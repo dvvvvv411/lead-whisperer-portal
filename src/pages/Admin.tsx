@@ -1,13 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 import AdminLogin from "@/components/admin/AdminLogin";
-import LeadTable from "@/components/admin/LeadTable";
-
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const Admin = () => {
   const [session, setSession] = useState<any>(null);
@@ -45,11 +39,13 @@ const Admin = () => {
     );
   }
 
-  return (
-    <div>
-      {session ? <LeadTable /> : <AdminLogin />}
-    </div>
-  );
+  // Wenn der Benutzer angemeldet ist, zur Leads-Seite weiterleiten, andernfalls Login-Formular anzeigen
+  if (session) {
+    window.location.href = "/admin/leads";
+    return null;
+  }
+
+  return <AdminLogin />;
 };
 
 export default Admin;

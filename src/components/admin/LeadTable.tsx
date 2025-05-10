@@ -5,16 +5,11 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 import { Check, X, MessageSquare } from "lucide-react";
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-const supabase = createClient(supabaseUrl, supabaseAnonKey);
-
 interface Lead {
-  id: number;
+  id: string;
   created_at: string;
   name: string;
   email: string;
@@ -25,8 +20,8 @@ interface Lead {
 }
 
 interface Comment {
-  id: number;
-  lead_id: number;
+  id: string;
+  lead_id: string;
   created_at: string;
   content: string;
   user_email: string;
@@ -70,7 +65,7 @@ const LeadTable = () => {
         }
         
         if (data) {
-          setLeads(data);
+          setLeads(data as Lead[]);
         }
       } catch (error) {
         console.error("Fehler beim Abrufen der Leads:", error);
@@ -101,7 +96,7 @@ const LeadTable = () => {
         }
         
         if (data) {
-          setComments(data);
+          setComments(data as Comment[]);
         }
       } catch (error) {
         console.error("Fehler beim Abrufen der Kommentare:", error);
@@ -111,7 +106,7 @@ const LeadTable = () => {
     fetchComments();
   }, []);
 
-  const handleStatusChange = async (id: number, status: 'akzeptiert' | 'abgelehnt') => {
+  const handleStatusChange = async (id: string, status: 'akzeptiert' | 'abgelehnt') => {
     try {
       const { error } = await supabase
         .from('leads')
@@ -167,7 +162,7 @@ const LeadTable = () => {
       
       // Kommentar zur lokalen Liste hinzufügen
       if (data && data.length > 0) {
-        setComments([...comments, data[0]]);
+        setComments([...comments, data[0] as Comment]);
         setNewComment("");
         
         toast({
@@ -186,7 +181,7 @@ const LeadTable = () => {
     }
   };
 
-  const getLeadComments = (leadId: number) => {
+  const getLeadComments = (leadId: string) => {
     return comments.filter(comment => comment.lead_id === leadId);
   };
 

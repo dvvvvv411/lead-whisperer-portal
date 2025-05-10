@@ -8,22 +8,9 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import AdminLeads from "./pages/AdminLeads";
 import NotFound from "./pages/NotFound";
-import { createClient } from "@supabase/supabase-js";
+import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
-
-// Supabase-Initialisierung für globalen Zugriff
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
-
-// Sicherstellen, dass die Umgebungsvariablen vorhanden sind
-if (!supabaseUrl || !supabaseAnonKey) {
-  console.error(
-    "Supabase-Umgebungsvariablen fehlen. Bitte aktiviere die Supabase-Integration."
-  );
-}
-
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
 
 const App = () => (
   <QueryClientProvider client={queryClient}>

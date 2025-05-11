@@ -106,6 +106,18 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
       setBotInterval(null);
     }
   }, [botInterval]);
+
+  // Stop the AI trading bot - Moved the function BEFORE startBot to fix the reference error
+  const stopBot = useCallback(() => {
+    clearBotInterval();
+    setSettings(prev => ({ ...prev, isActive: false }));
+    setStatus(prev => ({ ...prev, isActive: false }));
+    
+    toast({
+      title: "KI-Bot deaktiviert",
+      description: "Der KI-Trading-Bot wurde erfolgreich deaktiviert.",
+    });
+  }, [clearBotInterval, toast]);
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
@@ -205,18 +217,6 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
       description: "Der KI-Trading-Bot wurde erfolgreich aktiviert und wird nun automatisch handeln.",
     });
   }, [userId, userCredit, clearBotInterval, executeSingleTrade, settings.tradeFrequency, toast, status.maxTradesPerDay, status.tradesRemaining, stopBot]);
-  
-  // Stop the AI trading bot
-  const stopBot = useCallback(() => {
-    clearBotInterval();
-    setSettings(prev => ({ ...prev, isActive: false }));
-    setStatus(prev => ({ ...prev, isActive: false }));
-    
-    toast({
-      title: "KI-Bot deaktiviert",
-      description: "Der KI-Trading-Bot wurde erfolgreich deaktiviert.",
-    });
-  }, [clearBotInterval, toast]);
   
   // Update bot settings
   const updateBotSettings = useCallback((newSettings: Partial<BotSettings>) => {

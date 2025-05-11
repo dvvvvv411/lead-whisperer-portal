@@ -51,7 +51,10 @@ export const useSimulation = ({
     }
     
     // Mark simulation as active and record start time
-    startTimeRef.current = Date.now();
+    if (!startTimeRef.current) {
+      startTimeRef.current = Date.now();
+      console.log("Simulation started at:", startTimeRef.current);
+    }
     
     // Use setInterval for more consistent updates
     intervalIdRef.current = setInterval(() => {
@@ -63,14 +66,19 @@ export const useSimulation = ({
       const currentTime = Date.now();
       const elapsed = currentTime - startTimeRef.current;
       
-      // Create a strict linear progress that completes exactly at simulationDuration
-      const linearProgress = Math.min(100, (elapsed / simulationDuration) * 100);
+      // Ensure the simulation completes at exactly 60 seconds
+      // Create a strict linear progress that always increases and never goes backward
+      let newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
       
-      // Ensure progress always increases and never goes backward
-      const newProgress = Math.max(progressRef.current, Math.floor(linearProgress));
+      // Ensure progress never decreases
+      if (newProgress < progressRef.current) {
+        newProgress = progressRef.current;
+      } else {
+        progressRef.current = newProgress;
+      }
       
-      progressRef.current = newProgress;
       setProgress(newProgress);
+      console.log("Progress updated:", newProgress, "elapsed:", elapsed, "ms");
       
       // Update current step based on progress with fixed thresholds
       const stepThresholds = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
@@ -92,9 +100,9 @@ export const useSimulation = ({
         setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }
       
-      // Complete simulation when progress reaches 100%
-      if (newProgress >= 100 && !completedRef.current) {
-        console.log("Simulation completed!");
+      // Complete simulation when progress reaches 100% or when elapsed time reaches simulation duration
+      if ((newProgress >= 100 || elapsed >= simulationDuration) && !completedRef.current) {
+        console.log("Simulation completed! Progress:", newProgress, "Elapsed:", elapsed);
         completedRef.current = true;
         
         // When complete, wait a second then call onComplete with selected crypto
@@ -103,6 +111,8 @@ export const useSimulation = ({
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null;
           }
+          setProgress(100); // Ensure progress is at 100% for visual consistency
+          console.log("Calling onComplete with selectedCrypto:", selectedCryptoRef.current);
           onComplete(true, selectedCryptoRef.current);
         }, 1000);
       }

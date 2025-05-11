@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TrendingUp, Zap, Star } from "lucide-react";
@@ -135,13 +136,13 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
         )}
       </div>
       
-      {/* Company Logo - Bottom left */}
+      {/* Crypto Trader Logo - Bottom left */}
       <div className="absolute bottom-2 left-2 opacity-70 hover:opacity-100 transition-opacity">
         <div className="flex items-center gap-1.5">
           <div className="w-6 h-6 rounded-full bg-gradient-to-r from-gold to-accent1 shadow-glow flex items-center justify-center">
-            <span className="text-xs font-bold text-black">C</span>
+            <span className="text-xs font-bold text-black">CT</span>
           </div>
-          <span className="text-xs font-medium text-gold/80">Casino AI</span>
+          <span className="text-xs font-medium text-gold/80">Crypto Trader</span>
         </div>
       </div>
       

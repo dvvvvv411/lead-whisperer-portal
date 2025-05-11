@@ -37,13 +37,18 @@ export const CreateAccountDialog = ({
     try {
       setIsCreatingAccount(true);
       
-      // 1. Create the user using signUp
+      // 1. Create the user using signUp with adminUserCredentials option to prevent auto-login
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
         options: {
           data: {
             name: formData.name
+          },
+          emailRedirectTo: window.location.origin,
+          // This prevents the newly created user from being automatically logged in
+          adminUserCredentials: {
+            preventSignIn: true
           }
         }
       });

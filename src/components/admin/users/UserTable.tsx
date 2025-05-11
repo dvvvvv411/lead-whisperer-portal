@@ -38,16 +38,16 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
       setProcessing(userId);
       const newRole = currentRole === "admin" ? "user" : "admin";
       
-      // Entfernen der alten Rolle
+      // Entfernen der alten Rolle - Konvertiere string zu app_role Enum
       await supabase.rpc('remove_user_role', {
         _user_id: userId,
-        _role: currentRole
+        _role: currentRole as 'admin' | 'user'
       });
       
-      // Hinzufügen der neuen Rolle
+      // Hinzufügen der neuen Rolle - Konvertiere string zu app_role Enum
       await supabase.rpc('add_user_role', {
         _user_id: userId,
-        _role: newRole
+        _role: newRole as 'admin' | 'user'
       });
       
       toast({

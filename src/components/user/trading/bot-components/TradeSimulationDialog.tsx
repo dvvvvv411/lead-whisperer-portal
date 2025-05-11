@@ -9,54 +9,10 @@ import {
   DialogTitle
 } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
-import { TrendingUpIcon, TrendingDownIcon, ActivityIcon } from "lucide-react";
-
-interface CryptoComparisonProps {
-  symbol: string;
-  price: number;
-  change: number;
-}
-
-const CryptoComparison = ({ symbol, price, change }: CryptoComparisonProps) => {
-  return (
-    <div className="flex items-center justify-between py-2 border-b border-dashed border-slate-200 animate-fade-in">
-      <div className="flex items-center gap-2">
-        <span className="font-mono bg-slate-100 px-2 py-1 rounded text-xs">{symbol}</span>
-        <span className="text-sm font-medium">{price.toFixed(2)} €</span>
-      </div>
-      <div className="flex items-center">
-        {change > 0 ? (
-          <TrendingUpIcon className="h-4 w-4 text-green-500 mr-1" />
-        ) : (
-          <TrendingDownIcon className="h-4 w-4 text-red-500 mr-1" />
-        )}
-        <span className={`text-xs ${change > 0 ? 'text-green-500' : 'text-red-500'}`}>
-          {change.toFixed(2)}%
-        </span>
-      </div>
-    </div>
-  );
-};
-
-interface AlgorithmStepProps {
-  name: string;
-  isComplete: boolean;
-  current?: boolean;
-}
-
-const AlgorithmStep = ({ name, isComplete, current = false }: AlgorithmStepProps) => {
-  return (
-    <div className={`flex items-center gap-2 py-1.5 ${current ? 'text-blue-600 font-medium' : ''}`}>
-      <div className={`h-2 w-2 rounded-full ${isComplete ? 'bg-green-500' : current ? 'bg-blue-500 animate-pulse' : 'bg-gray-300'}`} />
-      <span className="text-xs">{name}</span>
-      {current && (
-        <div className="ml-auto flex items-center">
-          <ActivityIcon className="h-3 w-3 text-blue-500 animate-pulse" />
-        </div>
-      )}
-    </div>
-  );
-};
+import { ActivityIcon } from "lucide-react";
+import CryptoComparison, { CryptoComparisonProps } from "./simulation/CryptoComparison";
+import AlgorithmStep from "./simulation/AlgorithmStep";
+import { algorithmSteps, generateCryptoComparison } from "./simulation/simulationUtils";
 
 interface TradeSimulationDialogProps {
   open: boolean;
@@ -77,34 +33,6 @@ const TradeSimulationDialog = ({
   
   // Fixed simulation duration of exactly 60 seconds
   const simulationDuration = 60000; // 60 seconds
-  
-  // Algorithm steps
-  const steps = [
-    "Initialisiere KI-Algorithmus",
-    "Analyse historischer Kursdaten",
-    "Berechnung optimaler Einstiegspunkte",
-    "Sentiment-Analyse der Markttrends",
-    "Volumen-Korrelationsanalyse",
-    "Prüfung technischer Indikatoren",
-    "Bewertung der Handelsvolumina",
-    "Erkennung von Marktmustern",
-    "Berechnung der Gewinnwahrscheinlichkeit",
-    "Finale Handelsempfehlung"
-  ];
-
-  // Mock crypto data for simulation
-  const mockCryptoSymbols = [
-    { symbol: "BTC", basePrice: 42000 },
-    { symbol: "ETH", basePrice: 2800 },
-    { symbol: "SOL", basePrice: 120 },
-    { symbol: "ADA", basePrice: 0.45 },
-    { symbol: "DOT", basePrice: 6.2 },
-    { symbol: "AVAX", basePrice: 32 },
-    { symbol: "LINK", basePrice: 15.8 },
-    { symbol: "MATIC", basePrice: 0.85 },
-    { symbol: "UNI", basePrice: 9.4 },
-    { symbol: "ATOM", basePrice: 11.2 }
-  ];
 
   useEffect(() => {
     if (!open) return;
@@ -125,28 +53,12 @@ const TradeSimulationDialog = ({
       setProgress(newProgress);
       
       // Update current step based on progress
-      const newStep = Math.min(steps.length - 1, Math.floor((newProgress / 100) * steps.length));
+      const newStep = Math.min(algorithmSteps.length - 1, Math.floor((newProgress / 100) * algorithmSteps.length));
       setCurrentStep(newStep);
       
       // Generate crypto comparison roughly every second
       if (elapsed % 1000 < 50) {
-        // Select random mock crypto
-        const randomIndex = Math.floor(Math.random() * mockCryptoSymbols.length);
-        const mockCrypto = mockCryptoSymbols[randomIndex];
-        
-        // Generate realistic price fluctuation (±2% of base price)
-        const priceVariation = mockCrypto.basePrice * (Math.random() * 0.04 - 0.02);
-        const price = mockCrypto.basePrice + priceVariation;
-        
-        // Generate change percentage (-3% to +3%)
-        const change = (Math.random() * 6) - 3;
-        
-        const newComparison = {
-          symbol: mockCrypto.symbol,
-          price,
-          change
-        };
-        
+        const newComparison = generateCryptoComparison();
         setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }
       
@@ -170,7 +82,7 @@ const TradeSimulationDialog = ({
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [open, simulationDuration, steps.length, onComplete]);
+  }, [open, simulationDuration, onComplete]);
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -211,7 +123,7 @@ const TradeSimulationDialog = ({
           <div className="bg-slate-50 p-3 rounded-md">
             <div className="text-xs font-medium mb-1">KI-Algorithmus</div>
             <div className="space-y-0.5">
-              {steps.map((step, idx) => (
+              {algorithmSteps.map((step, idx) => (
                 <AlgorithmStep 
                   key={idx} 
                   name={step} 

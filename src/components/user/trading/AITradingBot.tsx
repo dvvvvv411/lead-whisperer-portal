@@ -1,11 +1,10 @@
 
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 import { ZapIcon } from "lucide-react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { useCryptos } from "@/hooks/useCryptos";
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect, useRef } from "react";
 import RankDisplay from "./RankDisplay";
 import BotStatusOverview from "./bot-components/BotStatusOverview";
 import BotSettingsPanel from "./bot-components/BotSettingsPanel";
@@ -36,6 +35,10 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   const { cryptos } = useCryptos();
   const [simulationOpen, setSimulationOpen] = useState(false);
   
+  // Use a ref to track dialog closing to prevent race conditions
+  const dialogClosingRef = useRef(false);
+  
+  // Format currency function
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
       style: 'currency',
@@ -43,30 +46,65 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }).format(amount);
   };
 
+  // Handle manual trade button click
   const handleManualTrade = useCallback(async () => {
     console.log("Manual trade button clicked");
     const canStart = await executeSingleTrade();
+    
     if (canStart) {
       console.log("Starting simulation dialog");
       setSimulationOpen(true);
+      // Reset the dialog closing state
+      dialogClosingRef.current = false;
     }
   }, [executeSingleTrade]);
   
+  // Handle simulation completion
   const handleSimulationComplete = useCallback(async (success: boolean) => {
     console.log("Simulation completed, success:", success);
-    if (success) {
-      await completeTradeAfterSimulation();
+    
+    // Prevent multiple completions
+    if (dialogClosingRef.current) {
+      console.log("Dialog already closing, ignoring completion");
+      return;
     }
-    setSimulationOpen(false);
+    
+    // Mark dialog as closing
+    dialogClosingRef.current = true;
+    
+    if (success) {
+      // Complete the trade with a slight delay to ensure dialog animation completes
+      setTimeout(async () => {
+        await completeTradeAfterSimulation();
+        setSimulationOpen(false);
+      }, 500);
+    } else {
+      setSimulationOpen(false);
+    }
   }, [completeTradeAfterSimulation]);
 
+  // Handle dialog open state changes
   const handleDialogOpenChange = useCallback((open: boolean) => {
     console.log("Dialog open state changed to:", open);
+    
     if (!open && isSimulating) {
-      // Reset simulation state if dialog is closed manually
+      // Dialog closed manually during simulation
+      console.log("Dialog closed manually while simulating");
+      dialogClosingRef.current = true;
       setIsSimulating(false);
     }
+    
     setSimulationOpen(open);
+  }, [isSimulating, setIsSimulating]);
+  
+  // Ensure simulation is properly closed if component unmounts
+  useEffect(() => {
+    return () => {
+      if (isSimulating) {
+        console.log("Component unmounting, cleaning up simulation");
+        setIsSimulating(false);
+      }
+    };
   }, [isSimulating, setIsSimulating]);
 
   return (
@@ -130,13 +168,15 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         </div>
       </CardContent>
       
-      {/* Trade Simulation Dialog - Use React.memo to prevent unnecessary re-renders */}
-      <TradeSimulationDialog
-        open={simulationOpen}
-        onOpenChange={handleDialogOpenChange}
-        onComplete={handleSimulationComplete}
-        cryptoData={cryptos || []}
-      />
+      {/* Trade Simulation Dialog */}
+      {cryptos && cryptos.length > 0 && (
+        <TradeSimulationDialog
+          open={simulationOpen}
+          onOpenChange={handleDialogOpenChange}
+          onComplete={handleSimulationComplete}
+          cryptoData={cryptos}
+        />
+      )}
     </Card>
   );
 };

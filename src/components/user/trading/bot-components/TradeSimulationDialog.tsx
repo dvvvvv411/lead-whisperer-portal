@@ -27,7 +27,7 @@ const TradeSimulationDialog = React.memo(({
   onComplete,
   cryptoData
 }: TradeSimulationDialogProps) => {
-  // Use refs to track simulation state across re-renders
+  // Use refs for simulation state to prevent reset on rerenders
   const progressRef = useRef(0);
   const simulationActive = useRef(false);
   const startTimeRef = useRef<number | null>(null);
@@ -41,8 +41,6 @@ const TradeSimulationDialog = React.memo(({
   
   // Fixed simulation duration of exactly 60 seconds
   const simulationDuration = 60000; // 60 seconds
-
-  console.log("Dialog rendering, open:", open, "progress:", progress, "active:", simulationActive.current);
 
   // Initialize or reset the simulation when dialog opens
   useEffect(() => {

@@ -38,6 +38,7 @@ export const useBotOperations = (
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
     if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
+      console.log("Missing required parameters for executeSingleTrade", { userId, userCredit, status, settings });
       return false;
     }
     
@@ -53,6 +54,10 @@ export const useBotOperations = (
     
     // Check if user has reached daily limit
     if (status.tradesRemaining <= 0) {
+      console.log("Daily trade limit reached", { 
+        dailyTradesExecuted: status.dailyTradesExecuted, 
+        maxTradesPerDay: status.maxTradesPerDay 
+      });
       toast({
         title: "Tägliches Limit erreicht",
         description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
@@ -73,30 +78,43 @@ export const useBotOperations = (
   const completeTradeAfterSimulation = useCallback(async () => {
     console.log("Completing trade after simulation");
     if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
+      console.log("Missing required parameters for completeTradeAfterSimulation");
       setIsSimulating(false);
       return false;
     }
     
-    const success = await executeAITrade(
-      userId, 
-      userCredit, 
-      cryptos, 
-      settings, 
-      toast, 
-      updateStatus, 
-      status.dailyTradesExecuted,
-      status.maxTradesPerDay
-    );
-    
-    // Reset simulating state
-    setIsSimulating(false);
-    
-    // Call the onTradeExecuted callback to update the parent components
-    if (success && onTradeExecuted) {
-      onTradeExecuted();
+    try {
+      const success = await executeAITrade(
+        userId, 
+        userCredit, 
+        cryptos, 
+        settings, 
+        toast, 
+        updateStatus, 
+        status.dailyTradesExecuted,
+        status.maxTradesPerDay
+      );
+      
+      console.log("AI trade execution completed with result:", success);
+      
+      // Call the onTradeExecuted callback to update the parent components
+      if (success && onTradeExecuted) {
+        onTradeExecuted();
+      }
+      
+      return success;
+    } catch (error) {
+      console.error("Error in completeTradeAfterSimulation:", error);
+      toast({
+        title: "Fehler bei der Ausführung des Trades",
+        description: "Bitte versuchen Sie es später erneut.",
+        variant: "destructive"
+      });
+      return false;
+    } finally {
+      // Always reset simulating state, even on error
+      setIsSimulating(false);
     }
-    
-    return success;
   }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted, status]);
   
   // Start the AI trading bot - no longer used but kept for compatibility

@@ -101,11 +101,11 @@ export const useBotOperations = (
       console.log("Missing required parameters for completeTradeAfterSimulation");
       setIsSimulating(false);
       simulationInProgressRef.current = false;
-      return false;
+      return { success: false };
     }
     
     try {
-      const success = await executeAITrade(
+      const tradeResult = await executeAITrade(
         userId, 
         userCredit, 
         cryptos, 
@@ -116,14 +116,14 @@ export const useBotOperations = (
         status.maxTradesPerDay
       );
       
-      console.log("AI trade execution completed with result:", success);
+      console.log("AI trade execution completed with result:", tradeResult);
       
       // Call the onTradeExecuted callback to update the parent components
-      if (success && onTradeExecuted) {
+      if (tradeResult.success && onTradeExecuted) {
         onTradeExecuted();
       }
       
-      return success;
+      return tradeResult;
     } catch (error) {
       console.error("Error in completeTradeAfterSimulation:", error);
       toast({
@@ -131,7 +131,7 @@ export const useBotOperations = (
         description: "Bitte versuchen Sie es später erneut.",
         variant: "destructive"
       });
-      return false;
+      return { success: false };
     } finally {
       // Always reset simulating state, even on error
       setIsSimulating(false);

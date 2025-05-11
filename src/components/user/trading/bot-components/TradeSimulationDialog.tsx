@@ -12,12 +12,12 @@ import { Progress } from "@/components/ui/progress";
 import { ActivityIcon } from "lucide-react";
 import CryptoComparison, { CryptoComparisonProps } from "./simulation/CryptoComparison";
 import AlgorithmStep from "./simulation/AlgorithmStep";
-import { algorithmSteps, generateCryptoComparison } from "./simulation/simulationUtils";
+import { algorithmSteps, generateCryptoComparison, selectRandomCrypto } from "./simulation/simulationUtils";
 
 interface TradeSimulationDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onComplete: (success: boolean) => void;
+  onComplete: (success: boolean, selectedCrypto?: any) => void;
   cryptoData: any[];
 }
 
@@ -33,6 +33,7 @@ const TradeSimulationDialog = React.memo(({
   const startTimeRef = useRef<number | null>(null);
   const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
   const completedRef = useRef(false);
+  const selectedCryptoRef = useRef<any>(null);
   
   // Visual state for rendering
   const [progress, setProgress] = useState(0);
@@ -67,6 +68,12 @@ const TradeSimulationDialog = React.memo(({
     setComparisons([]);
     completedRef.current = false;
     
+    // Select a crypto to trade at the start of simulation
+    if (cryptoData && cryptoData.length > 0) {
+      selectedCryptoRef.current = selectRandomCrypto(cryptoData);
+      console.log("Selected crypto for trade:", selectedCryptoRef.current);
+    }
+    
     // Mark simulation as active and record start time
     simulationActive.current = true;
     startTimeRef.current = Date.now();
@@ -91,7 +98,7 @@ const TradeSimulationDialog = React.memo(({
       
       // Generate crypto comparison roughly every second
       if (elapsed % 1000 < 100) {
-        const newComparison = generateCryptoComparison();
+        const newComparison = generateCryptoComparison(cryptoData);
         setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }
       
@@ -101,19 +108,19 @@ const TradeSimulationDialog = React.memo(({
         simulationActive.current = false;
         completedRef.current = true;
         
-        // When complete, wait a second then call onComplete
+        // When complete, wait a second then call onComplete with selected crypto
         setTimeout(() => {
           if (intervalIdRef.current) {
             clearInterval(intervalIdRef.current);
             intervalIdRef.current = null;
           }
-          onComplete(true);
+          onComplete(true, selectedCryptoRef.current);
         }, 1000);
       }
     }, 250); // Update 4 times per second for smoother animation
     
     return cleanup;
-  }, [open, simulationDuration, onComplete]);
+  }, [open, simulationDuration, onComplete, cryptoData]);
   
   return (
     <Dialog 

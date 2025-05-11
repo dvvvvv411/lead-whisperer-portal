@@ -11,6 +11,7 @@ import BotPerformance from "./bot-components/BotPerformance";
 import BotInfoCard from "./bot-components/BotInfoCard";
 import BotControlsHeader from "./bot-components/BotControlsHeader";
 import TradeSimulationDialog from "./bot-components/TradeSimulationDialog";
+import TradeResultDialog from "./bot-components/TradeResultDialog";
 
 interface AITradingBotProps {
   userId?: string;
@@ -35,6 +36,16 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
   const { cryptos } = useCryptos();
   const [simulationOpen, setSimulationOpen] = useState(false);
+  
+  // State for trade result dialog
+  const [resultDialogOpen, setResultDialogOpen] = useState(false);
+  const [tradeResult, setTradeResult] = useState({
+    cryptoSymbol: "",
+    cryptoName: "",
+    profitAmount: 0,
+    profitPercentage: 0,
+    tradeAmount: 0
+  });
   
   // Use a ref to track dialog closing to prevent race conditions
   const dialogClosingRef = useRef(false);
@@ -70,8 +81,8 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   }, [executeSingleTrade]);
   
   // Handle simulation completion
-  const handleSimulationComplete = useCallback(async (success: boolean) => {
-    console.log("Simulation completed, success:", success);
+  const handleSimulationComplete = useCallback(async (success: boolean, selectedCrypto?: any) => {
+    console.log("Simulation completed, success:", success, "selected crypto:", selectedCrypto);
     
     // Prevent multiple completions
     if (dialogClosingRef.current) {
@@ -85,8 +96,25 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     if (success) {
       // Complete the trade with a slight delay to ensure dialog animation completes
       setTimeout(async () => {
-        await completeTradeAfterSimulation();
+        // Close simulation dialog first
         setSimulationOpen(false);
+        
+        // Execute the trade and get results
+        const tradeResult = await completeTradeAfterSimulation();
+        
+        if (tradeResult && typeof tradeResult === 'object' && 'success' in tradeResult && tradeResult.success) {
+          // Prepare data for result dialog
+          setTradeResult({
+            cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
+            cryptoName: tradeResult.crypto?.name || selectedCrypto?.name || "Bitcoin",
+            profitAmount: tradeResult.profit || 0,
+            profitPercentage: tradeResult.profitPercentage || 0,
+            tradeAmount: tradeResult.tradeAmount || 0
+          });
+          
+          // Show result dialog
+          setResultDialogOpen(true);
+        }
       }, 500);
     } else {
       setSimulationOpen(false);
@@ -106,6 +134,11 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     
     setSimulationOpen(open);
   }, [isSimulating, setIsSimulating, simulationInProgressRef]);
+  
+  // Handle closing the result dialog
+  const handleResultDialogClose = useCallback(() => {
+    setResultDialogOpen(false);
+  }, []);
   
   // Ensure simulation is properly closed if component unmounts
   useEffect(() => {
@@ -178,6 +211,17 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
           cryptoData={cryptos}
         />
       )}
+      
+      {/* Trade Result Dialog */}
+      <TradeResultDialog
+        open={resultDialogOpen}
+        onClose={handleResultDialogClose}
+        cryptoSymbol={tradeResult.cryptoSymbol}
+        cryptoName={tradeResult.cryptoName}
+        profitAmount={tradeResult.profitAmount}
+        profitPercentage={tradeResult.profitPercentage}
+        tradeAmount={tradeResult.tradeAmount}
+      />
     </Card>
   );
 };

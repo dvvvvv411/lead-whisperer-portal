@@ -22,7 +22,7 @@ export const executeAITrade = async (
 ) => {
   if (!userId || !userCredit || userCredit <= 0) {
     console.log("KI-Bot: Kein Benutzer oder kein Guthaben verfügbar", { userId, userCredit });
-    return false;
+    return { success: false };
   }
   
   // Check if user has reached daily trade limit
@@ -33,14 +33,14 @@ export const executeAITrade = async (
       description: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
       variant: "destructive"
     });
-    return false;
+    return { success: false };
   }
 
   try {
     const crypto = getRandomCrypto(cryptos);
     if (!crypto) {
       console.log("KI-Bot: Keine Kryptowährung gefunden");
-      return false;
+      return { success: false };
     }
 
     // Use entire account balance for the trade (minus a small safety buffer)
@@ -129,7 +129,15 @@ export const executeAITrade = async (
       variant: "default"
     });
     
-    return true;
+    // Return trade details for the result dialog
+    return {
+      success: true,
+      crypto,
+      tradeAmount,
+      profit,
+      profitPercentage,
+      sellAmount
+    };
   } catch (error: any) {
     console.error('Error executing AI trade:', error.message);
     toast({
@@ -137,6 +145,6 @@ export const executeAITrade = async (
       description: error.message,
       variant: "destructive"
     });
-    return false;
+    return { success: false };
   }
 };

@@ -1,18 +1,4 @@
 
-// Mock crypto data for simulation
-export const mockCryptoSymbols = [
-  { symbol: "BTC", basePrice: 42000 },
-  { symbol: "ETH", basePrice: 2800 },
-  { symbol: "SOL", basePrice: 120 },
-  { symbol: "ADA", basePrice: 0.45 },
-  { symbol: "DOT", basePrice: 6.2 },
-  { symbol: "AVAX", basePrice: 32 },
-  { symbol: "LINK", basePrice: 15.8 },
-  { symbol: "MATIC", basePrice: 0.85 },
-  { symbol: "UNI", basePrice: 9.4 },
-  { symbol: "ATOM", basePrice: 11.2 }
-];
-
 // Algorithm steps
 export const algorithmSteps = [
   "Initialisiere KI-Algorithmus",
@@ -27,22 +13,43 @@ export const algorithmSteps = [
   "Finale Handelsempfehlung"
 ];
 
-// Generate a realistic crypto comparison
-export const generateCryptoComparison = () => {
-  // Select random mock crypto
-  const randomIndex = Math.floor(Math.random() * mockCryptoSymbols.length);
-  const mockCrypto = mockCryptoSymbols[randomIndex];
+// Generate a realistic crypto comparison from real data
+export const generateCryptoComparison = (cryptoData: any[]) => {
+  if (!cryptoData || cryptoData.length === 0) {
+    return {
+      symbol: "BTC",
+      price: 42000,
+      change: 0.5
+    };
+  }
   
-  // Generate realistic price fluctuation (±2% of base price)
-  const priceVariation = mockCrypto.basePrice * (Math.random() * 0.04 - 0.02);
-  const price = mockCrypto.basePrice + priceVariation;
+  // Select random crypto from real data
+  const randomIndex = Math.floor(Math.random() * cryptoData.length);
+  const selectedCrypto = cryptoData[randomIndex];
   
-  // Generate change percentage (-3% to +3%)
-  const change = (Math.random() * 6) - 3;
+  // Use real price with small variation to simulate live updates
+  const priceVariation = selectedCrypto.current_price * (Math.random() * 0.02 - 0.01); // ±1%
+  const price = selectedCrypto.current_price + priceVariation;
+  
+  // Use real data for change if available, otherwise simulate one
+  const change = selectedCrypto.price_change_percentage_24h || (Math.random() * 6 - 3);
   
   return {
-    symbol: mockCrypto.symbol,
+    symbol: selectedCrypto.symbol,
     price,
     change
   };
+};
+
+// Select a random crypto for trading
+export const selectRandomCrypto = (cryptoData: any[]) => {
+  if (!cryptoData || cryptoData.length === 0) return null;
+  
+  const randomIndex = Math.floor(Math.random() * cryptoData.length);
+  return cryptoData[randomIndex];
+};
+
+// Generate a profit percentage between 5-10%
+export const generateProfitPercentage = () => {
+  return 5 + Math.random() * 5; // Between 5% and 10%
 };

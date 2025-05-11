@@ -57,10 +57,7 @@ export const useCryptos = () => {
     
     try {
       setUpdating(true);
-      toast({
-        title: "Aktualisierung gestartet",
-        description: "Kryptowährungsdaten werden aktualisiert..."
-      });
+      // Removed toast notification for starting the update
       
       // Get the current session for auth token
       const { data: sessionData } = await supabase.auth.getSession();
@@ -86,10 +83,7 @@ export const useCryptos = () => {
       
       const result = await response.json();
       
-      toast({
-        title: "Aktualisierung erfolgreich",
-        description: `${result.message}`
-      });
+      // Removed toast notification for successful update
       
       // Fetch updated cryptocurrencies
       fetchCryptos();

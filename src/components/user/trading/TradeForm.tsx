@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
@@ -93,7 +92,7 @@ const TradeForm = ({ crypto, onTrade, onClose, defaultAction = 'buy', userCredit
     onClose();
   };
   
-  const formatPrice = (price: number) => {
+  const formatCurrency = (price: number) => {
     return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
   };
   
@@ -123,7 +122,7 @@ const TradeForm = ({ crypto, onTrade, onClose, defaultAction = 'buy', userCredit
           {crypto.name} 
           <span className="text-muted-foreground">({crypto.symbol})</span>
           <span className="font-bold ml-2">
-            {formatPrice(crypto.current_price)}
+            {formatCurrency(crypto.current_price)}
           </span>
         </div>
         <Button variant="ghost" size="sm" onClick={onClose}>
@@ -169,7 +168,7 @@ const TradeForm = ({ crypto, onTrade, onClose, defaultAction = 'buy', userCredit
                 />
                 {action === 'buy' && userCredit !== undefined && (
                   <div className="text-sm text-muted-foreground">
-                    Verfügbares Guthaben: {formatPrice(userCredit)}
+                    Verfügbares Guthaben: {formatCurrency(userCredit)}
                   </div>
                 )}
               </div>
@@ -216,7 +215,7 @@ const TradeForm = ({ crypto, onTrade, onClose, defaultAction = 'buy', userCredit
           <div className="pt-2 border-t">
             <div className="flex justify-between text-sm mb-4">
               <span>Gesamtbetrag:</span>
-              <span className="font-bold">{formatPrice(currentTotal)}</span>
+              <span className="font-bold">{formatCurrency(currentTotal)}</span>
             </div>
             <div className="flex justify-between text-sm mb-4">
               <span>Menge:</span>
@@ -261,11 +260,11 @@ const TradeForm = ({ crypto, onTrade, onClose, defaultAction = 'buy', userCredit
             </div>
             <div className="flex justify-between">
               <span>Preis:</span>
-              <span className="font-semibold">{formatPrice(crypto.current_price)}</span>
+              <span className="font-semibold">{formatCurrency(crypto.current_price)}</span>
             </div>
             <div className="flex justify-between">
               <span>Gesamtbetrag:</span>
-              <span className="font-semibold">{formatPrice(currentTotal)}</span>
+              <span className="font-semibold">{formatCurrency(currentTotal)}</span>
             </div>
             <div className="flex justify-between">
               <span>Strategie:</span>

@@ -96,8 +96,14 @@ const RankDisplay = ({
             <Progress 
               value={progressToNextRank} 
               className="h-3 bg-casino-darker" 
-              indicatorClassName="bg-gradient-to-r from-gold/80 to-gold transition-all"
             />
+            <style jsx>{`
+              /* Custom progress bar styling */
+              :global(.h-3.bg-casino-darker [role="progressbar"]) {
+                background: linear-gradient(to right, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 1)) !important;
+                transition: all 0.3s ease;
+              }
+            `}</style>
             <div className="flex justify-between mt-1">
               <div className="text-xs text-muted-foreground">
                 {currentTier?.label}

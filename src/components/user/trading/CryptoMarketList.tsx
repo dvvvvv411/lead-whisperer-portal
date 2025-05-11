@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import React, { useState } from "react";
 import { Motion, spring } from "react-motion";
 import { ChevronUp, ChevronDown, BarChart2 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
@@ -141,6 +141,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
                             crypto={crypto}
                             onTrade={onTrade}
                             userCredit={userCredit}
+                            onClose={() => handleSelectCrypto(crypto.id)}
                           />
                         </div>
                       )}

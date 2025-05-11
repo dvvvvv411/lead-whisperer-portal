@@ -21,41 +21,53 @@ interface TradeSimulationDialogProps {
   cryptoData: any[];
 }
 
-const TradeSimulationDialog = ({ 
+const TradeSimulationDialog = React.memo(({ 
   open, 
   onOpenChange, 
   onComplete,
   cryptoData
 }: TradeSimulationDialogProps) => {
+  // Use refs to track simulation state across re-renders
+  const progressRef = useRef(0);
+  const simulationActive = useRef(false);
+  const startTimeRef = useRef<number | null>(null);
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  const completedRef = useRef(false);
+  
+  // Visual state for rendering
   const [progress, setProgress] = useState(0);
   const [currentStep, setCurrentStep] = useState(0);
   const [comparisons, setComparisons] = useState<CryptoComparisonProps[]>([]);
   
-  // Use refs to track simulation state across re-renders
-  const simulationActive = useRef(false);
-  const startTimeRef = useRef<number | null>(null);
-  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
-  
   // Fixed simulation duration of exactly 60 seconds
   const simulationDuration = 60000; // 60 seconds
 
+  console.log("Dialog rendering, open:", open, "progress:", progress, "active:", simulationActive.current);
+
   // Initialize or reset the simulation when dialog opens
   useEffect(() => {
-    if (!open) {
-      // Clean up when dialog closes
+    // Cleanup function to cancel interval when component unmounts or dialog closes
+    const cleanup = () => {
       if (intervalIdRef.current) {
+        console.log("Cleaning up interval");
         clearInterval(intervalIdRef.current);
         intervalIdRef.current = null;
       }
       simulationActive.current = false;
-      startTimeRef.current = null;
+    };
+
+    if (!open) {
+      cleanup();
       return;
     }
     
     // Reset states when dialog opens
+    console.log("Dialog opened, initializing simulation");
+    progressRef.current = 0;
     setProgress(0);
     setCurrentStep(0);
     setComparisons([]);
+    completedRef.current = false;
     
     // Mark simulation as active and record start time
     simulationActive.current = true;
@@ -63,12 +75,16 @@ const TradeSimulationDialog = ({
     
     // Use setInterval for more consistent updates
     intervalIdRef.current = setInterval(() => {
-      if (!simulationActive.current || startTimeRef.current === null) return;
+      if (!simulationActive.current || startTimeRef.current === null) {
+        console.log("Simulation no longer active in interval");
+        return;
+      }
       
       const currentTime = Date.now();
       const elapsed = currentTime - startTimeRef.current;
       const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
       
+      progressRef.current = newProgress;
       setProgress(newProgress);
       
       // Update current step based on progress
@@ -82,27 +98,23 @@ const TradeSimulationDialog = ({
       }
       
       // Complete simulation when progress reaches 100%
-      if (newProgress >= 100) {
+      if (newProgress >= 100 && !completedRef.current) {
+        console.log("Simulation completed!");
         simulationActive.current = false;
-        if (intervalIdRef.current) {
-          clearInterval(intervalIdRef.current);
-          intervalIdRef.current = null;
-        }
+        completedRef.current = true;
+        
         // When complete, wait a second then call onComplete
         setTimeout(() => {
+          if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null;
+          }
           onComplete(true);
         }, 1000);
       }
     }, 250); // Update 4 times per second for smoother animation
     
-    // Cleanup function to cancel interval when component unmounts or dialog closes
-    return () => {
-      if (intervalIdRef.current) {
-        clearInterval(intervalIdRef.current);
-        intervalIdRef.current = null;
-      }
-      simulationActive.current = false;
-    };
+    return cleanup;
   }, [open, simulationDuration, onComplete]);
   
   return (
@@ -111,6 +123,7 @@ const TradeSimulationDialog = ({
       onOpenChange={(newOpenState) => {
         // If dialog is being closed manually and simulation is still running
         if (!newOpenState && simulationActive.current) {
+          console.log("Dialog manually closed, cancelling simulation");
           // Cancel simulation
           simulationActive.current = false;
           if (intervalIdRef.current) {
@@ -147,7 +160,7 @@ const TradeSimulationDialog = ({
             <div className="text-xs font-medium mb-2">Markt-Analyse</div>
             {comparisons.length > 0 ? (
               comparisons.map((comp, idx) => (
-                <CryptoComparison key={idx} {...comp} />
+                <CryptoComparison key={`comp-${idx}`} {...comp} />
               ))
             ) : (
               <div className="text-xs text-muted-foreground py-2">Warte auf Daten...</div>
@@ -160,7 +173,7 @@ const TradeSimulationDialog = ({
             <div className="space-y-0.5">
               {algorithmSteps.map((step, idx) => (
                 <AlgorithmStep 
-                  key={idx} 
+                  key={`step-${idx}`} 
                   name={step} 
                   isComplete={idx < currentStep} 
                   current={idx === currentStep} 
@@ -176,6 +189,7 @@ const TradeSimulationDialog = ({
       </DialogContent>
     </Dialog>
   );
-};
+});
 
+TradeSimulationDialog.displayName = 'TradeSimulationDialog';
 export default TradeSimulationDialog;

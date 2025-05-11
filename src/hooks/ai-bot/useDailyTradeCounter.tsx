@@ -33,7 +33,8 @@ export const useDailyTradeCounter = (
     
     fetchTodaysTrades();
     // Set up an interval to update trade count periodically
-    const interval = setInterval(fetchTodaysTrades, 30000); // 30 seconds
+    // Changed from 30 seconds to 120 seconds (2 minutes) to reduce interference with simulation
+    const interval = setInterval(fetchTodaysTrades, 120000);
     
     return () => clearInterval(interval);
   }, [userId, updateStatus]);

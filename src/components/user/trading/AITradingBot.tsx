@@ -5,7 +5,7 @@ import { ZapIcon } from "lucide-react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { useCryptos } from "@/hooks/useCryptos";
-import { useState } from "react";
+import { useState, useCallback } from "react";
 import RankDisplay from "./RankDisplay";
 import BotStatusOverview from "./bot-components/BotStatusOverview";
 import BotSettingsPanel from "./bot-components/BotSettingsPanel";
@@ -43,19 +43,31 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }).format(amount);
   };
 
-  const handleManualTrade = async () => {
+  const handleManualTrade = useCallback(async () => {
+    console.log("Manual trade button clicked");
     const canStart = await executeSingleTrade();
     if (canStart) {
+      console.log("Starting simulation dialog");
       setSimulationOpen(true);
     }
-  };
+  }, [executeSingleTrade]);
   
-  const handleSimulationComplete = async (success: boolean) => {
+  const handleSimulationComplete = useCallback(async (success: boolean) => {
+    console.log("Simulation completed, success:", success);
     if (success) {
       await completeTradeAfterSimulation();
     }
     setSimulationOpen(false);
-  };
+  }, [completeTradeAfterSimulation]);
+
+  const handleDialogOpenChange = useCallback((open: boolean) => {
+    console.log("Dialog open state changed to:", open);
+    if (!open && isSimulating) {
+      // Reset simulation state if dialog is closed manually
+      setIsSimulating(false);
+    }
+    setSimulationOpen(open);
+  }, [isSimulating, setIsSimulating]);
 
   return (
     <Card className="w-full">
@@ -118,10 +130,10 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         </div>
       </CardContent>
       
-      {/* Trade Simulation Dialog */}
+      {/* Trade Simulation Dialog - Use React.memo to prevent unnecessary re-renders */}
       <TradeSimulationDialog
         open={simulationOpen}
-        onOpenChange={setSimulationOpen}
+        onOpenChange={handleDialogOpenChange}
         onComplete={handleSimulationComplete}
         cryptoData={cryptos || []}
       />

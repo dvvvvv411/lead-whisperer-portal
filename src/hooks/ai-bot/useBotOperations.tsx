@@ -1,3 +1,4 @@
+
 import { useCallback, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCryptos } from "@/hooks/useCryptos";
@@ -42,6 +43,7 @@ export const useBotOperations = (
     
     // Check if already simulating
     if (isSimulating) {
+      console.log("Already simulating, ignoring new trade request");
       toast({
         title: "Transaktion in Bearbeitung",
         description: "Der KI-Bot analysiert bereits die Märkte für den optimalen Trade.",
@@ -60,6 +62,7 @@ export const useBotOperations = (
     }
     
     // Set simulating state to true to show dialog
+    console.log("Starting trade simulation");
     setIsSimulating(true);
     
     // Return true to indicate that simulation has started
@@ -68,6 +71,7 @@ export const useBotOperations = (
   
   // Complete trade after simulation
   const completeTradeAfterSimulation = useCallback(async () => {
+    console.log("Completing trade after simulation");
     if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
       setIsSimulating(false);
       return false;

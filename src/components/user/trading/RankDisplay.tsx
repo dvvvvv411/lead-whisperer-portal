@@ -3,7 +3,7 @@ import React from 'react';
 import { RankTier } from '@/hooks/ai-bot/types';
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, ChevronUp, Star, ArrowRight, Power } from "lucide-react";
+import { Trophy, ChevronUp, Star, Power } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -15,6 +15,7 @@ interface RankDisplayProps {
   userCredit: number;
   rankTiers: RankTier[];
   onExecuteTrade?: () => void;
+  userName?: string;
 }
 
 const RankDisplay = ({ 
@@ -24,7 +25,8 @@ const RankDisplay = ({
   dailyTradesExecuted,
   userCredit,
   rankTiers,
-  onExecuteTrade
+  onExecuteTrade,
+  userName
 }: RankDisplayProps) => {
   // Find the current and next rank tier
   const currentTier = rankTiers.find(tier => tier.rankNumber === currentRank);
@@ -155,26 +157,16 @@ const RankDisplay = ({
           
           {/* Welcome message and CTA - Middle section */}
           <div className="md:col-span-1 flex flex-col items-center justify-center">
-            <div className="text-center space-y-3">
-              {/* User welcome message */}
+            <div className="text-center space-y-4 py-2">
+              {/* User welcome message with name */}
               <h3 className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light animate-fade-in">
-                Willkommen!
+                Willkommen, {userName || ''}!
               </h3>
               
               {/* Instruction text */}
-              <p className="text-sm text-muted-foreground max-w-[200px] mx-auto">
+              <p className="text-sm text-muted-foreground max-w-[220px] mx-auto">
                 Starten Sie den KI-Bot für intelligente Trading-Entscheidungen
               </p>
-              
-              {/* Arrow pointing to the button */}
-              <div className="relative h-16 mt-2">
-                <div className="absolute right-0 top-1/2 transform -translate-y-1/2 translate-x-5">
-                  <ArrowRight className="h-8 w-8 text-gold/70 animate-pulse-gold" />
-                </div>
-                <div className="absolute left-0 top-1/2 transform -translate-y-1/2 -translate-x-5">
-                  <ArrowRight className="h-8 w-8 text-gold/70 animate-pulse-gold transform rotate-180" />
-                </div>
-              </div>
             </div>
           </div>
           

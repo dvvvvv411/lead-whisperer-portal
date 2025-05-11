@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -29,7 +28,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
   
-  // Automatische Aktualisierung der Daten alle 30 Sekunden
+  // Aktualisierung der Daten alle 90 Sekunden (geändert von 30 auf 90 Sekunden)
   useEffect(() => {
     const interval = setInterval(() => {
       // Aktualisiere alle relevanten Daten
@@ -37,7 +36,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
       fetchPortfolio();
       fetchTradeHistory();
       onUpdated(); // Aktualisiere das Guthaben
-    }, 30000);
+    }, 90000); // Changed from 30000 to 90000 (90 seconds)
     
     return () => clearInterval(interval);
   }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, onUpdated]);

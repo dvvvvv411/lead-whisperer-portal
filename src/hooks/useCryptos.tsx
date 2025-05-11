@@ -53,7 +53,10 @@ export const useCryptos = () => {
   // Manually trigger update of crypto prices
   const updateCryptoPrices = useCallback(async () => {
     // If already updating, don't start another update
-    if (updating) return;
+    if (updating) {
+      console.log("Already updating crypto prices, skipping this request");
+      return;
+    }
     
     try {
       setUpdating(true);

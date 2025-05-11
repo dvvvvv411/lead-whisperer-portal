@@ -13,6 +13,7 @@ import {
 import WithdrawalStatusBadge from "./WithdrawalStatusBadge";
 import WithdrawalActions from "./WithdrawalActions";
 import WithdrawalDialogContent from "./WithdrawalDialogContent";
+import { processWithdrawal } from "./withdrawalService";
 
 interface Withdrawal {
   id: string;
@@ -68,90 +69,39 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
     setNotes("");
   };
 
-  const updateLocalWithdrawalStatus = (withdrawalId: string, newStatus: string, newNotes: string | null) => {
-    setUpdatedWithdrawals(prevWithdrawals => 
-      prevWithdrawals.map(withdrawal => 
-        withdrawal.id === withdrawalId 
-          ? { 
-              ...withdrawal, 
-              status: newStatus, 
-              notes: newNotes, 
-              updated_at: new Date().toISOString()
-            } 
-          : withdrawal
-      )
-    );
-  };
-
   const handleConfirmAction = async () => {
     if (!selectedWithdrawal) return;
     
     try {
       setProcessing(true);
       
-      if (dialogAction === "approve") {
-        // Update the withdrawal status to completed
-        const { error: updateError } = await supabase
-          .from('withdrawals')
-          .update({ 
-            status: 'completed',
-            notes: notes || null,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', selectedWithdrawal.id);
-        
-        if (updateError) throw updateError;
-        
-        // Update user credit by subtracting the withdrawal amount
-        const { data: currentCreditData, error: creditFetchError } = await supabase
-          .from('user_credits')
-          .select('amount')
-          .eq('user_id', selectedWithdrawal.user_id)
-          .single();
-        
-        if (creditFetchError) throw creditFetchError;
-        
-        const currentCredit = currentCreditData?.amount || 0;
-        const newCredit = Math.max(0, currentCredit - selectedWithdrawal.amount);
-        
-        const { error: creditUpdateError } = await supabase
-          .from('user_credits')
-          .update({ 
-            amount: newCredit,
-            last_updated: new Date().toISOString()
-          })
-          .eq('user_id', selectedWithdrawal.user_id);
-        
-        if (creditUpdateError) throw creditUpdateError;
-        
-        // Update local state to reflect changes
-        updateLocalWithdrawalStatus(selectedWithdrawal.id, 'completed', notes || null);
-        
-        toast({
-          title: "Auszahlung genehmigt",
-          description: `Die Auszahlung für ${selectedWithdrawal.user_email} wurde genehmigt.`,
-        });
-      } else if (dialogAction === "reject") {
-        // Update the withdrawal status to rejected
-        const { error } = await supabase
-          .from('withdrawals')
-          .update({ 
-            status: 'rejected',
-            notes: notes || null,
-            updated_at: new Date().toISOString()
-          })
-          .eq('id', selectedWithdrawal.id);
-        
-        if (error) throw error;
-        
-        // Update local state to reflect changes
-        updateLocalWithdrawalStatus(selectedWithdrawal.id, 'rejected', notes || null);
-        
-        toast({
-          title: "Auszahlung abgelehnt",
-          description: `Die Auszahlung für ${selectedWithdrawal.user_email} wurde abgelehnt.`,
-        });
-      }
+      const newStatus = dialogAction === "approve" ? "completed" : "rejected";
+      
+      await processWithdrawal({
+        withdrawal: selectedWithdrawal,
+        status: newStatus,
+        notes: notes || null,
+        isApproved: dialogAction === "approve"
+      });
+      
+      // Update local state to reflect changes
+      setUpdatedWithdrawals(prevWithdrawals => 
+        prevWithdrawals.map(withdrawal => 
+          withdrawal.id === selectedWithdrawal.id 
+            ? { 
+                ...withdrawal, 
+                status: newStatus, 
+                notes: notes || null, 
+                updated_at: new Date().toISOString()
+              } 
+            : withdrawal
+        )
+      );
+      
+      toast({
+        title: dialogAction === "approve" ? "Auszahlung genehmigt" : "Auszahlung abgelehnt",
+        description: `Die Auszahlung für ${selectedWithdrawal.user_email} wurde ${dialogAction === "approve" ? "genehmigt" : "abgelehnt"}.`,
+      });
       
       // Refresh withdrawals from database
       onWithdrawalUpdated();

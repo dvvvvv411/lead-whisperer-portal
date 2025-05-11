@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -238,19 +237,21 @@ const LeadTable = () => {
         </div>
       </div>
       
-      {/* Filter-Buttons */}
+      {/* Filter-Buttons - now left-aligned */}
       <div className="mb-6">
         <h2 className="text-sm text-gray-500 mb-2">Nach Status filtern:</h2>
-        <ToggleGroup type="single" value={statusFilter} onValueChange={setStatusFilter}>
-          <ToggleGroupItem value="neu" className="bg-blue-100 text-blue-800 border-blue-300 data-[state=on]:bg-blue-200">
-            Neu
-          </ToggleGroupItem>
-          <ToggleGroupItem value="akzeptiert" className="bg-green-100 text-green-800 border-green-300 data-[state=on]:bg-green-200">
-            Akzeptiert
-          </ToggleGroupItem>
-          <ToggleGroupItem value="abgelehnt" className="bg-red-100 text-red-800 border-red-300 data-[state=on]:bg-red-200">
-            Abgelehnt
-          </ToggleGroupItem>
+        <div className="flex justify-start">
+          <ToggleGroup type="single" value={statusFilter} onValueChange={setStatusFilter}>
+            <ToggleGroupItem value="neu" className="bg-blue-100 text-blue-800 border-blue-300 data-[state=on]:bg-blue-200">
+              Neu
+            </ToggleGroupItem>
+            <ToggleGroupItem value="akzeptiert" className="bg-green-100 text-green-800 border-green-300 data-[state=on]:bg-green-200">
+              Akzeptiert
+            </ToggleGroupItem>
+            <ToggleGroupItem value="abgelehnt" className="bg-red-100 text-red-800 border-red-300 data-[state=on]:bg-red-200">
+              Abgelehnt
+            </ToggleGroupItem>
+          </ToggleGroup>
           <Button 
             variant="outline" 
             size="sm" 
@@ -259,7 +260,7 @@ const LeadTable = () => {
           >
             Alle anzeigen
           </Button>
-        </ToggleGroup>
+        </div>
       </div>
       
       {filteredLeads.length === 0 ? (
@@ -284,7 +285,7 @@ const LeadTable = () => {
               {filteredLeads.map((lead) => (
                 <tr key={lead.id} className="border-t hover:bg-gray-50">
                   <td className="px-4 py-3">
-                    {new Date(lead.created_at).toLocaleDateString('de-DE')}
+                    {new Date(lead.created_at).toLocaleDateString('de-DE')} {new Date(lead.created_at).toLocaleTimeString('de-DE', { hour: '2-digit', minute: '2-digit' })}
                   </td>
                   <td className="px-4 py-3">{lead.name}</td>
                   <td className="px-4 py-3">{lead.email}</td>

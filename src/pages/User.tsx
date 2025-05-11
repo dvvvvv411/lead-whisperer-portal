@@ -1,96 +1,103 @@
 
+// This file likely contains the user dashboard page
+// We need to ensure it refreshes the credit when returning from deposit page
+// Add code to refresh the credit when the page is loaded/mounted
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate, Link } from "react-router-dom";
 import UserDashboard from "@/components/user/UserDashboard";
-import { checkUserRole } from "@/services/roleService";
-import { useToast } from "@/hooks/use-toast";
-import CryptoTradingSection from "@/components/user/trading/CryptoTradingSection";
+import { CryptoTradingSection } from "@/components/user/trading/CryptoTradingSection";
 import { useUserCredit } from "@/hooks/useUserCredit";
-import { Button } from "@/components/ui/button";
-import { Link } from "react-router-dom";
-import { CreditCard } from "lucide-react";
+import { checkUserRole } from "@/services/roleService";
 
-const UserPage = () => {
-  const { toast } = useToast();
+const User = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [isActivated, setIsActivated] = useState(false);
-  
+  const [loading, setLoading] = useState(true);
+
+  // Use the credit hook with a key that forces refresh when coming back to this page
+  const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(user?.id);
+
+  // Force refresh of credit when component mounts or when user changes
+  useEffect(() => {
+    if (user?.id) {
+      fetchUserCredit();
+    }
+  }, [user?.id, fetchUserCredit]);
+
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
+      try {
+        setLoading(true);
+        const { data } = await supabase.auth.getUser();
         
-        // Prüfen, ob der Nutzer die Rolle "user" hat (aktiviert ist)
-        const activated = await checkUserRole('user');
-        setIsActivated(activated);
-        
-        // Wenn nicht aktiviert, zur Aktivierungsseite weiterleiten
-        if (!activated) {
-          console.log("Benutzer nicht aktiviert, Weiterleitung zur Aktivierungsseite");
-          toast({
-            title: "Aktivierung erforderlich",
-            description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
-          });
-          window.location.href = "/nutzer/aktivierung";
-          return;
+        if (data?.user) {
+          setUser(data.user);
+          
+          // Check if the user has the 'user' role (is activated)
+          const activated = await checkUserRole('user');
+          setIsActivated(activated);
+          
+          // If not activated, redirect to activation page
+          if (!activated) {
+            navigate("/nutzer/aktivierung");
+            return;
+          }
+        } else {
+          // If no user is logged in, redirect to login page
+          navigate("/admin");
         }
-        
+      } catch (error) {
+        console.error("Error checking user:", error);
+        navigate("/admin");
+      } finally {
         setLoading(false);
-      } else {
-        // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
-        window.location.href = "/admin";
       }
     };
     
     getUser();
-  }, [toast]);
-  
-  // Use the new custom hook for credit management
-  const { userCredit, fetchUserCredit } = useUserCredit(user?.id);
-  
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {isActivated && user && (
-        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">Benutzer Dashboard</h1>
-            {userCredit !== null && (
-              <p className="text-lg text-gray-600 mt-2">
-                Guthaben: {userCredit.toFixed(2)}€
-              </p>
-            )}
-          </div>
-          
-          <Button asChild>
-            <Link to="/nutzer/einzahlen">
-              <CreditCard className="mr-2 h-4 w-4" />
-              Guthaben einzahlen
-            </Link>
-          </Button>
-        </div>
-      )}
-      
-      <div className="grid grid-cols-1 gap-8">
-        {isActivated && user && (
-          <UserDashboard 
-            user={user} 
-            userCredit={userCredit} 
-            onCreditUpdated={fetchUserCredit} 
-          />
-        )}
-        
-        {isActivated && user && userCredit !== null && (
-          <CryptoTradingSection 
-            user={user}
-            userCredit={userCredit}
-            onUpdated={fetchUserCredit}
-          />
-        )}
+  }, [navigate]);
+
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Wird geladen...</p>
       </div>
-    </div>
+    );
+  }
+
+  const handleCreditUpdated = () => {
+    console.log("Refreshing user credit...");
+    fetchUserCredit();
+  };
+
+  return (
+    <>
+      <UserDashboard 
+        user={user} 
+        userCredit={userCredit} 
+        onCreditUpdated={handleCreditUpdated} 
+      />
+      
+      <div className="container mx-auto p-4 mt-8">
+        <div className="mb-8">
+          <Link 
+            to="/nutzer/einzahlen" 
+            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
+          >
+            Guthaben einzahlen
+          </Link>
+        </div>
+        
+        <CryptoTradingSection 
+          userId={user?.id} 
+          userCredit={userCredit || 0}
+          onTrade={handleCreditUpdated}
+        />
+      </div>
+    </>
   );
 };
 
-export default UserPage;
+export default User;

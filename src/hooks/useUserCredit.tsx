@@ -18,10 +18,7 @@ export const useUserCredit = (userId?: string) => {
     try {
       setLoading(true);
       
-      // First, ensure the user has a credit entry
-      await supabase.rpc('initialize_user_credit', { user_id_param: userId });
-      
-      // Then fetch the credit
+      // Directly fetch the credit without initializing
       const { data, error } = await supabase
         .from('user_credits')
         .select('amount')
@@ -30,14 +27,32 @@ export const useUserCredit = (userId?: string) => {
       
       if (error) {
         console.error("Error fetching user credit:", error);
-        if (error.code !== 'PGRST116') { // Don't show toast for "no rows" error
+        if (error.code === 'PGRST116') { // "No rows" error
+          // If there's no entry, initialize the user credit
+          await supabase.rpc('initialize_user_credit', { user_id_param: userId });
+          
+          // Then try fetching again
+          const { data: retryData, error: retryError } = await supabase
+            .from('user_credits')
+            .select('amount')
+            .eq('user_id', userId)
+            .single();
+            
+          if (retryError) {
+            console.error("Error on retry fetching user credit:", retryError);
+            setUserCredit(0);
+          } else {
+            setUserCredit(retryData ? retryData.amount / 100 : 0);
+          }
+        } else {
+          // For other errors, show toast
           toast({
             title: "Fehler beim Abrufen des Guthabens",
             description: "Bitte versuchen Sie es erneut",
             variant: "destructive"
           });
+          setUserCredit(0);
         }
-        setUserCredit(0); // Default to 0 if there's an error
       } else {
         // Convert from cents to euros
         setUserCredit(data ? data.amount / 100 : 0);
@@ -49,7 +64,7 @@ export const useUserCredit = (userId?: string) => {
         description: error.message,
         variant: "destructive"
       });
-      setUserCredit(0); // Default to 0 if there's an error
+      setUserCredit(0);
     } finally {
       setLoading(false);
     }
@@ -81,6 +96,24 @@ export const useUserCredit = (userId?: string) => {
       )
       .subscribe();
     
+    // Also listen for new payments that might affect credit
+    const paymentsChannel = supabase
+      .channel('payment_changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'payments',
+          filter: `user_id=eq.${userId} AND status=eq.completed`
+        },
+        () => {
+          console.log('Payment status changed to completed, refreshing credit...');
+          fetchUserCredit();
+        }
+      )
+      .subscribe();
+    
     // Also listen for new trades that might affect credit through triggers
     const tradesChannel = supabase
       .channel('trade_changes')
@@ -101,6 +134,7 @@ export const useUserCredit = (userId?: string) => {
     
     return () => {
       supabase.removeChannel(channel);
+      supabase.removeChannel(paymentsChannel);
       supabase.removeChannel(tradesChannel);
     };
   }, [userId, fetchUserCredit]);

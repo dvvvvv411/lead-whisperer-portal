@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -84,7 +83,32 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
       if (error) throw error;
       
       // Update user credits
+      // First initialize user credit to make sure the user has a credit entry
       await supabase.rpc('initialize_user_credit', { user_id_param: selectedPayment.user_id });
+      
+      // Then explicitly update the user's credit based on the payment amount
+      const { data: creditData, error: creditFetchError } = await supabase
+        .from('user_credits')
+        .select('amount')
+        .eq('user_id', selectedPayment.user_id)
+        .single();
+      
+      if (creditFetchError && creditFetchError.code !== 'PGRST116') {
+        throw creditFetchError;
+      }
+      
+      const currentAmount = creditData?.amount || 0;
+      const newAmount = currentAmount + selectedPayment.amount;
+      
+      const { error: creditUpdateError } = await supabase
+        .from('user_credits')
+        .update({ 
+          amount: newAmount,
+          last_updated: new Date().toISOString()
+        })
+        .eq('user_id', selectedPayment.user_id);
+      
+      if (creditUpdateError) throw creditUpdateError;
       
       toast({
         title: "Zahlung bestätigt",

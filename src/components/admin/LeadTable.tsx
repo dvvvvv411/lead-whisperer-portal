@@ -1,7 +1,7 @@
 
 import LeadsTable from "./leads/LeadsTable";
 
-// This is now just a wrapper component to maintain backward compatibility
+// This is just a wrapper component to maintain backward compatibility
 const LeadTable = () => {
   return <LeadsTable />;
 };

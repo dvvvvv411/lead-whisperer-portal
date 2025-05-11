@@ -39,6 +39,7 @@ const LeadsTable = () => {
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   
@@ -67,36 +68,44 @@ const LeadsTable = () => {
   }, []);
 
   // Leads abrufen
-  useEffect(() => {
-    const fetchLeads = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('leads')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          setLeads(data as Lead[]);
-          setFilteredLeads(data as Lead[]);
-        }
-      } catch (error) {
-        console.error("Fehler beim Abrufen der Leads:", error);
-        toast({
-          title: "Fehler beim Laden",
-          description: "Die Leads konnten nicht geladen werden.",
-          variant: "destructive"
-        });
-      } finally {
-        setIsLoading(false);
+  const fetchLeads = async () => {
+    try {
+      setIsRefreshing(true);
+      const { data, error } = await supabase
+        .from('leads')
+        .select('*')
+        .order('created_at', { ascending: false });
+      
+      if (error) {
+        throw error;
       }
-    };
-    
+      
+      if (data) {
+        setLeads(data as Lead[]);
+        // Re-apply any filters that were active
+        if (statusFilter === undefined) {
+          setFilteredLeads(data as Lead[]);
+        } else {
+          setFilteredLeads(data.filter(lead => lead.status === statusFilter) as Lead[]);
+        }
+      }
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Leads:", error);
+      toast({
+        title: "Fehler beim Laden",
+        description: "Die Leads konnten nicht geladen werden.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsLoading(false);
+      setIsRefreshing(false);
+    }
+  };
+  
+  // Initial load of leads
+  useEffect(() => {
     fetchLeads();
-  }, [toast]);
+  }, []);
 
   // Anwenden des Filters, wenn sich der statusFilter ändert
   useEffect(() => {
@@ -130,6 +139,16 @@ const LeadsTable = () => {
     
     fetchComments();
   }, []);
+
+  // Refresh data handler
+  const handleRefresh = async () => {
+    toast({
+      title: "Daten werden aktualisiert",
+      description: "Die Liste wird mit neuen Daten aktualisiert."
+    });
+    await fetchLeads();
+    await fetchComments();
+  };
 
   const handleStatusChange = async (id: string, status: 'akzeptiert' | 'abgelehnt') => {
     if (status === 'akzeptiert') {
@@ -205,6 +224,26 @@ const LeadsTable = () => {
     });
   };
 
+  // Function to fetch comments
+  const fetchComments = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('comments')
+        .select('*')
+        .order('created_at', { ascending: true });
+      
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        setComments(data as Comment[]);
+      }
+    } catch (error) {
+      console.error("Fehler beim Abrufen der Kommentare:", error);
+    }
+  };
+
   const handleCommentAdded = (newComment: Comment) => {
     setComments(prevComments => [...prevComments, newComment]);
   };
@@ -222,12 +261,19 @@ const LeadsTable = () => {
       <LeadTableHeader 
         userEmail={user?.email}
         onLogout={handleLogout}
+        onRefresh={handleRefresh}
       />
       
       <LeadFilterBar
         statusFilter={statusFilter}
         onStatusFilterChange={setStatusFilter}
       />
+      
+      {isRefreshing && (
+        <div className="text-center py-2">
+          <span className="text-blue-600">Daten werden aktualisiert...</span>
+        </div>
+      )}
       
       {filteredLeads.length === 0 ? (
         <div className="text-center p-10 bg-gray-50 rounded-lg">

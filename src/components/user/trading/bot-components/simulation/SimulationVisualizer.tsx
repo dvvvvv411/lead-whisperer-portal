@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import { Chart, LineChart } from "@/components/ui/chart";
+import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
+import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TrendingUp, Zap, Star } from "lucide-react";
 
 interface SimulationVisualizerProps {
@@ -98,19 +99,33 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
       {/* Chart */}
       <div className="h-full pt-6 relative z-10">
         {formattedChartData.length > 0 ? (
-          <Chart config={{ crypto: { label: "Crypto Analysis", color: "#FFD700" } }}>
-            <LineChart
-              data={formattedChartData}
-              index="index"
-              categories={["value"]}
-              colors={["crypto"]}
-              valueFormatter={(value) => `${value.toLocaleString('de-DE')} €`}
-              showXAxis={false}
-              showGridLines={false}
-              className="aspect-auto h-[120px]"
-              showLegend={false}
-            />
-          </Chart>
+          <ResponsiveContainer width="100%" height="100%">
+            <LineChart data={formattedChartData}>
+              <XAxis dataKey="index" hide />
+              <YAxis hide domain={['auto', 'auto']} />
+              <Tooltip 
+                content={({ active, payload }) => {
+                  if (active && payload && payload.length) {
+                    return (
+                      <div className="bg-casino-darker/90 border border-gold/20 rounded p-2 text-xs">
+                        <p className="text-gold">{payload[0].payload.valueFormatted}</p>
+                      </div>
+                    );
+                  }
+                  return null;
+                }}
+              />
+              <Line 
+                type="monotone"
+                dataKey="value"
+                stroke="#FFD700"
+                strokeWidth={2}
+                dot={false}
+                animationDuration={300}
+                isAnimationActive={true}
+              />
+            </LineChart>
+          </ResponsiveContainer>
         ) : (
           <div className="flex items-center justify-center h-full">
             <div className="animate-pulse flex items-center gap-2">

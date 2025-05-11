@@ -74,15 +74,28 @@ const UserActivation = () => {
 
   const handleCompletePayment = async () => {
     try {
-      // In einer realen Anwendung würde hier die Zahlung verifiziert werden
-      // Jetzt simulieren wir nur eine erfolgreiche Zahlung
+      const selectedWalletObj = wallets.find(w => w.currency === selectedWallet);
+      if (!selectedWalletObj) throw new Error("Keine gültige Wallet ausgewählt");
+      
+      // Zahlung in der Datenbank speichern
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .insert({
+          user_id: user.id,
+          user_email: user.email,
+          amount: 25000, // 250€ in Cent
+          wallet_id: selectedWalletObj.id,
+          wallet_currency: selectedWalletObj.currency,
+          status: 'pending'
+        });
+
+      if (paymentError) throw paymentError;
 
       // Nutzerrolle auf "user" setzen, um das Konto zu aktivieren
-      const { error } = await supabase.functions.invoke('add_user_role', {
-        body: { user_id: user.id, role: 'user' }
+      await supabase.rpc('add_user_role', {
+        _user_id: user.id,
+        _role: 'user'
       });
-
-      if (error) throw error;
 
       toast({
         title: "Konto aktiviert",
@@ -93,7 +106,7 @@ const UserActivation = () => {
       setTimeout(() => {
         window.location.href = "/nutzer";
       }, 2000);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Fehler bei der Aktivierung:", error);
       toast({
         title: "Aktivierung fehlgeschlagen",

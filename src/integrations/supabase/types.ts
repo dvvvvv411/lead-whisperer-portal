@@ -98,6 +98,59 @@ export type Database = {
         }
         Relationships: []
       }
+      payments: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          status: string
+          transaction_id: string | null
+          updated_at: string
+          user_email: string
+          user_id: string
+          wallet_currency: string
+          wallet_id: string | null
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_email: string
+          user_id: string
+          wallet_currency: string
+          wallet_id?: string | null
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          transaction_id?: string | null
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          wallet_currency?: string
+          wallet_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "payments_wallet_id_fkey"
+            columns: ["wallet_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_wallets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -127,6 +180,22 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: undefined
+      }
+      get_all_payments: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          user_id: string
+          user_email: string
+          amount: number
+          currency: string
+          wallet_currency: string
+          status: string
+          transaction_id: string
+          notes: string
+          created_at: string
+          updated_at: string
+        }[]
       }
       get_all_users: {
         Args: Record<PropertyKey, never>

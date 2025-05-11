@@ -10,6 +10,7 @@ import AdminRegister from "./pages/AdminRegister";
 import AdminLeads from "./pages/AdminLeads";
 import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import AdminUsers from "./pages/AdminUsers";
+import AdminPayments from "./pages/AdminPayments";
 import User from "./pages/User";
 import UserActivation from "./pages/UserActivation";
 import NotFound from "./pages/NotFound";
@@ -32,6 +33,7 @@ function App() {
             <Route path="/admin/leads" element={<AdminLeads />} />
             <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
             <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/nutzer" element={<User />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}

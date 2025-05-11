@@ -22,6 +22,16 @@ interface ProcessWithdrawalParams {
   isApproved: boolean;
 }
 
+// Define the type for our database function response
+interface ProcessWithdrawalResponse {
+  success: boolean;
+  withdrawal_id?: string;
+  status?: string;
+  updated_at?: string;
+  message?: string;
+  error?: string;
+}
+
 export async function processWithdrawal({ 
   withdrawal, 
   status, 
@@ -40,7 +50,7 @@ export async function processWithdrawal({
     console.log(`Calling secure database function to process withdrawal ${withdrawal.id}`);
     
     // Use the new secure database function instead of directly updating the table
-    const { data, error } = await supabase.rpc(
+    const { data, error } = await supabase.rpc<ProcessWithdrawalResponse>(
       'process_withdrawal_status',
       {
         withdrawal_id: withdrawal.id,
@@ -57,9 +67,9 @@ export async function processWithdrawal({
       throw error;
     }
     
-    if (!data || !data.success) {
+    if (!data || (data as ProcessWithdrawalResponse).success === false) {
       console.error("Failed to process withdrawal:", data || "Unknown error");
-      throw new Error(data?.message || "Failed to process withdrawal");
+      throw new Error((data as ProcessWithdrawalResponse)?.message || "Failed to process withdrawal");
     }
     
     return { 

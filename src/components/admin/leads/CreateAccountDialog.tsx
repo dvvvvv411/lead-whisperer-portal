@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
@@ -67,10 +66,8 @@ export const CreateAccountDialog = ({
       
       // 4. Add user role using a direct RPC function call instead of table insert
       if (authData?.user) {
-        // Umgehen der Typisierungsbeschränkung durch Verwendung der REST-Methode
-        // anstelle der rpc Methode
+        // Use the rpc method correctly with proper typing
         const { error: functionError } = await supabase
-          .rest
           .rpc('add_user_role', {
             _user_id: authData.user.id,
             _role: 'user'

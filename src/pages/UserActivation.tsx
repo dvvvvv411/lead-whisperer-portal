@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -39,11 +40,19 @@ const UserActivation = () => {
           console.log("User found:", data.user.email);
           setUser(data.user);
           
+          // Check if the user is an admin
+          const isAdmin = await checkUserRole(data.user.id, 'admin');
+          if (isAdmin) {
+            console.log("User is admin, redirecting to admin dashboard");
+            navigate('/admin');
+            return;
+          }
+          
           // Check if the user has any pending payments
           checkPendingPayments(data.user.id);
           
           // Check if user is already activated
-          const isActivated = await checkUserRole(data.user.id);
+          const isActivated = await checkUserRole(data.user.id, 'user');
           if (isActivated) {
             console.log("User is already activated, redirecting to dashboard");
             navigate('/nutzer');
@@ -68,18 +77,18 @@ const UserActivation = () => {
     getUser();
   }, [toast, navigate]);
   
-  // Check if user has been assigned the 'user' role (activated)
-  const checkUserRole = async (userId: string) => {
+  // Check if user has been assigned a specific role
+  const checkUserRole = async (userId: string, role: 'admin' | 'user') => {
     try {
       const { data, error } = await supabase.rpc('has_role', {
         _user_id: userId,
-        _role: 'user'
+        _role: role
       });
       
       if (error) throw error;
       return data;
     } catch (error: any) {
-      console.error("Error checking user role:", error.message);
+      console.error(`Error checking ${role} role:`, error.message);
       return false;
     }
   };

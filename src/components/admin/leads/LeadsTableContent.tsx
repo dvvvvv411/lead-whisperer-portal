@@ -1,6 +1,13 @@
 
 import { Lead, Comment } from "@/types/leads";
 import { LeadTableRow } from "./LeadTableRow";
+import { 
+  Table,
+  TableHeader,
+  TableBody,
+  TableHead,
+  TableRow
+} from "@/components/ui/table";
 
 interface LeadsTableContentProps {
   leads: Lead[];
@@ -37,19 +44,19 @@ export const LeadsTableContent = ({
 
   return (
     <div className="overflow-x-auto">
-      <table className="min-w-full bg-white rounded-lg overflow-hidden shadow">
-        <thead className="bg-gray-100">
-          <tr>
-            <th className="px-4 py-3 text-left">Datum</th>
-            <th className="px-4 py-3 text-left">Name</th>
-            <th className="px-4 py-3 text-left">Email</th>
-            <th className="px-4 py-3 text-left">Unternehmen</th>
-            <th className="px-4 py-3 text-left">Status</th>
-            <th className="px-4 py-3 text-left">Kommentare</th>
-            <th className="px-4 py-3 text-left">Aktionen</th>
-          </tr>
-        </thead>
-        <tbody>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>Datum</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Email</TableHead>
+            <TableHead>Unternehmen</TableHead>
+            <TableHead>Status</TableHead>
+            <TableHead>Kommentare</TableHead>
+            <TableHead>Aktionen</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {leads.map((lead) => (
             <LeadTableRow 
               key={lead.id}
@@ -60,8 +67,8 @@ export const LeadsTableContent = ({
               userEmail={userEmail || ''}
             />
           ))}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

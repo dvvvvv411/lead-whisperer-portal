@@ -13,18 +13,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-
-// Define the Lead type here instead of importing from LeadTable
-interface Lead {
-  id: string;
-  created_at: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  company: string | null;
-  message: string;
-  status: 'neu' | 'akzeptiert' | 'abgelehnt';
-}
+import { Lead } from "@/types/leads";
 
 interface CreateAccountDialogProps {
   open: boolean;

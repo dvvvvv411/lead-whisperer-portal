@@ -1,16 +1,6 @@
 
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-
-interface Lead {
-  id: string;
-  created_at: string;
-  name: string;
-  email: string;
-  phone: string | null;
-  company: string | null;
-  message: string;
-  status: 'neu' | 'akzeptiert' | 'abgelehnt';
-}
+import { Lead } from "@/types/leads";
 
 interface LeadDetailsDialogProps {
   lead: Lead;

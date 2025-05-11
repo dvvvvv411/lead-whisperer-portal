@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -5,8 +6,6 @@ import { LeadFilterBar } from "./LeadFilterBar";
 import { LeadTableHeader } from "./LeadTableHeader";
 import { LeadTableRow } from "./LeadTableRow";
 import { CreateAccountDialog } from "./CreateAccountDialog";
-import { Button } from "@/components/ui/button";
-import { generateDemoLeads } from "@/utils/generateDemoLeads";
 
 interface Lead {
   id: string;
@@ -40,7 +39,6 @@ const LeadsTable = () => {
   const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isGeneratingLeads, setIsGeneratingLeads] = useState(false);
   const [user, setUser] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
   
@@ -211,46 +209,6 @@ const LeadsTable = () => {
     setComments(prevComments => [...prevComments, newComment]);
   };
 
-  const handleGenerateLeads = async () => {
-    setIsGeneratingLeads(true);
-    try {
-      const result = await generateDemoLeads();
-      
-      if (result.success) {
-        toast({
-          title: "Demo-Leads erstellt",
-          description: "5 Demo-Leads wurden erfolgreich erstellt. Die Seite wird aktualisiert.",
-        });
-        
-        // Leads neu laden
-        const { data, error } = await supabase
-          .from('leads')
-          .select('*')
-          .order('created_at', { ascending: false });
-        
-        if (error) {
-          throw error;
-        }
-        
-        if (data) {
-          setLeads(data as Lead[]);
-          setFilteredLeads(data as Lead[]);
-        }
-      } else {
-        throw result.error;
-      }
-    } catch (error) {
-      console.error("Fehler beim Erstellen von Demo-Leads:", error);
-      toast({
-        title: "Fehler",
-        description: "Die Demo-Leads konnten nicht erstellt werden.",
-        variant: "destructive"
-      });
-    } finally {
-      setIsGeneratingLeads(false);
-    }
-  };
-
   if (isLoading) {
     return (
       <div className="flex justify-center items-center h-40">
@@ -266,20 +224,10 @@ const LeadsTable = () => {
         onLogout={handleLogout}
       />
       
-      <div className="flex justify-between items-center mb-4">
-        <LeadFilterBar
-          statusFilter={statusFilter}
-          onStatusFilterChange={setStatusFilter}
-        />
-        
-        <Button
-          onClick={handleGenerateLeads}
-          disabled={isGeneratingLeads}
-          className="ml-auto"
-        >
-          {isGeneratingLeads ? "Wird erstellt..." : "5 Test-Leads generieren"}
-        </Button>
-      </div>
+      <LeadFilterBar
+        statusFilter={statusFilter}
+        onStatusFilterChange={setStatusFilter}
+      />
       
       {filteredLeads.length === 0 ? (
         <div className="text-center p-10 bg-gray-50 rounded-lg">

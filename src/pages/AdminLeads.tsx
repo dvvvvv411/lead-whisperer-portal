@@ -1,6 +1,6 @@
 
 import { useEffect, useState } from "react";
-import LeadsTable from "@/components/admin/leads/LeadsTable";
+import LeadTable from "@/components/admin/LeadTable";
 import { checkUserRole } from "@/services/roleService";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -38,7 +38,7 @@ const AdminLeads = () => {
     );
   }
 
-  return isAdmin ? <LeadsTable /> : null;
+  return isAdmin ? <LeadTable /> : null;
 };
 
 export default AdminLeads;

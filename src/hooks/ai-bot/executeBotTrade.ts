@@ -6,7 +6,9 @@ import {
   generateTradeAmount, 
   getRandomCrypto, 
   getRandomStrategy,
-  generateProfitPercentage
+  generateProfitPercentage,
+  getUserRank,
+  getTradesExecutedToday
 } from "./botTradeUtils";
 
 export const executeAITrade = async (
@@ -15,10 +17,23 @@ export const executeAITrade = async (
   cryptos: any[],
   settings: BotSettings,
   toast: ReturnType<typeof useToast>["toast"],
-  updateStatus: (update: any) => void
+  updateStatus: (update: any) => void,
+  tradesExecutedToday: number,
+  maxTradesPerDay: number
 ) => {
   if (!userId || !userCredit || userCredit <= 0) {
     console.log("KI-Bot: Kein Benutzer oder kein Guthaben verfügbar", { userId, userCredit });
+    return false;
+  }
+  
+  // Check if user has reached daily trade limit
+  if (tradesExecutedToday >= maxTradesPerDay) {
+    console.log(`KI-Bot: Tägliches Handelslimit von ${maxTradesPerDay} Trades erreicht`);
+    toast({
+      title: "Tägliches Limit erreicht",
+      description: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
+      variant: "destructive"
+    });
     return false;
   }
 
@@ -30,7 +45,8 @@ export const executeAITrade = async (
     }
 
     const tradeAmount = generateTradeAmount(settings, userCredit);
-    const profitPercentage = generateProfitPercentage(settings.riskLevel);
+    // Updated to use fixed 5-10% profit range
+    const profitPercentage = generateProfitPercentage();
     const strategy = `ai_${getRandomStrategy()}`;
     
     // Log trade information
@@ -99,7 +115,9 @@ export const executeAITrade = async (
       lastTradeTime: new Date(),
       totalProfitAmount: (prevAmount: number) => prevAmount + profit,
       totalProfitPercentage: (prevPercentage: number) => prevPercentage + profitPercentage,
-      tradesExecuted: (prevTrades: number) => prevTrades + 1
+      tradesExecuted: (prevTrades: number) => prevTrades + 1,
+      dailyTradesExecuted: (prevDailyTrades: number) => prevDailyTrades + 1,
+      tradesRemaining: (prevRemaining: number) => prevRemaining - 1
     });
     
     toast({

@@ -12,4 +12,17 @@ export interface BotStatus {
   totalProfitPercentage: number;
   totalProfitAmount: number;
   tradesExecuted: number;
+  // New rank-related fields
+  currentRank: number;
+  maxTradesPerDay: number;
+  tradesRemaining: number;
+  dailyTradesExecuted: number;
+}
+
+export interface RankTier {
+  rankNumber: number;
+  minBalance: number;
+  maxBalance: number | null;
+  maxTradesPerDay: number;
+  label: string;
 }

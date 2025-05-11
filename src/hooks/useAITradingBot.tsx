@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCryptos } from "@/hooks/useCryptos";
 import { BotSettings, BotStatus } from "./ai-bot/types";
 import { executeAITrade } from "./ai-bot/executeBotTrade";
+import { getUserRank, rankTiers, getTradesExecutedToday } from "./ai-bot/botTradeUtils";
 
 export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExecuted?: () => void) => {
   const { toast } = useToast();
@@ -14,14 +15,57 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     riskLevel: 'balanced',
     maxTradeAmount: 100, // Default max amount per trade
   });
+  
+  // Get user's rank based on credit
+  const userRank = userCredit ? getUserRank(userCredit) : rankTiers[0];
+  
   const [status, setStatus] = useState<BotStatus>({
     isActive: false,
     lastTradeTime: null,
     totalProfitPercentage: 0,
     totalProfitAmount: 0,
     tradesExecuted: 0,
+    // New rank-related fields
+    currentRank: userRank.rankNumber,
+    maxTradesPerDay: userRank.maxTradesPerDay,
+    tradesRemaining: userRank.maxTradesPerDay,
+    dailyTradesExecuted: 0
   });
+  
   const [botInterval, setBotInterval] = useState<NodeJS.Timeout | null>(null);
+
+  // Update rank and limits when user credit changes
+  useEffect(() => {
+    if (userCredit) {
+      const newRank = getUserRank(userCredit);
+      setStatus(prev => ({ 
+        ...prev, 
+        currentRank: newRank.rankNumber,
+        maxTradesPerDay: newRank.maxTradesPerDay,
+      }));
+    }
+  }, [userCredit]);
+
+  // Fetch today's trades on mount and update remaining trades
+  useEffect(() => {
+    const fetchTodaysTrades = async () => {
+      if (userId) {
+        const todayTradesCount = await getTradesExecutedToday(userId);
+        const maxTrades = status.maxTradesPerDay;
+        setStatus(prev => ({ 
+          ...prev, 
+          dailyTradesExecuted: todayTradesCount,
+          tradesRemaining: Math.max(0, maxTrades - todayTradesCount)
+        }));
+      }
+    };
+    
+    fetchTodaysTrades();
+    // Set up an interval to update trade count periodically
+    const interval = setInterval(fetchTodaysTrades, 30000); // 30 seconds
+    
+    return () => clearInterval(interval);
+  }, [userId, status.maxTradesPerDay]);
 
   // Update bot status - explicitly type the update parameter with proper function typing
   const updateStatus = useCallback((update: Partial<BotStatus> | ((prev: BotStatus) => Partial<BotStatus>)) => {
@@ -65,7 +109,26 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
-    const success = await executeAITrade(userId, userCredit, cryptos, settings, toast, updateStatus);
+    // Check if user has reached daily limit
+    if (status.tradesRemaining <= 0) {
+      toast({
+        title: "Tägliches Limit erreicht",
+        description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    const success = await executeAITrade(
+      userId, 
+      userCredit, 
+      cryptos, 
+      settings, 
+      toast, 
+      updateStatus, 
+      status.dailyTradesExecuted,
+      status.maxTradesPerDay
+    );
     
     // Call the onTradeExecuted callback to update the parent components
     if (success && onTradeExecuted) {
@@ -73,7 +136,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     }
     
     return success;
-  }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted]);
+  }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted, status.dailyTradesExecuted, status.maxTradesPerDay, status.tradesRemaining]);
   
   // Start the AI trading bot
   const startBot = useCallback(() => {
@@ -81,6 +144,16 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
       toast({
         title: "Bot kann nicht aktiviert werden",
         description: "Benutzer nicht angemeldet oder kein Guthaben verfügbar.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    // Check if user has reached daily limit
+    if (status.tradesRemaining <= 0) {
+      toast({
+        title: "Tägliches Limit erreicht",
+        description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
         variant: "destructive"
       });
       return;
@@ -109,7 +182,18 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     
     // Set up interval for recurring trades
     const interval = setInterval(() => {
-      executeSingleTrade();
+      // Check if trades remaining before executing
+      if (status.tradesRemaining > 0) {
+        executeSingleTrade();
+      } else {
+        // Stop bot if daily limit reached
+        stopBot();
+        toast({
+          title: "Bot automatisch deaktiviert",
+          description: `Tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Bot wurde gestoppt.`,
+          variant: "default"
+        });
+      }
     }, intervalTime);
     
     setBotInterval(interval);
@@ -120,7 +204,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
       title: "KI-Bot aktiviert",
       description: "Der KI-Trading-Bot wurde erfolgreich aktiviert und wird nun automatisch handeln.",
     });
-  }, [userId, userCredit, clearBotInterval, executeSingleTrade, settings.tradeFrequency, toast]);
+  }, [userId, userCredit, clearBotInterval, executeSingleTrade, settings.tradeFrequency, toast, status.maxTradesPerDay, status.tradesRemaining, stopBot]);
   
   // Stop the AI trading bot
   const stopBot = useCallback(() => {
@@ -161,6 +245,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     startBot,
     stopBot,
     updateBotSettings,
-    executeSingleTrade, // Export this so we can trigger a single trade from outside
+    executeSingleTrade,
+    rankTiers,
   };
 };

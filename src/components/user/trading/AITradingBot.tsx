@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowUpIcon, ZapIcon, ZapOffIcon, ActivityIcon, TrendingUpIcon } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
+import RankDisplay from "./RankDisplay";
 
 interface AITradingBotProps {
   userId?: string;
@@ -23,7 +24,8 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     startBot, 
     stopBot, 
     updateBotSettings,
-    executeSingleTrade
+    executeSingleTrade,
+    rankTiers
   } = useAITradingBot(userId, userCredit, onTradeExecuted);
   const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
@@ -71,15 +73,21 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
             <Button 
               onClick={handleManualTrade}
               variant="outline"
-              disabled={settings.isActive}
+              disabled={settings.isActive || status.tradesRemaining <= 0}
             >
               <ActivityIcon className="h-4 w-4 mr-2" />
               Trade ausführen
+              {status.tradesRemaining <= 0 && (
+                <Badge variant="outline" className="ml-1 bg-red-100 text-red-800">
+                  Limit
+                </Badge>
+              )}
             </Button>
             <Button 
               onClick={handleToggleBot} 
               variant={settings.isActive ? "destructive" : "default"}
               className="relative overflow-hidden"
+              disabled={!settings.isActive && status.tradesRemaining <= 0}
             >
               {settings.isActive ? (
                 <>
@@ -98,6 +106,16 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
       </CardHeader>
       <CardContent>
         <div className="space-y-6">
+          {/* Rank Display */}
+          <RankDisplay 
+            currentRank={status.currentRank}
+            maxTradesPerDay={status.maxTradesPerDay}
+            tradesRemaining={status.tradesRemaining}
+            dailyTradesExecuted={status.dailyTradesExecuted}
+            userCredit={userCredit}
+            rankTiers={rankTiers}
+          />
+
           {/* Bot Status Overview */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div className="bg-slate-50 p-4 rounded-lg">
@@ -125,6 +143,9 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
               <div className="font-bold flex items-center">
                 <ActivityIcon className="h-4 w-4 mr-1 text-blue-500" />
                 {status.tradesExecuted}
+                <span className="text-xs text-muted-foreground ml-2">
+                  (Heute: {status.dailyTradesExecuted})
+                </span>
               </div>
               {status.lastTradeTime && (
                 <div className="text-xs text-muted-foreground mt-1">
@@ -183,9 +204,9 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
                         <SelectValue placeholder="Risiko auswählen" />
                       </SelectTrigger>
                       <SelectContent>
-                        <SelectItem value="conservative">Konservativ (3-8% Gewinn)</SelectItem>
-                        <SelectItem value="balanced">Ausgewogen (5-15% Gewinn)</SelectItem>
-                        <SelectItem value="aggressive">Aggressiv (10-20% Gewinn)</SelectItem>
+                        <SelectItem value="conservative">Konservativ (5-10% Gewinn)</SelectItem>
+                        <SelectItem value="balanced">Ausgewogen (5-10% Gewinn)</SelectItem>
+                        <SelectItem value="aggressive">Aggressiv (5-10% Gewinn)</SelectItem>
                       </SelectContent>
                     </Select>
                   </div>
@@ -253,7 +274,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
             <p className="text-blue-700 mb-2">
               Unser KI-Trading Bot analysiert kontinuierlich den Kryptomarkt und nutzt fortschrittliche 
               Algorithmen, um profitable Trading-Gelegenheiten zu identifizieren. Mit einer Erfolgsquote 
-              von über 90% generiert der Bot regelmäßige Gewinne zwischen 3% und 20%.
+              von über 90% generiert der Bot regelmäßige Gewinne zwischen 5% und 10%.
             </p>
             <div className="text-blue-600 text-xs">
               Die Ergebnisse können je nach Marktbedingungen variieren. Die historische Performance ist kein 

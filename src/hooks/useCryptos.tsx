@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -19,8 +19,9 @@ export const useCryptos = () => {
   const { toast } = useToast();
   const [cryptos, setCryptos] = useState<CryptoAsset[]>([]);
   const [loading, setLoading] = useState(true);
+  const [updating, setUpdating] = useState(false);
   
-  const fetchCryptos = async () => {
+  const fetchCryptos = useCallback(async () => {
     try {
       setLoading(true);
       
@@ -47,11 +48,15 @@ export const useCryptos = () => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [toast]);
   
   // Manually trigger update of crypto prices
-  const updateCryptoPrices = async () => {
+  const updateCryptoPrices = useCallback(async () => {
+    // If already updating, don't start another update
+    if (updating) return;
+    
     try {
+      setUpdating(true);
       toast({
         title: "Aktualisierung gestartet",
         description: "Kryptowährungsdaten werden aktualisiert..."
@@ -95,8 +100,10 @@ export const useCryptos = () => {
         description: error.message,
         variant: "destructive"
       });
+    } finally {
+      setUpdating(false);
     }
-  };
+  }, [toast, fetchCryptos, updating]);
   
   useEffect(() => {
     fetchCryptos();
@@ -106,11 +113,12 @@ export const useCryptos = () => {
     }, 5 * 60 * 1000);
     
     return () => clearInterval(interval);
-  }, []);
+  }, [fetchCryptos]);
   
   return { 
     cryptos, 
     loading, 
+    updating,
     fetchCryptos, 
     updateCryptoPrices 
   };

@@ -1,5 +1,5 @@
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -31,24 +31,42 @@ const TradeSimulationDialog = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [comparisons, setComparisons] = useState<CryptoComparisonProps[]>([]);
   
+  // Use refs to track simulation state across re-renders
+  const simulationActive = useRef(false);
+  const startTimeRef = useRef<number | null>(null);
+  const intervalIdRef = useRef<NodeJS.Timeout | null>(null);
+  
   // Fixed simulation duration of exactly 60 seconds
   const simulationDuration = 60000; // 60 seconds
 
+  // Initialize or reset the simulation when dialog opens
   useEffect(() => {
-    if (!open) return;
+    if (!open) {
+      // Clean up when dialog closes
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      }
+      simulationActive.current = false;
+      startTimeRef.current = null;
+      return;
+    }
     
     // Reset states when dialog opens
     setProgress(0);
     setCurrentStep(0);
     setComparisons([]);
     
-    const startTime = Date.now();
-    let intervalId: NodeJS.Timeout | null = null;
+    // Mark simulation as active and record start time
+    simulationActive.current = true;
+    startTimeRef.current = Date.now();
     
-    // Use setInterval instead of requestAnimationFrame for more consistent updates
-    intervalId = setInterval(() => {
+    // Use setInterval for more consistent updates
+    intervalIdRef.current = setInterval(() => {
+      if (!simulationActive.current || startTimeRef.current === null) return;
+      
       const currentTime = Date.now();
-      const elapsed = currentTime - startTime;
+      const elapsed = currentTime - startTimeRef.current;
       const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
       
       setProgress(newProgress);
@@ -65,7 +83,11 @@ const TradeSimulationDialog = ({
       
       // Complete simulation when progress reaches 100%
       if (newProgress >= 100) {
-        if (intervalId) clearInterval(intervalId);
+        simulationActive.current = false;
+        if (intervalIdRef.current) {
+          clearInterval(intervalIdRef.current);
+          intervalIdRef.current = null;
+        }
         // When complete, wait a second then call onComplete
         setTimeout(() => {
           onComplete(true);
@@ -75,12 +97,30 @@ const TradeSimulationDialog = ({
     
     // Cleanup function to cancel interval when component unmounts or dialog closes
     return () => {
-      if (intervalId) clearInterval(intervalId);
+      if (intervalIdRef.current) {
+        clearInterval(intervalIdRef.current);
+        intervalIdRef.current = null;
+      }
+      simulationActive.current = false;
     };
   }, [open, simulationDuration, onComplete]);
   
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog 
+      open={open} 
+      onOpenChange={(newOpenState) => {
+        // If dialog is being closed manually and simulation is still running
+        if (!newOpenState && simulationActive.current) {
+          // Cancel simulation
+          simulationActive.current = false;
+          if (intervalIdRef.current) {
+            clearInterval(intervalIdRef.current);
+            intervalIdRef.current = null;
+          }
+        }
+        onOpenChange(newOpenState);
+      }}
+    >
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
           <DialogTitle className="flex items-center">

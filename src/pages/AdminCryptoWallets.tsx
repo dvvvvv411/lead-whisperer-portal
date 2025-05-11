@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { checkUserRole } from "@/services/roleService";
 import { supabase } from "@/integrations/supabase/client";
-import { CryptoWalletManager } from "@/components/admin/CryptoWalletManager";
+import { CryptoWalletManager } from "@/components/admin/crypto-wallets/CryptoWalletManager";
 
 const AdminCryptoWallets = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);

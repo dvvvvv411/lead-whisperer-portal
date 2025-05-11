@@ -91,9 +91,9 @@ const User = () => {
         </div>
         
         <CryptoTradingSection 
-          userId={user?.id} 
+          user={user} 
           userCredit={userCredit || 0}
-          onTrade={handleCreditUpdated}
+          onUpdated={handleCreditUpdated}
         />
       </div>
     </>

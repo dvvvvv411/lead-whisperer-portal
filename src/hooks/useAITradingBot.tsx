@@ -36,8 +36,14 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     updateStatus,
     clearBotInterval,
     setNewBotInterval,
-    (minutes: number) => { setBotInterval(minutes); }, // Fix the type mismatch
-    setSettings,
+    // Fix the type mismatch by creating a wrapper function
+    (minutes: number) => { 
+      setBotInterval(null); // First clear any existing interval by setting to null
+    },
+    // Fix the type mismatch - create an adapter function
+    (newSettings) => {
+      setSettings(prevSettings => ({...prevSettings, ...newSettings}));
+    },
     onTradeExecuted
   );
   

@@ -4,27 +4,28 @@ export interface BotSettings {
   tradeFrequency: 'low' | 'medium' | 'high';
   riskLevel: 'conservative' | 'balanced' | 'aggressive';
   maxTradeAmount: number;
-  tradeInterval: number; // Added missing property
+  tradeInterval: number; 
 }
 
 export interface BotStatus {
   isActive: boolean;
-  isRunning: boolean; // Added missing property
+  isRunning: boolean; 
   lastTradeTime: Date | null;
-  lastTradeAttempt?: Date | null; // Added missing property
-  lastSuccessfulTrade?: Date | null; // Added missing property
+  lastTradeAttempt?: Date | null; 
+  lastSuccessfulTrade?: Date | null;
+  lastStarted?: Date | null; // Added the missing property
   totalProfitPercentage: number;
   totalProfitAmount: number;
   tradesExecuted: number;
-  totalTradesExecuted?: number; // Added missing property
+  totalTradesExecuted?: number; 
   // Rank-related fields
   currentRank: number;
   maxTradesPerDay: number;
   tradesRemaining: number;
   dailyTradesExecuted: number;
-  dailyTradesCount?: number; // Added missing property
-  dailyTradeLimit?: number; // Added missing property
-  statusMessage?: string; // Added missing property
+  dailyTradesCount?: number; 
+  dailyTradeLimit?: number; 
+  statusMessage?: string; 
 }
 
 export interface RankTier {

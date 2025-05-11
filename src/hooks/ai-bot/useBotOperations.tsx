@@ -1,4 +1,3 @@
-
 import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { executeAITrade } from "./executeBotTrade";
@@ -40,7 +39,6 @@ export const useBotOperations = (
     // Update status to running
     updateStatus({
       isRunning: true,
-      lastStarted: new Date(),
       statusMessage: "Bot ist aktiv und handelt automatisch"
     });
     

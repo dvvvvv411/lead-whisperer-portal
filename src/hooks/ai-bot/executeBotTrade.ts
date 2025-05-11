@@ -64,14 +64,14 @@ export const executeAITrade = async (
     
     console.log(`KI-Bot: Kauf-Trade erstellt, ID: ${buyResult.data?.id}`);
     
-    // Deduct funds for buy operations
+    // Deduct funds for buy operations - FIX: Convert to integer cents (round to ensure valid integer)
     const buyPaymentResult = await supabase
       .from('payments')
       .insert([
         {
           user_id: userId,
           user_email: '', // We don't need email for simulation
-          amount: -tradeAmount * 100, // Store in cents
+          amount: Math.round(-tradeAmount * 100), // Store in cents with rounding
           status: 'completed',
           currency: 'EUR',
           wallet_currency: 'SIMULATION',
@@ -118,14 +118,14 @@ export const executeAITrade = async (
     
     console.log(`KI-Bot: Verkauf-Trade erstellt, ID: ${sellResult.data?.id}`);
     
-    // Add funds for sell operations (with profit)
+    // Add funds for sell operations (with profit) - FIX: Convert to integer cents (round to ensure valid integer)
     const sellPaymentResult = await supabase
       .from('payments')
       .insert([
         {
           user_id: userId,
           user_email: '', // We don't need email for simulation
-          amount: sellAmount * 100, // Store in cents
+          amount: Math.round(sellAmount * 100), // Store in cents with rounding
           status: 'completed',
           currency: 'EUR',
           wallet_currency: 'SIMULATION',

@@ -13,6 +13,9 @@ export const algorithmSteps = [
   "Finale Handelsempfehlung"
 ];
 
+// List of stablecoin symbols that should be excluded from trading
+const STABLECOIN_SYMBOLS = ['USDT', 'USDC', 'BUSD', 'DAI', 'UST', 'TUSD', 'USDP', 'GUSD', 'FRAX'];
+
 // Generate a realistic crypto comparison from real data
 export const generateCryptoComparison = (cryptoData: any[]) => {
   if (!cryptoData || cryptoData.length === 0) {
@@ -23,9 +26,21 @@ export const generateCryptoComparison = (cryptoData: any[]) => {
     };
   }
   
-  // Select random crypto from real data
-  const randomIndex = Math.floor(Math.random() * cryptoData.length);
-  const selectedCrypto = cryptoData[randomIndex];
+  // Select random crypto from real data, excluding stablecoins
+  const tradableCryptos = cryptoData.filter(crypto => 
+    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
+  );
+  
+  if (tradableCryptos.length === 0) {
+    return {
+      symbol: "BTC",
+      price: 42000,
+      change: 0.5
+    };
+  }
+  
+  const randomIndex = Math.floor(Math.random() * tradableCryptos.length);
+  const selectedCrypto = tradableCryptos[randomIndex];
   
   // Use real price with small variation to simulate live updates
   const priceVariation = selectedCrypto.current_price * (Math.random() * 0.02 - 0.01); // ±1%
@@ -41,12 +56,19 @@ export const generateCryptoComparison = (cryptoData: any[]) => {
   };
 };
 
-// Select a random crypto for trading
+// Select a random crypto for trading, excluding stablecoins
 export const selectRandomCrypto = (cryptoData: any[]) => {
   if (!cryptoData || cryptoData.length === 0) return null;
   
-  const randomIndex = Math.floor(Math.random() * cryptoData.length);
-  return cryptoData[randomIndex];
+  // Filter out stablecoins
+  const tradableCryptos = cryptoData.filter(crypto => 
+    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
+  );
+  
+  if (tradableCryptos.length === 0) return null; // Safety check
+  
+  const randomIndex = Math.floor(Math.random() * tradableCryptos.length);
+  return tradableCryptos[randomIndex];
 };
 
 // Generate a profit percentage between 3-7.5%

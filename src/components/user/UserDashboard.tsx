@@ -2,8 +2,9 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { RefreshCcw, Wallet, CheckCircle } from "lucide-react";
+import { RefreshCcw, Wallet, CheckCircle, Settings } from "lucide-react";
 import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
 
 // Credit threshold required to access the dashboard (in EUR)
 const CREDIT_ACTIVATION_THRESHOLD = 250;
@@ -80,6 +81,12 @@ const UserDashboard = ({ user, userCredit, onCreditUpdated }: UserDashboardProps
         <h1 className="text-2xl font-bold">Benutzer Dashboard</h1>
         <div className="flex items-center gap-2">
           {user && <span className="text-sm text-gray-600">Angemeldet als: {user.email}</span>}
+          <Link to="/nutzer/einstellungen">
+            <Button variant="outline" size="sm" className="mr-2">
+              <Settings className="h-4 w-4 mr-2" />
+              Einstellungen
+            </Button>
+          </Link>
           <Button variant="outline" onClick={handleLogout}>Abmelden</Button>
         </div>
       </div>

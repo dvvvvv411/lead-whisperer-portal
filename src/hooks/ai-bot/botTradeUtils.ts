@@ -3,6 +3,9 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { BotSettings, RankTier } from "./types";
 
+// List of stablecoin symbols that should be excluded from trading
+const STABLECOIN_SYMBOLS = ['USDT', 'USDC', 'BUSD', 'DAI', 'UST', 'TUSD', 'USDP', 'GUSD', 'FRAX'];
+
 // Function to generate a random trade amount based on settings and available credit
 export const generateTradeAmount = (settings: BotSettings, userCredit?: number) => {
   if (!userCredit) return 10;
@@ -21,10 +24,18 @@ export const generateTradeAmount = (settings: BotSettings, userCredit?: number) 
   }
 };
 
-// Function to get a random crypto from the available list
+// Function to get a random crypto from the available list, excluding stablecoins
 export const getRandomCrypto = (cryptos: any[]) => {
   if (!cryptos || cryptos.length === 0) return null;
-  return cryptos[Math.floor(Math.random() * cryptos.length)];
+  
+  // Filter out stablecoins
+  const tradableCryptos = cryptos.filter(crypto => 
+    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
+  );
+  
+  if (tradableCryptos.length === 0) return null; // Safety check
+  
+  return tradableCryptos[Math.floor(Math.random() * tradableCryptos.length)];
 };
 
 // Function to generate a random strategy

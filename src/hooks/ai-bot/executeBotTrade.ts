@@ -41,9 +41,10 @@ export const executeAITrade = async (
   }
 
   try {
+    // Get random crypto, getRandomCrypto will now filter out stablecoins
     const crypto = getRandomCrypto(cryptos);
     if (!crypto) {
-      console.log("KI-Bot: Keine Kryptowährung gefunden");
+      console.log("KI-Bot: Keine geeignete Kryptowährung gefunden");
       return { success: false };
     }
 

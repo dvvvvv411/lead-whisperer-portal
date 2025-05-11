@@ -16,6 +16,7 @@ import User from "./pages/User";
 import UserActivation from "./pages/UserActivation";
 import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
+import UserSettings from "./pages/UserSettings";
 import NotFound from "./pages/NotFound";
 
 // Create a new QueryClient instance
@@ -42,6 +43,7 @@ function App() {
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
             <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
+            <Route path="/nutzer/einstellungen" element={<UserSettings />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

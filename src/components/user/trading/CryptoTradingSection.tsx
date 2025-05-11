@@ -26,7 +26,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   const [selectedTab, setSelectedTab] = useState("market");
   const { cryptos, loading: cryptosLoading, updateCryptoPrices } = useCryptos();
   const { portfolio, summary, loading: portfolioLoading, fetchPortfolio } = usePortfolio(user?.id);
-  const { trades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
+  const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
   
   const handleTrade = async (
@@ -137,7 +137,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
                 <Skeleton className="h-12 w-full" />
               </div>
             ) : (
-              <TradeHistoryList trades={trades} />
+              <TradeHistoryList trades={trades} botTrades={botTrades} />
             )}
           </TabsContent>
           

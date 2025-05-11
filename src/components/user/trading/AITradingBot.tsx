@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -24,15 +23,8 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     stopBot, 
     updateBotSettings 
   } = useAITradingBot(userId, userCredit);
-  const { trades, loading: tradesLoading } = useTradeHistory(userId);
+  const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
-  
-  // Filter to only bot trades (containing "KI-Bot" in notes)
-  const botTrades = trades.filter(trade => 
-    trade.crypto_asset?.symbol && 
-    // If we had a field to identify bot trades we could use that instead
-    true // For now, we'll consider all trades as potentially bot trades
-  );
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {

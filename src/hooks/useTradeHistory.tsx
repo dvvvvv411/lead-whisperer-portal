@@ -20,12 +20,14 @@ interface TradeHistoryItem {
     name: string;
     image_url: string | null;
   };
+  is_bot_trade?: boolean;
 }
 
 export const useTradeHistory = (userId?: string) => {
   const { toast } = useToast();
   const [trades, setTrades] = useState<TradeHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [botTrades, setBotTrades] = useState<TradeHistoryItem[]>([]);
   
   const fetchTradeHistory = async () => {
     if (!userId) return;
@@ -48,7 +50,18 @@ export const useTradeHistory = (userId?: string) => {
       if (error) throw error;
       
       if (data) {
-        setTrades(data as TradeHistoryItem[]);
+        // Process trades to identify bot trades based on strategy prefix
+        const allTrades = data as TradeHistoryItem[];
+        setTrades(allTrades);
+        
+        // Filter bot trades - trades done by the AI trading bot typically use strategies with AI prefix
+        // or are executed in rapid succession
+        const botTradesFiltered = allTrades.filter(trade => 
+          trade.strategy.includes('bot_') || 
+          trade.strategy.includes('ai_')
+        );
+        
+        setBotTrades(botTradesFiltered);
       }
     } catch (error: any) {
       console.error('Error fetching trade history:', error.message);
@@ -93,6 +106,7 @@ export const useTradeHistory = (userId?: string) => {
   
   return { 
     trades, 
+    botTrades,
     loading,
     fetchTradeHistory
   };

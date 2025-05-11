@@ -63,7 +63,8 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
 
   // Function to generate a random strategy
   const getRandomStrategy = useCallback(() => {
-    const strategies = ['trend_following', 'mean_reversion', 'momentum', 'sentiment'];
+    // Added prefix to strategies to make it easier to identify bot trades
+    const strategies = ['bot_trend_following', 'bot_mean_reversion', 'bot_momentum', 'bot_sentiment', 'ai_deep_learning'];
     return strategies[Math.floor(Math.random() * strategies.length)];
   }, []);
 

@@ -49,9 +49,9 @@ export const selectRandomCrypto = (cryptoData: any[]) => {
   return cryptoData[randomIndex];
 };
 
-// Generate a profit percentage between 5-10%
+// Generate a profit percentage between 3-7.5%
 export const generateProfitPercentage = () => {
-  return 5 + Math.random() * 5; // Between 5% and 10%
+  return 3 + Math.random() * 4.5; // Between 3% and 7.5%
 };
 
 // Calculate buy price based on current price and profit percentage

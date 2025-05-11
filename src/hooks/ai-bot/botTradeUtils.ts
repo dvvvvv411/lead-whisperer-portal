@@ -33,10 +33,10 @@ export const getRandomStrategy = () => {
   return strategies[Math.floor(Math.random() * strategies.length)];
 };
 
-// Function to generate a profit percentage based on specified range (5-10%)
+// Function to generate a profit percentage based on specified range (3-7.5%)
 export const generateProfitPercentage = () => {
-  // Changed to always return between 5-10% profit
-  return Math.random() * (10 - 5) + 5;
+  // Changed to return between 3-7.5% profit
+  return Math.random() * (7.5 - 3) + 3;
 };
 
 // Define rank tiers based on account balance

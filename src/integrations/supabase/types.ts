@@ -41,6 +41,42 @@ export type Database = {
           },
         ]
       }
+      crypto_assets: {
+        Row: {
+          current_price: number
+          id: string
+          image_url: string | null
+          last_updated: string | null
+          market_cap: number | null
+          name: string
+          price_change_24h: number | null
+          price_change_percentage_24h: number | null
+          symbol: string
+        }
+        Insert: {
+          current_price?: number
+          id?: string
+          image_url?: string | null
+          last_updated?: string | null
+          market_cap?: number | null
+          name: string
+          price_change_24h?: number | null
+          price_change_percentage_24h?: number | null
+          symbol: string
+        }
+        Update: {
+          current_price?: number
+          id?: string
+          image_url?: string | null
+          last_updated?: string | null
+          market_cap?: number | null
+          name?: string
+          price_change_24h?: number | null
+          price_change_percentage_24h?: number | null
+          symbol?: string
+        }
+        Relationships: []
+      }
       crypto_wallets: {
         Row: {
           created_at: string
@@ -151,6 +187,94 @@ export type Database = {
           },
         ]
       }
+      trade_simulations: {
+        Row: {
+          created_at: string | null
+          crypto_asset_id: string
+          id: string
+          price: number
+          quantity: number
+          simulation_date: string | null
+          status: string
+          strategy: string
+          total_amount: number
+          type: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string | null
+          crypto_asset_id: string
+          id?: string
+          price: number
+          quantity: number
+          simulation_date?: string | null
+          status?: string
+          strategy: string
+          total_amount: number
+          type: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string | null
+          crypto_asset_id?: string
+          id?: string
+          price?: number
+          quantity?: number
+          simulation_date?: string | null
+          status?: string
+          strategy?: string
+          total_amount?: number
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "trade_simulations_crypto_asset_id_fkey"
+            columns: ["crypto_asset_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      user_portfolios: {
+        Row: {
+          average_buy_price: number
+          created_at: string | null
+          crypto_asset_id: string
+          id: string
+          quantity: number
+          updated_at: string | null
+          user_id: string
+        }
+        Insert: {
+          average_buy_price?: number
+          created_at?: string | null
+          crypto_asset_id: string
+          id?: string
+          quantity?: number
+          updated_at?: string | null
+          user_id: string
+        }
+        Update: {
+          average_buy_price?: number
+          created_at?: string | null
+          crypto_asset_id?: string
+          id?: string
+          quantity?: number
+          updated_at?: string | null
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_portfolios_crypto_asset_id_fkey"
+            columns: ["crypto_asset_id"]
+            isOneToOne: false
+            referencedRelation: "crypto_assets"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       user_roles: {
         Row: {
           id: string
@@ -220,6 +344,10 @@ export type Database = {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
+        Returns: undefined
+      }
+      update_crypto_prices: {
+        Args: Record<PropertyKey, never>
         Returns: undefined
       }
     }

@@ -33,6 +33,40 @@ export const usePaymentFlow = ({
     enabled: paymentSubmitted
   });
 
+  // Set up a subscription to monitor user_roles changes for activation payments
+  useEffect(() => {
+    if (!isActivation || !userId || !paymentSubmitted) return;
+    
+    console.log("Setting up roles subscription for payment flow");
+    
+    const roleSubscription = supabase
+      .channel('payment-flow-roles')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'user_roles',
+        filter: `user_id=eq.${userId}`
+      }, (payload) => {
+        console.log("User role change detected in payment flow:", payload);
+        
+        // Show activation toast and redirect
+        toast({
+          title: "Konto aktiviert",
+          description: "Ihr Konto wurde erfolgreich aktiviert! Sie werden zum Dashboard weitergeleitet."
+        });
+        
+        // Redirect to user dashboard after a short delay
+        setTimeout(() => {
+          navigate(redirectPath);
+        }, 1500);
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(roleSubscription);
+    };
+  }, [isActivation, userId, paymentSubmitted, navigate, toast, redirectPath]);
+
   // Add periodic role check for activation payments
   useEffect(() => {
     let roleCheckInterval: number | null = null;
@@ -48,7 +82,7 @@ export const usePaymentFlow = ({
           console.log("Role check result:", hasUserRole);
           
           if (hasUserRole) {
-            console.log("User has been activated, refreshing page...");
+            console.log("User has been activated, redirecting to dashboard...");
             toast({
               title: "Konto aktiviert",
               description: "Ihr Konto wurde erfolgreich aktiviert! Die Seite wird aktualisiert..."
@@ -57,9 +91,9 @@ export const usePaymentFlow = ({
             // Clear interval and redirect
             if (roleCheckInterval) clearInterval(roleCheckInterval);
             
-            // Add a short delay before reloading to ensure the toast is visible
+            // Add a short delay before redirecting to ensure the toast is visible
             setTimeout(() => {
-              window.location.href = redirectPath;
+              navigate(redirectPath);
             }, 1500);
           }
         } catch (error) {
@@ -73,30 +107,7 @@ export const usePaymentFlow = ({
         clearInterval(roleCheckInterval);
       }
     };
-  }, [isActivation, paymentSubmitted, paymentCompleted, paymentRejected, userId, toast, redirectPath]);
-
-  // Assign user role when payment is completed (for activation payments)
-  const assignUserRole = async (userId: string) => {
-    if (!isActivation) return;
-
-    try {
-      console.log("Assigning 'user' role to user:", userId);
-      const { error } = await supabase.rpc('add_user_role', {
-        _user_id: userId,
-        _role: 'user'
-      });
-      
-      if (error) throw error;
-      console.log("Successfully assigned 'user' role");
-    } catch (error: any) {
-      console.error("Error assigning user role:", error.message);
-      toast({
-        title: "Fehler bei der Kontoaktivierung",
-        description: "Rolle konnte nicht zugewiesen werden. Bitte kontaktieren Sie den Support.",
-        variant: "destructive"
-      });
-    }
-  };
+  }, [isActivation, paymentSubmitted, paymentCompleted, paymentRejected, userId, toast, redirectPath, navigate]);
 
   // Handle navigation and notifications based on payment status
   useEffect(() => {
@@ -105,11 +116,6 @@ export const usePaymentFlow = ({
         title: "Zahlung bestätigt",
         description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
       });
-      
-      // If this is an activation payment, assign the user role first
-      if (isActivation) {
-        assignUserRole(userId);
-      }
       
       const redirectTimer = setTimeout(() => {
         navigate(redirectPath);
@@ -125,7 +131,7 @@ export const usePaymentFlow = ({
         variant: "destructive"
       });
     }
-  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId, isActivation]);
+  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId]);
   
   // Prevent navigation when user tries to go back or forward during payment processing
   useEffect(() => {

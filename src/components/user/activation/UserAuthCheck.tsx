@@ -75,6 +75,52 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
     }
   };
 
+  // Set up role change subscription
+  useEffect(() => {
+    if (!user?.id) return;
+    
+    console.log("Setting up role subscription for user:", user.id);
+    
+    // Subscribe to user_roles changes to detect when user gets activated
+    const rolesSubscription = supabase
+      .channel('user-roles-changes')
+      .on('postgres_changes', {
+        event: 'INSERT',
+        schema: 'public',
+        table: 'user_roles',
+        filter: `user_id=eq.${user.id}`
+      }, async (payload) => {
+        console.log("User role change detected:", payload);
+        
+        // Check if the user is now activated
+        const isActivated = await checkUserRole(user.id, 'user');
+        if (isActivated && !user.isActivated) {
+          console.log("User is now activated, redirecting to dashboard");
+          
+          // Show notification and redirect
+          toast({
+            title: "Konto aktiviert",
+            description: "Ihr Konto wurde aktiviert! Sie werden zum Dashboard weitergeleitet."
+          });
+          
+          // Update user object
+          const updatedUser = { ...user, isActivated: true };
+          setUser(updatedUser);
+          onUserLoaded(updatedUser);
+          
+          // Redirect to user dashboard
+          setTimeout(() => {
+            navigate('/nutzer');
+          }, 1500);
+        }
+      })
+      .subscribe();
+      
+    return () => {
+      supabase.removeChannel(rolesSubscription);
+    };
+  }, [user?.id, navigate, toast, onUserLoaded]);
+
   // Set up periodic activation check for the activation page
   useEffect(() => {
     let activationCheckInterval: number | null = null;
@@ -141,6 +187,13 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
           // Check if user has any pending payments
           const paymentStatus = await checkPendingPayments(data.user.id);
           console.log("User payment status:", paymentStatus);
+          
+          // If user is activated, always redirect to the user dashboard if they try to access activation page
+          if (isActivated && window.location.pathname.includes('/aktivierung')) {
+            console.log("User is already activated, redirecting to dashboard from activation page");
+            navigate('/nutzer');
+            return;
+          }
           
           // If user is not activated and redirectToActivation is true, redirect to activation page
           if (!isActivated && redirectToActivation) {

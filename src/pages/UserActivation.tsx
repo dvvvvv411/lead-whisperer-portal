@@ -1,6 +1,8 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
+import { checkUserRole } from "@/services/roleService";
 
 // Components
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
@@ -9,6 +11,7 @@ import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import LogoutButton from "@/components/user/activation/LogoutButton";
 
 const UserActivation = () => {
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
@@ -21,8 +24,30 @@ const UserActivation = () => {
     isActivation: true
   });
 
+  // Check if user is already activated when the component mounts
+  useEffect(() => {
+    if (user?.id) {
+      const checkActivationStatus = async () => {
+        const isActivated = await checkUserRole('user');
+        if (isActivated) {
+          console.log("User is already activated, redirecting from activation page");
+          navigate('/nutzer');
+        }
+      };
+      
+      checkActivationStatus();
+    }
+  }, [user?.id, navigate]);
+
   const handleUserLoaded = (userData: any) => {
     setUser(userData);
+    
+    // Automatically redirect if user is already activated
+    if (userData.isActivated) {
+      console.log("User is already activated, redirecting to dashboard");
+      navigate('/nutzer');
+      return;
+    }
     
     // Check if user already has a pending payment
     if (userData.paymentStatus?.pending) {

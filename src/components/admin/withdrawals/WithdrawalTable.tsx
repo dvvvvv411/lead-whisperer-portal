@@ -18,6 +18,7 @@ import { CheckCircle, XCircle } from "lucide-react";
 
 interface Withdrawal {
   id: string;
+  user_id: string; // Wichtig: user_id ist jetzt explizit definiert
   user_email: string;
   amount: number;
   currency: string;
@@ -83,9 +84,10 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
         if (updateError) throw updateError;
         
         // Update user credit by subtracting the withdrawal amount
+        // KORRIGIERT: Verwendung der richtigen user_id statt der withdrawal ID
         const { error: creditError } = await supabase.rpc(
           'initialize_user_credit',
-          { user_id_param: selectedWithdrawal.id }
+          { user_id_param: selectedWithdrawal.user_id }
         );
         
         if (creditError) throw creditError;

@@ -7,6 +7,7 @@ import WithdrawalTable from "./WithdrawalTable";
 
 interface Withdrawal {
   id: string;
+  user_id: string; // Added this field to match the interface in WithdrawalTable.tsx
   user_email: string;
   amount: number;
   currency: string;

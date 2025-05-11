@@ -7,7 +7,7 @@ import WithdrawalTable from "./WithdrawalTable";
 
 interface Withdrawal {
   id: string;
-  user_id: string; // Added this field to match the interface in WithdrawalTable.tsx
+  user_id: string;
   user_email: string;
   amount: number;
   currency: string;
@@ -47,6 +47,27 @@ const WithdrawalManager = () => {
 
   useEffect(() => {
     fetchWithdrawals();
+    
+    // Subscribe to withdrawals table changes
+    const withdrawalsChannel = supabase
+      .channel('admin_withdrawal_changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'withdrawals'
+        },
+        (payload) => {
+          console.log('Admin: Withdrawal update detected:', payload);
+          fetchWithdrawals();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(withdrawalsChannel);
+    };
   }, [toast]);
 
   return (

@@ -40,6 +40,12 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
   const [dialogAction, setDialogAction] = useState<"approve" | "reject" | null>(null);
   const [notes, setNotes] = useState("");
   const [processing, setProcessing] = useState(false);
+  const [updatedWithdrawals, setUpdatedWithdrawals] = useState<Withdrawal[]>(withdrawals);
+
+  // Update local state when props change
+  if (JSON.stringify(withdrawals) !== JSON.stringify(updatedWithdrawals)) {
+    setUpdatedWithdrawals(withdrawals);
+  }
 
   const handleApproveClick = (withdrawal: Withdrawal) => {
     setSelectedWithdrawal(withdrawal);
@@ -60,6 +66,21 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
     setSelectedWithdrawal(null);
     setDialogAction(null);
     setNotes("");
+  };
+
+  const updateLocalWithdrawalStatus = (withdrawalId: string, newStatus: string, newNotes: string | null) => {
+    setUpdatedWithdrawals(prevWithdrawals => 
+      prevWithdrawals.map(withdrawal => 
+        withdrawal.id === withdrawalId 
+          ? { 
+              ...withdrawal, 
+              status: newStatus, 
+              notes: newNotes, 
+              updated_at: new Date().toISOString()
+            } 
+          : withdrawal
+      )
+    );
   };
 
   const handleConfirmAction = async () => {
@@ -103,6 +124,9 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
         
         if (creditUpdateError) throw creditUpdateError;
         
+        // Update local state to reflect changes
+        updateLocalWithdrawalStatus(selectedWithdrawal.id, 'completed', notes || null);
+        
         toast({
           title: "Auszahlung genehmigt",
           description: `Die Auszahlung für ${selectedWithdrawal.user_email} wurde genehmigt.`,
@@ -120,13 +144,16 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
         
         if (error) throw error;
         
+        // Update local state to reflect changes
+        updateLocalWithdrawalStatus(selectedWithdrawal.id, 'rejected', notes || null);
+        
         toast({
           title: "Auszahlung abgelehnt",
           description: `Die Auszahlung für ${selectedWithdrawal.user_email} wurde abgelehnt.`,
         });
       }
       
-      // Refresh withdrawals
+      // Refresh withdrawals from database
       onWithdrawalUpdated();
     } catch (error: any) {
       console.error("Fehler beim Verarbeiten der Auszahlung:", error.message);
@@ -157,14 +184,14 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
             </TableRow>
           </TableHeader>
           <TableBody>
-            {withdrawals.length === 0 ? (
+            {updatedWithdrawals.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={7} className="text-center p-4">
                   Keine Auszahlungen vorhanden
                 </TableCell>
               </TableRow>
             ) : (
-              withdrawals.map((withdrawal) => (
+              updatedWithdrawals.map((withdrawal) => (
                 <TableRow key={withdrawal.id}>
                   <TableCell>
                     {new Date(withdrawal.created_at).toLocaleDateString('de-DE')}

@@ -16,6 +16,8 @@ interface Withdrawal {
   wallet_currency: string;
   status: string;
   created_at: string;
+  updated_at: string;
+  notes: string | null;
 }
 
 const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
@@ -23,33 +25,35 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [loading, setLoading] = useState(true);
 
-  useEffect(() => {
+  const fetchWithdrawals = async () => {
     if (!userId) return;
     
-    const fetchWithdrawals = async () => {
-      try {
-        setLoading(true);
-        
-        const { data, error } = await supabase
-          .from('withdrawals')
-          .select('id, amount, wallet_currency, status, created_at')
-          .eq('user_id', userId)
-          .order('created_at', { ascending: false });
-        
-        if (error) throw error;
-        
-        setWithdrawals(data || []);
-      } catch (error: any) {
-        console.error("Fehler beim Laden der Auszahlungen:", error.message);
-        toast({
-          title: "Fehler",
-          description: "Auszahlungsverlauf konnte nicht geladen werden.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('withdrawals')
+        .select('id, amount, wallet_currency, status, created_at, updated_at, notes')
+        .eq('user_id', userId)
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      setWithdrawals(data || []);
+    } catch (error: any) {
+      console.error("Fehler beim Laden der Auszahlungen:", error.message);
+      toast({
+        title: "Fehler",
+        description: "Auszahlungsverlauf konnte nicht geladen werden.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!userId) return;
     
     fetchWithdrawals();
     
@@ -64,7 +68,8 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
           table: 'withdrawals',
           filter: `user_id=eq.${userId}`
         },
-        (_) => {
+        (payload) => {
+          console.log('Withdrawal update detected:', payload);
           fetchWithdrawals();
         }
       )
@@ -117,6 +122,7 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
                 <TableHead>Betrag</TableHead>
                 <TableHead>Währung</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Anmerkungen</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -128,6 +134,9 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
                   <TableCell>{(withdrawal.amount / 100).toFixed(2)}€</TableCell>
                   <TableCell>{withdrawal.wallet_currency}</TableCell>
                   <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
+                  <TableCell>
+                    {withdrawal.notes || "-"}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

@@ -28,16 +28,39 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleCreateAccount = async () => {
-    if (!lead || !password || password !== confirmPassword) return;
+    if (!lead || !password || password !== confirmPassword) {
+      if (!lead) {
+        toast({
+          title: "Fehler",
+          description: "Kein Lead ausgewählt.",
+          variant: "destructive"
+        });
+      } else if (!password) {
+        toast({
+          title: "Fehler",
+          description: "Bitte geben Sie ein Passwort ein.",
+          variant: "destructive"
+        });
+      } else if (password !== confirmPassword) {
+        toast({
+          title: "Fehler",
+          description: "Die Passwörter stimmen nicht überein.",
+          variant: "destructive"
+        });
+      }
+      return;
+    }
     
     setIsSubmitting(true);
     
     try {
-      // Create the user account in Auth
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Standardmethode für Registrierung statt Admin API verwenden
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: lead.email,
         password: password,
-        email_confirm: true
+        options: {
+          emailRedirectTo: `${window.location.origin}/nutzer`
+        }
       });
       
       if (authError) throw authError;
@@ -45,20 +68,17 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       console.log("User created:", authData);
       
       if (authData?.user) {
-        // REMOVED: No longer automatically assigning 'user' role
-        // Instead, users will gain access based on their credit amount
-        
-        // Update the lead status to "account_created"
+        // Update the lead status to "akzeptiert"
         const { error: leadError } = await supabase
           .from('leads')
-          .update({ status: 'account_created' })
+          .update({ status: 'akzeptiert' })
           .eq('id', lead.id);
         
         if (leadError) throw leadError;
         
         toast({
           title: "Konto erstellt",
-          description: `Ein Konto für ${lead.email} wurde erfolgreich erstellt. Der Nutzer muss nun eine Aktivierungszahlung vornehmen.`
+          description: `Ein Konto für ${lead.email} wurde erfolgreich erstellt. Eine Bestätigungsmail wurde an den Nutzer gesendet.`
         });
         
         onClose();
@@ -67,7 +87,7 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       console.error("Error creating user account:", error);
       toast({
         title: "Fehler beim Erstellen des Kontos",
-        description: error.message,
+        description: error.message || "Ein unbekannter Fehler ist aufgetreten.",
         variant: "destructive"
       });
     } finally {

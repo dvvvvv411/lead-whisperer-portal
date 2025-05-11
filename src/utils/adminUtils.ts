@@ -15,6 +15,27 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
       
     if (fetchError) {
       console.error("Error fetching current credit:", fetchError);
+      
+      // If no credit record found, try to create one with the initial amount
+      if (fetchError.code === 'PGRST116') { // "No rows" error
+        console.log("No credit record found, creating new record with amount:", amountInCents);
+        
+        const { error: insertError } = await supabase
+          .from('user_credits')
+          .insert({ 
+            user_id: userId, 
+            amount: amountInCents,
+            last_updated: new Date().toISOString() 
+          });
+          
+        if (insertError) {
+          console.error("Error creating new credit record:", insertError);
+          return false;
+        }
+        
+        return true;
+      }
+      
       return false;
     }
     
@@ -116,5 +137,5 @@ export const giveTestCredit = async () => {
   return result;
 };
 
-// Call this function once to add credit
-giveTestCredit();
+// Remove this line as it automatically runs this function and might cause unwanted behavior
+// giveTestCredit();

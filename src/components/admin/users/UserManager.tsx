@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
@@ -36,9 +36,10 @@ export const UserManager = () => {
     getUser();
   }, []);
 
-  // Benutzer und deren Guthaben abrufen
-  const fetchUsers = async () => {
+  // Benutzer und deren Guthaben abrufen - moved to a useCallback for reusability
+  const fetchUsers = useCallback(async () => {
     try {
+      console.log("Fetching all users data...");
       setIsLoading(true);
       
       // Benutzer aus der auth.users Tabelle abrufen (nur für Admins möglich)
@@ -51,28 +52,34 @@ export const UserManager = () => {
       if (data) {
         const usersData = data as UserData[];
         
+        console.log(`Fetched ${usersData.length} users, now fetching credit for each...`);
+        
         // Für jeden Benutzer das Guthaben abrufen
-        for (const user of usersData) {
+        const usersWithCredit = await Promise.all(usersData.map(async (user) => {
           try {
             const { data: creditData, error: creditError } = await supabase
               .from('user_credits')
               .select('amount')
               .eq('user_id', user.id)
-              .single();
+              .maybeSingle();
             
             if (!creditError && creditData) {
               // Konvertiere von Cent zu Euro
-              user.credit = creditData.amount / 100;
+              const creditInEuros = creditData.amount / 100;
+              console.log(`User ${user.email} has ${creditInEuros}€ credit (${creditData.amount} cents)`);
+              return { ...user, credit: creditInEuros };
             } else {
-              user.credit = 0;
+              console.log(`No credit found for user ${user.email}, defaulting to 0`);
+              return { ...user, credit: 0 };
             }
           } catch (creditFetchError) {
             console.error(`Fehler beim Abrufen des Guthabens für ${user.email}:`, creditFetchError);
-            user.credit = 0;
+            return { ...user, credit: 0 };
           }
-        }
+        }));
         
-        setUsers(usersData);
+        setUsers(usersWithCredit);
+        console.log("Users data with credit updated successfully");
       }
     } catch (error: any) {
       console.error("Fehler beim Abrufen der Benutzer:", error);
@@ -84,12 +91,38 @@ export const UserManager = () => {
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [toast]);
   
   // Initial load of users
   useEffect(() => {
     fetchUsers();
-  }, []);
+  }, [fetchUsers]);
+
+  // Setup subscription for credit updates
+  useEffect(() => {
+    console.log("Setting up subscription for credit updates");
+    
+    const channel = supabase
+      .channel('user_credits_changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'user_credits'
+        },
+        (payload) => {
+          console.log('Credit change detected:', payload);
+          fetchUsers();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      console.log("Cleaning up subscription");
+      supabase.removeChannel(channel);
+    };
+  }, [fetchUsers]);
 
   return (
     <div className="container mx-auto p-4">

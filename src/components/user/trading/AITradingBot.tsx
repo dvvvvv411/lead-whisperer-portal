@@ -47,6 +47,15 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }).format(amount);
   };
 
+  // Set bot as active during simulation
+  useEffect(() => {
+    if (simulationOpen) {
+      startBot();
+    } else if (!simulationOpen && !simulationInProgressRef.current) {
+      stopBot();
+    }
+  }, [simulationOpen, startBot, stopBot, simulationInProgressRef]);
+
   // Handle manual trade button click
   const handleManualTrade = useCallback(async () => {
     console.log("Manual trade button clicked");
@@ -83,15 +92,6 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
       setSimulationOpen(false);
     }
   }, [completeTradeAfterSimulation]);
-
-  // Toggle bot activation
-  const handleBotToggle = useCallback(() => {
-    if (status.isActive) {
-      stopBot();
-    } else {
-      startBot();
-    }
-  }, [status.isActive, startBot, stopBot]);
 
   // Handle dialog open state changes
   const handleDialogOpenChange = useCallback((open: boolean) => {
@@ -131,8 +131,6 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
           <BotControlsHeader 
             onManualTrade={handleManualTrade}
             tradesRemaining={status.tradesRemaining}
-            isActive={status.isActive}
-            onBotToggle={handleBotToggle}
           />
         </div>
       </CardHeader>
@@ -150,7 +148,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
 
           {/* Bot Status Overview */}
           <BotStatusOverview
-            isActive={status.isActive}
+            isActive={status.isActive || simulationOpen}
             totalProfitAmount={status.totalProfitAmount}
             totalProfitPercentage={status.totalProfitPercentage}
             tradesExecuted={status.tradesExecuted}

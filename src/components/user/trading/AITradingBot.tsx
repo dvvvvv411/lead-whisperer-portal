@@ -75,7 +75,6 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AI
       {/* Content */}
       <div className="relative z-10">
         <TradingBotHeader 
-          onManualTrade={handleManualTrade}
           tradesRemaining={status.tradesRemaining}
         />
         <div className="p-4 pt-6">
@@ -87,6 +86,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AI
             botTrades={botTrades}
             tradesLoading={tradesLoading}
             formatCurrency={formatCurrency}
+            onManualTrade={handleManualTrade}
           />
         </div>
       </div>

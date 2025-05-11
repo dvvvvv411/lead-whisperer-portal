@@ -23,6 +23,7 @@ interface TradingBotContentProps {
   botTrades: any[];
   tradesLoading: boolean;
   formatCurrency: (amount: number) => string;
+  onManualTrade: () => void;
 }
 
 const TradingBotContent = ({
@@ -32,7 +33,8 @@ const TradingBotContent = ({
   simulationOpen,
   botTrades,
   tradesLoading,
-  formatCurrency
+  formatCurrency,
+  onManualTrade
 }: TradingBotContentProps) => {
   return (
     <div className="space-y-6">
@@ -44,6 +46,7 @@ const TradingBotContent = ({
         dailyTradesExecuted={status.dailyTradesExecuted}
         userCredit={userCredit}
         rankTiers={rankTiers}
+        onExecuteTrade={onManualTrade}
       />
 
       {/* Bot Status Overview */}

@@ -23,6 +23,7 @@ export const useWithdrawalHistory = (userId?: string) => {
     
     try {
       setLoading(true);
+      console.log("Fetching withdrawals for user:", userId);
       
       const { data, error } = await supabase
         .from('withdrawals')
@@ -32,6 +33,7 @@ export const useWithdrawalHistory = (userId?: string) => {
       
       if (error) throw error;
       
+      console.log("Withdrawals fetched:", data);
       setWithdrawals(data || []);
     } catch (error: any) {
       console.error("Fehler beim Laden der Auszahlungen:", error.message);
@@ -50,9 +52,11 @@ export const useWithdrawalHistory = (userId?: string) => {
     
     fetchWithdrawals();
     
-    // Subscribe to withdrawals table changes
+    // Subscribe to withdrawals table changes with enhanced logging
+    console.log("Setting up realtime subscription for withdrawals with user_id:", userId);
+    
     const withdrawalsChannel = supabase
-      .channel('withdrawal_changes')
+      .channel('withdrawals-channel')
       .on(
         'postgres_changes',
         { 
@@ -63,12 +67,26 @@ export const useWithdrawalHistory = (userId?: string) => {
         },
         (payload) => {
           console.log('Withdrawal update detected:', payload);
+          
+          // Check the specific type of change
+          if (payload.eventType === 'UPDATE') {
+            console.log('Withdrawal status updated:', payload.new.status);
+          } else if (payload.eventType === 'INSERT') {
+            console.log('New withdrawal created:', payload.new);
+          } else if (payload.eventType === 'DELETE') {
+            console.log('Withdrawal deleted:', payload.old);
+          }
+          
+          // Refresh the withdrawals list
           fetchWithdrawals();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Realtime subscription status:", status);
+      });
     
     return () => {
+      console.log("Cleaning up realtime subscription");
       supabase.removeChannel(withdrawalsChannel);
     };
   }, [userId, toast]);

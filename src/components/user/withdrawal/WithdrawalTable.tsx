@@ -1,6 +1,7 @@
 
 import { Table, TableHeader, TableRow, TableHead, TableBody, TableCell } from "@/components/ui/table";
 import WithdrawalStatusBadge from "./WithdrawalStatusBadge";
+import { useEffect, useState } from "react";
 
 interface Withdrawal {
   id: string;
@@ -16,6 +17,14 @@ interface WithdrawalTableProps {
 }
 
 const WithdrawalTable = ({ withdrawals }: WithdrawalTableProps) => {
+  const [localWithdrawals, setLocalWithdrawals] = useState<Withdrawal[]>(withdrawals);
+  
+  // Update local state when props change
+  useEffect(() => {
+    console.log("WithdrawalTable received updated withdrawals:", withdrawals);
+    setLocalWithdrawals(withdrawals);
+  }, [withdrawals]);
+
   return (
     <Table>
       <TableHeader>
@@ -28,7 +37,7 @@ const WithdrawalTable = ({ withdrawals }: WithdrawalTableProps) => {
         </TableRow>
       </TableHeader>
       <TableBody>
-        {withdrawals.map((withdrawal) => (
+        {localWithdrawals.map((withdrawal) => (
           <TableRow key={withdrawal.id}>
             <TableCell>
               {new Date(withdrawal.created_at).toLocaleDateString('de-DE')}

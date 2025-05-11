@@ -43,7 +43,7 @@ export const useBotControls = (
       });
     }, status.currentRank);
     
-    // Entfernen wir die Toast-Notification, die beim Start des Bots angezeigt wurde
+    // Removed toast notification that was shown when bot starts
     
   }, [userId, status, updateStatus, setNewBotInterval, executeSingleTrade]);
   

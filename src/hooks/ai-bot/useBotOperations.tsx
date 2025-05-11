@@ -12,7 +12,7 @@ export const useBotOperations = (
   updateStatus?: (newStatus: Partial<BotStatus>) => void,
   clearBotInterval?: () => void,
   setNewBotInterval?: (callback: () => void, minutes: number) => void,
-  setBotInterval?: (minutes: number) => void,
+  _unused?: null, // Keep this parameter for now but mark it as unused
   setSettings?: (newSettings: Partial<BotSettings>) => void,
   onTradeExecuted?: () => void
 ) => {

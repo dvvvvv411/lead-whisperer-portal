@@ -14,7 +14,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
   const { cryptos } = useCryptos();
   
   // Use our modular hooks
-  const { botInterval, clearBotInterval, setNewBotInterval, setBotInterval } = useBotInterval();
+  const { botInterval, clearBotInterval, setNewBotInterval } = useBotInterval();
   const { settings, status, updateBotSettings, updateStatus, setSettings } = useBotState(userId, userCredit);
   
   // Track daily trades and update limits based on user rank
@@ -42,7 +42,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     updateStatus,
     clearBotInterval,
     setNewBotInterval,
-    setBotInterval,
+    null, // Remove setBotInterval parameter since it's not needed
     handleSetSettings,
     onTradeExecuted
   );

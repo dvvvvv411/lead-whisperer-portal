@@ -43,6 +43,6 @@ export const useBotInterval = () => {
     botInterval,
     clearBotInterval,
     setNewBotInterval,
-    setBotInterval
+    setBotInterval  // This is the raw setState function we should not pass directly
   };
 };

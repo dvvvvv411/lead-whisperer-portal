@@ -75,10 +75,8 @@ const TradeSimulationDialog = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [comparisons, setComparisons] = useState<CryptoComparisonProps[]>([]);
   
-  // Set simulation duration between 30-90 seconds for production
-  // Use shorter duration (5-15 seconds) for testing
-  const simulationDuration = Math.floor(Math.random() * 60000) + 30000; // 30-90 seconds
-  // const simulationDuration = Math.floor(Math.random() * 10000) + 5000; // 5-15 seconds (for testing)
+  // Fixed simulation duration of exactly 60 seconds
+  const simulationDuration = 60000; // 60 seconds
   
   // Algorithm steps
   const steps = [
@@ -92,6 +90,20 @@ const TradeSimulationDialog = ({
     "Erkennung von Marktmustern",
     "Berechnung der Gewinnwahrscheinlichkeit",
     "Finale Handelsempfehlung"
+  ];
+
+  // Mock crypto data for simulation
+  const mockCryptoSymbols = [
+    { symbol: "BTC", basePrice: 42000 },
+    { symbol: "ETH", basePrice: 2800 },
+    { symbol: "SOL", basePrice: 120 },
+    { symbol: "ADA", basePrice: 0.45 },
+    { symbol: "DOT", basePrice: 6.2 },
+    { symbol: "AVAX", basePrice: 32 },
+    { symbol: "LINK", basePrice: 15.8 },
+    { symbol: "MATIC", basePrice: 0.85 },
+    { symbol: "UNI", basePrice: 9.4 },
+    { symbol: "ATOM", basePrice: 11.2 }
   ];
 
   useEffect(() => {
@@ -116,20 +128,26 @@ const TradeSimulationDialog = ({
       const newStep = Math.min(steps.length - 1, Math.floor((newProgress / 100) * steps.length));
       setCurrentStep(newStep);
       
-      // Add crypto comparisons periodically (roughly every second)
-      if (elapsed % 1000 < 50 && cryptoData && cryptoData.length > 0) {
-        const randomIndex = Math.floor(Math.random() * cryptoData.length);
-        const randomCrypto = cryptoData[randomIndex];
+      // Generate crypto comparison roughly every second
+      if (elapsed % 1000 < 50) {
+        // Select random mock crypto
+        const randomIndex = Math.floor(Math.random() * mockCryptoSymbols.length);
+        const mockCrypto = mockCryptoSymbols[randomIndex];
         
-        if (randomCrypto) {
-          const newComparison = {
-            symbol: randomCrypto.symbol || `CRYPTO${randomIndex}`,
-            price: randomCrypto.current_price || Math.random() * 1000,
-            change: (Math.random() * 10) - 5 // Random change between -5% and +5%
-          };
-          
-          setComparisons(prev => [newComparison, ...prev].slice(0, 5));
-        }
+        // Generate realistic price fluctuation (±2% of base price)
+        const priceVariation = mockCrypto.basePrice * (Math.random() * 0.04 - 0.02);
+        const price = mockCrypto.basePrice + priceVariation;
+        
+        // Generate change percentage (-3% to +3%)
+        const change = (Math.random() * 6) - 3;
+        
+        const newComparison = {
+          symbol: mockCrypto.symbol,
+          price,
+          change
+        };
+        
+        setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }
       
       // Continue animation or complete
@@ -152,7 +170,7 @@ const TradeSimulationDialog = ({
         cancelAnimationFrame(animationFrameId);
       }
     };
-  }, [open, cryptoData, simulationDuration, steps.length, onComplete]);
+  }, [open, simulationDuration, steps.length, onComplete]);
   
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>

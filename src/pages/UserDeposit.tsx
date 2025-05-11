@@ -8,6 +8,7 @@ import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import DepositForm from "@/components/user/deposit/DepositForm";
+import DepositHistory from "@/components/user/deposit/DepositHistory";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
@@ -156,6 +157,9 @@ const UserDeposit = () => {
           onSubmit={handleDepositSubmit}
         />
       )}
+      
+      {/* Add the transaction history component */}
+      <DepositHistory userId={user?.id} />
     </div>
   );
 };

@@ -3,16 +3,29 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { checkUserRole } from "@/services/roleService";
 
 const UserDashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
+  const [isActivated, setIsActivated] = useState(false);
+  
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setUser(data.user);
+        
+        // Prüfen, ob der Nutzer die Rolle "user" hat (aktiviert ist)
+        const activated = await checkUserRole('user');
+        setIsActivated(activated);
+        
+        // Wenn nicht aktiviert, zur Aktivierungsseite weiterleiten
+        if (!activated) {
+          window.location.href = "/nutzer/aktivierung";
+          return;
+        }
+        
         setLoading(false);
       } else {
         // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
@@ -56,7 +69,7 @@ const UserDashboard = () => {
             <CardTitle>Willkommen</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>Sie sind als regulärer Benutzer angemeldet. Diese Seite ist für zukünftige Benutzer-Features reserviert.</p>
+            <p>Sie sind als aktiver Benutzer angemeldet. Vielen Dank für die Aktivierung Ihres Kontos!</p>
           </CardContent>
         </Card>
       </div>

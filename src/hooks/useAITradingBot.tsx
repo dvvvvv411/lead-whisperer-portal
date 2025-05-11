@@ -25,6 +25,15 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     setSettings(prev => ({ ...prev, ...newSettings }));
   }, [setSettings]);
   
+  // Create an enhanced trade executed callback that ensures data refresh
+  const handleTradeExecuted = useCallback(() => {
+    console.log("Trade executed callback triggered");
+    if (onTradeExecuted) {
+      console.log("Calling parent onTradeExecuted callback");
+      onTradeExecuted();
+    }
+  }, [onTradeExecuted]);
+  
   // Bot operations (start, stop, execute trade)
   const { 
     startBot, 
@@ -44,7 +53,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     setNewBotInterval,
     null, // Remove setBotInterval parameter since it's not needed
     handleSetSettings,
-    onTradeExecuted
+    handleTradeExecuted // Use our enhanced callback
   );
   
   return {

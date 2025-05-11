@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -28,18 +29,26 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
   
-  // Aktualisierung der Daten alle 90 Sekunden (geändert von 30 auf 90 Sekunden)
+  // Refresh data every 90 seconds
   useEffect(() => {
     const interval = setInterval(() => {
-      // Aktualisiere alle relevanten Daten
+      // Update all relevant data
       updateCryptoPrices();
       fetchPortfolio();
       fetchTradeHistory();
-      onUpdated(); // Aktualisiere das Guthaben
-    }, 90000); // Changed from 30000 to 90000 (90 seconds)
+      onUpdated(); // Update balance
+    }, 90000); // 90 seconds
     
     return () => clearInterval(interval);
   }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, onUpdated]);
+  
+  // Also fetch data when the component mounts
+  useEffect(() => {
+    console.log("CryptoTradingSection mounted, fetching initial data");
+    updateCryptoPrices();
+    fetchPortfolio();
+    fetchTradeHistory();
+  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory]);
   
   const handleTrade = async (
     cryptoId: string, 
@@ -77,6 +86,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   };
 
   const handleRefresh = () => {
+    console.log("Manual refresh triggered");
     updateCryptoPrices();
     fetchPortfolio();
     fetchTradeHistory();
@@ -85,9 +95,21 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
 
   const handleBotTradeExecuted = () => {
     // Refresh all data when the bot performs a trade
+    console.log("Bot trade executed, refreshing all data");
     fetchPortfolio();
     fetchTradeHistory();
     onUpdated(); // Update parent component (to refresh user credit)
+  };
+
+  // Log whenever we change tabs
+  const handleTabChange = (value: string) => {
+    console.log("Tab changed to:", value);
+    setSelectedTab(value);
+    
+    // If changing to AIBot tab, refresh data
+    if (value === "aibot") {
+      fetchTradeHistory();
+    }
   };
 
   return (
@@ -104,7 +126,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
         </div>
       </CardHeader>
       <CardContent>
-        <Tabs defaultValue="market" value={selectedTab} onValueChange={setSelectedTab}>
+        <Tabs defaultValue="market" value={selectedTab} onValueChange={handleTabChange}>
           <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="market">Marktübersicht</TabsTrigger>
             <TabsTrigger value="portfolio">Mein Portfolio</TabsTrigger>
@@ -160,6 +182,7 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
             <AITradingBot 
               userId={user?.id} 
               userCredit={userCredit}
+              userEmail={user?.email}
               onTradeExecuted={handleBotTradeExecuted}
             />
           </TabsContent>

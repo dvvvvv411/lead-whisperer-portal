@@ -1,4 +1,5 @@
 
+import { useEffect } from "react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { useCryptos } from "@/hooks/useCryptos";
@@ -30,7 +31,7 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     rankTiers
   } = useAITradingBot(userId, userCredit, onTradeExecuted);
   
-  const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
+  const { botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(userId);
   const { cryptos } = useCryptos();
   
   // Format currency function
@@ -40,6 +41,14 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
       currency: 'EUR'
     }).format(amount);
   };
+  
+  // Ensure trade history is refreshed when component mounts
+  useEffect(() => {
+    if (userId) {
+      console.log("AITradingBot component mounted, fetching initial trade history");
+      fetchTradeHistory();
+    }
+  }, [userId, fetchTradeHistory]);
   
   // Use our custom hook for simulation logic
   const {
@@ -62,6 +71,11 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
 
   // Get user's first name from email if available
   const userName = userEmail ? userEmail.split('@')[0].split('.')[0] : undefined;
+
+  // Log dialog states for debugging
+  useEffect(() => {
+    console.log("Dialog states in AITradingBot - simulation:", simulationOpen, "result:", resultDialogOpen);
+  }, [simulationOpen, resultDialogOpen]);
 
   return (
     <div className={cn(

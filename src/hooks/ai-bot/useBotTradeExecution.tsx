@@ -96,11 +96,11 @@ export const useBotTradeExecution = (
         
         // Call the onTradeExecuted callback if provided
         if (onTradeExecuted) {
+          console.log("Calling onTradeExecuted to refresh data");
           onTradeExecuted();
         }
         
         console.log("Trade completed successfully:", result);
-        // Removing toast notification here to avoid duplicate notifications
       } else {
         // Update status with failure
         if (updateStatus) {
@@ -116,8 +116,6 @@ export const useBotTradeExecution = (
           variant: "destructive"
         });
       }
-      
-      // Don't reset simulation state here, let the calling code handle it
       
       return result;
       

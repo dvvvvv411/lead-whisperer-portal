@@ -34,6 +34,7 @@ export const useTradeHistory = (userId?: string) => {
     
     try {
       setLoading(true);
+      console.log("Fetching trade history for user:", userId);
       
       // Fetch trade history with crypto asset details and joined payment records for notes
       const { data, error } = await supabase
@@ -50,6 +51,8 @@ export const useTradeHistory = (userId?: string) => {
       if (error) throw error;
       
       if (data) {
+        console.log("Trade history fetched successfully, count:", data.length);
+        
         // Process trades to identify bot trades based on strategy prefix
         const allTrades = data as TradeHistoryItem[];
         setTrades(allTrades);
@@ -61,6 +64,7 @@ export const useTradeHistory = (userId?: string) => {
           trade.strategy.includes('ai_')
         );
         
+        console.log("Bot trades filtered, count:", botTradesFiltered.length);
         setBotTrades(botTradesFiltered);
       }
     } catch (error: any) {
@@ -99,7 +103,10 @@ export const useTradeHistory = (userId?: string) => {
       )
       .subscribe();
     
+    console.log("Supabase real-time channel subscribed for trade history");
+    
     return () => {
+      console.log("Cleaning up real-time subscription");
       supabase.removeChannel(channel);
     };
   }, [userId]);

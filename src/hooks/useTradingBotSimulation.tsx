@@ -1,5 +1,5 @@
-
 import { useState, useRef, useCallback, useEffect } from "react";
+import { useToast } from "@/hooks/use-toast";
 
 export const useTradingBotSimulation = (
   startBot: () => void,
@@ -10,11 +10,13 @@ export const useTradingBotSimulation = (
   setIsSimulating: (simulating: boolean) => void,
   simulationInProgressRef: React.MutableRefObject<boolean>
 ) => {
-  // State für Dialoge
+  const { toast } = useToast();
+
+  // State for dialogs
   const [simulationOpen, setSimulationOpen] = useState(false);
   const [resultDialogOpen, setResultDialogOpen] = useState(false);
   
-  // Trade-Ergebnis-State
+  // Trade result state
   const [tradeResult, setTradeResult] = useState({
     cryptoSymbol: "",
     cryptoName: "",
@@ -27,10 +29,10 @@ export const useTradingBotSimulation = (
     tradeDate: new Date()
   });
   
-  // Ref um Race-Conditions zu verhindern
+  // Ref to prevent race conditions
   const dialogClosingRef = useRef(false);
   
-  // Bot als aktiv setzen während der Simulation
+  // Set bot as active during simulation
   useEffect(() => {
     if (simulationOpen) {
       startBot();
@@ -39,11 +41,11 @@ export const useTradingBotSimulation = (
     }
   }, [simulationOpen, startBot, stopBot, simulationInProgressRef]);
   
-  // Manuellen Trade-Button-Click behandeln
+  // Handle manual trade button click
   const handleManualTrade = useCallback(async () => {
     console.log("Manual trade button clicked");
     
-    // Wenn die Simulation bereits läuft, Dialog nur erneut öffnen
+    // If simulation is already in progress, just reopen dialog
     if (simulationInProgressRef.current) {
       console.log("Simulation already in progress, reopening dialog");
       setSimulationOpen(true);
@@ -55,38 +57,38 @@ export const useTradingBotSimulation = (
     if (canStart) {
       console.log("Starting simulation dialog");
       setSimulationOpen(true);
-      // Zurücksetzen des Dialog-Schließ-Zustands
+      // Reset dialog closing state
       dialogClosingRef.current = false;
     }
   }, [executeSingleTrade, simulationInProgressRef]);
   
-  // Abschluss der Simulation behandeln
+  // Handle simulation completion
   const handleSimulationComplete = useCallback(async (success: boolean, selectedCrypto?: any) => {
     console.log("Simulation completed, success:", success, "selected crypto:", selectedCrypto);
     
-    // Mehrfache Abschlüsse verhindern
+    // Prevent multiple completions
     if (dialogClosingRef.current) {
       console.log("Dialog already closing, ignoring completion");
       return;
     }
     
-    // Dialog als schließend markieren
+    // Mark dialog as closing
     dialogClosingRef.current = true;
     
     if (success) {
-      // Trade mit leichter Verzögerung abschließen, um sicherzustellen, dass die Dialog-Animation abgeschlossen ist
+      // Complete trade with slight delay to ensure dialog animation is complete
       setTimeout(async () => {
-        // Zuerst den Simulations-Dialog schließen
+        // First close simulation dialog
         setSimulationOpen(false);
         
         try {
-          // Trade ausführen und Ergebnisse erhalten
+          // Execute trade and get results
           console.log("Completing trade after simulation...");
           const tradeResult = await completeTradeAfterSimulation();
           console.log("Trade completed with result:", tradeResult);
           
           if (tradeResult && typeof tradeResult === 'object' && 'success' in tradeResult && tradeResult.success) {
-            // Daten für den Ergebnisdialog mit neuen detaillierten Informationen vorbereiten
+            // Prepare data for result dialog with detailed information
             setTradeResult({
               cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
               cryptoName: tradeResult.crypto?.name || selectedCrypto?.name || "Bitcoin",
@@ -99,62 +101,83 @@ export const useTradingBotSimulation = (
               tradeDate: new Date()
             });
             
-            // Sicherstellen, dass wir den Ergebnisdialog anzeigen
-            console.log("Opening result dialog");
+            // Ensure we show the result dialog
+            console.log("Opening result dialog with data:", {
+              cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
+              profitAmount: tradeResult.profit || 0,
+              profitPercentage: tradeResult.profitPercentage || 0
+            });
+            
             setTimeout(() => {
               setResultDialogOpen(true);
-              simulationInProgressRef.current = false; // Simulation als beendet markieren
+              simulationInProgressRef.current = false; // Mark simulation as complete
+              console.log("Result dialog should now be open, dialogOpen state:", resultDialogOpen);
             }, 300);
           } else {
             console.error("Trade completion failed or returned unexpected result:", tradeResult);
-            simulationInProgressRef.current = false; // Simulation als beendet markieren bei Fehler
+            simulationInProgressRef.current = false; // Mark simulation as complete on error
+            toast({
+              title: "Trade fehlgeschlagen",
+              description: "Der Trade konnte nicht abgeschlossen werden.",
+              variant: "destructive"
+            });
           }
         } catch (error) {
           console.error("Error completing trade:", error);
-          simulationInProgressRef.current = false; // Simulation als beendet markieren bei Fehler
+          simulationInProgressRef.current = false; // Mark simulation as complete on error
+          toast({
+            title: "Fehler",
+            description: "Es ist ein Fehler beim Ausführen des Trades aufgetreten.",
+            variant: "destructive"
+          });
         } finally {
-          // Simulating auf false setzen, unabhängig von Erfolg oder Misserfolg
+          // Set simulating to false regardless of success or failure
           setIsSimulating(false);
         }
       }, 500);
     } else {
       setSimulationOpen(false);
       setIsSimulating(false);
-      simulationInProgressRef.current = false; // Simulation als beendet markieren bei Abbruch
+      simulationInProgressRef.current = false; // Mark simulation as complete on cancel
     }
-  }, [completeTradeAfterSimulation, setIsSimulating, simulationInProgressRef]);
+  }, [completeTradeAfterSimulation, setIsSimulating, simulationInProgressRef, resultDialogOpen, toast]);
   
-  // Änderungen des Dialog-Öffnungszustands behandeln
+  // Handle dialog open state changes
   const handleDialogOpenChange = useCallback((open: boolean) => {
     console.log("Dialog open state changed to:", open);
     
     if (!open && (isSimulating || simulationInProgressRef.current)) {
-      // Dialog während der Simulation manuell geschlossen
+      // Dialog manually closed while simulating
       console.log("Dialog closed manually while simulating");
       dialogClosingRef.current = true;
       setIsSimulating(false);
-      simulationInProgressRef.current = false; // Simulation als beendet markieren
+      simulationInProgressRef.current = false; // Mark simulation as complete
     }
     
     setSimulationOpen(open);
   }, [isSimulating, setIsSimulating, simulationInProgressRef]);
   
-  // Schließen des Ergebnisdialogs behandeln
+  // Handle result dialog close
   const handleResultDialogClose = useCallback(() => {
     console.log("Closing result dialog");
     setResultDialogOpen(false);
   }, []);
   
-  // Aufräumen beim Unmount
+  // Cleanup on unmount
   useEffect(() => {
     return () => {
       if (isSimulating || simulationInProgressRef.current) {
         console.log("Component unmounting, cleaning up simulation");
         setIsSimulating(false);
-        simulationInProgressRef.current = false; // Simulation als beendet markieren
+        simulationInProgressRef.current = false; // Mark simulation as complete
       }
     };
   }, [isSimulating, setIsSimulating, simulationInProgressRef]);
+  
+  // Debug logs to track dialog states
+  useEffect(() => {
+    console.log("Current dialog states - simulation:", simulationOpen, "result:", resultDialogOpen);
+  }, [simulationOpen, resultDialogOpen]);
   
   return {
     simulationOpen,

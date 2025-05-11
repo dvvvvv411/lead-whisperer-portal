@@ -51,31 +51,43 @@ Deno.serve(async (req) => {
       const currentAmount = currentCreditData.amount || 0;
       finalAmount = currentAmount + amountInCents;
       console.log(`Current amount: ${currentAmount} cents + New amount: ${amountInCents} cents = Final: ${finalAmount} cents`);
+      
+      // Update existing record
+      const { error: updateError } = await supabaseClient
+        .from('user_credits')
+        .update({ 
+          amount: finalAmount,
+          last_updated: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+      
+      if (updateError) {
+        console.error('Error updating credit:', updateError);
+        throw updateError;
+      }
     } else {
       finalAmount = amountInCents;
       console.log(`No existing credit found. Setting initial amount to ${finalAmount} cents`);
-    }
-    
-    // Update the credit using upsert
-    const { data, error } = await supabaseClient
-      .from('user_credits')
-      .upsert({ 
-        user_id: userId,
-        amount: finalAmount,
-        last_updated: new Date().toISOString()
-      })
-      .select();
-    
-    if (error) {
-      console.error('Error updating credit:', error);
-      throw error;
+      
+      // Insert new record
+      const { error: insertError } = await supabaseClient
+        .from('user_credits')
+        .insert({ 
+          user_id: userId,
+          amount: finalAmount,
+          last_updated: new Date().toISOString()
+        });
+      
+      if (insertError) {
+        console.error('Error inserting credit:', insertError);
+        throw insertError;
+      }
     }
     
     console.log(`Successfully updated credit for user ${userId} to ${finalAmount} cents (${finalAmount/100}€)`);
     return new Response(
       JSON.stringify({ 
         success: true, 
-        data,
         previousAmount: currentCreditData?.amount,
         addedAmount: amountInCents,
         newAmount: finalAmount

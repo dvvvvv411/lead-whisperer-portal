@@ -1,31 +1,31 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { useWallets } from "@/hooks/useWallets";
-import { useUserCredit } from "@/hooks/useUserCredit";
-import { usePaymentFlow } from "@/hooks/usePaymentFlow";
+import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import DepositForm from "@/components/user/deposit/DepositForm";
 import DepositHistory from "@/components/user/deposit/DepositHistory";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, Loader2 } from "lucide-react";
-
-// Credit threshold required to access the dashboard (in EUR)
-const CREDIT_ACTIVATION_THRESHOLD = 250;
+import { ArrowLeft } from "lucide-react";
+import { usePaymentFlow } from "@/hooks/usePaymentFlow";
+import { useWallets } from "@/hooks/useWallets";
+import { useUserCredit } from "@/hooks/useUserCredit";
 
 const UserDeposit = () => {
-  const { toast } = useToast();
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
-  const [loading, setLoading] = useState(true);
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [depositAmount, setDepositAmount] = useState<number>(0);
   
   // Fetch crypto wallets for payment
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
+  
+  // Get user credit
+  const { userCredit } = useUserCredit(user?.id);
   
   // Monitor payment status using the custom hook
   const { paymentCompleted, paymentRejected } = usePaymentFlow({
@@ -36,78 +36,16 @@ const UserDeposit = () => {
     redirectDelay: 2000
   });
 
-  // Fetch user credit information
-  const { userCredit, fetchUserCredit } = useUserCredit(user?.id);
+  // Handle user loaded callback from auth check
+  const handleUserLoaded = (userData: any) => {
+    setUser(userData);
+  };
   
-  // Check the user's authentication and credit
-  useEffect(() => {
-    const getUser = async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        if (data?.user) {
-          setUser(data.user);
-          
-          // Check if the user has sufficient credit
-          if (userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
-            console.log("User doesn't have sufficient credit, redirecting from deposit to activation page");
-            toast({
-              title: "Aktivierung erforderlich",
-              description: `Sie benötigen mindestens ${CREDIT_ACTIVATION_THRESHOLD}€ Guthaben, um fortzufahren.`,
-            });
-            navigate("/nutzer/aktivierung");
-            return;
-          }
-          
-          setLoading(false);
-        } else {
-          // If no user is logged in, redirect to login page
-          navigate("/admin");
-        }
-      } catch (error) {
-        console.error("Error checking user:", error);
-        toast({
-          title: "Authentifizierungsfehler",
-          description: "Bitte melden Sie sich erneut an.",
-          variant: "destructive"
-        });
-        navigate("/admin");
-      }
-    };
-    
-    if (!loading && userCredit !== null) {
-      getUser();
-    }
-  }, [navigate, toast, userCredit]);
-
-  // Check user credit when it updates
-  useEffect(() => {
-    if (user?.id && userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
-      console.log("User credit below threshold, redirecting to activation");
-      navigate("/nutzer/aktivierung");
-    }
-  }, [userCredit, user?.id, navigate]);
-
-  // Initial user authentication check
-  useEffect(() => {
-    const initialAuthCheck = async () => {
-      try {
-        const { data } = await supabase.auth.getUser();
-        if (data?.user) {
-          setUser(data.user);
-        } else {
-          navigate("/admin");
-        }
-      } catch (error) {
-        console.error("Error in initial auth check:", error);
-        navigate("/admin");
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    initialAuthCheck();
-  }, [navigate]);
-
+  // Handle back navigation
+  const handleBack = () => {
+    navigate('/nutzer');
+  };
+  
   // Handle deposit submission
   const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
     if (!user) return;
@@ -153,62 +91,46 @@ const UserDeposit = () => {
     }
   };
 
-  // Back navigation handler
-  const handleBack = () => {
-    navigate('/nutzer');
-  };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
-        <p>Wird geladen...</p>
-      </div>
-    );
-  }
-
-  // Additional check to ensure only users with sufficient credit can view this page
-  if (userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
-    console.log("User credit below threshold, redirecting to activation page from deposit");
-    navigate("/nutzer/aktivierung");
-    return null;
-  }
-
   return (
-    <div className="container mx-auto px-4 py-8">
-      <div className="mb-6">
-        <Button
-          variant="ghost"
-          onClick={handleBack}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Zurück zum Dashboard
-        </Button>
+    <UserAuthCheck
+      onUserLoaded={handleUserLoaded}
+      redirectToActivation={false}
+    >
+      <div className="container mx-auto px-4 py-8">
+        <div className="mb-6">
+          <Button
+            variant="ghost"
+            onClick={handleBack}
+            className="mb-4"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Zurück zum Dashboard
+          </Button>
+          
+          <h1 className="text-3xl font-bold">Guthaben einzahlen</h1>
+          {userCredit !== null && (
+            <p className="text-lg text-gray-600 mt-2">
+              Aktuelles Guthaben: {userCredit.toFixed(2)}€
+            </p>
+          )}
+        </div>
         
-        <h1 className="text-3xl font-bold">Guthaben einzahlen</h1>
-        {userCredit !== null && (
-          <p className="text-lg text-gray-600 mt-2">
-            Aktuelles Guthaben: {userCredit.toFixed(2)}€
-          </p>
+        {paymentSubmitted ? (
+          <PaymentStatusView paymentId={paymentId} />
+        ) : (
+          <DepositForm 
+            wallets={wallets}
+            walletsLoading={walletsLoading}
+            walletError={walletError}
+            onRetryWallets={fetchWallets}
+            onSubmit={handleDepositSubmit}
+          />
         )}
+        
+        {/* Add the transaction history component */}
+        <DepositHistory userId={user?.id} />
       </div>
-      
-      {paymentSubmitted ? (
-        <PaymentStatusView paymentId={paymentId} />
-      ) : (
-        <DepositForm 
-          wallets={wallets}
-          walletsLoading={walletsLoading}
-          walletError={walletError}
-          onRetryWallets={fetchWallets}
-          onSubmit={handleDepositSubmit}
-        />
-      )}
-      
-      {/* Add the transaction history component */}
-      <DepositHistory userId={user?.id} />
-    </div>
+    </UserAuthCheck>
   );
 };
 

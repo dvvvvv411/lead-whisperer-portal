@@ -22,6 +22,10 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     const currentAmount = creditData?.amount || 0;
     const newAmount = currentAmount + amountInCents;
     
+    console.log("Current credit amount (cents):", currentAmount);
+    console.log("Adding amount (cents):", amountInCents);
+    console.log("New total amount (cents):", newAmount);
+    
     // Update the user's credit
     const { error } = await supabase
       .from('user_credits')

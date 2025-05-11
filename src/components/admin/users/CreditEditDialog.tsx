@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { addCreditToUser, setUserCredit } from "@/utils/adminUtils";
+import { addCreditToUser } from "@/utils/adminUtils";
 
 interface CreditEditDialogProps {
   isOpen: boolean;
@@ -40,10 +40,12 @@ export const CreditEditDialog = ({
 
     try {
       setIsSubmitting(true);
-      console.log(`Setting credit for ${userId} to ${newCredit}`);
+      console.log(`Current credit: ${currentCredit}, New credit: ${newCredit}`);
       
       // Calculate the difference to add (can be negative for reductions)
       const creditDifference = newCredit - currentCredit;
+      console.log(`Adding difference of ${creditDifference}€ to user ${userId}`);
+      
       const success = creditDifference !== 0 
         ? await addCreditToUser(userId, creditDifference) 
         : true; // If no change, consider it successful

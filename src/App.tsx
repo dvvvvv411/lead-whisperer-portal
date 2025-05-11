@@ -13,6 +13,7 @@ import AdminUsers from "./pages/AdminUsers";
 import AdminPayments from "./pages/AdminPayments";
 import User from "./pages/User";
 import UserActivation from "./pages/UserActivation";
+import UserDeposit from "./pages/UserDeposit";
 import NotFound from "./pages/NotFound";
 
 // Create a new QueryClient instance
@@ -36,6 +37,7 @@ function App() {
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/nutzer" element={<User />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
+            <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

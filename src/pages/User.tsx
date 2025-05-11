@@ -6,6 +6,9 @@ import { checkUserRole } from "@/services/roleService";
 import { useToast } from "@/hooks/use-toast";
 import CryptoTradingSection from "@/components/user/trading/CryptoTradingSection";
 import { useUserCredit } from "@/hooks/useUserCredit";
+import { Button } from "@/components/ui/button";
+import { Link } from "react-router-dom";
+import { CreditCard } from "lucide-react";
 
 const UserPage = () => {
   const { toast } = useToast();
@@ -49,6 +52,26 @@ const UserPage = () => {
   
   return (
     <div className="container mx-auto px-4 py-8">
+      {isActivated && user && (
+        <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+          <div>
+            <h1 className="text-3xl font-bold">Benutzer Dashboard</h1>
+            {userCredit !== null && (
+              <p className="text-lg text-gray-600 mt-2">
+                Guthaben: {userCredit.toFixed(2)}€
+              </p>
+            )}
+          </div>
+          
+          <Button asChild>
+            <Link to="/nutzer/einzahlen">
+              <CreditCard className="mr-2 h-4 w-4" />
+              Guthaben einzahlen
+            </Link>
+          </Button>
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 gap-8">
         {isActivated && user && (
           <UserDashboard 

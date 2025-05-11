@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -21,8 +22,9 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     status, 
     startBot, 
     stopBot, 
-    updateBotSettings 
-  } = useAITradingBot(userId, userCredit);
+    updateBotSettings,
+    executeSingleTrade
+  } = useAITradingBot(userId, userCredit, onTradeExecuted);
   const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
   const [showAdvancedSettings, setShowAdvancedSettings] = useState(false);
   
@@ -39,7 +41,12 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     } else {
       startBot();
     }
-    if (onTradeExecuted) {
+  };
+
+  // Funktion für einen manuellen Trade
+  const handleManualTrade = async () => {
+    const success = await executeSingleTrade();
+    if (success && onTradeExecuted) {
       onTradeExecuted();
     }
   };
@@ -60,23 +67,33 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
             </CardTitle>
             <CardDescription>Automatisierte Trades mit KI-Optimierung</CardDescription>
           </div>
-          <Button 
-            onClick={handleToggleBot} 
-            variant={settings.isActive ? "destructive" : "default"}
-            className="relative overflow-hidden"
-          >
-            {settings.isActive ? (
-              <>
-                <ZapOffIcon className="h-4 w-4 mr-2" />
-                Deaktivieren
-              </>
-            ) : (
-              <>
-                <ZapIcon className="h-4 w-4 mr-2" />
-                Aktivieren
-              </>
-            )}
-          </Button>
+          <div className="flex gap-2">
+            <Button 
+              onClick={handleManualTrade}
+              variant="outline"
+              disabled={settings.isActive}
+            >
+              <ActivityIcon className="h-4 w-4 mr-2" />
+              Trade ausführen
+            </Button>
+            <Button 
+              onClick={handleToggleBot} 
+              variant={settings.isActive ? "destructive" : "default"}
+              className="relative overflow-hidden"
+            >
+              {settings.isActive ? (
+                <>
+                  <ZapOffIcon className="h-4 w-4 mr-2" />
+                  Deaktivieren
+                </>
+              ) : (
+                <>
+                  <ZapIcon className="h-4 w-4 mr-2" />
+                  Aktivieren
+                </>
+              )}
+            </Button>
+          </div>
         </div>
       </CardHeader>
       <CardContent>

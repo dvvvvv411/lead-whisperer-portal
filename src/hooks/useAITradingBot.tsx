@@ -5,7 +5,7 @@ import { useCryptos } from "@/hooks/useCryptos";
 import { BotSettings, BotStatus } from "./ai-bot/types";
 import { executeAITrade } from "./ai-bot/executeBotTrade";
 
-export const useAITradingBot = (userId?: string, userCredit?: number) => {
+export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExecuted?: () => void) => {
   const { toast } = useToast();
   const { cryptos } = useCryptos();
   const [settings, setSettings] = useState<BotSettings>({
@@ -63,6 +63,18 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
     }
   }, [botInterval]);
   
+  // Execute a single trade
+  const executeSingleTrade = useCallback(async () => {
+    const success = await executeAITrade(userId, userCredit, cryptos, settings, toast, updateStatus);
+    
+    // Call the onTradeExecuted callback to update the parent components
+    if (success && onTradeExecuted) {
+      onTradeExecuted();
+    }
+    
+    return success;
+  }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted]);
+  
   // Start the AI trading bot
   const startBot = useCallback(() => {
     if (!userId || !userCredit) {
@@ -93,11 +105,11 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
     }
     
     // Execute a trade immediately
-    executeAITrade(userId, userCredit, cryptos, settings, toast, updateStatus);
+    executeSingleTrade();
     
     // Set up interval for recurring trades
     const interval = setInterval(() => {
-      executeAITrade(userId, userCredit, cryptos, settings, toast, updateStatus);
+      executeSingleTrade();
     }, intervalTime);
     
     setBotInterval(interval);
@@ -108,7 +120,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
       title: "KI-Bot aktiviert",
       description: "Der KI-Trading-Bot wurde erfolgreich aktiviert und wird nun automatisch handeln.",
     });
-  }, [userId, userCredit, cryptos, settings, toast, clearBotInterval, updateStatus]);
+  }, [userId, userCredit, clearBotInterval, executeSingleTrade, settings.tradeFrequency, toast]);
   
   // Stop the AI trading bot
   const stopBot = useCallback(() => {
@@ -149,5 +161,6 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
     startBot,
     stopBot,
     updateBotSettings,
+    executeSingleTrade, // Export this so we can trigger a single trade from outside
   };
 };

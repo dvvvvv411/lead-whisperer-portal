@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
@@ -28,6 +28,19 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   const { portfolio, summary, loading: portfolioLoading, fetchPortfolio } = usePortfolio(user?.id);
   const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
+  
+  // Automatische Aktualisierung der Daten alle 30 Sekunden
+  useEffect(() => {
+    const interval = setInterval(() => {
+      // Aktualisiere alle relevanten Daten
+      updateCryptoPrices();
+      fetchPortfolio();
+      fetchTradeHistory();
+      onUpdated(); // Aktualisiere das Guthaben
+    }, 30000);
+    
+    return () => clearInterval(interval);
+  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, onUpdated]);
   
   const handleTrade = async (
     cryptoId: string, 
@@ -66,6 +79,9 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
 
   const handleRefresh = () => {
     updateCryptoPrices();
+    fetchPortfolio();
+    fetchTradeHistory();
+    onUpdated();
   };
 
   const handleBotTradeExecuted = () => {

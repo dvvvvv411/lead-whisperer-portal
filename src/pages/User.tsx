@@ -45,11 +45,21 @@ const UserPage = () => {
     };
     
     getUser();
+    
+    // Setze ein Intervall, um das Guthaben regelmäßig zu aktualisieren
+    const creditUpdateInterval = setInterval(() => {
+      if (user?.id) {
+        fetchUserCredit(user.id);
+      }
+    }, 15000); // Alle 15 Sekunden aktualisieren
+    
+    return () => clearInterval(creditUpdateInterval);
   }, [toast]);
   
   // Guthaben des Nutzers abrufen
   const fetchUserCredit = async (userId: string) => {
     try {
+      console.log("Aktualisiere Benutzerguthaben für ID:", userId);
       const { data, error } = await supabase
         .from('payments')
         .select('amount')
@@ -62,6 +72,7 @@ const UserPage = () => {
       // Summe aller bestätigten Zahlungen berechnen
       if (data && data.length > 0) {
         const totalAmount = data.reduce((sum, payment) => sum + payment.amount, 0) / 100; // Umrechnung von Cent in Euro
+        console.log("Neues Benutzerguthaben:", totalAmount);
         setUserCredit(totalAmount);
       }
     } catch (error: any) {
@@ -80,7 +91,9 @@ const UserPage = () => {
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="grid grid-cols-1 gap-8">
-        <UserDashboard />
+        {isActivated && user && (
+          <UserDashboard user={user} userCredit={userCredit} onCreditUpdated={() => fetchUserCredit(user.id)} />
+        )}
         
         {isActivated && user && userCredit !== null && (
           <CryptoTradingSection 

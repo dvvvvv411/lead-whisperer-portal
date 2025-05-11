@@ -1,5 +1,5 @@
 
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { 
   Dialog,
   DialogContent,
@@ -12,6 +12,7 @@ import { ActivityIcon } from "lucide-react";
 import { algorithmSteps } from "./simulation/simulationUtils";
 import SimulationDialogContent from "./simulation/SimulationDialogContent";
 import { useSimulation } from "./simulation/useSimulation";
+import { cn } from "@/lib/utils";
 
 interface TradeSimulationDialogProps {
   open: boolean;
@@ -28,6 +29,10 @@ const TradeSimulationDialog = React.memo(({
 }: TradeSimulationDialogProps) => {
   // Use refs for simulation state tracking
   const simulationActive = useRef(false);
+  const startTimeRef = useRef<number | null>(null);
+  
+  // Track elapsed time for countdown display
+  const [elapsedTime, setElapsedTime] = useState(0);
   
   // Fixed simulation duration of exactly 60 seconds
   const simulationDuration = 60000; // 60 seconds
@@ -40,13 +45,39 @@ const TradeSimulationDialog = React.memo(({
     simulationDuration
   });
 
+  // Update elapsed time
+  useEffect(() => {
+    if (!open || !simulationActive.current) return;
+    
+    if (!startTimeRef.current) {
+      startTimeRef.current = Date.now();
+    }
+    
+    const timer = setInterval(() => {
+      if (startTimeRef.current) {
+        const elapsed = Date.now() - startTimeRef.current;
+        setElapsedTime(elapsed);
+        
+        // Stop the timer when we reach the end
+        if (elapsed >= simulationDuration) {
+          clearInterval(timer);
+        }
+      }
+    }, 100);
+    
+    return () => clearInterval(timer);
+  }, [open, simulationDuration]);
+
   // Initialize or reset the simulation when dialog opens
-  React.useEffect(() => {
+  useEffect(() => {
     if (open) {
       console.log("Dialog opened, initializing simulation");
       simulationActive.current = true;
+      startTimeRef.current = Date.now();
+      setElapsedTime(0);
     } else {
       simulationActive.current = false;
+      startTimeRef.current = null;
     }
   }, [open]);
   
@@ -62,15 +93,24 @@ const TradeSimulationDialog = React.memo(({
         onOpenChange(newOpenState);
       }}
     >
-      <DialogContent className="sm:max-w-md">
-        <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <ActivityIcon className="h-4 w-4 mr-2 text-blue-600" />
-            KI-Trading im Prozess
-          </DialogTitle>
-          <DialogDescription>
-            Der KI-Algorithmus analysiert aktuell die besten Handelsmöglichkeiten.
-          </DialogDescription>
+      <DialogContent className={cn(
+        "sm:max-w-3xl bg-gradient-to-br from-casino-dark/95 to-casino-darker border border-gold/10",
+        "backdrop-blur-xl shadow-xl overflow-hidden"
+      )}>
+        <DialogHeader className="border-b border-gold/10 pb-3">
+          <div className="flex items-center">
+            <div className="h-7 w-7 rounded-full bg-accent1/10 flex items-center justify-center mr-2.5">
+              <ActivityIcon className="h-4 w-4 text-accent1" />
+            </div>
+            <div>
+              <DialogTitle className="text-white">
+                KI-Trading Analyse
+              </DialogTitle>
+              <DialogDescription>
+                Der Algorithmus findet die optimale Handelsstrategie für maximalen Profit
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
         
         <SimulationDialogContent 
@@ -78,10 +118,19 @@ const TradeSimulationDialog = React.memo(({
           comparisons={comparisons}
           steps={algorithmSteps}
           currentStep={currentStep}
+          simulationDuration={simulationDuration / 1000} // Convert to seconds
+          elapsedTime={elapsedTime}
         />
         
-        <DialogFooter className="text-xs text-muted-foreground">
-          Trade wird automatisch ausgeführt, sobald die optimale Gelegenheit identifiziert wurde.
+        <DialogFooter className="text-xs text-muted-foreground border-t border-gold/10 pt-3">
+          <div className="w-full flex justify-between items-center">
+            <span className="text-gold/70">
+              {progress < 100 ? "Trading wird analysiert..." : "Analyse abgeschlossen!"}
+            </span>
+            <span>
+              {progress < 100 ? "Bitte warten..." : "Trade wird ausgeführt..."}
+            </span>
+          </div>
         </DialogFooter>
       </DialogContent>
     </Dialog>

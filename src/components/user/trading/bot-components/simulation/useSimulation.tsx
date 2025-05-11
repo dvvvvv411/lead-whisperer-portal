@@ -62,17 +62,48 @@ export const useSimulation = ({
       
       const currentTime = Date.now();
       const elapsed = currentTime - startTimeRef.current;
-      const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
+      
+      // Create a non-linear progress curve that starts slower and speeds up
+      // This creates a more dramatic effect towards the end
+      let progressCurve;
+      const normalizedTime = elapsed / simulationDuration;
+      
+      if (normalizedTime < 0.2) {
+        // Start slower (0-15%)
+        progressCurve = normalizedTime * 0.75 * 100;
+      } else if (normalizedTime < 0.7) {
+        // Middle section (15-75%)
+        progressCurve = (0.15 + (normalizedTime - 0.2) * 0.85) * 100;
+      } else {
+        // End section - accelerate to completion (75-100%)
+        const remaining = 1 - normalizedTime;
+        const accelerationFactor = 1 - Math.pow(remaining / 0.3, 2);
+        progressCurve = Math.min(100, 75 + accelerationFactor * 25);
+      }
+      
+      const newProgress = Math.min(100, Math.floor(progressCurve));
       
       progressRef.current = newProgress;
       setProgress(newProgress);
       
       // Update current step based on progress
-      const newStep = Math.min(algorithmSteps.length - 1, Math.floor((newProgress / 100) * algorithmSteps.length));
-      setCurrentStep(newStep);
+      // We'll use a slightly different curve for the steps to create interesting visuals
+      // Some steps will appear to take longer than others
+      const stepsCurve = [0, 10, 25, 40, 60, 75, 85, 92, 97, 100];
+      let newStep = 0;
       
-      // Generate crypto comparison roughly every second
-      if (elapsed % 1000 < 100) {
+      for (let i = 0; i < stepsCurve.length; i++) {
+        if (newProgress >= stepsCurve[i]) {
+          newStep = i;
+        } else {
+          break;
+        }
+      }
+      
+      setCurrentStep(Math.min(algorithmSteps.length - 1, newStep));
+      
+      // Generate crypto comparison more frequently with richer data
+      if (elapsed % 800 < 100) {  // Generate roughly every 800ms
         const newComparison = generateCryptoComparison(cryptoData);
         setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }

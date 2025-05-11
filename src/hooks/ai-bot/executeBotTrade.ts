@@ -18,16 +18,23 @@ export const executeAITrade = async (
   updateStatus: (update: any) => void
 ) => {
   if (!userId || !userCredit || userCredit <= 0) {
+    console.log("KI-Bot: Kein Benutzer oder kein Guthaben verfügbar", { userId, userCredit });
     return false;
   }
 
   try {
     const crypto = getRandomCrypto(cryptos);
-    if (!crypto) return false;
+    if (!crypto) {
+      console.log("KI-Bot: Keine Kryptowährung gefunden");
+      return false;
+    }
 
     const tradeAmount = generateTradeAmount(settings, userCredit);
     const profitPercentage = generateProfitPercentage(settings.riskLevel);
-    const strategy = getRandomStrategy();
+    const strategy = `ai_${getRandomStrategy()}`;
+    
+    // Log trade information
+    console.log(`KI-Bot: Starte Trade mit ${crypto.symbol}, Betrag: ${tradeAmount}€, Profitziel: ${profitPercentage}%`);
     
     // Calculate quantity based on current price
     const quantity = tradeAmount / crypto.current_price;
@@ -50,10 +57,15 @@ export const executeAITrade = async (
       .select()
       .single();
     
-    if (buyResult.error) throw buyResult.error;
+    if (buyResult.error) {
+      console.error("KI-Bot: Fehler beim Erstellen des Kauf-Trades:", buyResult.error);
+      throw buyResult.error;
+    }
+    
+    console.log(`KI-Bot: Kauf-Trade erstellt, ID: ${buyResult.data?.id}`);
     
     // Deduct funds for buy operations
-    await supabase
+    const buyPaymentResult = await supabase
       .from('payments')
       .insert([
         {
@@ -65,7 +77,16 @@ export const executeAITrade = async (
           wallet_currency: 'SIMULATION',
           notes: `KI-Bot: KAUF ${quantity.toFixed(6)} ${crypto.symbol} @ ${crypto.current_price.toFixed(2)}€ mit ${strategy}`
         }
-      ]);
+      ])
+      .select()
+      .single();
+      
+    if (buyPaymentResult.error) {
+      console.error("KI-Bot: Fehler beim Erstellen der Kauf-Zahlung:", buyPaymentResult.error);
+      throw buyPaymentResult.error;
+    }
+    
+    console.log(`KI-Bot: Kauf-Zahlung erstellt, ID: ${buyPaymentResult.data?.id}`);
     
     // Calculate sell price with profit
     const sellPrice = crypto.current_price * (1 + (profitPercentage / 100));
@@ -90,10 +111,15 @@ export const executeAITrade = async (
       .select()
       .single();
       
-    if (sellResult.error) throw sellResult.error;
+    if (sellResult.error) {
+      console.error("KI-Bot: Fehler beim Erstellen des Verkauf-Trades:", sellResult.error);
+      throw sellResult.error;
+    }
+    
+    console.log(`KI-Bot: Verkauf-Trade erstellt, ID: ${sellResult.data?.id}`);
     
     // Add funds for sell operations (with profit)
-    await supabase
+    const sellPaymentResult = await supabase
       .from('payments')
       .insert([
         {
@@ -105,7 +131,16 @@ export const executeAITrade = async (
           wallet_currency: 'SIMULATION',
           notes: `KI-Bot: VERKAUF ${quantity.toFixed(6)} ${crypto.symbol} @ ${sellPrice.toFixed(2)}€ mit ${strategy} (Gewinn: ${profit.toFixed(2)}€)`
         }
-      ]);
+      ])
+      .select()
+      .single();
+      
+    if (sellPaymentResult.error) {
+      console.error("KI-Bot: Fehler beim Erstellen der Verkauf-Zahlung:", sellPaymentResult.error);
+      throw sellPaymentResult.error;
+    }
+    
+    console.log(`KI-Bot: Verkauf-Zahlung erstellt, ID: ${sellPaymentResult.data?.id}, Gewinn: ${profit.toFixed(2)}€`);
     
     // Update bot status
     updateStatus({
@@ -121,6 +156,7 @@ export const executeAITrade = async (
       variant: "default"
     });
     
+    // Call the callback to update the parent component
     return true;
   } catch (error: any) {
     console.error('Error executing AI trade:', error.message);

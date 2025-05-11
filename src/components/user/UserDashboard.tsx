@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
-import { RefreshCcw } from "lucide-react";
+import { RefreshCcw, Wallet } from "lucide-react";
 
 interface UserDashboardProps {
   user: any;
@@ -49,14 +49,20 @@ const UserDashboard = ({ user, userCredit, onCreditUpdated }: UserDashboardProps
         <Card>
           <CardHeader>
             <div className="flex justify-between items-center">
-              <CardTitle>Ihr Guthaben</CardTitle>
+              <CardTitle className="flex items-center">
+                <Wallet className="mr-2 h-5 w-5 text-primary" />
+                Ihr Guthaben
+              </CardTitle>
               <Button variant="ghost" size="icon" onClick={handleRefreshCredit} title="Guthaben aktualisieren">
                 <RefreshCcw className="h-4 w-4" />
               </Button>
             </div>
           </CardHeader>
           <CardContent>
-            <p className="text-2xl font-bold">{userCredit !== null ? `${userCredit.toFixed(2)}€` : "0,00€"}</p>
+            <p className="text-3xl font-bold text-primary">{userCredit !== null ? `${userCredit.toFixed(2)}€` : "0,00€"}</p>
+            <p className="text-sm text-muted-foreground mt-2">
+              Ihr Guthaben wird für den Krypto-Trading-Simulator verwendet und nach jedem Trade aktualisiert.
+            </p>
           </CardContent>
         </Card>
       </div>

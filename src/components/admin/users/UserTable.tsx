@@ -11,9 +11,10 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Check, X } from "lucide-react";
+import { Calendar, Check, X, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
+import { CreditEditDialog } from "./CreditEditDialog";
 
 export interface User {
   id: string;
@@ -22,6 +23,7 @@ export interface User {
   last_sign_in_at: string | null;
   role: string;
   activated: boolean;
+  credit?: number | null;
 }
 
 interface UserTableProps {
@@ -32,6 +34,7 @@ interface UserTableProps {
 export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
+  const [editingCredit, setEditingCredit] = useState<User | null>(null);
 
   const toggleUserRole = async (userId: string, currentRole: string) => {
     try {
@@ -76,6 +79,7 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
             <TableHead>E-Mail</TableHead>
             <TableHead>Rolle</TableHead>
             <TableHead>Aktiviert</TableHead>
+            <TableHead>Guthaben</TableHead>
             <TableHead>Registriert am</TableHead>
             <TableHead>Letzter Login</TableHead>
             <TableHead className="text-right">Aktionen</TableHead>
@@ -84,7 +88,7 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
         <TableBody>
           {users.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-6">
+              <TableCell colSpan={7} className="text-center py-6">
                 Keine Benutzer gefunden
               </TableCell>
             </TableRow>
@@ -106,6 +110,12 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
+                    <Wallet className="mr-2 h-4 w-4 text-gray-500" />
+                    {user.credit !== undefined ? `${user.credit.toFixed(2)}€` : "-"}
+                  </div>
+                </TableCell>
+                <TableCell>
+                  <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4 text-gray-500" />
                     {user.created_at ? format(new Date(user.created_at), 'dd.MM.yyyy') : '-'}
                   </div>
@@ -114,20 +124,40 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                   {user.last_sign_in_at ? format(new Date(user.last_sign_in_at), 'dd.MM.yyyy') : '-'}
                 </TableCell>
                 <TableCell className="text-right">
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={processing === user.id}
-                    onClick={() => toggleUserRole(user.id, user.role)}
-                  >
-                    {user.role === "admin" ? "Zum Benutzer machen" : "Zum Admin machen"}
-                  </Button>
+                  <div className="flex justify-end gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setEditingCredit(user)}
+                    >
+                      Guthaben
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={processing === user.id}
+                      onClick={() => toggleUserRole(user.id, user.role)}
+                    >
+                      {user.role === "admin" ? "Zum Benutzer" : "Zum Admin"}
+                    </Button>
+                  </div>
                 </TableCell>
               </TableRow>
             ))
           )}
         </TableBody>
       </Table>
+
+      {editingCredit && (
+        <CreditEditDialog
+          isOpen={!!editingCredit}
+          onClose={() => setEditingCredit(null)}
+          userId={editingCredit.id}
+          userEmail={editingCredit.email}
+          currentCredit={editingCredit.credit || 0}
+          onCreditUpdated={onUserUpdated}
+        />
+      )}
     </div>
   );
 };

@@ -12,6 +12,7 @@ interface UserData {
   last_sign_in_at: string | null;
   role: string;
   activated: boolean;
+  credit?: number | null;
 }
 
 export const UserManager = () => {
@@ -35,7 +36,7 @@ export const UserManager = () => {
     getUser();
   }, []);
 
-  // Benutzer abrufen
+  // Benutzer und deren Guthaben abrufen
   const fetchUsers = async () => {
     try {
       setIsLoading(true);
@@ -48,7 +49,30 @@ export const UserManager = () => {
       }
       
       if (data) {
-        setUsers(data as UserData[]);
+        const usersData = data as UserData[];
+        
+        // Für jeden Benutzer das Guthaben abrufen
+        for (const user of usersData) {
+          try {
+            const { data: creditData, error: creditError } = await supabase
+              .from('user_credits')
+              .select('amount')
+              .eq('user_id', user.id)
+              .single();
+            
+            if (!creditError && creditData) {
+              // Konvertiere von Cent zu Euro
+              user.credit = creditData.amount / 100;
+            } else {
+              user.credit = 0;
+            }
+          } catch (creditFetchError) {
+            console.error(`Fehler beim Abrufen des Guthabens für ${user.email}:`, creditFetchError);
+            user.credit = 0;
+          }
+        }
+        
+        setUsers(usersData);
       }
     } catch (error: any) {
       console.error("Fehler beim Abrufen der Benutzer:", error);

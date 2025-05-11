@@ -7,12 +7,13 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 
-const AdminLogin = () => {
+const AdminRegister = () => {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
-    password: ""
+    password: "",
+    confirmPassword: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -25,10 +26,20 @@ const AdminLogin = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (formData.password !== formData.confirmPassword) {
+      toast({
+        title: "Passwörter stimmen nicht überein",
+        description: "Bitte überprüfe deine Eingabe",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { error } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password
       });
@@ -38,18 +49,15 @@ const AdminLogin = () => {
       }
       
       toast({
-        title: "Erfolgreich angemeldet",
-        description: "Du wirst zum Admin-Bereich weitergeleitet.",
+        title: "Registrierung erfolgreich",
+        description: "Ein Bestätigungslink wurde an deine E-Mail-Adresse gesendet.",
       });
       
-      // Weiterleitung nach erfolgreichem Login
-      window.location.href = "/admin/leads";
-      
     } catch (error: any) {
-      console.error("Login-Fehler:", error);
+      console.error("Registrierungsfehler:", error);
       toast({
-        title: "Anmeldung fehlgeschlagen",
-        description: error.message || "Ungültige Anmeldedaten.",
+        title: "Registrierung fehlgeschlagen",
+        description: error.message || "Bitte versuche es erneut.",
         variant: "destructive"
       });
     } finally {
@@ -61,9 +69,9 @@ const AdminLogin = () => {
     <div className="flex justify-center items-center min-h-screen bg-gray-50">
       <Card className="w-full max-w-md">
         <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Admin Login</CardTitle>
+          <CardTitle className="text-2xl font-bold text-center">Admin Registrierung</CardTitle>
           <CardDescription className="text-center">
-            Gib deine Anmeldedaten ein, um auf den Admin-Bereich zuzugreifen
+            Erstelle ein neues Admin-Konto
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -91,26 +99,34 @@ const AdminLogin = () => {
                 required
               />
             </div>
+            <div className="space-y-2">
+              <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
+              <Input
+                id="confirmPassword"
+                name="confirmPassword"
+                type="password"
+                value={formData.confirmPassword}
+                onChange={handleChange}
+                required
+              />
+            </div>
             <Button 
               type="submit" 
               className="w-full" 
               disabled={isLoading}
             >
-              {isLoading ? "Wird angemeldet..." : "Anmelden"}
+              {isLoading ? "Wird registriert..." : "Registrieren"}
             </Button>
           </form>
         </CardContent>
-        <CardFooter className="flex justify-between">
+        <CardFooter className="flex justify-center">
           <p className="text-sm text-gray-500">
-            Falls du dein Passwort vergessen hast, kontaktiere den Administrator
+            Bereits registriert? <a href="/admin" className="text-blue-600 hover:underline">Anmelden</a>
           </p>
-          <a href="/admin/register" className="text-sm text-blue-600 hover:underline">
-            Registrieren
-          </a>
         </CardFooter>
       </Card>
     </div>
   );
 };
 
-export default AdminLogin;
+export default AdminRegister;

@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -61,6 +62,24 @@ export default {
 					'accent-foreground': 'hsl(var(--sidebar-accent-foreground))',
 					border: 'hsl(var(--sidebar-border))',
 					ring: 'hsl(var(--sidebar-ring))'
+				},
+				gold: {
+					DEFAULT: '#FFD700',
+					light: '#FFDF33',
+					dark: '#E6C200',
+					foreground: '#000000'
+				},
+				accent1: {
+					DEFAULT: '#8B5CF6',
+					light: '#A78BFA',
+					dark: '#7C3AED',
+					foreground: '#FFFFFF'
+				},
+				casino: {
+					dark: '#1A1F2C',
+					darker: '#12151E',
+					card: '#21283B',
+					highlight: '#313950'
 				}
 			},
 			borderRadius: {
@@ -70,25 +89,42 @@ export default {
 			},
 			keyframes: {
 				'accordion-down': {
-					from: {
-						height: '0'
-					},
-					to: {
-						height: 'var(--radix-accordion-content-height)'
-					}
+					from: { height: '0' },
+					to: { height: 'var(--radix-accordion-content-height)' }
 				},
 				'accordion-up': {
-					from: {
-						height: 'var(--radix-accordion-content-height)'
-					},
-					to: {
-						height: '0'
-					}
+					from: { height: 'var(--radix-accordion-content-height)' },
+					to: { height: '0' }
+				},
+				'pulse-gold': {
+					'0%, 100%': { boxShadow: '0 0 0 0 rgba(255, 215, 0, 0.4)' },
+					'50%': { boxShadow: '0 0 0 10px rgba(255, 215, 0, 0)' }
+				},
+				'gradient-shift': {
+					'0%, 100%': { backgroundPosition: '0% 50%' },
+					'50%': { backgroundPosition: '100% 50%' }
+				},
+				'float': {
+					'0%, 100%': { transform: 'translateY(0)' },
+					'50%': { transform: 'translateY(-10px)' }
+				},
+				'glow-pulse': {
+					'0%, 100%': { opacity: '0.6' },
+					'50%': { opacity: '1' }
 				}
 			},
 			animation: {
 				'accordion-down': 'accordion-down 0.2s ease-out',
-				'accordion-up': 'accordion-up 0.2s ease-out'
+				'accordion-up': 'accordion-up 0.2s ease-out',
+				'pulse-gold': 'pulse-gold 2s infinite',
+				'gradient-shift': 'gradient-shift 3s ease infinite',
+				'float': 'float 3s ease-in-out infinite',
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
+			},
+			backgroundImage: {
+				'casino-gradient': 'linear-gradient(to right, #1A1F2C, #21283B, #1A1F2C)',
+				'gold-gradient': 'linear-gradient(90deg, #FFD700, #FFC107, #FFD700)',
+				'accent-gradient': 'linear-gradient(90deg, #8B5CF6, #6366F1, #8B5CF6)'
 			}
 		}
 	},

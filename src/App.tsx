@@ -18,6 +18,7 @@ import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
 import UserSettings from "./pages/UserSettings";
 import NotFound from "./pages/NotFound";
+import { ThemeProvider } from "@/components/user/theme/theme-provider";
 
 // Create a new QueryClient instance
 const queryClient = new QueryClient();
@@ -26,31 +27,34 @@ const queryClient = new QueryClient();
 function App() {
   return (
     <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            <Route path="/" element={<Index />} />
-            <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/register" element={<AdminRegister />} />
-            <Route path="/admin/leads" element={<AdminLeads />} />
-            <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
-            <Route path="/admin/users" element={<AdminUsers />} />
-            <Route path="/admin/payments" element={<AdminPayments />} />
-            <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
-            <Route path="/nutzer" element={<User />} />
-            <Route path="/nutzer/aktivierung" element={<UserActivation />} />
-            <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
-            <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
-            <Route path="/nutzer/einstellungen" element={<UserSettings />} />
-            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
+      <ThemeProvider defaultTheme="dark" storageKey="user-theme">
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              <Route path="/" element={<Index />} />
+              <Route path="/admin" element={<Admin />} />
+              <Route path="/admin/register" element={<AdminRegister />} />
+              <Route path="/admin/leads" element={<AdminLeads />} />
+              <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
+              <Route path="/admin/users" element={<AdminUsers />} />
+              <Route path="/admin/payments" element={<AdminPayments />} />
+              <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+              <Route path="/nutzer" element={<User />} />
+              <Route path="/nutzer/aktivierung" element={<UserActivation />} />
+              <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
+              <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
+              <Route path="/nutzer/einstellungen" element={<UserSettings />} />
+              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </ThemeProvider>
     </QueryClientProvider>
   );
 }
 
 export default App;
+

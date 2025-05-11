@@ -1,5 +1,5 @@
 
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { useCryptos } from "@/hooks/useCryptos";
@@ -7,14 +7,16 @@ import { useTradingBotSimulation } from "@/hooks/useTradingBotSimulation";
 import TradingBotHeader from "./bot-components/TradingBotHeader";
 import TradingBotContent from "./bot-components/TradingBotContent";
 import TradingBotDialogs from "./bot-components/TradingBotDialogs";
+import { cn } from "@/lib/utils";
 
 interface AITradingBotProps {
   userId?: string;
   userCredit?: number;
   onTradeExecuted?: () => void;
+  className?: string;
 }
 
-const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotProps) => {
+const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AITradingBotProps) => {
   const { 
     settings, 
     status, 
@@ -42,7 +44,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   // Use our custom hook for simulation logic
   const {
     simulationOpen,
-    resultDialogOpen,  // This was missing in the original implementation
+    resultDialogOpen,
     tradeResult,
     handleManualTrade,
     handleSimulationComplete,
@@ -59,14 +61,12 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   );
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <TradingBotHeader 
-          onManualTrade={handleManualTrade}
-          tradesRemaining={status.tradesRemaining}
-        />
-      </CardHeader>
-      <CardContent>
+    <div className={cn("w-full", className)}>
+      <TradingBotHeader 
+        onManualTrade={handleManualTrade}
+        tradesRemaining={status.tradesRemaining}
+      />
+      <CardContent className="p-4 pt-6">
         <TradingBotContent
           status={status}
           userCredit={userCredit}
@@ -87,7 +87,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         handleSimulationComplete={handleSimulationComplete}
         handleResultDialogClose={handleResultDialogClose}
       />
-    </Card>
+    </div>
   );
 };
 

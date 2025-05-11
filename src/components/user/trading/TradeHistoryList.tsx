@@ -1,140 +1,133 @@
 
-import { useState } from "react";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { format } from "date-fns";
+import { de } from "date-fns/locale";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-
-interface TradeHistoryItem {
-  id: string;
-  type: 'buy' | 'sell';
-  quantity: number;
-  price: number;
-  total_amount: number;
-  strategy: string;
-  status: string;
-  simulation_date: string;
-  created_at: string;
-  crypto_asset?: {
-    id: string;
-    symbol: string;
-    name: string;
-    image_url: string | null;
-  };
-}
+import { BotIcon, TrendingUp, TrendingDown } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TradeHistoryListProps {
-  trades: TradeHistoryItem[];
-  botTrades?: TradeHistoryItem[];
+  trades: any[];
+  botTrades?: any[];
+  compact?: boolean;
 }
 
-const TradeHistoryList = ({ trades, botTrades = [] }: TradeHistoryListProps) => {
-  const [activeTab, setActiveTab] = useState<'all' | 'bot'>('all');
-  
+const TradeHistoryList = ({ trades, botTrades = [], compact = false }: TradeHistoryListProps) => {
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  };
+
+  // Format date
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return new Intl.DateTimeFormat('de-DE', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit'
-    }).format(date);
+    return format(date, compact ? 'HH:mm' : 'dd.MM.yyyy HH:mm', { locale: de });
   };
-  
-  const formatPrice = (price: number) => {
-    return new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(price);
+
+  // Check if a trade was executed by the AI bot
+  const isBotTrade = (trade: any) => {
+    return trade.strategy.includes('bot_') || trade.strategy.includes('ai_');
   };
+
+  // Display the most recent trades first
+  const sortedTrades = [...trades].sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
   
-  const getStrategyName = (strategyId: string) => {
-    const strategies: Record<string, string> = {
-      'trend_following': 'Trendfolge-Strategie',
-      'mean_reversion': 'Mean-Reversion-Strategie',
-      'momentum': 'Momentum-Strategie',
-      'sentiment': 'Sentiment-Analyse',
-      'bot_trend_following': 'KI Trendfolge',
-      'bot_mean_reversion': 'KI Mean-Reversion',
-      'bot_momentum': 'KI Momentum',
-      'bot_sentiment': 'KI Sentiment-Analyse',
-      'ai_deep_learning': 'KI Deep Learning'
-    };
-    
-    return strategies[strategyId] || strategyId;
-  };
-  
-  // Determine which trades to display based on active tab
-  const displayTrades = activeTab === 'bot' ? botTrades : trades;
+  // Limit to 10 most recent trades if in compact mode
+  const displayedTrades = compact ? sortedTrades.slice(0, 10) : sortedTrades;
 
   return (
-    <div className="space-y-4">
-      <Tabs value={activeTab} onValueChange={(value: any) => setActiveTab(value)}>
-        <TabsList>
-          <TabsTrigger value="all">Alle Trades</TabsTrigger>
-          <TabsTrigger value="bot">Bot Trades</TabsTrigger>
-        </TabsList>
-      </Tabs>
-      
-      <div className="rounded-md border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Datum</TableHead>
-              <TableHead>Aktion</TableHead>
-              <TableHead>Asset</TableHead>
-              <TableHead className="text-right">Menge</TableHead>
-              <TableHead className="text-right">Preis</TableHead>
-              <TableHead className="text-right">Gesamtbetrag</TableHead>
-              <TableHead>Strategie</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {displayTrades.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={7} className="h-24 text-center">
-                  {activeTab === 'bot' ? 'Keine Bot-Handelshistorie vorhanden' : 'Keine Handelshistorie vorhanden'}
-                </TableCell>
-              </TableRow>
-            ) : (
-              displayTrades.map((trade) => (
-                <TableRow key={trade.id}>
-                  <TableCell className="whitespace-nowrap">
-                    {formatDate(trade.created_at)}
-                  </TableCell>
-                  <TableCell>
-                    <Badge 
-                      variant={trade.type === 'buy' ? 'default' : 'destructive'}
-                      className="uppercase"
-                    >
-                      {trade.type === 'buy' ? 'Kauf' : 'Verkauf'}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="flex items-center gap-2">
-                    {trade.crypto_asset?.image_url && (
-                      <img 
-                        src={trade.crypto_asset.image_url} 
-                        alt={trade.crypto_asset?.symbol || ''} 
-                        className="w-5 h-5 rounded-full" 
-                      />
+    <div className={compact ? "p-2" : "p-4"}>
+      {displayedTrades.length === 0 ? (
+        <div className="text-center py-4 text-muted-foreground">
+          Keine Handelshistorie verfügbar
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {displayedTrades.map((trade) => (
+            <div 
+              key={trade.id} 
+              className={cn(
+                "rounded-lg border transition-all",
+                isBotTrade(trade) 
+                  ? "border-accent1/30 bg-accent1/5 hover:bg-accent1/10" 
+                  : "border-casino-highlight bg-casino-card hover:bg-casino-highlight",
+                compact ? "p-2" : "p-3"
+              )}
+            >
+              <div className="flex justify-between items-center">
+                <div className="flex items-center">
+                  {trade.crypto_asset?.image_url && (
+                    <img 
+                      src={trade.crypto_asset?.image_url} 
+                      alt={trade.crypto_asset?.symbol || "Crypto"} 
+                      className={`${compact ? "h-4 w-4" : "h-6 w-6"} mr-2 rounded-full`} 
+                    />
+                  )}
+                  <span className={`${compact ? "text-xs" : "text-sm"} font-medium`}>
+                    {trade.crypto_asset?.symbol?.toUpperCase() || "UNKNOWN"}
+                  </span>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  <Badge 
+                    variant={trade.type === 'buy' ? 'default' : 'secondary'}
+                    className={cn(
+                      compact ? "text-xs px-1.5 py-0" : "text-xs px-2 py-0.5",
+                      trade.type === 'buy' 
+                        ? "bg-green-600/30 text-green-300 hover:bg-green-600/40 border-green-600/50" 
+                        : "bg-red-600/30 text-red-300 hover:bg-red-600/40 border-red-600/50"
                     )}
-                    <span>{trade.crypto_asset?.symbol}</span>
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {trade.quantity.toFixed(6)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatPrice(trade.price)}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    {formatPrice(trade.total_amount)}
-                  </TableCell>
-                  <TableCell>
-                    {getStrategyName(trade.strategy)}
-                  </TableCell>
-                </TableRow>
-              ))
-            )}
-          </TableBody>
-        </Table>
-      </div>
+                  >
+                    {trade.type === 'buy' ? (
+                      <TrendingUp className={`${compact ? "h-3 w-3" : "h-3.5 w-3.5"} mr-0.5`} />
+                    ) : (
+                      <TrendingDown className={`${compact ? "h-3 w-3" : "h-3.5 w-3.5"} mr-0.5`} />
+                    )}
+                    {trade.type === 'buy' ? 'KAUF' : 'VERKAUF'}
+                  </Badge>
+                  
+                  {isBotTrade(trade) && (
+                    <Badge 
+                      variant="outline"
+                      className={cn(
+                        "bg-accent1/10 text-accent1-light border-accent1/30",
+                        compact ? "text-[0.65rem] px-1 py-0" : "text-xs px-1.5 py-0"
+                      )}
+                    >
+                      <BotIcon className={`${compact ? "h-2.5 w-2.5" : "h-3 w-3"} mr-0.5`} />
+                      BOT
+                    </Badge>
+                  )}
+                </div>
+              </div>
+
+              <div className="flex justify-between mt-2">
+                <div className={`${compact ? "text-xs" : "text-sm"} text-muted-foreground`}>
+                  {formatDate(trade.created_at)}
+                </div>
+                <div className={`${compact ? "text-xs" : "text-sm"} font-medium text-gold`}>
+                  {formatCurrency(trade.total_amount)}
+                </div>
+              </div>
+
+              {!compact && (
+                <div className="flex justify-between mt-1">
+                  <div className="text-xs text-muted-foreground">
+                    Strategie: {trade.strategy}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {trade.quantity.toFixed(6)} @ {formatCurrency(trade.price)}
+                  </div>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 };

@@ -42,7 +42,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   // Use our custom hook for simulation logic
   const {
     simulationOpen,
-    resultDialogOpen,
+    resultDialogOpen,  // This was missing in the original implementation
     tradeResult,
     handleManualTrade,
     handleSimulationComplete,

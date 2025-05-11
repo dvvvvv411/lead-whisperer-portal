@@ -6,7 +6,7 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
 import UserDashboard from "@/components/user/UserDashboard";
-import { CryptoTradingSection } from "@/components/user/trading/CryptoTradingSection";
+import CryptoTradingSection from "@/components/user/trading/CryptoTradingSection";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { checkUserRole } from "@/services/roleService";
 

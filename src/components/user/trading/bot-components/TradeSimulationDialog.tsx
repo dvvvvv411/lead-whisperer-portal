@@ -196,5 +196,5 @@ const TradeSimulationDialog = React.memo(({
   );
 });
 
-TradeResultDialog.displayName = 'TradeResultDialog';
+TradeSimulationDialog.displayName = 'TradeSimulationDialog';
 export default TradeSimulationDialog;

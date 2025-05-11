@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2, CreditCard } from "lucide-react";
+import { Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 // Custom hooks
@@ -95,6 +95,12 @@ const UserActivation = () => {
       const selectedWalletObj = wallets.find(w => w.currency === selectedWallet);
       if (!selectedWalletObj) throw new Error("Keine gültige Wallet ausgewählt");
       
+      if (!user || !user.id) {
+        throw new Error("Benutzer nicht authentifiziert");
+      }
+
+      console.log("Inserting payment with user_id:", user.id);
+      
       // Zahlung in der Datenbank speichern
       const { data, error: paymentError } = await supabase
         .from('payments')
@@ -109,7 +115,10 @@ const UserActivation = () => {
         .select('id')
         .single();
 
-      if (paymentError) throw paymentError;
+      if (paymentError) {
+        console.error("Payment error details:", paymentError);
+        throw paymentError;
+      }
 
       toast({
         title: "Zahlung erfolgreich gemeldet",
@@ -124,7 +133,7 @@ const UserActivation = () => {
       console.error("Fehler bei der Zahlungsmeldung:", error);
       toast({
         title: "Zahlung fehlgeschlagen",
-        description: "Es gab ein Problem bei der Zahlungsmeldung. Bitte versuchen Sie es später erneut.",
+        description: "Es gab ein Problem bei der Zahlungsmeldung: " + error.message,
         variant: "destructive"
       });
     } finally {

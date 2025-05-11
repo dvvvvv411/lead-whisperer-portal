@@ -5,7 +5,7 @@ import { supabase } from "@/integrations/supabase/client";
 const CREDIT_ACTIVATION_THRESHOLD = 250;
 
 // Original role check function - still used for admin role checks
-export const checkUserRole = async (role: string): Promise<boolean> => {
+export const checkUserRole = async (role: "admin" | "user"): Promise<boolean> => {
   try {
     // Get current user
     const { data: userData, error: userError } = await supabase.auth.getUser();

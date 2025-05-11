@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -12,7 +13,18 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { Lead } from "./LeadTable";
+
+// Define the Lead type here instead of importing from LeadTable
+interface Lead {
+  id: string;
+  created_at: string;
+  name: string;
+  email: string;
+  phone: string | null;
+  company: string | null;
+  message: string;
+  status: 'neu' | 'akzeptiert' | 'abgelehnt';
+}
 
 interface CreateAccountDialogProps {
   open: boolean;

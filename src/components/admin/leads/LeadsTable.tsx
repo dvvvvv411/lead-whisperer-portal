@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +8,7 @@ import { LeadTableRow } from "./LeadTableRow";
 import { CreateAccountDialog } from "./CreateAccountDialog";
 import { AdminNavbar } from "../AdminNavbar";
 
-interface Lead {
+export interface Lead {
   id: string;
   created_at: string;
   name: string;
@@ -45,12 +46,7 @@ const LeadsTable = () => {
   
   // Account creation states
   const [createAccountOpen, setCreateAccountOpen] = useState(false);
-  const [createAccountData, setCreateAccountData] = useState<CreateAccountFormData>({
-    name: '',
-    email: '',
-    password: '',
-    leadId: ''
-  });
+  const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
 
   // Benutzer-Session abrufen
   useEffect(() => {
@@ -155,12 +151,7 @@ const LeadsTable = () => {
       // Find the lead to populate account creation form
       const lead = leads.find(l => l.id === id);
       if (lead) {
-        setCreateAccountData({
-          name: lead.name,
-          email: lead.email,
-          password: '',
-          leadId: lead.id
-        });
+        setSelectedLead(lead);
         setCreateAccountOpen(true);
       }
     } else {
@@ -208,20 +199,17 @@ const LeadsTable = () => {
   };
 
   const handleAccountCreated = () => {
-    // Update local leads state
-    setLeads(prevLeads => 
-      prevLeads.map(lead => 
-        lead.id === createAccountData.leadId ? { ...lead, status: 'akzeptiert' } : lead
-      )
-    );
+    if (selectedLead) {
+      // Update local leads state
+      setLeads(prevLeads => 
+        prevLeads.map(lead => 
+          lead.id === selectedLead.id ? { ...lead, status: 'akzeptiert' } : lead
+        )
+      );
+    }
     
     setCreateAccountOpen(false);
-    setCreateAccountData({
-      name: '',
-      email: '',
-      password: '',
-      leadId: ''
-    });
+    setSelectedLead(null);
   };
 
   // Function to fetch comments
@@ -313,10 +301,11 @@ const LeadsTable = () => {
 
       <CreateAccountDialog
         open={createAccountOpen}
-        onOpenChange={setCreateAccountOpen}
-        formData={createAccountData}
-        onFormDataChange={(data) => setCreateAccountData({...createAccountData, ...data})}
-        onSuccess={handleAccountCreated}
+        onClose={() => {
+          setCreateAccountOpen(false);
+          setSelectedLead(null);
+        }}
+        lead={selectedLead}
       />
     </div>
   );

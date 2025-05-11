@@ -75,8 +75,8 @@ const TradeSimulationDialog = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [comparisons, setComparisons] = useState<CryptoComparisonProps[]>([]);
   
-  // Random simulation duration between 30-90 seconds (30000-90000ms)
-  // For development speed, we're making it much shorter (5-15 seconds)
+  // Simulation duration zwischen 30-90 Sekunden (30000-90000ms)
+  // Für die Entwicklung und Tests verwenden wir 5-15 Sekunden
   const simulationDuration = Math.floor(Math.random() * 10000) + 5000;
   
   // Algorithm steps
@@ -103,7 +103,11 @@ const TradeSimulationDialog = ({
     
     // Start progress animation
     const startTime = Date.now();
-    const interval = setInterval(() => {
+    
+    // Use requestAnimationFrame for smoother animation
+    let requestId: number;
+    
+    const updateProgress = () => {
       const elapsed = Date.now() - startTime;
       const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
       setProgress(newProgress);
@@ -113,12 +117,13 @@ const TradeSimulationDialog = ({
       setCurrentStep(newStep);
       
       // Add crypto comparisons periodically
-      if (elapsed % 1500 < 100 && cryptoData.length > 0) {
+      if (elapsed % 1000 < 100 && cryptoData.length > 0) {
         // Take a random crypto from the data
-        const randomCrypto = cryptoData[Math.floor(Math.random() * cryptoData.length)];
+        const randomIndex = Math.floor(Math.random() * cryptoData.length);
+        const randomCrypto = cryptoData[randomIndex];
         if (randomCrypto) {
           const newComparison = {
-            symbol: randomCrypto.symbol,
+            symbol: randomCrypto.symbol || `CRYPTO${randomIndex}`,
             price: randomCrypto.current_price || Math.random() * 1000,
             change: (Math.random() * 10) - 5 // Random change between -5% and +5%
           };
@@ -128,14 +133,24 @@ const TradeSimulationDialog = ({
       
       // End simulation
       if (newProgress >= 100) {
-        clearInterval(interval);
+        cancelAnimationFrame(requestId);
         setTimeout(() => {
           onComplete(true);
         }, 1000);
+        return;
       }
-    }, 100);
+      
+      // Continue animation
+      requestId = requestAnimationFrame(updateProgress);
+    };
     
-    return () => clearInterval(interval);
+    // Start the animation
+    requestId = requestAnimationFrame(updateProgress);
+    
+    // Cleanup
+    return () => {
+      cancelAnimationFrame(requestId);
+    };
   }, [open, cryptoData, simulationDuration, steps.length, onComplete]);
   
   return (

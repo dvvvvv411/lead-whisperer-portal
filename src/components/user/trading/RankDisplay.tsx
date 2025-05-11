@@ -3,7 +3,7 @@ import React from 'react';
 import { RankTier } from '@/hooks/ai-bot/types';
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, ChevronUp, Star, Award, Zap, Bot } from "lucide-react";
+import { Trophy, ChevronUp, Star, Award, Zap } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -34,7 +34,29 @@ const RankDisplay = ({
       (nextTier.minBalance - currentTier!.minBalance) * 100))
     : 100;
   
-  // Get rank name
+  // Get rank badge color
+  const getRankBadgeBg = (rank: number) => {
+    switch(rank) {
+      case 1: return "bg-gradient-to-br from-amber-700 to-amber-500"; // Bronze
+      case 2: return "bg-gradient-to-br from-slate-400 to-slate-300"; // Silver
+      case 3: return "bg-gradient-to-br from-yellow-500 to-amber-300"; // Gold
+      case 4: return "bg-gradient-to-br from-blue-600 to-cyan-400"; // Platinum
+      case 5: return "bg-gradient-to-br from-violet-600 to-fuchsia-400"; // Diamond
+      default: return "bg-slate-700";
+    }
+  };
+
+  const getRankGlow = (rank: number) => {
+    switch(rank) {
+      case 1: return "shadow-amber-700/30"; // Bronze
+      case 2: return "shadow-slate-400/30"; // Silver
+      case 3: return "shadow-yellow-500/40"; // Gold
+      case 4: return "shadow-blue-600/40"; // Platinum
+      case 5: return "shadow-violet-600/50"; // Diamond
+      default: return "shadow-slate-700/30";
+    }
+  };
+
   const getRankName = (rank: number) => {
     switch(rank) {
       case 1: return "Bronze";
@@ -63,51 +85,35 @@ const RankDisplay = ({
         <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gold/5 blur-3xl animate-glow-pulse"></div>
         <div className="absolute -bottom-40 -left-20 w-60 h-60 rounded-full bg-accent1/5 blur-3xl animate-glow-pulse"></div>
         
-        {/* Bot and Rank Display - New Unified Design */}
-        <div className="flex justify-center mb-6">
-          <div className="relative">
-            {/* Gold circular background with gradient */}
-            <div className={cn(
-              "flex items-center justify-center w-32 h-32 rounded-full shadow-lg transition-all duration-500",
-              "bg-gradient-to-br from-gold/80 via-gold-light to-amber-400",
-              "shadow-[0_0_40px_rgba(255,215,0,0.4)]",
-            )}>
-              {/* Hexagonal grid pattern overlay */}
-              <div className="absolute inset-0 rounded-full overflow-hidden opacity-20">
-                <div className="w-full h-full bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZGVmcz48cGF0dGVybiBpZD0iaGV4YWdvbiIgd2lkdGg9IjIwIiBoZWlnaHQ9IjM0LjY0IiBwYXR0ZXJuVW5pdHM9InVzZXJTcGFjZU9uVXNlIiBwYXR0ZXJuVHJhbnNmb3JtPSJyb3RhdGUoMzApIj48cGF0aCBkPSJNMCwwIGwxMCwwIGw1LDguNjYgbC01LDguNjYgbC0xMCwwIGwtNSwtOC42NiB6IiBmaWxsPSJub25lIiBzdHJva2U9IiNmZmZmZmYiIHN0cm9rZS13aWR0aD0iMC41Ii8+PC9wYXR0ZXJuPjwvZGVmcz48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSJ1cmwoI2hleGFnb24pIiAvPjwvc3ZnPg==')]"></div>
-              </div>
-              
-              {/* Bot Icon in center */}
-              <div className="relative flex flex-col items-center justify-center">
-                <Bot className="h-14 w-14 text-gold-foreground drop-shadow-lg z-10" />
-                
-                {/* Rank number overlay */}
-                <div className="absolute -bottom-1 -right-7 flex items-center justify-center w-10 h-10 rounded-full bg-gradient-to-br from-casino-dark to-casino-card border-2 border-gold shadow-lg">
-                  <span className="text-xl font-bold text-gold">{currentRank}</span>
-                </div>
-                
-                {/* Rank name */}
-                <div className="mt-2 text-center">
-                  <span className={cn(
-                    "text-lg font-bold text-gold-foreground drop-shadow-md",
-                    currentRank === 5 && "animate-pulse"
-                  )}>
-                    {getRankName(currentRank)}
-                  </span>
-                </div>
-              </div>
-              
-              {/* Animated pulse rings */}
-              <div className="absolute inset-0 w-full h-full rounded-full border-4 border-gold/20 animate-ping" style={{ animationDuration: '3s' }}></div>
-              <div className="absolute inset-0 w-full h-full rounded-full border-2 border-gold/10 animate-ping" style={{ animationDuration: '2s' }}></div>
+        {/* Large rank display */}
+        <div className="flex items-center justify-between mb-6 relative z-10">
+          <div className="flex flex-col items-start">
+            <span className="text-sm text-muted-foreground">Aktueller Rang</span>
+            <div className="flex items-center gap-2 mt-1">
+              <Award className={cn(
+                "h-7 w-7",
+                currentRank >= 3 ? "text-yellow-400" : currentRank === 2 ? "text-slate-300" : "text-amber-600", 
+                "drop-shadow-md animate-pulse"
+              )} />
+              <span className={cn(
+                "text-2xl font-bold",
+                currentRank >= 3 ? "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500" : 
+                currentRank === 2 ? "text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-gray-400" : 
+                "text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-400"
+              )}>
+                {getRankName(currentRank)}
+              </span>
             </div>
-            
-            {/* Circulating dots representing trading simulation */}
-            <div className="absolute inset-0 w-full h-full">
-              <div className="absolute top-0 left-[50%] w-2 h-2 rounded-full bg-white/60 animate-spin" style={{ animationDuration: '8s', transformOrigin: '0 16rem' }}></div>
-              <div className="absolute top-0 left-[50%] w-1.5 h-1.5 rounded-full bg-white/40 animate-spin" style={{ animationDuration: '12s', animationDelay: '0.5s', transformOrigin: '0 16rem' }}></div>
-              <div className="absolute top-0 left-[50%] w-1 h-1 rounded-full bg-white/30 animate-spin" style={{ animationDuration: '15s', animationDelay: '1s', transformOrigin: '0 16rem' }}></div>
-            </div>
+          </div>
+          <div className={cn(
+            "flex items-center justify-center w-20 h-20 rounded-full shadow-lg transition-all duration-500",
+            getRankBadgeBg(currentRank),
+            getRankGlow(currentRank),
+            "shadow-[0_0_30px_rgba(255,215,0,0.3)]"
+          )}>
+            <span className="text-5xl font-bold text-white drop-shadow-lg">
+              {currentRank}
+            </span>
           </div>
         </div>
         

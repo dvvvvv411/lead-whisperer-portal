@@ -5,9 +5,18 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
 
+interface UserData {
+  id: string;
+  email: string;
+  created_at: string;
+  last_sign_in_at: string | null;
+  role: string;
+  activated: boolean;
+}
+
 export const UserManager = () => {
   const { toast } = useToast();
-  const [users, setUsers] = useState<any[]>([]);
+  const [users, setUsers] = useState<UserData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
@@ -39,7 +48,7 @@ export const UserManager = () => {
       }
       
       if (data) {
-        setUsers(data);
+        setUsers(data as UserData[]);
       }
     } catch (error: any) {
       console.error("Fehler beim Abrufen der Benutzer:", error);

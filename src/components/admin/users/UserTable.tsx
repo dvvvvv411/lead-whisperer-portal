@@ -15,7 +15,7 @@ import { Calendar, Check, X } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 
-interface User {
+export interface User {
   id: string;
   email: string;
   created_at: string;

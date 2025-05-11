@@ -128,12 +128,30 @@ export type Database = {
         }
         Returns: undefined
       }
+      get_all_users: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          email: string
+          created_at: string
+          last_sign_in_at: string
+          role: string
+          activated: boolean
+        }[]
+      }
       has_role: {
         Args: {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
+      }
+      remove_user_role: {
+        Args: {
+          _user_id: string
+          _role: Database["public"]["Enums"]["app_role"]
+        }
+        Returns: undefined
       }
     }
     Enums: {

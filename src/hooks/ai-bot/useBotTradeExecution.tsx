@@ -22,7 +22,22 @@ export const useBotTradeExecution = (
     console.log("Checking if trade can be executed...");
     
     if (!userId || !settings || !status || !updateStatus) {
-      console.log("Cannot execute trade: missing required data");
+      console.log("Cannot execute trade: missing required data", { userId, settings: !!settings, status: !!status });
+      toast({
+        title: "Fehler",
+        description: "Fehlende Daten für Handelsausführung",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    if (!userCredit || userCredit <= 0) {
+      console.log("Cannot execute trade: insufficient credit", { userCredit });
+      toast({
+        title: "Fehler",
+        description: "Nicht genügend Guthaben für den Handel",
+        variant: "destructive"
+      });
       return false;
     }
     
@@ -62,19 +77,39 @@ export const useBotTradeExecution = (
     
     console.log("Trade can be executed, simulation starting...");
     return true;
-  }, [userId, settings, status, updateStatus, toast]);
+  }, [userId, userCredit, settings, status, updateStatus, toast]);
   
   // Complete trade after simulation is done
   const completeTradeAfterSimulation = useCallback(async () => {
     console.log("Completing trade after simulation...");
     
-    if (!userId || !userCredit || !settings) {
-      console.log("Cannot complete trade: missing required data");
+    if (!userId || !settings) {
+      console.log("Cannot complete trade: missing required user data or settings", { userId: !!userId, settings: !!settings });
       simulationInProgressRef.current = false; // Reset simulation state
+      setIsSimulating(false);
+      toast({
+        title: "Fehler",
+        description: "Fehlende Benutzerdaten für die Handelsausführung",
+        variant: "destructive"
+      });
       return { success: false, error: "Missing required data" };
     }
     
+    if (!userCredit || userCredit <= 0) {
+      console.log("Cannot complete trade: insufficient credit", { userCredit });
+      simulationInProgressRef.current = false; // Reset simulation state
+      setIsSimulating(false);
+      toast({
+        title: "Fehler",
+        description: "Nicht genügend Guthaben für den Handel",
+        variant: "destructive"
+      });
+      return { success: false, error: "Insufficient credit" };
+    }
+    
     try {
+      console.log("Executing AI trade with:", { userId, userCredit, riskLevel: settings.riskLevel, maxTradeAmount: settings.maxTradeAmount });
+      
       // Execute the actual trade with the bot's strategy
       const result = await executeAITrade({
         userId,
@@ -82,6 +117,8 @@ export const useBotTradeExecution = (
         tradeAmount: settings.maxTradeAmount,
         riskLevel: settings.riskLevel,
       });
+      
+      console.log("Trade execution result:", result);
       
       if (result.success) {
         // Update status with trade info
@@ -101,6 +138,13 @@ export const useBotTradeExecution = (
         }
         
         console.log("Trade completed successfully:", result);
+        
+        // Display success toast
+        toast({
+          title: "Trade erfolgreich",
+          description: `Gewinn: ${result.profit.toFixed(2)}€ (${result.profitPercentage.toFixed(2)}%)`,
+          variant: "default"
+        });
       } else {
         // Update status with failure
         if (updateStatus) {
@@ -112,7 +156,7 @@ export const useBotTradeExecution = (
         console.log("Trade failed:", result.error);
         toast({
           title: "Trade fehlgeschlagen",
-          description: result.error,
+          description: result.error || "Unbekannter Fehler",
           variant: "destructive"
         });
       }
@@ -131,14 +175,19 @@ export const useBotTradeExecution = (
       
       toast({
         title: "Fehler",
-        description: "Es ist ein Fehler beim Ausführen des Trades aufgetreten.",
+        description: error.message || "Es ist ein Fehler beim Ausführen des Trades aufgetreten.",
         variant: "destructive"
       });
       
       // Reset simulation state
       simulationInProgressRef.current = false;
+      setIsSimulating(false);
       
-      return { success: false, error: "Unerwarteter Fehler" };
+      return { success: false, error: error.message || "Unerwarteter Fehler" };
+    } finally {
+      console.log("Trade execution completed, resetting simulation state");
+      simulationInProgressRef.current = false;
+      setIsSimulating(false);
     }
   }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, toast]);
   

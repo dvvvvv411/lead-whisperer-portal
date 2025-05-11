@@ -32,7 +32,7 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
   } = useAITradingBot(userId, userCredit, onTradeExecuted);
   
   const { botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(userId);
-  const { cryptos } = useCryptos();
+  const { cryptos, fetchCryptos } = useCryptos();
   
   // Format currency function
   const formatCurrency = (amount: number) => {
@@ -42,7 +42,18 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     }).format(amount);
   };
   
-  // Ensure trade history is refreshed when component mounts
+  // Custom trade executed callback that ensures data refresh
+  const handleTradeExecuted = () => {
+    console.log("AITradingBot: Trade executed, refreshing data");
+    fetchTradeHistory();
+    fetchCryptos();
+    
+    if (onTradeExecuted) {
+      onTradeExecuted();
+    }
+  };
+  
+  // Ensure trade history is refreshed when component mounts and after trade execution
   useEffect(() => {
     if (userId) {
       console.log("AITradingBot component mounted, fetching initial trade history");
@@ -63,7 +74,12 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     startBot,
     stopBot,
     executeSingleTrade,
-    completeTradeAfterSimulation,
+    async () => {
+      const result = await completeTradeAfterSimulation();
+      // Refresh trade history immediately after trade execution
+      fetchTradeHistory();
+      return result;
+    },
     isSimulating,
     setIsSimulating,
     simulationInProgressRef
@@ -71,11 +87,14 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
 
   // Get user's first name from email if available
   const userName = userEmail ? userEmail.split('@')[0].split('.')[0] : undefined;
-
-  // Log dialog states for debugging
+  
+  // Refresh trade history when dialogs close
   useEffect(() => {
-    console.log("Dialog states in AITradingBot - simulation:", simulationOpen, "result:", resultDialogOpen);
-  }, [simulationOpen, resultDialogOpen]);
+    if (!simulationOpen && !resultDialogOpen && !isSimulating) {
+      console.log("Dialogs closed, refreshing trade history");
+      fetchTradeHistory();
+    }
+  }, [simulationOpen, resultDialogOpen, isSimulating, fetchTradeHistory]);
 
   return (
     <div className={cn(

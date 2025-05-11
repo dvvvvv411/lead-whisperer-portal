@@ -11,7 +11,7 @@ import { BotSettings } from "./ai-bot/types";
 
 export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExecuted?: () => void) => {
   const { toast } = useToast();
-  const { cryptos } = useCryptos();
+  const { cryptos, fetchCryptos } = useCryptos();
   
   // Use our modular hooks
   const { botInterval, clearBotInterval, setNewBotInterval } = useBotInterval();
@@ -28,11 +28,15 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
   // Create an enhanced trade executed callback that ensures data refresh
   const handleTradeExecuted = useCallback(() => {
     console.log("Trade executed callback triggered");
+    
+    // Refresh crypto data
+    fetchCryptos();
+    
     if (onTradeExecuted) {
       console.log("Calling parent onTradeExecuted callback");
       onTradeExecuted();
     }
-  }, [onTradeExecuted]);
+  }, [onTradeExecuted, fetchCryptos]);
   
   // Bot operations (start, stop, execute trade)
   const { 

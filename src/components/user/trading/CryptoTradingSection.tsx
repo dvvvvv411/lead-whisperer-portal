@@ -29,26 +29,30 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
   const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
   
-  // Refresh data every 90 seconds
+  // Refresh data every 60 seconds
   useEffect(() => {
     const interval = setInterval(() => {
       // Update all relevant data
       updateCryptoPrices();
-      fetchPortfolio();
-      fetchTradeHistory();
+      if (user?.id) {
+        fetchPortfolio();
+        fetchTradeHistory();
+      }
       onUpdated(); // Update balance
-    }, 90000); // 90 seconds
+    }, 60000); // 60 seconds
     
     return () => clearInterval(interval);
-  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, onUpdated]);
+  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, onUpdated, user?.id]);
   
   // Also fetch data when the component mounts
   useEffect(() => {
     console.log("CryptoTradingSection mounted, fetching initial data");
     updateCryptoPrices();
-    fetchPortfolio();
-    fetchTradeHistory();
-  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory]);
+    if (user?.id) {
+      fetchPortfolio();
+      fetchTradeHistory();
+    }
+  }, [updateCryptoPrices, fetchPortfolio, fetchTradeHistory, user?.id]);
   
   const handleTrade = async (
     cryptoId: string, 
@@ -106,9 +110,13 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
     console.log("Tab changed to:", value);
     setSelectedTab(value);
     
-    // If changing to AIBot tab, refresh data
-    if (value === "aibot") {
+    // If changing to AIBot or history tab, refresh data
+    if (value === "aibot" || value === "history") {
       fetchTradeHistory();
+      onUpdated();
+    } else if (value === "portfolio") {
+      fetchPortfolio();
+      onUpdated();
     }
   };
 

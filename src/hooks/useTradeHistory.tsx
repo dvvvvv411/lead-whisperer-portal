@@ -1,5 +1,5 @@
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 
@@ -29,7 +29,7 @@ export const useTradeHistory = (userId?: string) => {
   const [loading, setLoading] = useState(true);
   const [botTrades, setBotTrades] = useState<TradeHistoryItem[]>([]);
   
-  const fetchTradeHistory = async () => {
+  const fetchTradeHistory = useCallback(async () => {
     if (!userId) return;
     
     try {
@@ -77,13 +77,34 @@ export const useTradeHistory = (userId?: string) => {
     } finally {
       setLoading(false);
     }
-  };
+  }, [userId, toast]);
   
   // Set up real-time subscription for new trades (useful for bot activity)
   useEffect(() => {
     if (!userId) return;
     
     fetchTradeHistory();
+    
+    // Ensure realtime is enabled for trade_simulations table on Supabase
+    const enableRealtimeQuery = async () => {
+      try {
+        // This is just a check to see if the user can connect
+        const { data, error } = await supabase
+          .from('trade_simulations')
+          .select('id')
+          .limit(1);
+          
+        if (error) {
+          console.error("Error checking trade_simulations access:", error);
+        } else {
+          console.log("Successfully connected to trade_simulations table");
+        }
+      } catch (e) {
+        console.error("Error enabling realtime:", e);
+      }
+    };
+    
+    enableRealtimeQuery();
     
     // Subscribe to changes in trade_simulations table for this user
     const channel = supabase
@@ -101,7 +122,9 @@ export const useTradeHistory = (userId?: string) => {
           fetchTradeHistory();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Supabase real-time subscription status:", status);
+      });
     
     console.log("Supabase real-time channel subscribed for trade history");
     
@@ -109,7 +132,7 @@ export const useTradeHistory = (userId?: string) => {
       console.log("Cleaning up real-time subscription");
       supabase.removeChannel(channel);
     };
-  }, [userId]);
+  }, [userId, fetchTradeHistory]);
   
   return { 
     trades, 

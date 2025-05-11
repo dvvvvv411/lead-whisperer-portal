@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -17,8 +17,8 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
   
-  // Get the user to fetch their credit
-  useState(() => {
+  // Get the user to fetch their credit - using useEffect instead of useState
+  useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {

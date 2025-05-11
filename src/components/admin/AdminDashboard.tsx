@@ -5,7 +5,7 @@ import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { LayoutDashboard, List, Menu, LogOut } from "lucide-react";
+import { LayoutDashboard, List, Menu, LogOut, Wallet } from "lucide-react";
 import { Link } from "react-router-dom";
 
 export const AdminDashboard = () => {
@@ -75,6 +75,12 @@ export const AdminDashboard = () => {
       description: "Zahlungen verwalten und bestätigen",
       icon: <LayoutDashboard className="w-10 h-10 text-purple-500" />,
       link: "/admin/payments"
+    },
+    {
+      title: "Auszahlungen",
+      description: "Auszahlungsanträge verwalten",
+      icon: <Wallet className="w-10 h-10 text-teal-500" />,
+      link: "/admin/withdrawals"
     }
   ];
 
@@ -93,7 +99,7 @@ export const AdminDashboard = () => {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8">
         {adminModules.map((module) => (
           <Link to={module.link} key={module.title} className="block no-underline">
             <Card className="h-full hover:shadow-md transition-shadow">

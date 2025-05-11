@@ -11,9 +11,11 @@ import AdminLeads from "./pages/AdminLeads";
 import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import AdminUsers from "./pages/AdminUsers";
 import AdminPayments from "./pages/AdminPayments";
+import AdminWithdrawals from "./pages/AdminWithdrawals";
 import User from "./pages/User";
 import UserActivation from "./pages/UserActivation";
 import UserDeposit from "./pages/UserDeposit";
+import UserWithdrawal from "./pages/UserWithdrawal";
 import NotFound from "./pages/NotFound";
 
 // Create a new QueryClient instance
@@ -35,9 +37,11 @@ function App() {
             <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
             <Route path="/admin/users" element={<AdminUsers />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
             <Route path="/nutzer" element={<User />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
+            <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
             {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
             <Route path="*" element={<NotFound />} />
           </Routes>

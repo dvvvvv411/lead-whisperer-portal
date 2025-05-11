@@ -23,6 +23,9 @@ export const AdminNavbar = () => {
           <MenubarItem asChild>
             <Link to="/admin/payments">Zahlungen</Link>
           </MenubarItem>
+          <MenubarItem asChild>
+            <Link to="/admin/withdrawals">Auszahlungen</Link>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

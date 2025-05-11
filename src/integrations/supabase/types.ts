@@ -314,6 +314,48 @@ export type Database = {
         }
         Relationships: []
       }
+      withdrawals: {
+        Row: {
+          amount: number
+          created_at: string
+          currency: string
+          id: string
+          notes: string | null
+          status: string
+          updated_at: string
+          user_email: string
+          user_id: string
+          wallet_address: string
+          wallet_currency: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_email: string
+          user_id: string
+          wallet_address: string
+          wallet_currency: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          currency?: string
+          id?: string
+          notes?: string | null
+          status?: string
+          updated_at?: string
+          user_email?: string
+          user_id?: string
+          wallet_address?: string
+          wallet_currency?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never
@@ -351,6 +393,22 @@ export type Database = {
           last_sign_in_at: string
           role: string
           activated: boolean
+        }[]
+      }
+      get_all_withdrawals: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          id: string
+          user_id: string
+          user_email: string
+          amount: number
+          currency: string
+          wallet_currency: string
+          wallet_address: string
+          status: string
+          notes: string
+          created_at: string
+          updated_at: string
         }[]
       }
       has_role: {

@@ -101,12 +101,18 @@ const User = () => {
       />
       
       <div className="container mx-auto p-4 mt-8">
-        <div className="mb-8">
+        <div className="mb-8 flex space-x-4">
           <Link 
             to="/nutzer/einzahlen" 
             className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
           >
             Guthaben einzahlen
+          </Link>
+          <Link 
+            to="/nutzer/auszahlen" 
+            className="bg-gray-100 text-gray-800 px-4 py-2 rounded hover:bg-gray-200 transition-colors"
+          >
+            Guthaben auszahlen
           </Link>
         </div>
         

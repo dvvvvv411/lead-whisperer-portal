@@ -4,7 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePaymentStatus } from "./usePaymentStatus";
 import { supabase } from "@/integrations/supabase/client";
-import { checkUserRole } from "@/services/roleService";
+import { useUserCredit } from "@/hooks/useUserCredit";
+
+// Credit threshold required to access the dashboard (in EUR)
+const CREDIT_ACTIVATION_THRESHOLD = 250;
 
 interface UsePaymentFlowProps {
   userId?: string;
@@ -33,77 +36,88 @@ export const usePaymentFlow = ({
     enabled: paymentSubmitted
   });
 
-  // Set up a subscription to monitor user_roles changes for activation payments
+  // Use the user credit hook to monitor credit level
+  const { userCredit, fetchUserCredit } = useUserCredit(userId);
+
+  // Set up a subscription to monitor user_credits changes for activation payments
   useEffect(() => {
     if (!isActivation || !userId || !paymentSubmitted) return;
     
-    console.log("Setting up roles subscription for payment flow");
+    console.log("Setting up credit subscription for payment flow");
     
-    const roleSubscription = supabase
-      .channel('payment-flow-roles')
+    const creditSubscription = supabase
+      .channel('payment-flow-credits')
       .on('postgres_changes', {
-        event: 'INSERT',
+        event: '*',
         schema: 'public',
-        table: 'user_roles',
+        table: 'user_credits',
         filter: `user_id=eq.${userId}`
-      }, (payload) => {
-        console.log("User role change detected in payment flow:", payload);
+      }, async (payload) => {
+        console.log("User credit change detected in payment flow:", payload);
         
-        // Show activation toast and redirect
-        toast({
-          title: "Konto aktiviert",
-          description: "Ihr Konto wurde erfolgreich aktiviert! Sie werden zum Dashboard weitergeleitet."
-        });
+        // Refresh credit amount
+        await fetchUserCredit();
         
-        // Redirect to user dashboard immediately
-        navigate(redirectPath);
+        // Check if user has enough credit now
+        if (userCredit >= CREDIT_ACTIVATION_THRESHOLD) {
+          console.log("User now has sufficient credit for activation, redirecting to dashboard");
+          
+          // Show activation toast and redirect
+          toast({
+            title: "Konto aktiviert",
+            description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Sie werden zum Dashboard weitergeleitet.`
+          });
+          
+          // Redirect to user dashboard immediately
+          navigate(redirectPath);
+        }
       })
       .subscribe();
       
     return () => {
-      supabase.removeChannel(roleSubscription);
+      supabase.removeChannel(creditSubscription);
     };
-  }, [isActivation, userId, paymentSubmitted, navigate, toast, redirectPath]);
+  }, [isActivation, userId, paymentSubmitted, navigate, toast, redirectPath, userCredit, fetchUserCredit]);
 
-  // Add more frequent role check for activation payments
+  // Add more frequent credit check for activation payments
   useEffect(() => {
-    let roleCheckInterval: number | null = null;
+    let creditCheckInterval: number | null = null;
     
     // Only start checking if this is an activation payment and we're waiting
     if (isActivation && paymentSubmitted && !paymentCompleted && !paymentRejected && userId) {
-      console.log("Starting frequent role check for user:", userId);
+      console.log("Starting frequent credit check for user:", userId);
       
-      roleCheckInterval = window.setInterval(async () => {
+      creditCheckInterval = window.setInterval(async () => {
         try {
-          // Check if user has been activated (has 'user' role)
-          const hasUserRole = await checkUserRole('user');
-          console.log("Role check result:", hasUserRole);
+          // Refresh credit
+          await fetchUserCredit();
+          console.log("Credit check result:", userCredit);
           
-          if (hasUserRole) {
-            console.log("User has been activated, redirecting to dashboard...");
+          if (userCredit >= CREDIT_ACTIVATION_THRESHOLD) {
+            console.log("User has sufficient credit, redirecting to dashboard...");
             toast({
               title: "Konto aktiviert",
-              description: "Ihr Konto wurde erfolgreich aktiviert! Die Seite wird aktualisiert..."
+              description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Die Seite wird aktualisiert...`
             });
             
             // Clear interval and redirect
-            if (roleCheckInterval) clearInterval(roleCheckInterval);
+            if (creditCheckInterval) clearInterval(creditCheckInterval);
             
             // Redirect immediately to ensure the user doesn't stay on the activation page
             navigate(redirectPath);
           }
         } catch (error) {
-          console.error("Error checking user role:", error);
+          console.error("Error checking user credit:", error);
         }
       }, 3000); // Check every 3 seconds (more frequent)
     }
     
     return () => {
-      if (roleCheckInterval) {
-        clearInterval(roleCheckInterval);
+      if (creditCheckInterval) {
+        clearInterval(creditCheckInterval);
       }
     };
-  }, [isActivation, paymentSubmitted, paymentCompleted, paymentRejected, userId, toast, redirectPath, navigate]);
+  }, [isActivation, paymentSubmitted, paymentCompleted, paymentRejected, userId, toast, redirectPath, navigate, userCredit, fetchUserCredit]);
 
   // Handle navigation and notifications based on payment status
   useEffect(() => {

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,9 +12,10 @@ import { useWallets } from "@/hooks/useWallets";
 
 interface ActivationFormProps {
   user: any;
+  creditThreshold?: number;
 }
 
-const ActivationForm = ({ user }: ActivationFormProps) => {
+const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) => {
   const { toast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -85,31 +85,39 @@ const ActivationForm = ({ user }: ActivationFormProps) => {
   };
 
   return (
-    <>
-      <PaymentInfoCard />
-      
-      <WalletSelector 
-        wallets={wallets}
-        walletsLoading={walletsLoading}
-        walletError={walletError}
-        selectedWallet={selectedWallet}
-        onSelectWallet={handleSelectWallet}
-        onConfirmPayment={handleConfirmPayment}
-        onRetryWallets={fetchWallets}
-      />
+    <div className="space-y-6">
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-center">Konto aktivieren</CardTitle>
+          <CardDescription className="text-center">
+            Zahlen Sie mindestens {creditThreshold}€ ein, um Ihr Konto zu aktivieren.
+          </CardDescription>
+        </CardHeader>
+        <PaymentInfoCard />
+        
+        <WalletSelector 
+          wallets={wallets}
+          walletsLoading={walletsLoading}
+          walletError={walletError}
+          selectedWallet={selectedWallet}
+          onSelectWallet={handleSelectWallet}
+          onConfirmPayment={handleConfirmPayment}
+          onRetryWallets={fetchWallets}
+        />
 
-      <PaymentConfirmationDialog
-        showDialog={showConfirmDialog}
-        onClose={() => setShowConfirmDialog(false)}
-        onConfirm={handleCompletePayment}
-        selectedWallet={selectedWallet}
-      />
-      
-      {/* Return payment values to parent component */}
-      {paymentSubmitted && paymentId && (
-        <input type="hidden" id="payment-submitted" value={paymentId} />
-      )}
-    </>
+        <PaymentConfirmationDialog
+          showDialog={showConfirmDialog}
+          onClose={() => setShowConfirmDialog(false)}
+          onConfirm={handleCompletePayment}
+          selectedWallet={selectedWallet}
+        />
+        
+        {/* Return payment values to parent component */}
+        {paymentSubmitted && paymentId && (
+          <input type="hidden" id="payment-submitted" value={paymentId} />
+        )}
+      </Card>
+    </div>
   );
 };
 

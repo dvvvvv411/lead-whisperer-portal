@@ -3,21 +3,26 @@ import { useState, useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { checkUserRole } from "@/services/roleService";
 import { useToast } from "@/hooks/use-toast";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { supabase } from "@/integrations/supabase/client";
+import { useNavigate } from "react-router-dom";
+
+// Default credit threshold if not provided
+const DEFAULT_CREDIT_THRESHOLD = 250;
 
 interface PaymentStatusViewProps {
   paymentId: string | null;
+  creditThreshold?: number;
 }
 
-const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
+const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHOLD }: PaymentStatusViewProps) => {
   const [isChecking, setIsChecking] = useState(false);
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const navigate = useNavigate();
   
-  // Get the user to fetch their credit - using useEffect instead of useState
+  // Get the user to fetch their credit
   useEffect(() => {
     const getUser = async () => {
       const { data } = await supabase.auth.getUser();
@@ -41,28 +46,27 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
       // First refresh the user credit to get the latest value
       await fetchUserCredit();
       
-      const isActivated = await checkUserRole('user');
-      
-      if (isActivated) {
+      if (userCredit >= creditThreshold) {
         toast({
           title: "Konto aktiviert",
-          description: "Ihr Konto wurde erfolgreich aktiviert! Die Seite wird aktualisiert..."
+          description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Die Seite wird aktualisiert...`
         });
         
         setTimeout(() => {
-          window.location.href = '/nutzer';
+          navigate('/nutzer');
         }, 1500);
       } else {
+        const remaining = creditThreshold - (userCredit || 0);
         toast({
-          title: "Noch nicht aktiviert",
-          description: "Ihr Konto wurde noch nicht aktiviert. Bitte haben Sie etwas Geduld oder kontaktieren Sie den Support."
+          title: "Noch nicht genug Guthaben",
+          description: `Sie benötigen noch ${remaining.toFixed(2)}€, um Ihr Konto zu aktivieren.`
         });
       }
     } catch (error) {
       console.error("Error checking activation status:", error);
       toast({
         title: "Fehler beim Überprüfen",
-        description: "Es gab einen Fehler beim Überprüfen Ihres Aktivierungsstatus.",
+        description: "Es gab einen Fehler beim Überprüfen Ihres Kontostands.",
         variant: "destructive"
       });
     } finally {
@@ -74,6 +78,11 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
   const refreshPage = () => {
     window.location.reload();
   };
+
+  // Calculate remaining amount needed to activate
+  const remainingAmount = creditThreshold - (userCredit || 0);
+  const isActivated = userCredit !== null && userCredit >= creditThreshold;
+  const activationProgress = userCredit !== null ? Math.min((userCredit / creditThreshold) * 100, 100) : 0;
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
@@ -96,11 +105,34 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
             <p className="text-sm text-gray-500 text-center mt-2">
               Dies kann bis zu 15 Minuten dauern. Bitte verlassen Sie diese Seite nicht.
             </p>
-            {userCredit && userCredit > 0 ? (
-              <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md">
-                <p className="font-medium">Aktuelles Guthaben: {userCredit.toFixed(2)}€</p>
+            
+            {userCredit !== null && (
+              <div className={`mt-4 p-3 ${isActivated ? 'bg-green-50 text-green-700' : 'bg-amber-50 text-amber-700'} rounded-md w-full`}>
+                <div className="flex justify-between mb-1">
+                  <p className="font-medium">Aktuelles Guthaben: {userCredit.toFixed(2)}€</p>
+                  <p className="font-medium">{activationProgress.toFixed(0)}%</p>
+                </div>
+                
+                <div className="w-full bg-gray-200 rounded-full h-2.5">
+                  <div 
+                    className={`h-2.5 rounded-full ${isActivated ? 'bg-green-600' : 'bg-amber-500'}`} 
+                    style={{ width: `${activationProgress}%` }}
+                  ></div>
+                </div>
+                
+                {!isActivated && (
+                  <p className="text-sm mt-2">
+                    Sie benötigen noch {remainingAmount.toFixed(2)}€, um Ihr Konto zu aktivieren.
+                  </p>
+                )}
+                
+                {isActivated && (
+                  <p className="text-sm mt-2 font-medium text-green-700">
+                    Ihr Konto ist jetzt aktiviert! Sie werden gleich weitergeleitet.
+                  </p>
+                )}
               </div>
-            ) : null}
+            )}
           </div>
           
           <div className="bg-yellow-50 p-4 rounded-lg">
@@ -108,7 +140,7 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
               <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
               <p className="text-sm text-yellow-700">
                 <strong>Wichtig:</strong> Bitte bleiben Sie auf dieser Seite, bis Ihre Zahlung bestätigt wurde. 
-                Sie werden automatisch weitergeleitet, sobald die Überprüfung abgeschlossen ist.
+                Sie werden automatisch weitergeleitet, sobald Ihr Guthaben mindestens {creditThreshold}€ erreicht hat.
               </p>
             </div>
           </div>

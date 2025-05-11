@@ -5,12 +5,13 @@ import { useNavigate, Link } from "react-router-dom";
 import UserDashboard from "@/components/user/UserDashboard";
 import CryptoTradingSection from "@/components/user/trading/CryptoTradingSection";
 import { useUserCredit } from "@/hooks/useUserCredit";
-import { checkUserRole } from "@/services/roleService";
+
+// Credit threshold required to access the dashboard (in EUR)
+const CREDIT_ACTIVATION_THRESHOLD = 250;
 
 const User = () => {
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
-  const [isActivated, setIsActivated] = useState(false);
   const [loading, setLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
 
@@ -36,17 +37,7 @@ const User = () => {
           console.log("User found on /nutzer page:", data.user.id);
           setUser(data.user);
           
-          // Check if the user has the 'user' role (is activated)
-          const activated = await checkUserRole('user');
-          console.log("User activation status on /nutzer page:", activated);
-          setIsActivated(activated);
-          
-          // If not activated, immediately redirect to activation page
-          if (!activated) {
-            console.log("User not activated, redirecting from /nutzer to activation page");
-            navigate("/nutzer/aktivierung");
-            return;
-          }
+          // Once user is set, userCredit will automatically load via the hook
         } else {
           // If no user is logged in, redirect to login page
           console.log("No user found, redirecting to login");
@@ -66,27 +57,46 @@ const User = () => {
     getUser();
   }, [navigate]);
 
-  // Periodically check activation status to ensure user is still allowed to access the page
+  // Check if user has enough credit after credit is loaded
+  useEffect(() => {
+    if (!user?.id || creditLoading) return;
+    
+    console.log("Checking user credit for activation:", userCredit);
+    
+    // If user has less than the threshold, redirect to activation page
+    if (userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+      console.log(`User credit (${userCredit}€) is below threshold (${CREDIT_ACTIVATION_THRESHOLD}€), redirecting to activation page`);
+      navigate("/nutzer/aktivierung");
+      return;
+    }
+    
+    console.log(`User credit (${userCredit}€) is above threshold (${CREDIT_ACTIVATION_THRESHOLD}€), access granted`);
+  }, [userCredit, creditLoading, user?.id, navigate]);
+
+  // Periodically check credit status to ensure user is still allowed to access the page
   useEffect(() => {
     if (!user?.id) return;
     
-    const activationCheckInterval = setInterval(async () => {
+    const creditCheckInterval = setInterval(async () => {
       try {
-        const activated = await checkUserRole('user');
-        if (!activated && isActivated) {
-          console.log("User no longer activated, redirecting to activation page");
+        // Re-fetch credit to ensure it's current
+        await fetchUserCredit();
+        
+        // If credit falls below threshold, redirect to activation page
+        if (userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+          console.log("User credit has fallen below threshold, redirecting to activation page");
           navigate("/nutzer/aktivierung");
         }
       } catch (error) {
-        console.error("Error checking activation status:", error);
+        console.error("Error checking credit status:", error);
       }
     }, 60000); // Check every minute
     
-    return () => clearInterval(activationCheckInterval);
-  }, [user?.id, isActivated, navigate]);
+    return () => clearInterval(creditCheckInterval);
+  }, [user?.id, userCredit, navigate, fetchUserCredit]);
 
   // Early return to prevent any content rendering before verification is complete
-  if (loading) {
+  if (loading || creditLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
         <p>Wird geladen...</p>
@@ -94,9 +104,9 @@ const User = () => {
     );
   }
 
-  // Second security check - if auth is checked and user is not activated, redirect
-  if (authChecked && !isActivated) {
-    console.log("Auth checked and user not activated, redirecting");
+  // Second security check - if auth is checked and user doesn't have enough credit, redirect
+  if (authChecked && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+    console.log("Auth checked and credit below threshold, redirecting");
     navigate("/nutzer/aktivierung");
     return null;
   }
@@ -108,8 +118,8 @@ const User = () => {
 
   console.log("Current user credit:", userCredit);
 
-  // Only render the dashboard if user is activated
-  return isActivated ? (
+  // Only render the dashboard if user has sufficient credit
+  return userCredit >= CREDIT_ACTIVATION_THRESHOLD ? (
     <>
       <UserDashboard 
         user={user} 

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -110,21 +109,7 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
       const result = await response.json();
       console.log("Add credit result:", result);
       
-      // If this is an activation payment (250€), add user role automatically
-      if (selectedPayment.amount === 25000) { // 25000 cents = 250€
-        console.log("This is an activation payment. Adding 'user' role automatically...");
-        
-        const { error: roleError } = await supabase.rpc('add_user_role', {
-          _user_id: selectedPayment.user_id,
-          _role: 'user'
-        });
-        
-        if (roleError) {
-          console.error("Error assigning user role:", roleError);
-        } else {
-          console.log("User role assigned successfully");
-        }
-      }
+      // No longer automatically adding user role - access is now credit-based
       
       toast({
         title: "Zahlung bestätigt",

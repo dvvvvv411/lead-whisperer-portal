@@ -3,7 +3,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { checkUserRole } from "@/services/roleService";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
@@ -13,12 +12,14 @@ import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, Loader2 } from "lucide-react";
 
+// Credit threshold required to access the dashboard (in EUR)
+const CREDIT_ACTIVATION_THRESHOLD = 250;
+
 const UserDeposit = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [isActivated, setIsActivated] = useState(false);
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [depositAmount, setDepositAmount] = useState<number>(0);
@@ -38,7 +39,7 @@ const UserDeposit = () => {
   // Fetch user credit information
   const { userCredit, fetchUserCredit } = useUserCredit(user?.id);
   
-  // Check the user's authentication and role
+  // Check the user's authentication and credit
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -46,17 +47,12 @@ const UserDeposit = () => {
         if (data?.user) {
           setUser(data.user);
           
-          // Check if the user has the 'user' role (is activated)
-          const activated = await checkUserRole('user');
-          console.log("User activation status on deposit page:", activated);
-          setIsActivated(activated);
-          
-          // If not activated, redirect to activation page
-          if (!activated) {
-            console.log("User not activated, redirecting from deposit to activation page");
+          // Check if the user has sufficient credit
+          if (userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+            console.log("User doesn't have sufficient credit, redirecting from deposit to activation page");
             toast({
               title: "Aktivierung erforderlich",
-              description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
+              description: `Sie benötigen mindestens ${CREDIT_ACTIVATION_THRESHOLD}€ Guthaben, um fortzufahren.`,
             });
             navigate("/nutzer/aktivierung");
             return;
@@ -78,12 +74,43 @@ const UserDeposit = () => {
       }
     };
     
-    getUser();
-  }, [navigate, toast]);
+    if (!loading && userCredit !== null) {
+      getUser();
+    }
+  }, [navigate, toast, userCredit]);
+
+  // Check user credit when it updates
+  useEffect(() => {
+    if (user?.id && userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+      console.log("User credit below threshold, redirecting to activation");
+      navigate("/nutzer/aktivierung");
+    }
+  }, [userCredit, user?.id, navigate]);
+
+  // Initial user authentication check
+  useEffect(() => {
+    const initialAuthCheck = async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) {
+          setUser(data.user);
+        } else {
+          navigate("/admin");
+        }
+      } catch (error) {
+        console.error("Error in initial auth check:", error);
+        navigate("/admin");
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    initialAuthCheck();
+  }, [navigate]);
 
   // Handle deposit submission
   const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
-    if (!user || !isActivated) return;
+    if (!user) return;
     
     try {
       setDepositAmount(amount);
@@ -140,9 +167,9 @@ const UserDeposit = () => {
     );
   }
 
-  // Additional check to ensure only activated users can view this page
-  if (!isActivated) {
-    console.log("User not activated, redirecting to activation page from deposit");
+  // Additional check to ensure only users with sufficient credit can view this page
+  if (userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+    console.log("User credit below threshold, redirecting to activation page from deposit");
     navigate("/nutzer/aktivierung");
     return null;
   }

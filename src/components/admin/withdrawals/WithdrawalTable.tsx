@@ -9,16 +9,14 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Textarea } from "@/components/ui/textarea";
-import { CheckCircle, XCircle } from "lucide-react";
+import WithdrawalStatusBadge from "./WithdrawalStatusBadge";
+import WithdrawalActions from "./WithdrawalActions";
+import WithdrawalDialogContent from "./WithdrawalDialogContent";
 
 interface Withdrawal {
   id: string;
-  user_id: string; // Wichtig: user_id ist jetzt explizit definiert
+  user_id: string;
   user_email: string;
   amount: number;
   currency: string;
@@ -84,13 +82,26 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
         if (updateError) throw updateError;
         
         // Update user credit by subtracting the withdrawal amount
-        // KORRIGIERT: Verwendung der richtigen user_id statt der withdrawal ID
-        const { error: creditError } = await supabase.rpc(
-          'initialize_user_credit',
-          { user_id_param: selectedWithdrawal.user_id }
-        );
+        const { data: currentCreditData, error: creditFetchError } = await supabase
+          .from('user_credits')
+          .select('amount')
+          .eq('user_id', selectedWithdrawal.user_id)
+          .single();
         
-        if (creditError) throw creditError;
+        if (creditFetchError) throw creditFetchError;
+        
+        const currentCredit = currentCreditData?.amount || 0;
+        const newCredit = Math.max(0, currentCredit - selectedWithdrawal.amount);
+        
+        const { error: creditUpdateError } = await supabase
+          .from('user_credits')
+          .update({ 
+            amount: newCredit,
+            last_updated: new Date().toISOString()
+          })
+          .eq('user_id', selectedWithdrawal.user_id);
+        
+        if (creditUpdateError) throw creditUpdateError;
         
         toast({
           title: "Auszahlung genehmigt",
@@ -130,19 +141,6 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
     }
   };
 
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "pending":
-        return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 hover:bg-yellow-50">Ausstehend</Badge>;
-      case "completed":
-        return <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">Abgeschlossen</Badge>;
-      case "rejected":
-        return <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50">Abgelehnt</Badge>;
-      default:
-        return <Badge variant="outline">{status}</Badge>;
-    }
-  };
-
   return (
     <>
       <div className="rounded-md border">
@@ -177,36 +175,15 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
                   <TableCell className="font-mono text-xs max-w-[200px] truncate">
                     {withdrawal.wallet_address}
                   </TableCell>
-                  <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
                   <TableCell>
-                    {withdrawal.status === "pending" && (
-                      <div className="flex space-x-2">
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-green-700 border-green-300 hover:bg-green-50"
-                          onClick={() => handleApproveClick(withdrawal)}
-                        >
-                          <CheckCircle className="h-4 w-4 mr-1" />
-                          Genehmigen
-                        </Button>
-                        
-                        <Button 
-                          variant="outline" 
-                          size="sm"
-                          className="text-red-700 border-red-300 hover:bg-red-50"
-                          onClick={() => handleRejectClick(withdrawal)}
-                        >
-                          <XCircle className="h-4 w-4 mr-1" />
-                          Ablehnen
-                        </Button>
-                      </div>
-                    )}
-                    {withdrawal.status !== "pending" && (
-                      <span className="text-sm text-gray-500">
-                        {withdrawal.notes || "Keine Anmerkung"}
-                      </span>
-                    )}
+                    <WithdrawalStatusBadge status={withdrawal.status} />
+                  </TableCell>
+                  <TableCell>
+                    <WithdrawalActions 
+                      withdrawal={withdrawal}
+                      onApprove={handleApproveClick}
+                      onReject={handleRejectClick}
+                    />
                   </TableCell>
                 </TableRow>
               ))
@@ -229,59 +206,16 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
           </DialogHeader>
           
           {selectedWithdrawal && (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-4">
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Benutzer</p>
-                  <p>{selectedWithdrawal.user_email}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Betrag</p>
-                  <p>{(selectedWithdrawal.amount / 100).toFixed(2)}€</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Krypto-Währung</p>
-                  <p>{selectedWithdrawal.wallet_currency}</p>
-                </div>
-                <div>
-                  <p className="text-sm font-medium text-gray-500">Datum</p>
-                  <p>{new Date(selectedWithdrawal.created_at).toLocaleDateString('de-DE')}</p>
-                </div>
-              </div>
-              
-              <div>
-                <p className="text-sm font-medium text-gray-500">Wallet-Adresse</p>
-                <p className="font-mono text-xs break-all bg-gray-50 p-2 rounded">{selectedWithdrawal.wallet_address}</p>
-              </div>
-              
-              <div className="pt-2">
-                <label htmlFor="notes" className="text-sm font-medium text-gray-500">
-                  Anmerkungen
-                </label>
-                <Textarea
-                  id="notes"
-                  value={notes}
-                  onChange={(e) => setNotes(e.target.value)}
-                  placeholder="Optionale Anmerkungen zur Auszahlung"
-                  className="mt-1"
-                />
-              </div>
-            </div>
+            <WithdrawalDialogContent 
+              withdrawal={selectedWithdrawal}
+              notes={notes}
+              onNotesChange={(e) => setNotes(e.target.value)}
+              onConfirm={handleConfirmAction}
+              onCancel={handleDialogClose}
+              processing={processing}
+              action={dialogAction as "approve" | "reject"}
+            />
           )}
-          
-          <DialogFooter className="gap-2">
-            <Button variant="outline" onClick={handleDialogClose}>
-              Abbrechen
-            </Button>
-            <Button 
-              type="submit" 
-              onClick={handleConfirmAction}
-              disabled={processing}
-              variant={dialogAction === "approve" ? "default" : "destructive"}
-            >
-              {dialogAction === "approve" ? "Genehmigen" : "Ablehnen"}
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
     </>

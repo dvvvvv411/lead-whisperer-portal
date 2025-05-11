@@ -11,6 +11,7 @@ const UserDashboard = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isActivated, setIsActivated] = useState(false);
+  const [userCredit, setUserCredit] = useState<number | null>(null);
   
   useEffect(() => {
     const getUser = async () => {
@@ -33,6 +34,9 @@ const UserDashboard = () => {
           return;
         }
         
+        // Guthaben des Nutzers abrufen
+        await fetchUserCredit(data.user.id);
+        
         setLoading(false);
       } else {
         // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
@@ -42,6 +46,28 @@ const UserDashboard = () => {
     
     getUser();
   }, [toast]);
+  
+  // Guthaben des Nutzers abrufen
+  const fetchUserCredit = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('payments')
+        .select('amount')
+        .eq('user_id', userId)
+        .eq('status', 'completed')
+        .order('created_at', { ascending: false });
+      
+      if (error) throw error;
+      
+      // Summe aller bestätigten Zahlungen berechnen
+      if (data && data.length > 0) {
+        const totalAmount = data.reduce((sum, payment) => sum + payment.amount, 0) / 100; // Umrechnung von Cent in Euro
+        setUserCredit(totalAmount);
+      }
+    } catch (error: any) {
+      console.error("Fehler beim Abrufen des Guthabens:", error.message);
+    }
+  };
 
   const handleLogout = async () => {
     try {
@@ -77,6 +103,15 @@ const UserDashboard = () => {
           </CardHeader>
           <CardContent>
             <p>Sie sind als aktiver Benutzer angemeldet. Vielen Dank für die Aktivierung Ihres Kontos!</p>
+          </CardContent>
+        </Card>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Ihr Guthaben</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <p className="text-2xl font-bold">{userCredit !== null ? `${userCredit.toFixed(2)}€` : "0,00€"}</p>
           </CardContent>
         </Card>
       </div>

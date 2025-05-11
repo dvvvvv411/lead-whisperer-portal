@@ -27,7 +27,7 @@ const UserActivation = () => {
   
   // Custom hooks
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
-  usePaymentStatus(user?.id, paymentSubmitted, paymentId);
+  const { paymentCompleted } = usePaymentStatus(user?.id, paymentSubmitted, paymentId);
 
   useEffect(() => {
     const getUser = async () => {
@@ -41,6 +41,14 @@ const UserActivation = () => {
           
           // Check if the user has any pending payments
           checkPendingPayments(data.user.id);
+          
+          // Check if user is already activated
+          const isActivated = await checkUserRole(data.user.id);
+          if (isActivated) {
+            console.log("User is already activated, redirecting to dashboard");
+            navigate('/nutzer');
+            return;
+          }
         } else {
           console.log("No user found, redirecting to login");
           window.location.href = "/admin";
@@ -58,12 +66,28 @@ const UserActivation = () => {
     };
     
     getUser();
-  }, [toast]);
+  }, [toast, navigate]);
+  
+  // Check if user has been assigned the 'user' role (activated)
+  const checkUserRole = async (userId: string) => {
+    try {
+      const { data, error } = await supabase.rpc('has_role', {
+        _user_id: userId,
+        _role: 'user'
+      });
+      
+      if (error) throw error;
+      return data;
+    } catch (error: any) {
+      console.error("Error checking user role:", error.message);
+      return false;
+    }
+  };
 
   // Check if user has pending payments
   const checkPendingPayments = async (userId: string) => {
     try {
-      const { data, error } = await supabase
+      const { data: pendingPayments, error: pendingError } = await supabase
         .from('payments')
         .select('*')
         .eq('user_id', userId)
@@ -71,14 +95,32 @@ const UserActivation = () => {
         .order('created_at', { ascending: false })
         .limit(1);
       
-      if (error) throw error;
+      if (pendingError) throw pendingError;
       
-      if (data && data.length > 0) {
+      if (pendingPayments && pendingPayments.length > 0) {
+        console.log("Found pending payment:", pendingPayments[0].id);
         setPaymentSubmitted(true);
-        setPaymentId(data[0].id);
+        setPaymentId(pendingPayments[0].id);
+      } else {
+        // If no pending payments, check for completed payments
+        const { data: completedPayments, error: completedError } = await supabase
+          .from('payments')
+          .select('*')
+          .eq('user_id', userId)
+          .eq('status', 'completed')
+          .order('created_at', { ascending: false })
+          .limit(1);
+        
+        if (completedError) throw completedError;
+        
+        if (completedPayments && completedPayments.length > 0) {
+          console.log("Found completed payment:", completedPayments[0].id);
+          // User has a completed payment but hasn't been redirected yet
+          navigate('/nutzer');
+        }
       }
     } catch (error: any) {
-      console.error("Error checking pending payments:", error.message);
+      console.error("Error checking payments:", error.message);
     }
   };
 

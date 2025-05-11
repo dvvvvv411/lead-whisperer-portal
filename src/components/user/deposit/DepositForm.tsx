@@ -32,7 +32,7 @@ interface DepositFormProps {
   walletsLoading: boolean;
   walletError: string | null;
   onRetryWallets: () => void;
-  onSubmit: (amount: number, walletCurrency: string) => void;
+  onSubmit: (amount: number, walletCurrency: string, walletId: string) => void;
 }
 
 const DepositForm = ({
@@ -45,6 +45,7 @@ const DepositForm = ({
   const { toast } = useToast();
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   
   // Initialize form with react-hook-form
   const form = useForm<z.infer<typeof formSchema>>({
@@ -77,14 +78,32 @@ const DepositForm = ({
     }
 
     setSelectedWallet(values.walletCurrency);
+    setSelectedWalletId(wallet.id);
     setShowConfirmation(true);
   };
 
   // Handle payment confirmation
   const handleConfirmPayment = () => {
     const values = form.getValues();
-    onSubmit(values.amount, values.walletCurrency);
-    setShowConfirmation(false);
+    if (selectedWalletId) {
+      onSubmit(values.amount, values.walletCurrency, selectedWalletId);
+      setShowConfirmation(false);
+    } else {
+      toast({
+        title: "Fehler",
+        description: "Wallet ID konnte nicht ermittelt werden.",
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Handle wallet selection change to capture wallet ID
+  const handleWalletChange = (currency: string) => {
+    const wallet = wallets.find(w => w.currency === currency);
+    if (wallet) {
+      setSelectedWalletId(wallet.id);
+      form.setValue("walletCurrency", currency);
+    }
   };
 
   return (
@@ -144,7 +163,7 @@ const DepositForm = ({
                     <FormItem>
                       <FormLabel>Kryptowährung</FormLabel>
                       <Select 
-                        onValueChange={field.onChange} 
+                        onValueChange={handleWalletChange} 
                         defaultValue={field.value}
                       >
                         <FormControl>

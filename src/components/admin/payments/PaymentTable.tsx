@@ -39,6 +39,7 @@ export interface Payment {
   amount: number;
   currency: string;
   wallet_currency: string;
+  wallet_id: string | null;
   status: string;
   transaction_id: string | null;
   notes: string | null;

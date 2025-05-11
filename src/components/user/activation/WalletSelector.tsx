@@ -15,7 +15,7 @@ interface WalletSelectorProps {
   wallets: CryptoWallet[];
   walletsLoading: boolean;
   walletError: string | null;
-  onSelectWallet: (currency: string) => void;
+  onSelectWallet: (currency: string, walletId?: string) => void;
   selectedWallet: string | null;
   onConfirmPayment: () => void;
   onRetryWallets: () => void;
@@ -30,6 +30,18 @@ const WalletSelector = ({
   onConfirmPayment,
   onRetryWallets
 }: WalletSelectorProps) => {
+  const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+  
+  const handleWalletSelect = (currency: string) => {
+    const wallet = wallets.find(w => w.currency === currency);
+    if (wallet) {
+      setSelectedWalletId(wallet.id);
+      onSelectWallet(currency, wallet.id);
+    } else {
+      onSelectWallet(currency);
+    }
+  };
+  
   return (
     <Card>
       <CardHeader>
@@ -61,7 +73,7 @@ const WalletSelector = ({
               <h3 className="text-lg font-medium">Kryptowährungen</h3>
             </div>
             
-            <Select onValueChange={onSelectWallet}>
+            <Select onValueChange={handleWalletSelect}>
               <SelectTrigger>
                 <SelectValue placeholder="Kryptowährung auswählen" />
               </SelectTrigger>

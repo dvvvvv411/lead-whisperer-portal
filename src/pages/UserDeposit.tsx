@@ -70,7 +70,7 @@ const UserDeposit = () => {
   }, [navigate, toast]);
 
   // Handle deposit submission
-  const handleDepositSubmit = async (amount: number, walletCurrency: string) => {
+  const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
     if (!user) return;
     
     try {
@@ -85,6 +85,7 @@ const UserDeposit = () => {
           amount: Math.round(amount * 100), // Convert to cents
           currency: 'EUR',
           wallet_currency: walletCurrency,
+          wallet_id: walletId, // Speichern der wallet_id
           status: 'pending'
         })
         .select('id')

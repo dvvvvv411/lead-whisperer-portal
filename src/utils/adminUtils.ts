@@ -9,11 +9,27 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     // First ensure the user has a credit entry
     await supabase.rpc('initialize_user_credit', { user_id_param: userId });
     
+    // Get current credit value first
+    const { data: creditData, error: fetchError } = await supabase
+      .from('user_credits')
+      .select('amount')
+      .eq('user_id', userId)
+      .single();
+      
+    if (fetchError) {
+      console.error("Error fetching current credit:", fetchError);
+      return false;
+    }
+    
+    // Calculate the new amount
+    const currentAmount = creditData?.amount || 0;
+    const newAmount = currentAmount + amountInCents;
+    
     // Update the user's credit
     const { error } = await supabase
       .from('user_credits')
       .update({ 
-        amount: supabase.rpc('get_current_amount', { user_id_param: userId }) + amountInCents,
+        amount: newAmount,
         last_updated: new Date().toISOString()
       })
       .eq('user_id', userId);

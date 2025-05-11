@@ -1,5 +1,5 @@
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useRef } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCryptos } from "@/hooks/useCryptos";
 import { BotSettings, BotStatus } from "./types";
@@ -21,6 +21,9 @@ export const useBotOperations = (
   const { cryptos } = useCryptos();
   const [isSimulating, setIsSimulating] = useState(false);
   
+  // Use a ref to track dialog closing to prevent race conditions
+  const simulationInProgressRef = useRef(false);
+  
   // Stop the AI trading bot
   const stopBot = useCallback(() => {
     if (!clearBotInterval || !setSettings || !updateStatus) return;
@@ -35,6 +38,22 @@ export const useBotOperations = (
     });
   }, [clearBotInterval, toast, setSettings, updateStatus]);
   
+  // Start the AI trading bot
+  const startBot = useCallback(() => {
+    if (!setSettings || !updateStatus || !setNewBotInterval || !userId || !userCredit) return;
+    
+    // Set bot to active
+    setSettings(prev => ({ ...prev, isActive: true }));
+    updateStatus({ isActive: true });
+    
+    toast({
+      title: "KI-Bot aktiviert",
+      description: "Der KI-Trading-Bot wurde erfolgreich aktiviert.",
+    });
+    
+    // The bot execution is still handled by manual trades only
+  }, [userId, userCredit, toast, setSettings, updateStatus, setNewBotInterval]);
+  
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
     if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
@@ -43,7 +62,7 @@ export const useBotOperations = (
     }
     
     // Check if already simulating
-    if (isSimulating) {
+    if (isSimulating || simulationInProgressRef.current) {
       console.log("Already simulating, ignoring new trade request");
       toast({
         title: "Transaktion in Bearbeitung",
@@ -66,9 +85,10 @@ export const useBotOperations = (
       return false;
     }
     
-    // Set simulating state to true to show dialog
+    // Set both state and ref to track simulation
     console.log("Starting trade simulation");
     setIsSimulating(true);
+    simulationInProgressRef.current = true;
     
     // Return true to indicate that simulation has started
     return true;
@@ -80,6 +100,7 @@ export const useBotOperations = (
     if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
       console.log("Missing required parameters for completeTradeAfterSimulation");
       setIsSimulating(false);
+      simulationInProgressRef.current = false;
       return false;
     }
     
@@ -114,14 +135,9 @@ export const useBotOperations = (
     } finally {
       // Always reset simulating state, even on error
       setIsSimulating(false);
+      simulationInProgressRef.current = false;
     }
   }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted, status]);
-  
-  // Start the AI trading bot - no longer used but kept for compatibility
-  const startBot = useCallback(() => {
-    // This function is now empty as the bot activation is removed
-    // but we keep it for API compatibility
-  }, []);
 
   return {
     startBot,
@@ -129,6 +145,7 @@ export const useBotOperations = (
     executeSingleTrade,
     completeTradeAfterSimulation,
     isSimulating,
-    setIsSimulating
+    setIsSimulating,
+    simulationInProgressRef
   };
 };

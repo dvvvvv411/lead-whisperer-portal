@@ -24,16 +24,22 @@ export const useDailyTradeCounter = (
     if (!userId || !updateStatus) return;
 
     const fetchTodaysTrades = async () => {
-      // Get the count of buy transactions (each buy-sell pair counts as 1 trade)
-      const todayTradesCount = await getTradesExecutedToday(userId);
-      
-      updateStatus(prev => ({ 
-        dailyTradesExecuted: todayTradesCount,
-        tradesRemaining: Math.max(0, prev.maxTradesPerDay - todayTradesCount)
-      }));
+      try {
+        // Get the count of buy transactions (each buy-sell pair counts as 1 trade)
+        const todayTradesCount = await getTradesExecutedToday(userId);
+        
+        updateStatus(prev => ({ 
+          dailyTradesExecuted: todayTradesCount,
+          tradesRemaining: Math.max(0, prev.maxTradesPerDay - todayTradesCount)
+        }));
+      } catch (error) {
+        console.error("Error fetching today's trades:", error);
+      }
     };
     
+    // Initial fetch
     fetchTodaysTrades();
+    
     // Use a longer interval (2 minutes) to reduce interference with simulation
     const interval = setInterval(fetchTodaysTrades, 120000);
     

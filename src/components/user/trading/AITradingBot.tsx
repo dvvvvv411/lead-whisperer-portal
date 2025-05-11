@@ -7,7 +7,6 @@ import { useCryptos } from "@/hooks/useCryptos";
 import { useState, useCallback, useEffect, useRef } from "react";
 import RankDisplay from "./RankDisplay";
 import BotStatusOverview from "./bot-components/BotStatusOverview";
-import BotSettingsPanel from "./bot-components/BotSettingsPanel";
 import BotPerformance from "./bot-components/BotPerformance";
 import BotInfoCard from "./bot-components/BotInfoCard";
 import BotControlsHeader from "./bot-components/BotControlsHeader";
@@ -23,11 +22,13 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   const { 
     settings, 
     status, 
-    updateBotSettings,
+    startBot,
+    stopBot,
     executeSingleTrade,
     completeTradeAfterSimulation,
     isSimulating,
     setIsSimulating,
+    simulationInProgressRef,
     rankTiers
   } = useAITradingBot(userId, userCredit, onTradeExecuted);
   
@@ -83,11 +84,20 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }
   }, [completeTradeAfterSimulation]);
 
+  // Toggle bot activation
+  const handleBotToggle = useCallback(() => {
+    if (status.isActive) {
+      stopBot();
+    } else {
+      startBot();
+    }
+  }, [status.isActive, startBot, stopBot]);
+
   // Handle dialog open state changes
   const handleDialogOpenChange = useCallback((open: boolean) => {
     console.log("Dialog open state changed to:", open);
     
-    if (!open && isSimulating) {
+    if (!open && (isSimulating || simulationInProgressRef.current)) {
       // Dialog closed manually during simulation
       console.log("Dialog closed manually while simulating");
       dialogClosingRef.current = true;
@@ -95,17 +105,17 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }
     
     setSimulationOpen(open);
-  }, [isSimulating, setIsSimulating]);
+  }, [isSimulating, setIsSimulating, simulationInProgressRef]);
   
   // Ensure simulation is properly closed if component unmounts
   useEffect(() => {
     return () => {
-      if (isSimulating) {
+      if (isSimulating || simulationInProgressRef.current) {
         console.log("Component unmounting, cleaning up simulation");
         setIsSimulating(false);
       }
     };
-  }, [isSimulating, setIsSimulating]);
+  }, [isSimulating, setIsSimulating, simulationInProgressRef]);
 
   return (
     <Card className="w-full">
@@ -121,6 +131,8 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
           <BotControlsHeader 
             onManualTrade={handleManualTrade}
             tradesRemaining={status.tradesRemaining}
+            isActive={status.isActive}
+            onBotToggle={handleBotToggle}
           />
         </div>
       </CardHeader>
@@ -138,21 +150,12 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
 
           {/* Bot Status Overview */}
           <BotStatusOverview
-            isActive={false}
+            isActive={status.isActive}
             totalProfitAmount={status.totalProfitAmount}
             totalProfitPercentage={status.totalProfitPercentage}
             tradesExecuted={status.tradesExecuted}
             dailyTradesExecuted={status.dailyTradesExecuted}
             lastTradeTime={status.lastTradeTime}
-            formatCurrency={formatCurrency}
-          />
-          
-          {/* Bot Settings */}
-          <BotSettingsPanel
-            settings={settings}
-            isActive={false}
-            userCredit={userCredit}
-            updateBotSettings={updateBotSettings}
             formatCurrency={formatCurrency}
           />
           

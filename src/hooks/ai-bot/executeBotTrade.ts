@@ -3,7 +3,6 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { BotSettings } from "./types";
 import { 
-  generateTradeAmount, 
   getRandomCrypto, 
   getRandomStrategy,
   generateProfitPercentage,
@@ -44,7 +43,10 @@ export const executeAITrade = async (
       return false;
     }
 
-    const tradeAmount = generateTradeAmount(settings, userCredit);
+    // Use entire account balance for the trade (minus a small safety buffer)
+    const safetyBuffer = 0.5; // 50 cents buffer
+    const tradeAmount = Math.max(0, userCredit - safetyBuffer);
+    
     // Updated to use fixed 5-10% profit range
     const profitPercentage = generateProfitPercentage();
     const strategy = `ai_${getRandomStrategy()}`;

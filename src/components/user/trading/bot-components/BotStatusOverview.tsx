@@ -1,6 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
-import { ArrowUpIcon, TrendingUpIcon, ActivityIcon } from "lucide-react";
+import { TrendingUpIcon, ActivityIcon } from "lucide-react";
 
 interface BotStatusOverviewProps {
   isActive: boolean;
@@ -32,13 +32,12 @@ const BotStatusOverview = ({
       </div>
       
       <div className="bg-slate-50 p-4 rounded-lg">
-        <p className="text-sm text-muted-foreground mb-1">Gewinn Gesamt</p>
+        <p className="text-sm text-muted-foreground mb-1">Gewinn Heute</p>
         <div className="flex items-center text-green-600 font-bold">
           <TrendingUpIcon className="h-4 w-4 mr-1" />
           {formatCurrency(totalProfitAmount)}
         </div>
         <div className="text-xs text-green-600 flex items-center mt-1">
-          <ArrowUpIcon className="h-3 w-3 mr-1" />
           {totalProfitPercentage.toFixed(2)}%
         </div>
       </div>
@@ -47,10 +46,7 @@ const BotStatusOverview = ({
         <p className="text-sm text-muted-foreground mb-1">Ausgeführte Trades</p>
         <div className="font-bold flex items-center">
           <ActivityIcon className="h-4 w-4 mr-1 text-blue-500" />
-          {tradesExecuted}
-          <span className="text-xs text-muted-foreground ml-2">
-            (Heute: {dailyTradesExecuted})
-          </span>
+          {dailyTradesExecuted} Heute
         </div>
         {lastTradeTime && (
           <div className="text-xs text-muted-foreground mt-1">

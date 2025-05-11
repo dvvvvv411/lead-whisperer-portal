@@ -26,7 +26,8 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     executeSingleTrade, 
     completeTradeAfterSimulation,
     isSimulating,
-    setIsSimulating
+    setIsSimulating,
+    simulationInProgressRef
   } = useBotOperations(
     userId,
     userCredit,
@@ -50,6 +51,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     completeTradeAfterSimulation,
     isSimulating,
     setIsSimulating,
+    simulationInProgressRef,
     rankTiers,
   };
 };

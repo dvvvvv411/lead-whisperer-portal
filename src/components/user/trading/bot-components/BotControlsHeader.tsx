@@ -1,31 +1,39 @@
 
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { ActivityIcon } from "lucide-react";
+import { BotIcon } from "lucide-react";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 
 interface BotControlsHeaderProps {
   onManualTrade: () => void;
   tradesRemaining: number;
+  isActive?: boolean;
+  onBotToggle?: () => void;
 }
 
-const BotControlsHeader = ({
-  onManualTrade,
-  tradesRemaining
-}: BotControlsHeaderProps) => {
+const BotControlsHeader = ({ onManualTrade, tradesRemaining, isActive = false, onBotToggle }: BotControlsHeaderProps) => {
   return (
-    <div className="flex gap-2">
-      <Button 
+    <div className="flex items-center gap-4">
+      {onBotToggle && (
+        <div className="flex items-center gap-2">
+          <Switch 
+            id="bot-active" 
+            checked={isActive} 
+            onCheckedChange={onBotToggle} 
+          />
+          <Label htmlFor="bot-active" className="text-sm">
+            {isActive ? 'Aktiviert' : 'Deaktiviert'}
+          </Label>
+        </div>
+      )}
+      
+      <Button
+        className="flex items-center"
         onClick={onManualTrade}
-        variant="default"
         disabled={tradesRemaining <= 0}
       >
-        <ActivityIcon className="h-4 w-4 mr-2" />
+        <BotIcon className="mr-2 h-4 w-4" />
         Trade ausführen
-        {tradesRemaining <= 0 && (
-          <Badge variant="outline" className="ml-1 bg-red-100 text-red-800">
-            Limit
-          </Badge>
-        )}
       </Button>
     </div>
   );

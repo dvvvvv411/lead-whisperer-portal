@@ -5,6 +5,8 @@ import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter }
 import { Button } from "@/components/ui/button";
 import { checkUserRole } from "@/services/roleService";
 import { useToast } from "@/hooks/use-toast";
+import { useUserCredit } from "@/hooks/useUserCredit";
+import { supabase } from "@/integrations/supabase/client";
 
 interface PaymentStatusViewProps {
   paymentId: string | null;
@@ -13,11 +15,32 @@ interface PaymentStatusViewProps {
 const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
   const [isChecking, setIsChecking] = useState(false);
   const { toast } = useToast();
+  const [currentUser, setCurrentUser] = useState<any>(null);
+  
+  // Get the user to fetch their credit
+  useState(() => {
+    const getUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        setCurrentUser(data.user);
+      }
+    };
+    
+    getUser();
+  }, []);
+  
+  // Use the credit hook to check the current credit status
+  const { userCredit, fetchUserCredit } = useUserCredit(currentUser?.id);
 
   // Function to manually check activation status
   const checkActivationStatus = async () => {
+    if (!currentUser) return;
+    
     setIsChecking(true);
     try {
+      // First refresh the user credit to get the latest value
+      await fetchUserCredit();
+      
       const isActivated = await checkUserRole('user');
       
       if (isActivated) {
@@ -73,6 +96,11 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
             <p className="text-sm text-gray-500 text-center mt-2">
               Dies kann bis zu 15 Minuten dauern. Bitte verlassen Sie diese Seite nicht.
             </p>
+            {userCredit && userCredit > 0 ? (
+              <div className="mt-4 p-3 bg-green-50 text-green-700 rounded-md">
+                <p className="font-medium">Aktuelles Guthaben: {userCredit.toFixed(2)}€</p>
+              </div>
+            ) : null}
           </div>
           
           <div className="bg-yellow-50 p-4 rounded-lg">

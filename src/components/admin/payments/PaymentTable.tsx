@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -86,56 +85,31 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
       
       console.log(`Payment ${selectedPayment.id} marked as completed. Now updating user credit...`);
       
-      // First get the current user credit to ensure we add to it
-      const { data: creditData, error: creditFetchError } = await supabase
-        .from('user_credits')
-        .select('amount')
-        .eq('user_id', selectedPayment.user_id)
-        .maybeSingle();
+      // Use the add-credit edge function to add the payment amount to the user's credit
+      // This is guaranteed to add to the existing amount rather than replacing it
+      const response = await fetch(`https://evtlahgiyytcvfeiqwaz.supabase.co/functions/v1/add-credit`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${supabase.auth.session()?.access_token}`
+        },
+        body: JSON.stringify({
+          userId: selectedPayment.user_id,
+          amount: selectedPayment.amount / 100, // Convert cents to euros for the function
+        }),
+      });
       
-      // Handle the case where user has no credit record yet
-      if (creditFetchError && creditFetchError.code !== 'PGRST116') {
-        throw creditFetchError;
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(`Error adding credit: ${errorData.error || response.statusText}`);
       }
       
-      const currentAmount = creditData?.amount || 0;
-      const additionalAmount = selectedPayment.amount;
-      const newTotalAmount = currentAmount + additionalAmount;
-      
-      console.log(`User ${selectedPayment.user_id} current credit: ${currentAmount} cents`);
-      console.log(`Adding payment amount: ${additionalAmount} cents`);
-      console.log(`New total credit will be: ${newTotalAmount} cents (${(newTotalAmount/100).toFixed(2)}€)`);
-      
-      // If no credit record exists, create one; otherwise update existing record
-      if (creditFetchError && creditFetchError.code === 'PGRST116') {
-        console.log(`No credit record found for user ${selectedPayment.user_id}, creating new record`);
-        
-        const { error: insertError } = await supabase
-          .from('user_credits')
-          .insert({ 
-            user_id: selectedPayment.user_id,
-            amount: additionalAmount,
-            last_updated: new Date().toISOString()
-          });
-        
-        if (insertError) throw insertError;
-      } else {
-        console.log(`Updating existing credit record for user ${selectedPayment.user_id}`);
-        
-        const { error: creditUpdateError } = await supabase
-          .from('user_credits')
-          .update({ 
-            amount: newTotalAmount,
-            last_updated: new Date().toISOString()
-          })
-          .eq('user_id', selectedPayment.user_id);
-        
-        if (creditUpdateError) throw creditUpdateError;
-      }
+      const result = await response.json();
+      console.log("Add credit result:", result);
       
       toast({
         title: "Zahlung bestätigt",
-        description: `Die Zahlung von ${(selectedPayment.amount / 100).toFixed(2)}€ wurde erfolgreich bestätigt.`
+        description: `Die Zahlung von ${(selectedPayment.amount / 100).toFixed(2)}€ wurde erfolgreich bestätigt und dem Konto gutgeschrieben.`
       });
       
       // Close dialog and refresh payments

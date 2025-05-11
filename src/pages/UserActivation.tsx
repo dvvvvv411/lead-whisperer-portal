@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { usePaymentStatus } from "@/hooks/usePaymentStatus";
+import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 
 // Components
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
@@ -13,8 +13,12 @@ const UserActivation = () => {
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   
-  // Custom hooks
-  const { paymentCompleted } = usePaymentStatus(user?.id, paymentSubmitted, paymentId);
+  // Use the payment flow hook
+  const { paymentCompleted } = usePaymentFlow({
+    userId: user?.id,
+    paymentId,
+    paymentSubmitted
+  });
 
   const handleUserLoaded = (userData: any) => {
     setUser(userData);

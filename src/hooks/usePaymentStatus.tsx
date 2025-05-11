@@ -1,18 +1,38 @@
 
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 
-export const usePaymentStatus = (userId: string | undefined, paymentSubmitted: boolean, paymentId: string | null) => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
-  const [paymentCompleted, setPaymentCompleted] = useState(false);
-  
-  // Check payment status immediately on component mount or when returning to the page
+type PaymentStatus = 'pending' | 'completed' | 'rejected' | null;
+
+interface UsePaymentStatusProps {
+  userId?: string;
+  paymentId: string | null;
+  enabled: boolean;
+  pollingInterval?: number;
+}
+
+interface UsePaymentStatusResult {
+  status: PaymentStatus;
+  paymentCompleted: boolean;
+  paymentRejected: boolean;
+  isPolling: boolean;
+}
+
+export const usePaymentStatus = ({
+  userId,
+  paymentId,
+  enabled = true,
+  pollingInterval = 15000
+}: UsePaymentStatusProps): UsePaymentStatusResult => {
+  const [status, setStatus] = useState<PaymentStatus>(null);
+  const [isPolling, setIsPolling] = useState(false);
+  const paymentCompleted = status === 'completed';
+  const paymentRejected = status === 'rejected';
+
+  // Check payment status immediately on hook mount or when paymentId changes
   useEffect(() => {
     const checkInitialPaymentStatus = async () => {
-      if (!userId || !paymentId) return;
+      if (!userId || !paymentId || !enabled) return;
       
       try {
         const { data, error } = await supabase
@@ -24,36 +44,26 @@ export const usePaymentStatus = (userId: string | undefined, paymentSubmitted: b
         if (error) throw error;
         
         console.log("Initial payment status check:", data.status);
-        
-        if (data.status === 'completed') {
-          setPaymentCompleted(true);
-          toast({
-            title: "Zahlung bestätigt",
-            description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
-          });
-          
-          setTimeout(() => {
-            navigate('/nutzer');
-          }, 2000);
-        }
+        setStatus(data.status as PaymentStatus);
       } catch (error: any) {
         console.error("Error checking initial payment status:", error.message);
       }
     };
     
-    if (userId && paymentId) {
+    if (userId && paymentId && enabled) {
       checkInitialPaymentStatus();
     }
-  }, [userId, paymentId, toast, navigate]);
+  }, [userId, paymentId, enabled]);
   
   // Set up polling for payment status updates
   useEffect(() => {
-    let pollInterval: number | null = null;
+    let pollIntervalId: number | null = null;
     
     const startPolling = (id: string) => {
-      if (!id) return;
+      if (!id || !enabled) return;
       
-      pollInterval = window.setInterval(async () => {
+      setIsPolling(true);
+      pollIntervalId = window.setInterval(async () => {
         try {
           const { data, error } = await supabase
             .from('payments')
@@ -63,55 +73,33 @@ export const usePaymentStatus = (userId: string | undefined, paymentSubmitted: b
           
           if (error) throw error;
           
-          console.log("Payment status check:", data.status);
+          console.log("Payment status poll check:", data.status);
+          setStatus(data.status as PaymentStatus);
           
-          if (data.status === 'completed' && !paymentCompleted) {
-            setPaymentCompleted(true);
-            if (pollInterval) clearInterval(pollInterval);
-            
-            toast({
-              title: "Zahlung bestätigt",
-              description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
-            });
-            
-            setTimeout(() => {
-              navigate('/nutzer');
-            }, 2000);
-          } else if (data.status === 'rejected') {
-            if (pollInterval) clearInterval(pollInterval);
-            
-            toast({
-              title: "Zahlung abgelehnt",
-              description: "Ihre Zahlung wurde abgelehnt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.",
-              variant: "destructive"
-            });
+          // Stop polling if payment is completed or rejected
+          if (data.status === 'completed' || data.status === 'rejected') {
+            if (pollIntervalId) {
+              clearInterval(pollIntervalId);
+              setIsPolling(false);
+            }
           }
         } catch (error: any) {
           console.error("Error polling payment status:", error.message);
         }
-      }, 15000); // Check every 15 seconds
+      }, pollingInterval);
     };
     
-    if (paymentSubmitted && paymentId && !paymentCompleted) {
+    if (paymentId && enabled && !paymentCompleted && !paymentRejected) {
       startPolling(paymentId);
     }
     
-    // Prevent navigation when user tries to go back or forward
-    const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (paymentSubmitted && !paymentCompleted) {
-        e.preventDefault();
-        e.returnValue = '';
-        return '';
+    return () => {
+      if (pollIntervalId) {
+        clearInterval(pollIntervalId);
+        setIsPolling(false);
       }
     };
-    
-    window.addEventListener('beforeunload', handleBeforeUnload);
-    
-    return () => {
-      if (pollInterval) clearInterval(pollInterval);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-  }, [paymentSubmitted, paymentId, paymentCompleted, navigate, toast]);
+  }, [paymentId, enabled, paymentCompleted, paymentRejected, pollingInterval]);
   
-  return { paymentCompleted };
+  return { status, paymentCompleted, paymentRejected, isPolling };
 };

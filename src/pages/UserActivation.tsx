@@ -7,6 +7,7 @@ import { Button } from "@/components/ui/button";
 import { Euro, Bitcoin, Check, CreditCard, AlertCircle, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { useNavigate } from "react-router-dom";
 
 interface CryptoWallet {
   id: string;
@@ -16,6 +17,7 @@ interface CryptoWallet {
 
 const UserActivation = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [walletsLoading, setWalletsLoading] = useState(true);
@@ -23,6 +25,8 @@ const UserActivation = () => {
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [walletError, setWalletError] = useState<string | null>(null);
+  const [paymentSubmitted, setPaymentSubmitted] = useState(false);
+  const [paymentId, setPaymentId] = useState<string | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -34,6 +38,9 @@ const UserActivation = () => {
           console.log("User found:", data.user.email);
           setUser(data.user);
           fetchWallets();
+          
+          // Check if the user has any pending payments
+          checkPendingPayments(data.user.id);
         } else {
           console.log("No user found, redirecting to login");
           window.location.href = "/admin";
@@ -52,6 +59,73 @@ const UserActivation = () => {
     
     getUser();
   }, [toast]);
+
+  // Check if user has pending payments
+  const checkPendingPayments = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('payments')
+        .select('*')
+        .eq('user_id', userId)
+        .eq('status', 'pending')
+        .order('created_at', { ascending: false })
+        .limit(1);
+      
+      if (error) throw error;
+      
+      if (data && data.length > 0) {
+        setPaymentSubmitted(true);
+        setPaymentId(data[0].id);
+        
+        // Start polling for payment status
+        startPaymentStatusPolling(data[0].id);
+      }
+    } catch (error: any) {
+      console.error("Error checking pending payments:", error.message);
+    }
+  };
+
+  // Poll payment status every 15 seconds
+  const startPaymentStatusPolling = (paymentId: string) => {
+    const pollInterval = setInterval(async () => {
+      try {
+        const { data, error } = await supabase
+          .from('payments')
+          .select('status')
+          .eq('id', paymentId)
+          .single();
+        
+        if (error) throw error;
+        
+        console.log("Payment status check:", data.status);
+        
+        if (data.status === 'completed') {
+          clearInterval(pollInterval);
+          toast({
+            title: "Zahlung bestätigt",
+            description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
+          });
+          setTimeout(() => {
+            navigate('/nutzer');
+          }, 2000);
+        } else if (data.status === 'rejected') {
+          clearInterval(pollInterval);
+          toast({
+            title: "Zahlung abgelehnt",
+            description: "Ihre Zahlung wurde abgelehnt. Bitte versuchen Sie es erneut oder kontaktieren Sie den Support.",
+            variant: "destructive"
+          });
+          setPaymentSubmitted(false);
+          setPaymentId(null);
+        }
+      } catch (error: any) {
+        console.error("Error polling payment status:", error.message);
+      }
+    }, 15000); // Check every 15 seconds
+    
+    // Clean up interval on component unmount
+    return () => clearInterval(pollInterval);
+  };
 
   const fetchWallets = async () => {
     try {
@@ -105,7 +179,7 @@ const UserActivation = () => {
       if (!selectedWalletObj) throw new Error("Keine gültige Wallet ausgewählt");
       
       // Zahlung in der Datenbank speichern
-      const { error: paymentError } = await supabase
+      const { data, error: paymentError } = await supabase
         .from('payments')
         .insert({
           user_id: user.id,
@@ -114,7 +188,9 @@ const UserActivation = () => {
           wallet_id: selectedWalletObj.id,
           wallet_currency: selectedWalletObj.currency,
           status: 'pending'
-        });
+        })
+        .select('id')
+        .single();
 
       if (paymentError) throw paymentError;
 
@@ -123,10 +199,13 @@ const UserActivation = () => {
         description: "Vielen Dank! Ihre Zahlung wurde erfolgreich gemeldet und wird überprüft.",
       });
 
-      // Zur Warteseite weiterleiten
-      setTimeout(() => {
-        window.location.href = "/nutzer";
-      }, 2000);
+      // Set payment as submitted and store payment ID
+      setPaymentSubmitted(true);
+      setPaymentId(data.id);
+      
+      // Start polling for payment status
+      startPaymentStatusPolling(data.id);
+      
     } catch (error: any) {
       console.error("Fehler bei der Zahlungsmeldung:", error);
       toast({
@@ -142,12 +221,69 @@ const UserActivation = () => {
   const handleRetryWallets = () => {
     fetchWallets();
   };
+  
+  // Prevent navigation when user tries to go back or forward
+  useEffect(() => {
+    if (paymentSubmitted) {
+      // Block navigation attempts
+      const handleBeforeUnload = (e: BeforeUnloadEvent) => {
+        e.preventDefault();
+        e.returnValue = '';
+        return '';
+      };
+      
+      window.addEventListener('beforeunload', handleBeforeUnload);
+      
+      return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+      };
+    }
+  }, [paymentSubmitted]);
 
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
         <p>Wird geladen...</p>
+      </div>
+    );
+  }
+
+  if (paymentSubmitted) {
+    return (
+      <div className="container mx-auto p-4 max-w-3xl">
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold mb-2">Zahlung wird überprüft</h1>
+          <p className="text-gray-600">Bitte verlassen Sie diese Seite nicht, während Ihre Zahlung überprüft wird.</p>
+        </div>
+        
+        <Card>
+          <CardHeader>
+            <CardTitle>Zahlungsstatus</CardTitle>
+            <CardDescription>
+              Ihre Zahlungsmeldung wurde erfolgreich eingereicht und wird jetzt überprüft.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            <div className="flex flex-col items-center justify-center p-6 border rounded-lg bg-gray-50">
+              <Loader2 className="h-10 w-10 animate-spin text-primary mb-4" />
+              <p className="text-lg font-medium">Wir überprüfen Ihre Zahlung</p>
+              <p className="text-sm text-gray-500 text-center mt-2">
+                Dies kann bis zu 15 Minuten dauern. Bitte verlassen Sie diese Seite nicht.
+              </p>
+            </div>
+            
+            <div className="bg-yellow-50 p-4 rounded-lg">
+              <div className="flex items-start">
+                <AlertCircle className="h-5 w-5 text-yellow-600 mr-2 mt-0.5" />
+                <p className="text-sm text-yellow-700">
+                  <strong>Wichtig:</strong> Bitte bleiben Sie auf dieser Seite, bis Ihre Zahlung bestätigt wurde. 
+                  Sie werden automatisch weitergeleitet, sobald die Überprüfung abgeschlossen ist.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

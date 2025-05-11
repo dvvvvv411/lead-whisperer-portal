@@ -57,12 +57,20 @@ export const useCryptos = () => {
         description: "Kryptowährungsdaten werden aktualisiert..."
       });
       
+      // Get the current session for auth token
+      const { data: sessionData } = await supabase.auth.getSession();
+      
+      if (!sessionData?.session) {
+        throw new Error("Keine aktive Sitzung gefunden");
+      }
+      
       const response = await fetch(
         "https://evtlahgiyytcvfeiqwaz.supabase.co/functions/v1/update-crypto-prices",
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json"
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${sessionData.session.access_token}`
           }
         }
       );

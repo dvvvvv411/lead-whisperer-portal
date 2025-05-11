@@ -22,21 +22,31 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
   });
   const [botInterval, setBotInterval] = useState<NodeJS.Timeout | null>(null);
 
-  // Update bot status
-  const updateStatus = useCallback((update: any) => {
+  // Update bot status - explicitly type the update parameter
+  const updateStatus = useCallback((update: Partial<BotStatus> | ((prev: BotStatus) => Partial<BotStatus>)) => {
     setStatus((prev) => {
       const newStatus = { ...prev };
       
       // Process each key in the update object
-      Object.keys(update).forEach((key) => {
-        if (typeof update[key] === 'function') {
-          // If it's a function, call it with the previous value
-          newStatus[key as keyof BotStatus] = update[key](prev[key as keyof BotStatus]);
-        } else {
-          // Otherwise just update the value
-          newStatus[key as keyof BotStatus] = update[key];
-        }
-      });
+      if (typeof update === 'function') {
+        // If update is a function, call it with previous status
+        const updateResult = update(prev);
+        return { ...prev, ...updateResult };
+      } else {
+        // If update is an object, directly apply updates
+        Object.keys(update).forEach((key) => {
+          const typedKey = key as keyof BotStatus;
+          const updateValue = update[typedKey];
+          
+          if (typeof updateValue === 'function') {
+            // If the value is a function, call it with the previous value
+            (newStatus[typedKey] as any) = updateValue((prev[typedKey]));
+          } else {
+            // Otherwise just update the value
+            (newStatus[typedKey] as any) = updateValue;
+          }
+        });
+      }
       
       return newStatus;
     });

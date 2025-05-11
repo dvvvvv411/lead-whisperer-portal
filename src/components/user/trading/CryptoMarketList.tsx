@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ArrowUpIcon, ArrowDownIcon } from "lucide-react";
@@ -165,7 +164,6 @@ const CryptoMarketList = ({
         </thead>
         <tbody>
           {sortedCryptos.map((crypto) => (
-            // Use regular div instead of React.Fragment with properties
             <div key={crypto.id}>
               <tr className="border-b border-gray-800 hover:bg-gray-900/50">
                 <td className="py-3 px-2">
@@ -207,7 +205,7 @@ const CryptoMarketList = ({
                       crypto={crypto}
                       userCredit={userCredit}
                       onTrade={onTrade}
-                      onCancel={() => setActiveTradeCrypto(null)}
+                      onClose={() => setActiveTradeCrypto(null)}
                     />
                   </td>
                 </tr>

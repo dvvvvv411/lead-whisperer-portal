@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Bitcoin, AlertCircle, Loader2 } from "lucide-react";
+import { Bitcoin, AlertCircle, Loader2, CreditCard } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";

@@ -55,14 +55,12 @@ export const useWithdrawalActions = (onWithdrawalUpdated: () => void) => {
       const newStatus = dialogAction === "approve" ? "completed" : "rejected";
       console.log(`Processing withdrawal: changing status to ${newStatus} for ID: ${selectedWithdrawal.id}`);
       
-      const result = await processWithdrawal({
+      await processWithdrawal({
         withdrawal: selectedWithdrawal,
         status: newStatus,
         notes: notes || null,
         isApproved: dialogAction === "approve"
       });
-      
-      console.log("Withdrawal processing result:", result);
       
       toast({
         title: dialogAction === "approve" ? "Auszahlung genehmigt" : "Auszahlung abgelehnt",
@@ -70,9 +68,7 @@ export const useWithdrawalActions = (onWithdrawalUpdated: () => void) => {
       });
       
       // Force refresh withdrawals from database
-      setTimeout(() => {
-        onWithdrawalUpdated();
-      }, 300);
+      onWithdrawalUpdated();
     } catch (error: any) {
       console.error("Fehler beim Verarbeiten der Auszahlung:", error.message);
       toast({

@@ -42,7 +42,7 @@ export async function processWithdrawal({
     
     console.log(`Updating withdrawal ${withdrawal.id} to status: ${status}`);
     
-    // First try direct update with explicit status value to ensure it's passed correctly
+    // Update the withdrawal status - don't use .single() here as it's causing the error
     const { data: updateData, error: updateError } = await supabase
       .from('withdrawals')
       .update({ 
@@ -50,8 +50,7 @@ export async function processWithdrawal({
         notes: notes,
         updated_at: currentTimestamp
       })
-      .eq('id', withdrawal.id)
-      .select();
+      .eq('id', withdrawal.id);
     
     console.log("Withdrawal update response:", { updateData, updateError });
     
@@ -60,17 +59,16 @@ export async function processWithdrawal({
       throw updateError;
     }
     
-    // Verify the update was successful
+    // Verify the update was successful - don't use .single() here
     const { data: verifyData, error: verifyError } = await supabase
       .from('withdrawals')
       .select('status, updated_at')
-      .eq('id', withdrawal.id)
-      .single();
+      .eq('id', withdrawal.id);
       
     console.log("Verification after update:", { 
       verifyData, 
       verifyError,
-      statusMatches: verifyData?.status === status 
+      statusMatches: verifyData && verifyData[0]?.status === status 
     });
     
     if (verifyError) {
@@ -78,10 +76,10 @@ export async function processWithdrawal({
       throw verifyError;
     }
     
-    if (verifyData?.status !== status) {
+    if (!verifyData || verifyData.length === 0 || verifyData[0]?.status !== status) {
       console.error("Status was not updated correctly:", {
         expectedStatus: status,
-        actualStatus: verifyData?.status
+        actualStatus: verifyData && verifyData[0]?.status
       });
     }
     
@@ -91,7 +89,7 @@ export async function processWithdrawal({
         .from('user_credits')
         .select('amount')
         .eq('user_id', withdrawal.user_id)
-        .single();
+        .maybeSingle();  // Use maybeSingle instead of single to avoid errors
       
       console.log("Current user credit:", { currentCreditData, creditFetchError });
       

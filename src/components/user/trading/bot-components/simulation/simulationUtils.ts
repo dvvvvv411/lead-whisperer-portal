@@ -44,38 +44,51 @@ export const algorithmSteps: { title: string; description: string }[] = [
   }
 ];
 
+// Format trade date for display
+export function formatTradeDate(date: Date): string {
+  return new Intl.DateTimeFormat('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+}
+
+// Calculate profit from an investment based on percentage
+export function calculateProfit(tradeAmount: number, profitPercentage: number): number {
+  return (tradeAmount * profitPercentage) / 100;
+}
+
+// Calculate buy price that would result in the given profit percentage at current market price
+export function calculateBuyPrice(currentPrice: number, profitPercentage: number): number {
+  return currentPrice / (1 + (profitPercentage / 100));
+}
+
 // Utility function to generate random crypto comparison data
 export function generateCryptoComparison(cryptoData: any[]): CryptoComparisonProps {
   // Generate random comparison data
-  const metrics = ["Volatilität", "Momentum", "Handelsvolumen", "Korrelation", "Markttiefe"];
-  const metric = metrics[Math.floor(Math.random() * metrics.length)];
+  const symbols = ["BTC", "ETH", "ADA", "SOL", "DOT", "AVAX", "MATIC"];
+  const prices = [50000, 3500, 1.2, 150, 20, 35, 2.5];
+  const changes = [-3.5, 2.8, 5.2, -1.5, 4.1, -2.3, 1.8];
   
-  // Use real crypto data if available, otherwise fallback to defaults
-  const cryptos = cryptoData && cryptoData.length >= 2 
-    ? [cryptoData[Math.floor(Math.random() * cryptoData.length)], cryptoData[Math.floor(Math.random() * cryptoData.length)]]
-    : [{ name: "Bitcoin", symbol: "BTC" }, { name: "Ethereum", symbol: "ETH" }];
+  // Pick two random indexes
+  const idx1 = Math.floor(Math.random() * symbols.length);
+  let idx2 = Math.floor(Math.random() * symbols.length);
   
-  // Ensure we don't compare the same crypto
-  if (cryptos[0].symbol === cryptos[1].symbol) {
-    cryptos[1] = { name: "Cardano", symbol: "ADA" };
+  // Make sure idx2 is different from idx1
+  while (idx2 === idx1) {
+    idx2 = Math.floor(Math.random() * symbols.length);
   }
   
-  // Generate random scores ensuring the first one is usually higher (for visual effect)
-  const score1 = Math.floor(Math.random() * 40) + 60; // 60-99
-  const score2 = Math.floor(Math.random() * 60) + 30; // 30-89
-  
   return {
-    metric,
-    crypto1: {
-      name: cryptos[0].name,
-      symbol: cryptos[0].symbol,
-      score: score1
-    },
-    crypto2: {
-      name: cryptos[1].name,
-      symbol: cryptos[1].symbol,
-      score: score2
-    }
+    symbol: cryptoData && cryptoData.length > 0 
+      ? cryptoData[Math.floor(Math.random() * cryptoData.length)].symbol
+      : symbols[idx1],
+    price: cryptoData && cryptoData.length > 0 
+      ? cryptoData[Math.floor(Math.random() * cryptoData.length)].current_price
+      : prices[idx1],
+    change: Math.random() > 0.5 ? Math.random() * 8 : -Math.random() * 5
   };
 }
 

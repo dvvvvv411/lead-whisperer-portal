@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { TrendingUpIcon, TrendingDownIcon, ChartLineIcon } from "lucide-react";
+import { TrendingUpIcon, TrendingDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface CryptoComparisonProps {

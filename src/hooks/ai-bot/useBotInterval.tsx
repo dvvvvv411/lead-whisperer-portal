@@ -1,40 +1,33 @@
 
-import { useState, useCallback, useEffect } from "react";
+import { useState, useRef, useCallback } from "react";
 
 export const useBotInterval = () => {
-  const [botInterval, setBotInterval] = useState<NodeJS.Timeout | null>(null);
-
-  // Clear the bot interval
+  const [botInterval, setBotInterval] = useState<number>(0);
+  const intervalRef = useRef<NodeJS.Timeout | null>(null);
+  
   const clearBotInterval = useCallback(() => {
-    if (botInterval) {
-      clearInterval(botInterval);
-      setBotInterval(null);
+    if (intervalRef.current) {
+      clearInterval(intervalRef.current);
+      intervalRef.current = null;
     }
-  }, [botInterval]);
-
-  // Set a new interval
-  const setNewBotInterval = useCallback((callback: () => void, intervalTime: number) => {
-    // Clear any existing interval first
+  }, []);
+  
+  const setNewBotInterval = useCallback((callback: () => void, minutes: number) => {
     clearBotInterval();
     
-    // Set up new interval
-    const interval = setInterval(callback, intervalTime);
-    setBotInterval(interval);
+    // Convert minutes to milliseconds
+    const milliseconds = minutes * 60 * 1000;
     
-    return interval;
+    // Set new interval
+    intervalRef.current = setInterval(callback, milliseconds);
+    
+    // Update the interval state
+    setBotInterval(minutes);
   }, [clearBotInterval]);
-
-  // Clean up on unmount
-  useEffect(() => {
-    return () => {
-      if (botInterval) {
-        clearInterval(botInterval);
-      }
-    };
-  }, [botInterval]);
 
   return {
     botInterval,
+    intervalRef,
     clearBotInterval,
     setNewBotInterval,
     setBotInterval

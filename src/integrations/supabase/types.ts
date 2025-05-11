@@ -237,6 +237,27 @@ export type Database = {
           },
         ]
       }
+      user_credits: {
+        Row: {
+          amount: number
+          id: string
+          last_updated: string | null
+          user_id: string
+        }
+        Insert: {
+          amount?: number
+          id?: string
+          last_updated?: string | null
+          user_id: string
+        }
+        Update: {
+          amount?: number
+          id?: string
+          last_updated?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
       user_portfolios: {
         Row: {
           average_buy_price: number
@@ -338,6 +359,10 @@ export type Database = {
           _role: Database["public"]["Enums"]["app_role"]
         }
         Returns: boolean
+      }
+      initialize_user_credit: {
+        Args: { user_id_param: string }
+        Returns: undefined
       }
       remove_user_role: {
         Args: {

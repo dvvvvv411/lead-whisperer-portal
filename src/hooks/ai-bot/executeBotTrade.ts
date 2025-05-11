@@ -64,30 +64,6 @@ export const executeAITrade = async (
     
     console.log(`KI-Bot: Kauf-Trade erstellt, ID: ${buyResult.data?.id}`);
     
-    // Deduct funds for buy operations - FIX: Convert to integer cents (round to ensure valid integer)
-    const buyPaymentResult = await supabase
-      .from('payments')
-      .insert([
-        {
-          user_id: userId,
-          user_email: '', // We don't need email for simulation
-          amount: Math.round(-tradeAmount * 100), // Store in cents with rounding
-          status: 'completed',
-          currency: 'EUR',
-          wallet_currency: 'SIMULATION',
-          notes: `KI-Bot: KAUF ${quantity.toFixed(6)} ${crypto.symbol} @ ${crypto.current_price.toFixed(2)}€ mit ${strategy}`
-        }
-      ])
-      .select()
-      .single();
-      
-    if (buyPaymentResult.error) {
-      console.error("KI-Bot: Fehler beim Erstellen der Kauf-Zahlung:", buyPaymentResult.error);
-      throw buyPaymentResult.error;
-    }
-    
-    console.log(`KI-Bot: Kauf-Zahlung erstellt, ID: ${buyPaymentResult.data?.id}`);
-    
     // Calculate sell price with profit
     const sellPrice = crypto.current_price * (1 + (profitPercentage / 100));
     const sellAmount = quantity * sellPrice;
@@ -118,30 +94,6 @@ export const executeAITrade = async (
     
     console.log(`KI-Bot: Verkauf-Trade erstellt, ID: ${sellResult.data?.id}`);
     
-    // Add funds for sell operations (with profit) - FIX: Convert to integer cents (round to ensure valid integer)
-    const sellPaymentResult = await supabase
-      .from('payments')
-      .insert([
-        {
-          user_id: userId,
-          user_email: '', // We don't need email for simulation
-          amount: Math.round(sellAmount * 100), // Store in cents with rounding
-          status: 'completed',
-          currency: 'EUR',
-          wallet_currency: 'SIMULATION',
-          notes: `KI-Bot: VERKAUF ${quantity.toFixed(6)} ${crypto.symbol} @ ${sellPrice.toFixed(2)}€ mit ${strategy} (Gewinn: ${profit.toFixed(2)}€)`
-        }
-      ])
-      .select()
-      .single();
-      
-    if (sellPaymentResult.error) {
-      console.error("KI-Bot: Fehler beim Erstellen der Verkauf-Zahlung:", sellPaymentResult.error);
-      throw sellPaymentResult.error;
-    }
-    
-    console.log(`KI-Bot: Verkauf-Zahlung erstellt, ID: ${sellPaymentResult.data?.id}, Gewinn: ${profit.toFixed(2)}€`);
-    
     // Update bot status
     updateStatus({
       lastTradeTime: new Date(),
@@ -156,7 +108,6 @@ export const executeAITrade = async (
       variant: "default"
     });
     
-    // Call the callback to update the parent component
     return true;
   } catch (error: any) {
     console.error('Error executing AI trade:', error.message);

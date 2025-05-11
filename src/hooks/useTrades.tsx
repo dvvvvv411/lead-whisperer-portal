@@ -84,49 +84,16 @@ export const useTrades = () => {
       
       if (error) throw error;
       
-      // Update user credit (deduct or add funds)
-      if (data) {
-        if (type === 'buy') {
-          // Deduct funds for buy operations
-          await supabase
-            .from('payments')
-            .insert([
-              {
-                user_id: userId,
-                user_email: userEmail,
-                amount: -totalAmount * 100, // Store in cents
-                status: 'completed',
-                currency: 'EUR',
-                wallet_currency: 'SIMULATION',
-                notes: `Simulation: ${type.toUpperCase()} ${quantity} @ ${price}€ mit Strategie: ${strategy}`
-              }
-            ]);
-        } else {
-          // Add funds for sell operations
-          await supabase
-            .from('payments')
-            .insert([
-              {
-                user_id: userId,
-                user_email: userEmail,
-                amount: totalAmount * 100, // Store in cents
-                status: 'completed',
-                currency: 'EUR',
-                wallet_currency: 'SIMULATION',
-                notes: `Simulation: ${type.toUpperCase()} ${quantity} @ ${price}€ mit Strategie: ${strategy}`
-              }
-            ]);
-        }
-        
-        toast({
-          title: `${type === 'buy' ? 'Kauf' : 'Verkauf'} erfolgreich`,
-          description: `${quantity} zu einem Preis von ${price.toFixed(2)}€ ${type === 'buy' ? 'gekauft' : 'verkauft'}.`
-        });
-        
-        return data;
-      }
+      // Note: We no longer need to manually update credit here,
+      // as it's now handled by the database trigger
       
-      return null;
+      toast({
+        title: `${type === 'buy' ? 'Kauf' : 'Verkauf'} erfolgreich`,
+        description: `${quantity} zu einem Preis von ${price.toFixed(2)}€ ${type === 'buy' ? 'gekauft' : 'verkauft'}.`
+      });
+      
+      return data;
+      
     } catch (error: any) {
       console.error('Error executing trade:', error.message);
       toast({

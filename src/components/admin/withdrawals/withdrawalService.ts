@@ -34,12 +34,12 @@ export async function processWithdrawal({
     isApproved
   });
   
-  // Update the withdrawal status
+  // Update the withdrawal status - using explicit match-case match
   const { data: updateData, error: updateError } = await supabase
     .from('withdrawals')
     .update({ 
-      status,
-      notes,
+      status: status, // Ensuring we're using the correct status value
+      notes: notes,
       updated_at: new Date().toISOString()
     })
     .eq('id', withdrawal.id);

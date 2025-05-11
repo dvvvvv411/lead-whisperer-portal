@@ -138,6 +138,10 @@
   .card-shine {
     @apply after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:translate-x-[-200%] hover:after:translate-x-[200%] after:transition-transform after:duration-1000;
   }
+  
+  .shadow-glow {
+    @apply shadow-[0_0_15px_rgba(255,215,0,0.6)];
+  }
 }
 
 @keyframes pulse-gold {
@@ -160,6 +164,11 @@
   50% { opacity: 1; }
 }
 
+@keyframes confetti-fall {
+  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+  100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
+}
+
 @layer utilities {
   .animate-pulse-gold {
     animation: pulse-gold 2s infinite;
@@ -176,5 +185,9 @@
   
   .animate-glow-pulse {
     animation: glow-pulse 2s ease-in-out infinite;
+  }
+  
+  .animate-confetti {
+    animation: confetti-fall 3s forwards;
   }
 }

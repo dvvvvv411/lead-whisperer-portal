@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { ChartContainer, ChartTooltip, ChartTooltipContent } from "@/components/ui/chart";
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TrendingUp, Zap, Star } from "lucide-react";
 
@@ -134,6 +133,16 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
             </div>
           </div>
         )}
+      </div>
+      
+      {/* Company Logo - Bottom left */}
+      <div className="absolute bottom-2 left-2 opacity-70 hover:opacity-100 transition-opacity">
+        <div className="flex items-center gap-1.5">
+          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-gold to-accent1 shadow-glow flex items-center justify-center">
+            <span className="text-xs font-bold text-black">C</span>
+          </div>
+          <span className="text-xs font-medium text-gold/80">Casino AI</span>
+        </div>
       </div>
       
       {/* Floating indicator icons */}

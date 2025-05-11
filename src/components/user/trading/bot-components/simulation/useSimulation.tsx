@@ -63,37 +63,21 @@ export const useSimulation = ({
       const currentTime = Date.now();
       const elapsed = currentTime - startTimeRef.current;
       
-      // Create a non-linear progress curve that starts slower and speeds up
-      // This creates a more dramatic effect towards the end
-      let progressCurve;
-      const normalizedTime = elapsed / simulationDuration;
+      // Create a strict linear progress that completes exactly at simulationDuration
+      const linearProgress = Math.min(100, (elapsed / simulationDuration) * 100);
       
-      if (normalizedTime < 0.2) {
-        // Start slower (0-15%)
-        progressCurve = normalizedTime * 0.75 * 100;
-      } else if (normalizedTime < 0.7) {
-        // Middle section (15-75%)
-        progressCurve = (0.15 + (normalizedTime - 0.2) * 0.85) * 100;
-      } else {
-        // End section - accelerate to completion (75-100%)
-        const remaining = 1 - normalizedTime;
-        const accelerationFactor = 1 - Math.pow(remaining / 0.3, 2);
-        progressCurve = Math.min(100, 75 + accelerationFactor * 25);
-      }
-      
-      const newProgress = Math.min(100, Math.floor(progressCurve));
+      // Ensure progress always increases and never goes backward
+      const newProgress = Math.max(progressRef.current, Math.floor(linearProgress));
       
       progressRef.current = newProgress;
       setProgress(newProgress);
       
-      // Update current step based on progress
-      // We'll use a slightly different curve for the steps to create interesting visuals
-      // Some steps will appear to take longer than others
-      const stepsCurve = [0, 10, 25, 40, 60, 75, 85, 92, 97, 100];
+      // Update current step based on progress with fixed thresholds
+      const stepThresholds = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];
       let newStep = 0;
       
-      for (let i = 0; i < stepsCurve.length; i++) {
-        if (newProgress >= stepsCurve[i]) {
+      for (let i = 0; i < stepThresholds.length; i++) {
+        if (newProgress >= stepThresholds[i]) {
           newStep = i;
         } else {
           break;
@@ -122,7 +106,7 @@ export const useSimulation = ({
           onComplete(true, selectedCryptoRef.current);
         }, 1000);
       }
-    }, 250); // Update 4 times per second for smoother animation
+    }, 200); // Update 5 times per second for smoother animation
     
     return cleanup;
   }, [simulationActive, simulationDuration, onComplete, cryptoData]);

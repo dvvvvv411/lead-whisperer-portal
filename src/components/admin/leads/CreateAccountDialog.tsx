@@ -59,21 +59,25 @@ export const CreateAccountDialog = ({
         throw authError;
       }
       
-      // 3. Add user role if account created successfully
+      // 3. Make sure the admin stays logged in
+      await supabase.auth.setSession({
+        access_token: adminSession.session.access_token,
+        refresh_token: adminSession.session.refresh_token
+      });
+      
+      // 4. Add user role using a direct RPC function call instead of table insert
       if (authData?.user) {
-        // Set up their role
-        const { error: roleError } = await supabase
-          .from('user_roles')
-          .insert([{
-            user_id: authData.user.id,
-            role: 'user'
-          }]);
+        // Use the stored function to set role to bypass RLS
+        const { error: functionError } = await supabase.rpc('add_user_role', {
+          _user_id: authData.user.id,
+          _role: 'user'
+        });
           
-        if (roleError) {
-          throw roleError;
+        if (functionError) {
+          throw functionError;
         }
         
-        // 4. Update lead status
+        // 5. Update lead status
         const { error: leadError } = await supabase
           .from('leads')
           .update({ status: 'akzeptiert' })
@@ -82,12 +86,6 @@ export const CreateAccountDialog = ({
         if (leadError) {
           throw leadError;
         }
-        
-        // 5. Make sure we stay logged in as the admin
-        await supabase.auth.setSession({
-          access_token: adminSession.session.access_token,
-          refresh_token: adminSession.session.refresh_token
-        });
         
         setAccountCreationSuccess(true);
       }

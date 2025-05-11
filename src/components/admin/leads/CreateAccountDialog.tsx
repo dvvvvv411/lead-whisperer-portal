@@ -37,7 +37,10 @@ export const CreateAccountDialog = ({
     try {
       setIsCreatingAccount(true);
       
-      // 1. Create the user using signUp with adminUserCredentials option to prevent auto-login
+      // Store the current session before creating a new user
+      const { data: currentSession } = await supabase.auth.getSession();
+      
+      // 1. Create the user using signUp with standard options
       const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
@@ -45,11 +48,7 @@ export const CreateAccountDialog = ({
           data: {
             name: formData.name
           },
-          emailRedirectTo: window.location.origin,
-          // This prevents the newly created user from being automatically logged in
-          adminUserCredentials: {
-            preventSignIn: true
-          }
+          emailRedirectTo: window.location.origin
         }
       });
       
@@ -59,6 +58,7 @@ export const CreateAccountDialog = ({
       
       // 2. Add user role if account created successfully
       if (authData?.user) {
+        // If a new user was created successfully, we need to set up their role
         const { error: roleError } = await supabase
           .from('user_roles')
           .insert([{
@@ -78,6 +78,14 @@ export const CreateAccountDialog = ({
           
         if (leadError) {
           throw leadError;
+        }
+        
+        // 4. Re-authenticate the admin user to ensure we stay logged in as admin
+        if (currentSession?.session) {
+          await supabase.auth.setSession({
+            access_token: currentSession.session.access_token,
+            refresh_token: currentSession.session.refresh_token
+          });
         }
         
         setAccountCreationSuccess(true);

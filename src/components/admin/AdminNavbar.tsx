@@ -14,6 +14,9 @@ export const AdminNavbar = () => {
           <MenubarItem asChild>
             <Link to="/admin/crypto-wallets">Krypto Wallets</Link>
           </MenubarItem>
+          <MenubarItem asChild>
+            <Link to="/admin/users">Benutzer</Link>
+          </MenubarItem>
         </MenubarContent>
       </MenubarMenu>
     </Menubar>

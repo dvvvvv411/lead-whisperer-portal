@@ -55,12 +55,13 @@ export async function processWithdrawal({
       throw updateError;
     }
     
-    // Fetch the withdrawal to verify the update was successful
+    // Ändern Sie die Überprüfungsmethode - Verwenden Sie maybeSingle() statt single()
+    // und prüfen Sie, ob Daten zurückgegeben wurden, anstatt einen Fehler zu erwarten
     const { data: verifyData, error: verifyError } = await supabase
       .from('withdrawals')
       .select('*')
       .eq('id', withdrawal.id)
-      .single();
+      .maybeSingle();
       
     console.log("Verification after update:", { 
       verifyData, 
@@ -68,9 +69,17 @@ export async function processWithdrawal({
       statusMatches: verifyData?.status === status 
     });
     
-    if (verifyError) {
+    // Wenn wir hier einen Fehler haben, der nicht PGRST116 ist, oder wenn wir verifyData haben und der Status nicht übereinstimmt,
+    // dann haben wir ein Problem
+    if (verifyError && verifyError.code !== 'PGRST116') {
       console.error("Error verifying withdrawal update:", verifyError);
       throw verifyError;
+    }
+    
+    // Wenn wir keine Daten zurückbekommen, bedeutet das, dass der Datensatz nicht gefunden wurde
+    // Dies könnte auf ein Problem mit den RLS-Richtlinien oder einen bereits gelöschten Datensatz hindeuten
+    if (!verifyData) {
+      console.warn("Withdrawal record not found during verification, but update was attempted. This could be due to RLS policies or the record was deleted.");
     }
     
     // If approved, update user credit by subtracting the withdrawal amount

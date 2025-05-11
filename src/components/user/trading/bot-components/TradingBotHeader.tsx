@@ -1,28 +1,36 @@
 
-import { Card } from "@/components/ui/card";
-import { Bot } from "lucide-react";
+import { CardTitle, CardDescription } from "@/components/ui/card";
+import { Bot, Sparkles } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface TradingBotHeaderProps {
+  onManualTrade: () => void;
   tradesRemaining: number;
 }
 
-const TradingBotHeader = ({ 
-  tradesRemaining 
-}: TradingBotHeaderProps) => {
+const TradingBotHeader = ({ onManualTrade, tradesRemaining }: TradingBotHeaderProps) => {
   return (
-    <div className="bg-gradient-to-r from-casino-darker to-casino-dark p-4 border-b border-gold/10">
-      <div className="flex items-center justify-between">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-accent1-dark to-accent1-light flex items-center justify-center">
-            <Bot className="h-4 w-4 text-white" />
-          </div>
-          <h2 className="text-lg font-semibold text-transparent bg-clip-text bg-gradient-to-r from-accent1-light to-accent1">
-            KI-Trading Bot
-          </h2>
+    <div className="p-6 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gradient-to-r from-casino-darker/80 to-casino-dark/80 backdrop-blur-xl border-b border-gold/10">
+      <div className="flex items-center">
+        <div className={cn(
+          "p-2 rounded-full bg-gradient-to-br from-gold/20 to-accent1/10 mr-3",
+          "shadow-lg shadow-gold/10",
+          "animate-pulse-gold"
+        )}>
+          <Bot className="h-6 w-6 text-gold" />
         </div>
-
-        {/* Trade counter indicator removed - now part of the power button in RankDisplay */}
+        <div>
+          <CardTitle className="text-2xl font-bold flex items-center text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light">
+            KI-Trading Bot
+            <Sparkles className="h-5 w-5 ml-2 text-gold animate-pulse" />
+          </CardTitle>
+          <CardDescription className="text-muted-foreground">
+            Automatisierte Trades mit KI-Optimierung für maximale Gewinne
+          </CardDescription>
+        </div>
       </div>
+      
+      {/* Empty placeholder - control buttons are now in the RankDisplay */}
     </div>
   );
 };

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -12,7 +11,7 @@ import AITradingBot from "@/components/user/trading/AITradingBot";
 import { useCryptos } from "@/hooks/useCryptos";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, Sparkles } from "lucide-react";
 
 // Credit threshold required to access the dashboard (in EUR)
 const CREDIT_ACTIVATION_THRESHOLD = 250;
@@ -120,13 +119,13 @@ const User = () => {
 
   // Only render the dashboard if authentication is checked
   return authChecked ? (
-    <div className="flex flex-col min-h-screen bg-casino-dark dark">
+    <div className="flex flex-col min-h-screen bg-gradient-to-br from-casino-darker to-casino-dark dark">
       <UserNavbar userId={user?.id} userEmail={user?.email} />
       
       <main className="flex-1 container mx-auto p-4">
         {/* Activation success message */}
         {showActivationMessage && (
-          <div className="mb-6 p-4 bg-green-900/30 border border-green-500/30 rounded-lg animate-fade-in">
+          <div className="mb-6 p-4 bg-gradient-to-r from-green-900/30 to-green-800/30 border border-green-500/30 rounded-xl animate-fade-in backdrop-blur-sm">
             <div className="flex items-start">
               <CheckCircle className="h-5 w-5 text-green-500 mr-3 mt-0.5" />
               <div className="flex-1">
@@ -150,29 +149,25 @@ const User = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Main section - AI Bot (takes 2/3 of the screen on large displays) */}
           <div className="lg:col-span-2">
-            <Card className="casino-card overflow-hidden mb-6 transform transition-all duration-300 hover:translate-y-[-2px]">
-              <CardHeader className="bg-gold/5 border-b border-gold/10">
-                <CardTitle className="gradient-text text-2xl">
-                  KI-Trading Bot
-                </CardTitle>
-              </CardHeader>
-              <CardContent className="p-0">
-                <AITradingBot 
-                  userId={user?.id} 
-                  userCredit={userCredit || 0}
-                  onTradeExecuted={handleCreditUpdated}
-                />
-              </CardContent>
-            </Card>
+            <AITradingBot 
+              userId={user?.id} 
+              userCredit={userCredit || 0}
+              onTradeExecuted={handleCreditUpdated}
+              className="transform transition-all duration-500 hover:translate-y-[-2px] hover:shadow-2xl"
+            />
           </div>
 
           {/* Sidebar sections (1/3 of screen on large displays) */}
           <div className="space-y-6">
             {/* Market Overview */}
-            <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
-              <CardHeader className="bg-gold/5 border-b border-gold/10">
-                <CardTitle className="text-lg text-foreground">
-                  Marktübersicht
+            <Card className="overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border border-gold/10 bg-gradient-to-br from-casino-darker to-casino-card/90 shadow-lg backdrop-blur-xl">
+              <CardHeader className="border-b border-gold/10 bg-gradient-to-r from-casino-darker/80 to-casino-dark/80">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-accent1-light animate-pulse"></div>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent1-light to-accent1">
+                    Marktübersicht
+                  </span>
+                  <Sparkles className="h-4 w-4 text-accent1 ml-auto" />
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0 max-h-[400px] overflow-y-auto">
@@ -193,10 +188,14 @@ const User = () => {
             </Card>
 
             {/* Trade History */}
-            <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
-              <CardHeader className="bg-gold/5 border-b border-gold/10">
-                <CardTitle className="text-lg text-foreground">
-                  Handelshistorie
+            <Card className="overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border border-gold/10 bg-gradient-to-br from-casino-darker to-casino-card/90 shadow-lg backdrop-blur-xl">
+              <CardHeader className="border-b border-gold/10 bg-gradient-to-r from-casino-darker/80 to-casino-dark/80">
+                <CardTitle className="text-lg flex items-center gap-2">
+                  <div className="w-2 h-2 rounded-full bg-gold animate-pulse"></div>
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light">
+                    Handelshistorie
+                  </span>
+                  <Sparkles className="h-4 w-4 text-gold ml-auto" />
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-0 max-h-[400px] overflow-y-auto">

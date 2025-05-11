@@ -51,7 +51,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
     <div className={`overflow-x-auto ${compact ? 'p-2' : 'p-4'}`}>
       <table className="w-full">
         <thead>
-          <tr className={`border-b border-casino-highlight ${compact ? 'text-xs' : 'text-sm'}`}>
+          <tr className={`border-b border-gold/10 ${compact ? 'text-xs' : 'text-sm'}`}>
             <th className="text-left py-2 text-muted-foreground font-medium">Asset</th>
             <th className="text-right py-2 text-muted-foreground font-medium">Preis</th>
             <th className="text-right py-2 text-muted-foreground font-medium">24h</th>
@@ -65,7 +65,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
           {cryptos.map((crypto) => (
             <React.Fragment key={crypto.id}>
               <tr 
-                className={`border-b border-casino-highlight hover:bg-casino-highlight cursor-pointer transition-colors ${
+                className={`border-b border-gold/10 hover:bg-gold/5 cursor-pointer transition-colors ${
                   compact ? 'text-xs' : 'text-sm'
                 }`}
                 onClick={() => !compact && handleSelectCrypto(crypto.id)}
@@ -76,7 +76,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
                       <img 
                         src={crypto.image_url} 
                         alt={crypto.name} 
-                        className={`${compact ? 'h-5 w-5' : 'h-6 w-6'} mr-2`} 
+                        className={`${compact ? 'h-5 w-5' : 'h-6 w-6'} mr-2 rounded-full shadow-md`} 
                       />
                     )}
                     <div>
@@ -111,7 +111,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
                     <Button 
                       variant="outline"
                       size="sm"
-                      className="border-gold/20 bg-transparent text-gold hover:bg-gold/10"
+                      className="border-gold/20 bg-gradient-to-r from-gold/5 to-gold/10 text-gold hover:bg-gold/15 shadow-sm"
                     >
                       Handeln
                     </Button>
@@ -120,7 +120,7 @@ const CryptoMarketList = ({ cryptos, onTrade, userCredit, compact = false }: Cry
               </tr>
               {selectedCrypto === crypto.id && !compact && (
                 <tr>
-                  <td colSpan={5} className="p-0 bg-casino-darker">
+                  <td colSpan={5} className="p-0 bg-gradient-to-br from-casino-darker to-casino-dark/80">
                     <Motion
                       defaultStyle={{ height: 0, opacity: 0 }}
                       style={{ 

@@ -122,4 +122,59 @@
   .gradient-text {
     @apply bg-clip-text text-transparent bg-gold-gradient animate-gradient-shift;
   }
+
+  .futuristic-border {
+    @apply border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)];
+  }
+  
+  .tech-bg {
+    @apply bg-gradient-to-br from-blue-900/30 to-purple-900/30 backdrop-blur-lg;
+  }
+  
+  .neo-button {
+    @apply bg-gradient-to-r from-accent1/80 to-accent1 hover:from-accent1 hover:to-accent1-light text-white font-medium py-2 px-4 rounded-md shadow-lg shadow-accent1/20 transition-all duration-300;
+  }
+  
+  .card-shine {
+    @apply after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:translate-x-[-200%] hover:after:translate-x-[200%] after:transition-transform after:duration-1000;
+  }
+}
+
+@keyframes pulse-gold {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
+  50% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
+}
+
+@keyframes gradient-shift {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes glow-pulse {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
+@layer utilities {
+  .animate-pulse-gold {
+    animation: pulse-gold 2s infinite;
+  }
+  
+  .animate-gradient-shift {
+    animation: gradient-shift 3s ease infinite;
+    background-size: 200% 200%;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-glow-pulse {
+    animation: glow-pulse 2s ease-in-out infinite;
+  }
 }

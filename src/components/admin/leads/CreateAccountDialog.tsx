@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
@@ -42,13 +43,15 @@ export const CreateAccountDialog = ({
         throw new Error("Admin session not found");
       }
       
-      // 2. Create the new user account with admin auth client
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // 2. Create the new user account using signUp
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        email_confirm: true,
-        user_metadata: {
-          name: formData.name
+        options: {
+          data: {
+            name: formData.name
+          },
+          emailRedirectTo: window.location.origin
         }
       });
       

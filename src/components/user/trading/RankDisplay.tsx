@@ -3,7 +3,7 @@ import React from 'react';
 import { RankTier } from '@/hooks/ai-bot/types';
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, ChevronUp, Star } from "lucide-react";
+import { Trophy, ChevronUp, Star, Award } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -33,20 +33,8 @@ const RankDisplay = ({
     ? Math.min(100, Math.round((userCredit - currentTier!.minBalance) / 
       (nextTier.minBalance - currentTier!.minBalance) * 100))
     : 100;
-    
-  // Get rank color based on rank number
-  const getRankColor = (rank: number) => {
-    switch(rank) {
-      case 1: return "text-gray-400 bg-gray-800/50"; // Bronze
-      case 2: return "text-gray-300 bg-gray-700/50"; // Silver
-      case 3: return "text-gold bg-gold/10"; // Gold
-      case 4: return "text-blue-300 bg-blue-800/50"; // Platinum
-      case 5: return "text-accent1-light bg-accent1/20"; // Diamond
-      default: return "text-gray-400 bg-gray-800/50";
-    }
-  };
   
-  // Get rank badge background
+  // Get rank badge color
   const getRankBadgeBg = (rank: number) => {
     switch(rank) {
       case 1: return "bg-gradient-to-r from-amber-700 to-amber-600"; // Bronze
@@ -58,80 +46,104 @@ const RankDisplay = ({
     }
   };
 
+  const getRankName = (rank: number) => {
+    switch(rank) {
+      case 1: return "Bronze";
+      case 2: return "Silber";
+      case 3: return "Gold";
+      case 4: return "Platin";
+      case 5: return "Diamant";
+      default: return "Anfänger";
+    }
+  };
+
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-gold" />
-          <h3 className="font-medium">Ihr Trading-Rang</h3>
+          <h3 className="font-medium">Trading-Rang</h3>
         </div>
-        <Badge 
-          className={cn(
-            "px-3 py-1 border-0 text-black font-bold",
-            getRankBadgeBg(currentRank),
-            "animate-gradient-shift bg-clip-text transition-all duration-300"
-          )}
-        >
-          <Star className="h-3.5 w-3.5 mr-1" />
-          Rang {currentRank}
-        </Badge>
       </div>
       
       <Card className="bg-casino-card border border-gold/20 p-4 relative overflow-hidden">
         {/* Background glow effect */}
         <div className="absolute -top-10 -right-10 w-32 h-32 rounded-full bg-gold/5 blur-xl animate-glow-pulse"></div>
         
-        <div className="flex items-center justify-between mb-2 relative z-10">
-          <div className="text-sm font-medium text-foreground">{currentTier?.label}</div>
-          {nextTier && (
-            <div className="text-xs text-muted-foreground flex items-center">
-              <span>Nächster Rang: {nextTier.label} ({nextTier.minBalance}€)</span> 
-              <ChevronUp className="ml-1 h-4 w-4" />
+        {/* Large rank display */}
+        <div className="flex items-center justify-between mb-6 relative z-10">
+          <div className="flex flex-col items-start">
+            <span className="text-sm text-muted-foreground">Aktueller Rang</span>
+            <div className="flex items-center gap-2 mt-1">
+              <Award className="h-7 w-7 text-gold animate-pulse-gold" />
+              <span className={`text-2xl font-bold ${currentRank >= 3 ? "text-gold" : currentRank === 2 ? "text-gray-300" : "text-amber-600"}`}>
+                {getRankName(currentRank)}
+              </span>
             </div>
-          )}
+          </div>
+          <div 
+            className={cn(
+              "flex items-center justify-center w-16 h-16 rounded-full border-4 transition-all duration-300",
+              getRankBadgeBg(currentRank),
+              "animate-gradient-shift"
+            )}
+          >
+            <span className="text-3xl font-bold text-black">
+              {currentRank}
+            </span>
+          </div>
         </div>
         
+        {/* Compact trades limit display */}
+        <div className="mb-4 p-3 bg-casino-darker rounded-lg border border-gold/10 relative z-10">
+          <div className="flex items-center justify-between mb-1">
+            <span className="text-sm text-muted-foreground">Tägliches Limit</span>
+            <span className="text-xs text-gold font-medium">
+              {tradesRemaining}/{maxTradesPerDay} verfügbar
+            </span>
+          </div>
+          <Progress 
+            value={(dailyTradesExecuted / maxTradesPerDay) * 100} 
+            className="h-3 bg-casino-darker"
+          />
+          <style>
+            {`
+              /* Custom progress bar styling */
+              .h-3.bg-casino-darker [role="progressbar"] {
+                background: linear-gradient(to right, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 1)) !important;
+                transition: all 0.3s ease;
+              }
+            `}
+          </style>
+        </div>
+        
+        {/* Next rank progress */}
         {nextTier && (
-          <div className="mb-4 relative z-10">
+          <div className="mb-2 relative z-10">
+            <div className="flex justify-between mb-1">
+              <div className="text-sm font-medium text-foreground">{currentTier?.label}</div>
+              <div className="text-xs text-muted-foreground flex items-center">
+                <span>Nächster Rang: {nextTier.label} ({nextTier.minBalance}€)</span> 
+                <ChevronUp className="ml-1 h-4 w-4" />
+              </div>
+            </div>
             <Progress 
               value={progressToNextRank} 
-              className="h-3 bg-casino-darker" 
+              className="h-2 bg-casino-darker" 
             />
-            <style>
-              {`
-                /* Custom progress bar styling */
-                .h-3.bg-casino-darker [role="progressbar"] {
-                  background: linear-gradient(to right, rgba(255, 215, 0, 0.8), rgba(255, 215, 0, 1)) !important;
-                  transition: all 0.3s ease;
-                }
-              `}
-            </style>
             <div className="flex justify-between mt-1">
               <div className="text-xs text-muted-foreground">
-                {currentTier?.label}
+                {currentTier?.minBalance}€
               </div>
               <div className="text-xs text-gold">
                 {progressToNextRank}%
               </div>
               <div className="text-xs text-muted-foreground">
-                {nextTier.label}
+                {nextTier.minBalance}€
               </div>
             </div>
           </div>
         )}
-        
-        <div className="grid grid-cols-2 gap-3 relative z-10">
-          <div className="text-center p-3 bg-casino-darker rounded-lg border border-gold/10 transition-transform duration-300 hover:scale-105">
-            <div className="text-sm text-muted-foreground">Tägliches Limit</div>
-            <div className="text-xl font-bold text-gold">{maxTradesPerDay}</div>
-            <div className="text-xs text-muted-foreground">Trades</div>
-          </div>
-          <div className="text-center p-3 bg-casino-darker rounded-lg border border-gold/10 transition-transform duration-300 hover:scale-105">
-            <div className="text-sm text-muted-foreground">Verbleibend</div>
-            <div className="text-xl font-bold text-accent1-light">{tradesRemaining}</div>
-            <div className="text-xs text-muted-foreground">Trades</div>
-          </div>
-        </div>
       </Card>
     </div>
   );

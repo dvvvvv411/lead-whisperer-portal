@@ -13,6 +13,7 @@ import PortfolioOverview from "./PortfolioOverview";
 import TradeForm from "./TradeForm";
 import TradeHistoryList from "./TradeHistoryList";
 import { Skeleton } from "@/components/ui/skeleton";
+import AITradingBot from "./AITradingBot";
 
 interface CryptoTradingProps {
   user?: any;
@@ -67,6 +68,13 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
     updateCryptoPrices();
   };
 
+  const handleBotTradeExecuted = () => {
+    // Refresh all data when the bot performs a trade
+    fetchPortfolio();
+    fetchTradeHistory();
+    onUpdated(); // Update parent component (to refresh user credit)
+  };
+
   return (
     <Card className="w-full">
       <CardHeader>
@@ -82,10 +90,11 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="market" value={selectedTab} onValueChange={setSelectedTab}>
-          <TabsList className="grid grid-cols-3 mb-4">
+          <TabsList className="grid grid-cols-4 mb-4">
             <TabsTrigger value="market">Marktübersicht</TabsTrigger>
             <TabsTrigger value="portfolio">Mein Portfolio</TabsTrigger>
             <TabsTrigger value="history">Handelshistorie</TabsTrigger>
+            <TabsTrigger value="aibot">KI-Bot</TabsTrigger>
           </TabsList>
           
           <TabsContent value="market">
@@ -130,6 +139,14 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
             ) : (
               <TradeHistoryList trades={trades} />
             )}
+          </TabsContent>
+          
+          <TabsContent value="aibot">
+            <AITradingBot 
+              userId={user?.id} 
+              userCredit={userCredit}
+              onTradeExecuted={handleBotTradeExecuted}
+            />
           </TabsContent>
         </Tabs>
       </CardContent>

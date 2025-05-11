@@ -62,10 +62,33 @@ export const useTradeHistory = (userId?: string) => {
     }
   };
   
+  // Set up real-time subscription for new trades (useful for bot activity)
   useEffect(() => {
-    if (userId) {
-      fetchTradeHistory();
-    }
+    if (!userId) return;
+    
+    fetchTradeHistory();
+    
+    // Subscribe to changes in trade_simulations table for this user
+    const channel = supabase
+      .channel('trade_history_changes')
+      .on(
+        'postgres_changes',
+        { 
+          event: '*', 
+          schema: 'public', 
+          table: 'trade_simulations',
+          filter: `user_id=eq.${userId}`
+        },
+        (payload) => {
+          console.log('New trade activity detected:', payload);
+          fetchTradeHistory();
+        }
+      )
+      .subscribe();
+    
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [userId]);
   
   return { 

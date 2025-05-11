@@ -14,43 +14,51 @@ import {
   calculateProfit
 } from "@/components/user/trading/bot-components/simulation/simulationUtils";
 
-export const executeAITrade = async (
-  userId: string | undefined,
-  userCredit: number | undefined,
-  cryptos: any[],
-  settings: BotSettings,
-  toast: ReturnType<typeof useToast>["toast"],
-  updateStatus: (update: any) => void,
-  tradesExecutedToday: number,
-  maxTradesPerDay: number
-) => {
+interface ExecuteTradeParams {
+  userId: string;
+  userCredit: number;
+  tradeAmount?: number;
+  riskLevel?: 'conservative' | 'balanced' | 'aggressive';
+  cryptos?: any[];
+}
+
+export const executeAITrade = async ({
+  userId,
+  userCredit,
+  tradeAmount,
+  riskLevel = 'balanced',
+  cryptos = []
+}: ExecuteTradeParams) => {
   if (!userId || !userCredit || userCredit <= 0) {
     console.log("KI-Bot: Kein Benutzer oder kein Guthaben verfügbar", { userId, userCredit });
-    return { success: false };
+    return { success: false, error: "Kein Benutzer oder kein Guthaben verfügbar" };
   }
   
-  // Check if user has reached daily trade limit
-  if (tradesExecutedToday >= maxTradesPerDay) {
-    console.log(`KI-Bot: Tägliches Handelslimit von ${maxTradesPerDay} Trades erreicht`);
-    toast({
-      title: "Tägliches Limit erreicht",
-      description: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
-      variant: "destructive"
-    });
-    return { success: false };
-  }
-
   try {
-    // Get random crypto, getRandomCrypto will now filter out stablecoins
+    // Get user's rank and daily trade limits
+    const userRank = getUserRank(userCredit);
+    const maxTradesPerDay = userRank.maxTradesPerDay;
+    
+    // Check if user has reached daily trade limit
+    const tradesExecutedToday = await getTradesExecutedToday(userId);
+    if (tradesExecutedToday >= maxTradesPerDay) {
+      console.log(`KI-Bot: Tägliches Handelslimit von ${maxTradesPerDay} Trades erreicht`);
+      return { 
+        success: false,
+        error: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`
+      };
+    }
+
+    // Get random crypto, getRandomCrypto will filter out stablecoins
     const crypto = getRandomCrypto(cryptos);
     if (!crypto) {
       console.log("KI-Bot: Keine geeignete Kryptowährung gefunden");
-      return { success: false };
+      return { success: false, error: "Keine geeignete Kryptowährung gefunden" };
     }
 
     // Use entire account balance for the trade (minus a small safety buffer)
     const safetyBuffer = 0.5; // 50 cents buffer
-    const tradeAmount = Math.max(0, userCredit - safetyBuffer);
+    const actualTradeAmount = tradeAmount || Math.max(0, userCredit - safetyBuffer);
     
     // Generate profit percentage between 5-10%
     const profitPercentage = generateProfitPercentage();
@@ -60,20 +68,20 @@ export const executeAITrade = async (
     const currentPrice = crypto.current_price;
     
     // Calculate buy price - price needs to be lower than current price to make profit
-    const buyPrice = calculateBuyPrice(currentPrice, profitPercentage);
+    const buyPrice = calculateBuyPrice(currentPrice);
     
     // Sell price is the current market price
     const sellPrice = currentPrice;
     
     // Calculate quantity based on buy price
-    const quantity = tradeAmount / buyPrice;
+    const quantity = actualTradeAmount / buyPrice;
     
     // Calculate profit
-    const profit = calculateProfit(tradeAmount, profitPercentage);
-    const sellAmount = tradeAmount + profit;
+    const profit = calculateProfit(actualTradeAmount, profitPercentage);
+    const sellAmount = actualTradeAmount + profit;
     
     // Log trade information
-    console.log(`KI-Bot: Starte Trade mit ${crypto.symbol}, Betrag: ${tradeAmount}€, Profitziel: ${profitPercentage}%`);
+    console.log(`KI-Bot: Starte Trade mit ${crypto.symbol}, Betrag: ${actualTradeAmount}€, Profitziel: ${profitPercentage}%`);
     console.log(`KI-Bot: Kaufpreis: ${buyPrice}€, Verkaufspreis: ${sellPrice}€, Gewinn: ${profit}€`);
     
     // First simulate a "buy" trade
@@ -86,7 +94,7 @@ export const executeAITrade = async (
           type: 'buy',
           quantity,
           price: buyPrice,
-          total_amount: tradeAmount,
+          total_amount: actualTradeAmount,
           strategy,
           status: 'completed'
         }
@@ -126,28 +134,10 @@ export const executeAITrade = async (
     
     console.log(`KI-Bot: Verkauf-Trade erstellt, ID: ${sellResult.data?.id}`);
     
-    // Update bot status
-    // Note: We now consider a buy-sell pair as a single trade
-    updateStatus({
-      lastTradeTime: new Date(),
-      totalProfitAmount: (prevAmount: number) => prevAmount + profit,
-      totalProfitPercentage: (prevPercentage: number) => prevPercentage + profitPercentage,
-      tradesExecuted: (prevTrades: number) => prevTrades + 1,
-      dailyTradesExecuted: (prevDailyTrades: number) => prevDailyTrades + 1,
-      tradesRemaining: (prevRemaining: number) => prevRemaining - 1
-    });
-    
-    toast({
-      title: "KI-Bot Trade erfolgreich",
-      description: `${profitPercentage.toFixed(2)}% Gewinn mit ${crypto.symbol} (${profit.toFixed(2)}€)`,
-      variant: "default"
-    });
-    
-    // Return trade details for the result dialog
     return {
       success: true,
       crypto,
-      tradeAmount,
+      tradeAmount: actualTradeAmount,
       profit,
       profitPercentage,
       buyPrice,
@@ -157,11 +147,9 @@ export const executeAITrade = async (
     };
   } catch (error: any) {
     console.error('Error executing AI trade:', error.message);
-    toast({
-      title: "KI-Bot Fehler",
-      description: error.message,
-      variant: "destructive"
-    });
-    return { success: false };
+    return { 
+      success: false, 
+      error: error.message || "Unbekannter Fehler beim Ausführen des Trades"
+    };
   }
 };

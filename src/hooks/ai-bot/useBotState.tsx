@@ -1,3 +1,4 @@
+
 import { useState, useCallback } from "react";
 import { BotSettings, BotStatus } from "./types";
 import { getUserRank, rankTiers } from "./botTradeUtils";
@@ -11,10 +12,12 @@ export const useBotState = (userId?: string, userCredit?: number) => {
     tradeFrequency: 'medium',
     riskLevel: 'balanced',
     maxTradeAmount: userCredit || 100, // Use full account balance as default
+    tradeInterval: 5, // Default to 5 minutes between trades
   });
   
   const [status, setStatus] = useState<BotStatus>({
     isActive: false,
+    isRunning: false, // Added this required property
     lastTradeTime: null,
     totalProfitPercentage: 0,
     totalProfitAmount: 0,

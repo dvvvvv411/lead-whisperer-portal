@@ -36,7 +36,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     updateStatus,
     clearBotInterval,
     setNewBotInterval,
-    setBotInterval,
+    (minutes: number) => { setBotInterval(minutes); }, // Fix the type mismatch
     setSettings,
     onTradeExecuted
   );

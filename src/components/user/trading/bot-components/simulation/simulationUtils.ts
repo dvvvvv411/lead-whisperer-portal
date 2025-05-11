@@ -1,3 +1,4 @@
+
 import { CryptoComparisonProps } from "./CryptoComparison";
 
 // Algorithm steps shown during simulation
@@ -61,25 +62,14 @@ export const formatTradeDate = (date: Date): string => {
   }).format(date);
 };
 
-// Calculate buy price with a small random variation
-export const calculateBuyPrice = (basePrice: number): number => {
+// Calculate buy price with a small random variation (adjusted to match the expected signature)
+export const calculateBuyPrice = (basePrice: number, profitPercentage?: number): number => {
   // Add a small random variation (±2%)
   const variation = (Math.random() * 4 - 2) / 100;
   return basePrice * (1 + variation);
 };
 
-// Calculate profit based on buy and sell prices
-export const calculateProfit = (buyPrice: number, sellPrice: number, quantity: number): {
-  profit: number;
-  profitPercentage: number;
-} => {
-  const totalBuy = buyPrice * quantity;
-  const totalSell = sellPrice * quantity;
-  const profit = totalSell - totalBuy;
-  const profitPercentage = (profit / totalBuy) * 100;
-  
-  return {
-    profit,
-    profitPercentage
-  };
+// Calculate profit based on trade amount and profit percentage (adjusted to match the expected signature)
+export const calculateProfit = (tradeAmount: number, profitPercentage: number): number => {
+  return tradeAmount * (profitPercentage / 100);
 };

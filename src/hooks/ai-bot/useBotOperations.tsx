@@ -1,7 +1,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { executeBotTrade } from "./executeBotTrade";
+import { executeAITrade } from "./executeBotTrade";
 import { BotSettings, BotStatus } from "./types";
 import { checkCanExecuteTrade } from "./botTradeUtils";
 
@@ -102,8 +102,8 @@ export const useBotOperations = (
     
     // Check if we can execute a trade (daily limit, etc.)
     const canExecute = checkCanExecuteTrade(
-      status.dailyTradesCount,
-      status.dailyTradeLimit,
+      status.dailyTradesExecuted,
+      status.maxTradesPerDay,
       lastExecutedRef.current
     );
     
@@ -128,7 +128,7 @@ export const useBotOperations = (
     updateStatus({
       lastTradeAttempt: new Date(),
       statusMessage: "Trade wird ausgeführt...",
-      dailyTradesCount: status.dailyTradesCount + 1
+      dailyTradesExecuted: status.dailyTradesExecuted + 1
     });
     
     console.log("Trade can be executed, simulation starting...");
@@ -147,21 +147,21 @@ export const useBotOperations = (
     
     try {
       // Execute the actual trade with the bot's strategy
-      const result = await executeBotTrade({
+      const result = await executeAITrade({
         userId,
         userCredit,
-        tradeAmount: settings.tradeAmount,
+        tradeAmount: settings.maxTradeAmount,
         riskLevel: settings.riskLevel,
       });
       
       if (result.success) {
         // Update status with trade info
-        if (updateStatus) {
+        if (updateStatus && status) {
           updateStatus({
             statusMessage: "Letzter Trade erfolgreich",
             lastSuccessfulTrade: new Date(),
-            totalProfitAmount: (status?.totalProfitAmount || 0) + result.profit,
-            totalTradesExecuted: (status?.totalTradesExecuted || 0) + 1
+            totalProfitAmount: (status.totalProfitAmount || 0) + result.profit,
+            tradesExecuted: (status.tradesExecuted || 0) + 1
           });
         }
         
@@ -196,7 +196,7 @@ export const useBotOperations = (
       
       return result;
       
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error executing trade:", error);
       
       // Update status with error

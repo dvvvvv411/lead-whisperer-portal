@@ -123,3 +123,35 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
   
   return data ? data.length : 0;
 };
+
+// Add the missing function to check if a trade can be executed
+export const checkCanExecuteTrade = (
+  dailyTradesCount: number,
+  dailyTradeLimit: number,
+  lastExecuted: Date | null
+): { canExecute: boolean; reason?: string } => {
+  // Check if daily limit reached
+  if (dailyTradesCount >= dailyTradeLimit) {
+    return { 
+      canExecute: false, 
+      reason: `Tägliches Limit von ${dailyTradeLimit} Trades erreicht.` 
+    };
+  }
+  
+  // Check cooldown period (at least 30 seconds between trades)
+  if (lastExecuted) {
+    const cooldownPeriod = 30 * 1000; // 30 seconds in milliseconds
+    const timeSinceLastExecution = Date.now() - lastExecuted.getTime();
+    
+    if (timeSinceLastExecution < cooldownPeriod) {
+      const remainingSeconds = Math.ceil((cooldownPeriod - timeSinceLastExecution) / 1000);
+      return { 
+        canExecute: false, 
+        reason: `Bitte warten Sie ${remainingSeconds} Sekunden vor dem nächsten Trade.` 
+      };
+    }
+  }
+  
+  // All checks passed
+  return { canExecute: true };
+};

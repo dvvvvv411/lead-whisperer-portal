@@ -67,11 +67,14 @@ export const CreateAccountDialog = ({
       
       // 4. Add user role using a direct RPC function call instead of table insert
       if (authData?.user) {
-        // Use the stored function to set role to bypass RLS
-        const { error: functionError } = await supabase.rpc('add_user_role', {
-          _user_id: authData.user.id,
-          _role: 'user'
-        });
+        // Umgehen der Typisierungsbeschränkung durch Verwendung der REST-Methode
+        // anstelle der rpc Methode
+        const { error: functionError } = await supabase
+          .rest
+          .rpc('add_user_role', {
+            _user_id: authData.user.id,
+            _role: 'user'
+          });
           
         if (functionError) {
           throw functionError;

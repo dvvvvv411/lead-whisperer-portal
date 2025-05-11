@@ -94,7 +94,7 @@ const RankDisplay = ({
             <div className="flex flex-col items-start mb-4">
               <span className="text-sm text-muted-foreground">Aktueller Rang</span>
               <div className="flex items-center gap-2 mt-1">
-                <Award 
+                <Trophy 
                   className={cn(
                     "h-7 w-7",
                     currentRank >= 3 ? "text-yellow-400" : currentRank === 2 ? "text-slate-300" : "text-amber-600", 

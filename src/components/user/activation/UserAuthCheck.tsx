@@ -8,9 +8,10 @@ import { Loader2 } from "lucide-react";
 interface UserAuthCheckProps {
   children: React.ReactNode;
   onUserLoaded: (user: any) => void;
+  redirectToActivation?: boolean;
 }
 
-const UserAuthCheck = ({ children, onUserLoaded }: UserAuthCheckProps) => {
+const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: UserAuthCheckProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
@@ -92,25 +93,30 @@ const UserAuthCheck = ({ children, onUserLoaded }: UserAuthCheckProps) => {
             return;
           }
           
+          // Check if user is already activated (has user role)
+          const isActivated = await checkUserRole(data.user.id, 'user');
+          console.log("User activation status:", isActivated);
+          
           // Check if user has any pending payments
           const paymentStatus = await checkPendingPayments(data.user.id);
+          console.log("User payment status:", paymentStatus);
           
-          // Check if user is already activated
-          const isActivated = await checkUserRole(data.user.id, 'user');
-          if (isActivated) {
-            console.log("User is already activated, redirecting to dashboard");
-            navigate('/nutzer');
+          // If user is not activated and redirectToActivation is true, redirect to activation page
+          if (!isActivated && redirectToActivation) {
+            console.log("User is not activated, redirecting to activation page");
+            navigate('/nutzer/aktivierung');
             return;
           }
           
           // Pass user data to parent component
           onUserLoaded({
             ...data.user,
+            isActivated,
             paymentStatus
           });
         } else {
           console.log("No user found, redirecting to login");
-          window.location.href = "/admin";
+          navigate("/admin");
         }
       } catch (error: any) {
         console.error("Error getting user:", error.message);
@@ -125,7 +131,7 @@ const UserAuthCheck = ({ children, onUserLoaded }: UserAuthCheckProps) => {
     };
     
     getUser();
-  }, [toast, navigate, onUserLoaded]);
+  }, [toast, navigate, onUserLoaded, redirectToActivation]);
   
   if (loading) {
     return (

@@ -41,27 +41,37 @@ const UserDeposit = () => {
   // Check the user's authentication and role
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
-        
-        // Check if the user has the 'user' role (is activated)
-        const activated = await checkUserRole('user');
-        setIsActivated(activated);
-        
-        // If not activated, redirect to activation page
-        if (!activated) {
-          toast({
-            title: "Aktivierung erforderlich",
-            description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
-          });
-          navigate("/nutzer/aktivierung");
-          return;
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) {
+          setUser(data.user);
+          
+          // Check if the user has the 'user' role (is activated)
+          const activated = await checkUserRole('user');
+          setIsActivated(activated);
+          
+          // If not activated, redirect to activation page
+          if (!activated) {
+            toast({
+              title: "Aktivierung erforderlich",
+              description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
+            });
+            navigate("/nutzer/aktivierung");
+            return;
+          }
+          
+          setLoading(false);
+        } else {
+          // If no user is logged in, redirect to login page
+          navigate("/admin");
         }
-        
-        setLoading(false);
-      } else {
-        // If no user is logged in, redirect to login page
+      } catch (error) {
+        console.error("Error checking user:", error);
+        toast({
+          title: "Authentifizierungsfehler",
+          description: "Bitte melden Sie sich erneut an.",
+          variant: "destructive"
+        });
         navigate("/admin");
       }
     };
@@ -71,7 +81,7 @@ const UserDeposit = () => {
 
   // Handle deposit submission
   const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
-    if (!user) return;
+    if (!user || !isActivated) return;
     
     try {
       setDepositAmount(amount);
@@ -85,7 +95,7 @@ const UserDeposit = () => {
           amount: Math.round(amount * 100), // Convert to cents
           currency: 'EUR',
           wallet_currency: walletCurrency,
-          wallet_id: walletId, // Speichern der wallet_id
+          wallet_id: walletId,
           status: 'pending'
         })
         .select('id')

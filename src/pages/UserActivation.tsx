@@ -13,11 +13,12 @@ const UserActivation = () => {
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   
-  // Use the payment flow hook
+  // Use the payment flow hook with isActivation flag
   const { paymentCompleted } = usePaymentFlow({
     userId: user?.id,
     paymentId,
-    paymentSubmitted
+    paymentSubmitted,
+    isActivation: true
   });
 
   const handleUserLoaded = (userData: any) => {
@@ -43,7 +44,7 @@ const UserActivation = () => {
   setTimeout(checkPaymentSubmission, 500);
 
   return (
-    <UserAuthCheck onUserLoaded={handleUserLoaded}>
+    <UserAuthCheck onUserLoaded={handleUserLoaded} redirectToActivation={false}>
       <div className="container mx-auto p-4 max-w-3xl">
         <div className="flex justify-between items-center mb-4">
           <h1 className="text-3xl font-bold">Konto Aktivierung</h1>

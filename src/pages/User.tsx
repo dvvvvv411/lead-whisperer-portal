@@ -42,6 +42,7 @@ const User = () => {
           
           // If not activated, redirect to activation page
           if (!activated) {
+            console.log("User not activated, redirecting to activation page");
             navigate("/nutzer/aktivierung");
             return;
           }
@@ -85,14 +86,16 @@ const User = () => {
       />
       
       <div className="container mx-auto p-4 mt-8">
-        <div className="mb-8">
-          <Link 
-            to="/nutzer/einzahlen" 
-            className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
-          >
-            Guthaben einzahlen
-          </Link>
-        </div>
+        {isActivated && (
+          <div className="mb-8">
+            <Link 
+              to="/nutzer/einzahlen" 
+              className="bg-primary text-white px-4 py-2 rounded hover:bg-primary/90 transition-colors"
+            >
+              Guthaben einzahlen
+            </Link>
+          </div>
+        )}
         
         <CryptoTradingSection 
           user={user} 

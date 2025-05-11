@@ -1,110 +1,79 @@
-
 import { supabase } from "@/integrations/supabase/client";
-import { useToast } from "@/hooks/use-toast";
-import { BotSettings, RankTier } from "./types";
+import { BotSettings } from "./types";
 
-// List of stablecoin symbols that should be excluded from trading
-const STABLECOIN_SYMBOLS = ['USDT', 'USDC', 'BUSD', 'DAI', 'UST', 'TUSD', 'USDP', 'GUSD', 'FRAX'];
-
-// Function to generate a random trade amount based on settings and available credit
-export const generateTradeAmount = (settings: BotSettings, userCredit?: number) => {
-  if (!userCredit) return 10;
-  
-  const maxAmount = Math.min(settings.maxTradeAmount, userCredit * 0.5);
-  let minAmount = 10;
-  
-  switch(settings.riskLevel) {
-    case 'conservative':
-      return Math.random() * (maxAmount * 0.5 - minAmount) + minAmount;
-    case 'aggressive':
-      return Math.random() * (maxAmount - maxAmount * 0.5) + maxAmount * 0.5;
-    case 'balanced':
-    default:
-      return Math.random() * (maxAmount - minAmount) + minAmount;
-  }
-};
-
-// Function to get a random crypto from the available list, excluding stablecoins
-export const getRandomCrypto = (cryptos: any[]) => {
-  if (!cryptos || cryptos.length === 0) return null;
-  
-  // Filter out stablecoins
-  const tradableCryptos = cryptos.filter(crypto => 
-    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
-  );
-  
-  if (tradableCryptos.length === 0) return null; // Safety check
-  
-  return tradableCryptos[Math.floor(Math.random() * tradableCryptos.length)];
-};
-
-// Function to generate a random strategy
-export const getRandomStrategy = () => {
-  const strategies = ['bot_trend_following', 'bot_mean_reversion', 'bot_momentum', 'bot_sentiment', 'ai_deep_learning'];
-  return strategies[Math.floor(Math.random() * strategies.length)];
-};
-
-// Function to generate a profit percentage based on specified range (3-7.5%)
-export const generateProfitPercentage = () => {
-  // Changed to return between 3-7.5% profit
-  return Math.random() * (7.5 - 3) + 3;
-};
-
-// Define rank tiers based on account balance
-export const rankTiers: RankTier[] = [
-  { 
-    rankNumber: 1, 
-    minBalance: 250, 
-    maxBalance: 999.99, 
-    maxTradesPerDay: 2,
-    label: "Starter Trader" 
+export const rankTiers = [
+  {
+    rankNumber: 1,
+    minBalance: 0,
+    maxBalance: 100,
+    maxTradesPerDay: 3,
+    label: "Anfänger"
   },
-  { 
-    rankNumber: 2, 
-    minBalance: 1000, 
-    maxBalance: 4999.99, 
-    maxTradesPerDay: 4,
-    label: "Advanced Trader" 
+  {
+    rankNumber: 2,
+    minBalance: 101,
+    maxBalance: 500,
+    maxTradesPerDay: 5,
+    label: "Fortgeschrittener"
   },
-  { 
-    rankNumber: 3, 
-    minBalance: 5000, 
-    maxBalance: 9999.99, 
-    maxTradesPerDay: 8,
-    label: "Expert Trader" 
+  {
+    rankNumber: 3,
+    minBalance: 501,
+    maxBalance: 1000,
+    maxTradesPerDay: 7,
+    label: "Experte"
   },
-  { 
-    rankNumber: 4, 
-    minBalance: 10000, 
-    maxBalance: null, 
+  {
+    rankNumber: 4,
+    minBalance: 1001,
+    maxBalance: 5000,
     maxTradesPerDay: 10,
-    label: "Elite Trader" 
+    label: "Profi"
   },
+  {
+    rankNumber: 5,
+    minBalance: 5001,
+    maxBalance: null,
+    maxTradesPerDay: 15,
+    label: "Elite"
+  }
 ];
 
-// Function to get user's current rank based on account balance
-export const getUserRank = (userCredit: number): RankTier => {
-  // Default to lowest rank if credit is too low
-  if (userCredit < 250) {
-    return rankTiers[0];
-  }
-  
-  // Find the appropriate rank tier
-  for (let i = rankTiers.length - 1; i >= 0; i--) {
-    if (userCredit >= rankTiers[i].minBalance) {
-      return rankTiers[i];
+export const getUserRank = (userCredit: number) => {
+  for (const rank of rankTiers) {
+    if (userCredit >= rank.minBalance && (rank.maxBalance === null || userCredit <= rank.maxBalance)) {
+      return rank;
     }
   }
-  
-  // Fallback to lowest rank
-  return rankTiers[0];
+  return rankTiers[0]; // Default to the first rank if no match is found
 };
 
-// Modified function to count only buy transactions (treating a buy-sell pair as one trade)
-// This effectively counts each complete trade (buy+sell) as a single trade
-export const getTradesExecutedToday = async (userId: string): Promise<number> => {
-  if (!userId) return 0;
+export const getRandomCrypto = (cryptos: any[]) => {
+  // Filter out stablecoins
+  const filteredCryptos = cryptos.filter(crypto =>
+    crypto.symbol !== 'usdt' && crypto.symbol !== 'usdc' && crypto.symbol !== 'busd'
+  );
   
+  if (!filteredCryptos || filteredCryptos.length === 0) {
+    return null;
+  }
+  
+  const randomIndex = Math.floor(Math.random() * filteredCryptos.length);
+  return filteredCryptos[randomIndex];
+};
+
+export const getRandomStrategy = () => {
+  const strategies = ['momentum', 'mean_reversion', 'breakout'];
+  const randomIndex = Math.floor(Math.random() * strategies.length);
+  return strategies[randomIndex];
+};
+
+export const generateProfitPercentage = () => {
+  // Generate a random profit percentage between 5% and 10%
+  return Math.random() * (0.10 - 0.05) + 0.05;
+};
+
+export const getTradesExecutedToday = async (userId: string): Promise<number> => {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
@@ -112,46 +81,49 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
     .from('trade_simulations')
     .select('id')
     .eq('user_id', userId)
-    .eq('type', 'buy') // Only count buy operations as trades
-    .gte('created_at', today.toISOString())
-    .or('strategy.ilike.ai_%,strategy.ilike.bot_%');
+    .gte('created_at', today.toISOString());
   
   if (error) {
-    console.error("Error fetching today's trades:", error);
+    console.error("Error fetching trades for today:", error);
     return 0;
   }
   
-  return data ? data.length : 0;
+  return data.length;
 };
 
-// Add the missing function to check if a trade can be executed
+// Modified to make the cooldown check optional
 export const checkCanExecuteTrade = (
-  dailyTradesCount: number,
-  dailyTradeLimit: number,
-  lastExecuted: Date | null
-): { canExecute: boolean; reason?: string } => {
-  // Check if daily limit reached
-  if (dailyTradesCount >= dailyTradeLimit) {
-    return { 
-      canExecute: false, 
-      reason: `Tägliches Limit von ${dailyTradeLimit} Trades erreicht.` 
+  dailyTradesExecuted: number,
+  maxTradesPerDay: number,
+  lastExecutedTimeRef: Date | null
+) => {
+  // Check if user has reached daily trade limit
+  if (dailyTradesExecuted >= maxTradesPerDay) {
+    return {
+      canExecute: false,
+      reason: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`
     };
   }
   
-  // Check cooldown period (at least 30 seconds between trades)
-  if (lastExecuted) {
-    const cooldownPeriod = 30 * 1000; // 30 seconds in milliseconds
-    const timeSinceLastExecution = Date.now() - lastExecuted.getTime();
+  // Skip cooldown check if lastExecutedTimeRef is null
+  if (lastExecutedTimeRef) {
+    // Check if we need to wait before executing the next trade (only if lastExecutedTimeRef is provided)
+    const now = new Date();
+    const diff = now.getTime() - lastExecutedTimeRef.getTime();
+    const cooldownPeriod = 20 * 1000; // 20 seconds in milliseconds
     
-    if (timeSinceLastExecution < cooldownPeriod) {
-      const remainingSeconds = Math.ceil((cooldownPeriod - timeSinceLastExecution) / 1000);
-      return { 
-        canExecute: false, 
-        reason: `Bitte warten Sie ${remainingSeconds} Sekunden vor dem nächsten Trade.` 
+    if (diff < cooldownPeriod) {
+      const remainingSeconds = Math.ceil((cooldownPeriod - diff) / 1000);
+      return {
+        canExecute: false,
+        reason: `Bitte warten Sie ${remainingSeconds} Sekunden vor dem nächsten Trade.`
       };
     }
   }
   
   // All checks passed
-  return { canExecute: true };
+  return {
+    canExecute: true,
+    reason: ""
+  };
 };

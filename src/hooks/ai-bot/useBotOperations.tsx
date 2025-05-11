@@ -1,3 +1,4 @@
+
 import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { executeAITrade } from "./executeBotTrade";
@@ -98,11 +99,11 @@ export const useBotOperations = (
       return false;
     }
     
-    // Check if we can execute a trade (daily limit, etc.)
+    // Check only daily trade limit, removing the cooldown check
     const canExecute = checkCanExecuteTrade(
       status.dailyTradesExecuted,
       status.maxTradesPerDay,
-      lastExecutedRef.current
+      null // Pass null to ignore cooldown check
     );
     
     if (!canExecute.canExecute) {
@@ -115,12 +116,15 @@ export const useBotOperations = (
       return false;
     }
     
+    // If a simulation is already in progress, just return true to continue it
+    if (simulationInProgressRef.current) {
+      console.log("Simulation already in progress, continuing with it");
+      return true;
+    }
+    
     // Set simulation in progress
     simulationInProgressRef.current = true;
     setIsSimulating(true);
-    
-    // Update last executed time
-    lastExecutedRef.current = new Date();
     
     // Update status
     updateStatus({

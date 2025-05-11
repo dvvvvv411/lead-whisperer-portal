@@ -42,6 +42,14 @@ export const useTradingBotSimulation = (
   // Handle manual trade button click
   const handleManualTrade = useCallback(async () => {
     console.log("Manual trade button clicked");
+    
+    // If simulation is already in progress, just reopen the dialog
+    if (simulationInProgressRef.current) {
+      console.log("Simulation already in progress, reopening dialog");
+      setSimulationOpen(true);
+      return;
+    }
+    
     const canStart = await executeSingleTrade();
     
     if (canStart) {
@@ -50,7 +58,7 @@ export const useTradingBotSimulation = (
       // Reset the dialog closing state
       dialogClosingRef.current = false;
     }
-  }, [executeSingleTrade]);
+  }, [executeSingleTrade, simulationInProgressRef]);
   
   // Handle simulation completion
   const handleSimulationComplete = useCallback(async (success: boolean, selectedCrypto?: any) => {

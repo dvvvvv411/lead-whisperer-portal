@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -5,8 +6,11 @@ import { Badge } from "@/components/ui/badge";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
-import { Check, X, MessageSquare } from "lucide-react";
+import { Check, X, MessageSquare, UserPlus } from "lucide-react";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
 
 interface Lead {
   id: string;
@@ -27,6 +31,13 @@ interface Comment {
   user_email: string;
 }
 
+interface CreateAccountFormData {
+  name: string;
+  email: string;
+  password: string;
+  leadId: string;
+}
+
 const LeadTable = () => {
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
@@ -37,6 +48,17 @@ const LeadTable = () => {
   const [newComment, setNewComment] = useState("");
   const [user, setUser] = useState<any>(null);
   const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
+  
+  // Account creation states
+  const [createAccountOpen, setCreateAccountOpen] = useState(false);
+  const [createAccountData, setCreateAccountData] = useState<CreateAccountFormData>({
+    name: '',
+    email: '',
+    password: '',
+    leadId: ''
+  });
+  const [isCreatingAccount, setIsCreatingAccount] = useState(false);
+  const [accountCreationSuccess, setAccountCreationSuccess] = useState(false);
 
   // Benutzer-Session abrufen
   useEffect(() => {
@@ -119,36 +141,124 @@ const LeadTable = () => {
   }, []);
 
   const handleStatusChange = async (id: string, status: 'akzeptiert' | 'abgelehnt') => {
+    if (status === 'akzeptiert') {
+      // Find the lead to populate account creation form
+      const lead = leads.find(l => l.id === id);
+      if (lead) {
+        setCreateAccountData({
+          name: lead.name,
+          email: lead.email,
+          password: '',
+          leadId: lead.id
+        });
+        setCreateAccountOpen(true);
+      }
+    } else {
+      // For rejected leads, just update the status
+      try {
+        const { error } = await supabase
+          .from('leads')
+          .update({ status })
+          .eq('id', id);
+        
+        if (error) {
+          throw error;
+        }
+        
+        // Lokale Daten aktualisieren
+        setLeads(prevLeads => 
+          prevLeads.map(lead => 
+            lead.id === id ? { ...lead, status } : lead
+          )
+        );
+        
+        toast({
+          title: "Status aktualisiert",
+          description: `Der Lead wurde als "${status}" markiert.`
+        });
+        
+      } catch (error) {
+        console.error("Fehler bei der Statusänderung:", error);
+        toast({
+          title: "Fehler",
+          description: "Der Status konnte nicht aktualisiert werden.",
+          variant: "destructive"
+        });
+      }
+    }
+  };
+
+  const handleCreateAccount = async () => {
     try {
-      const { error } = await supabase
-        .from('leads')
-        .update({ status })
-        .eq('id', id);
+      setIsCreatingAccount(true);
       
-      if (error) {
-        throw error;
+      // 1. Create the user account
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+        email: createAccountData.email,
+        password: createAccountData.password,
+        email_confirm: true, // Auto confirm email
+        user_metadata: {
+          name: createAccountData.name
+        }
+      });
+      
+      if (authError) {
+        throw authError;
       }
       
-      // Lokale Daten aktualisieren
-      setLeads(prevLeads => 
-        prevLeads.map(lead => 
-          lead.id === id ? { ...lead, status } : lead
-        )
-      );
-      
-      toast({
-        title: "Status aktualisiert",
-        description: `Der Lead wurde als "${status}" markiert.`
-      });
-      
-    } catch (error) {
-      console.error("Fehler bei der Statusänderung:", error);
+      // 2. Add user role if account created successfully
+      if (authData?.user) {
+        const { error: roleError } = await supabase
+          .from('user_roles')
+          .insert([{
+            user_id: authData.user.id,
+            role: 'user'
+          }]);
+          
+        if (roleError) {
+          throw roleError;
+        }
+        
+        // 3. Update lead status
+        const { error: leadError } = await supabase
+          .from('leads')
+          .update({ status: 'akzeptiert' })
+          .eq('id', createAccountData.leadId);
+          
+        if (leadError) {
+          throw leadError;
+        }
+        
+        // 4. Update local data
+        setLeads(prevLeads => 
+          prevLeads.map(lead => 
+            lead.id === createAccountData.leadId ? { ...lead, status: 'akzeptiert' } : lead
+          )
+        );
+        
+        setAccountCreationSuccess(true);
+      }
+    } catch (error: any) {
+      console.error("Fehler beim Erstellen des Benutzerkontos:", error);
       toast({
         title: "Fehler",
-        description: "Der Status konnte nicht aktualisiert werden.",
+        description: error?.message || "Der Benutzeraccount konnte nicht erstellt werden.",
         variant: "destructive"
       });
+    } finally {
+      setIsCreatingAccount(false);
     }
+  };
+
+  const resetAccountCreation = () => {
+    setAccountCreationSuccess(false);
+    setCreateAccountOpen(false);
+    setCreateAccountData({
+      name: '',
+      email: '',
+      password: '',
+      leadId: ''
+    });
   };
 
   const handleAddComment = async () => {
@@ -412,6 +522,91 @@ const LeadTable = () => {
           </table>
         </div>
       )}
+
+      {/* Account Creation Dialog */}
+      <AlertDialog open={createAccountOpen} onOpenChange={setCreateAccountOpen}>
+        <AlertDialogContent className="max-w-md">
+          {!accountCreationSuccess ? (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Benutzerkonto erstellen</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Erstellen Sie ein Benutzerkonto für diesen Lead. Der Lead wird automatisch als akzeptiert markiert.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="name" className="text-right">
+                    Name
+                  </Label>
+                  <Input
+                    id="name"
+                    value={createAccountData.name}
+                    onChange={(e) => setCreateAccountData({...createAccountData, name: e.target.value})}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="email" className="text-right">
+                    Email
+                  </Label>
+                  <Input
+                    id="email"
+                    type="email"
+                    value={createAccountData.email}
+                    onChange={(e) => setCreateAccountData({...createAccountData, email: e.target.value})}
+                    className="col-span-3"
+                  />
+                </div>
+                <div className="grid grid-cols-4 items-center gap-4">
+                  <Label htmlFor="password" className="text-right">
+                    Passwort
+                  </Label>
+                  <Input
+                    id="password"
+                    type="password"
+                    value={createAccountData.password}
+                    onChange={(e) => setCreateAccountData({...createAccountData, password: e.target.value})}
+                    className="col-span-3"
+                  />
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel disabled={isCreatingAccount}>Abbrechen</AlertDialogCancel>
+                <AlertDialogAction 
+                  onClick={handleCreateAccount}
+                  disabled={!createAccountData.email || !createAccountData.password || !createAccountData.name || isCreatingAccount}
+                >
+                  {isCreatingAccount ? "Wird erstellt..." : "Konto erstellen"}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          ) : (
+            <>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Benutzerkonto erfolgreich erstellt</AlertDialogTitle>
+                <AlertDialogDescription>
+                  Das Benutzerkonto wurde erfolgreich erstellt und der Lead als akzeptiert markiert.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="py-4">
+                <div className="bg-green-50 border border-green-200 text-green-800 p-4 rounded-lg">
+                  <div className="flex items-center mb-2">
+                    <UserPlus className="h-5 w-5 mr-2" />
+                    <p className="font-medium">Account für {createAccountData.name} erstellt</p>
+                  </div>
+                  <p>Email: {createAccountData.email}</p>
+                </div>
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogAction onClick={resetAccountCreation}>
+                  Schließen
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </>
+          )}
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

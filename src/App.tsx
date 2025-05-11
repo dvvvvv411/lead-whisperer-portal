@@ -12,27 +12,31 @@ import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import User from "./pages/User";
 import NotFound from "./pages/NotFound";
 
+// Create a new QueryClient instance
 const queryClient = new QueryClient();
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<Index />} />
-          <Route path="/admin" element={<Admin />} />
-          <Route path="/admin/register" element={<AdminRegister />} />
-          <Route path="/admin/leads" element={<AdminLeads />} />
-          <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
-          <Route path="/nutzer" element={<User />} />
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+// Define App component as a proper function component
+function App() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <Routes>
+            <Route path="/" element={<Index />} />
+            <Route path="/admin" element={<Admin />} />
+            <Route path="/admin/register" element={<AdminRegister />} />
+            <Route path="/admin/leads" element={<AdminLeads />} />
+            <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
+            <Route path="/nutzer" element={<User />} />
+            {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+}
 
 export default App;

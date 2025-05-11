@@ -70,6 +70,7 @@ export const useBotTradeExecution = (
     
     if (!userId || !userCredit || !settings) {
       console.log("Cannot complete trade: missing required data");
+      simulationInProgressRef.current = false; // Reset simulation state
       return { success: false, error: "Missing required data" };
     }
     
@@ -99,10 +100,7 @@ export const useBotTradeExecution = (
         }
         
         console.log("Trade completed successfully:", result);
-        toast({
-          title: "Trade erfolgreich",
-          description: `${result.profit.toFixed(2)}€ Gewinn (${result.profitPercentage.toFixed(2)}%)`,
-        });
+        // Removing toast notification here to avoid duplicate notifications
       } else {
         // Update status with failure
         if (updateStatus) {
@@ -119,8 +117,7 @@ export const useBotTradeExecution = (
         });
       }
       
-      // Reset simulation state
-      simulationInProgressRef.current = false;
+      // Don't reset simulation state here, let the calling code handle it
       
       return result;
       

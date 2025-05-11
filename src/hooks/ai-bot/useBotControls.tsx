@@ -43,12 +43,9 @@ export const useBotControls = (
       });
     }, status.currentRank);
     
-    toast({
-      title: "Trading Bot gestartet",
-      description: `Der Bot wird alle ${status.currentRank} Minuten automatisch handeln.`
-    });
+    // Entfernen wir die Toast-Notification, die beim Start des Bots angezeigt wurde
     
-  }, [userId, status, updateStatus, setNewBotInterval, executeSingleTrade, toast]);
+  }, [userId, status, updateStatus, setNewBotInterval, executeSingleTrade]);
   
   // Stop the trading bot
   const stopBot = useCallback(() => {

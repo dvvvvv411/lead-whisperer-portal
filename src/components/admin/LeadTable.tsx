@@ -7,6 +7,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Textarea } from "@/components/ui/textarea";
 import { supabase } from "@/integrations/supabase/client";
 import { Check, X, MessageSquare } from "lucide-react";
+import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 
 interface Lead {
   id: string;
@@ -30,11 +31,13 @@ interface Comment {
 const LeadTable = () => {
   const { toast } = useToast();
   const [leads, setLeads] = useState<Lead[]>([]);
+  const [filteredLeads, setFilteredLeads] = useState<Lead[]>([]);
   const [comments, setComments] = useState<Comment[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [selectedLead, setSelectedLead] = useState<Lead | null>(null);
   const [newComment, setNewComment] = useState("");
   const [user, setUser] = useState<any>(null);
+  const [statusFilter, setStatusFilter] = useState<string | undefined>(undefined);
 
   // Benutzer-Session abrufen
   useEffect(() => {
@@ -66,6 +69,7 @@ const LeadTable = () => {
         
         if (data) {
           setLeads(data as Lead[]);
+          setFilteredLeads(data as Lead[]);
         }
       } catch (error) {
         console.error("Fehler beim Abrufen der Leads:", error);
@@ -81,6 +85,15 @@ const LeadTable = () => {
     
     fetchLeads();
   }, [toast]);
+
+  // Anwenden des Filters, wenn sich der statusFilter ändert
+  useEffect(() => {
+    if (statusFilter === undefined) {
+      setFilteredLeads(leads);
+    } else {
+      setFilteredLeads(leads.filter(lead => lead.status === statusFilter));
+    }
+  }, [statusFilter, leads]);
 
   // Kommentare abrufen
   useEffect(() => {
@@ -225,9 +238,33 @@ const LeadTable = () => {
         </div>
       </div>
       
-      {leads.length === 0 ? (
+      {/* Filter-Buttons */}
+      <div className="mb-6">
+        <h2 className="text-sm text-gray-500 mb-2">Nach Status filtern:</h2>
+        <ToggleGroup type="single" value={statusFilter} onValueChange={setStatusFilter}>
+          <ToggleGroupItem value="neu" className="bg-blue-100 text-blue-800 border-blue-300 data-[state=on]:bg-blue-200">
+            Neu
+          </ToggleGroupItem>
+          <ToggleGroupItem value="akzeptiert" className="bg-green-100 text-green-800 border-green-300 data-[state=on]:bg-green-200">
+            Akzeptiert
+          </ToggleGroupItem>
+          <ToggleGroupItem value="abgelehnt" className="bg-red-100 text-red-800 border-red-300 data-[state=on]:bg-red-200">
+            Abgelehnt
+          </ToggleGroupItem>
+          <Button 
+            variant="outline" 
+            size="sm" 
+            onClick={() => setStatusFilter(undefined)}
+            className="ml-2"
+          >
+            Alle anzeigen
+          </Button>
+        </ToggleGroup>
+      </div>
+      
+      {filteredLeads.length === 0 ? (
         <div className="text-center p-10 bg-gray-50 rounded-lg">
-          <p className="text-gray-600">Keine Leads vorhanden.</p>
+          <p className="text-gray-600">Keine Leads vorhanden für diese Filterauswahl.</p>
         </div>
       ) : (
         <div className="overflow-x-auto">
@@ -244,7 +281,7 @@ const LeadTable = () => {
               </tr>
             </thead>
             <tbody>
-              {leads.map((lead) => (
+              {filteredLeads.map((lead) => (
                 <tr key={lead.id} className="border-t hover:bg-gray-50">
                   <td className="px-4 py-3">
                     {new Date(lead.created_at).toLocaleDateString('de-DE')}

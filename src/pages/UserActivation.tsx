@@ -1,9 +1,9 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Loader2 } from "lucide-react";
+import { Loader2, LogOut } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 // Custom hooks
 import { useWallets } from "@/hooks/useWallets";
@@ -141,6 +141,24 @@ const UserActivation = () => {
     }
   };
 
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet."
+      });
+      navigate("/admin");
+    } catch (error: any) {
+      console.error("Error signing out:", error.message);
+      toast({
+        title: "Fehler",
+        description: "Es gab ein Problem beim Abmelden.",
+        variant: "destructive"
+      });
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex flex-col justify-center items-center min-h-screen">
@@ -156,8 +174,15 @@ const UserActivation = () => {
 
   return (
     <div className="container mx-auto p-4 max-w-3xl">
+      <div className="flex justify-between items-center mb-4">
+        <h1 className="text-3xl font-bold">Konto Aktivierung</h1>
+        <Button variant="outline" size="sm" onClick={handleLogout} className="flex items-center gap-2">
+          <LogOut className="h-4 w-4" />
+          <span>Abmelden</span>
+        </Button>
+      </div>
+      
       <div className="mb-8 text-center">
-        <h1 className="text-3xl font-bold mb-2">Konto Aktivierung</h1>
         <p className="text-gray-600">Hallo {user?.email}, aktivieren Sie Ihr Konto, um Zugriff auf alle Funktionen zu erhalten.</p>
       </div>
 

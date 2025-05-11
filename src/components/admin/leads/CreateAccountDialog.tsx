@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { UserPlus } from "lucide-react";
@@ -37,18 +36,19 @@ export const CreateAccountDialog = ({
     try {
       setIsCreatingAccount(true);
       
-      // Store the current session before creating a new user
-      const { data: currentSession } = await supabase.auth.getSession();
+      // 1. Store the admin's current session
+      const { data: adminSession } = await supabase.auth.getSession();
+      if (!adminSession?.session) {
+        throw new Error("Admin session not found");
+      }
       
-      // 1. Create the user using signUp with standard options
-      const { data: authData, error: authError } = await supabase.auth.signUp({
+      // 2. Create the new user account with admin auth client
+      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
         email: formData.email,
         password: formData.password,
-        options: {
-          data: {
-            name: formData.name
-          },
-          emailRedirectTo: window.location.origin
+        email_confirm: true,
+        user_metadata: {
+          name: formData.name
         }
       });
       
@@ -56,9 +56,9 @@ export const CreateAccountDialog = ({
         throw authError;
       }
       
-      // 2. Add user role if account created successfully
+      // 3. Add user role if account created successfully
       if (authData?.user) {
-        // If a new user was created successfully, we need to set up their role
+        // Set up their role
         const { error: roleError } = await supabase
           .from('user_roles')
           .insert([{
@@ -70,7 +70,7 @@ export const CreateAccountDialog = ({
           throw roleError;
         }
         
-        // 3. Update lead status
+        // 4. Update lead status
         const { error: leadError } = await supabase
           .from('leads')
           .update({ status: 'akzeptiert' })
@@ -80,13 +80,11 @@ export const CreateAccountDialog = ({
           throw leadError;
         }
         
-        // 4. Re-authenticate the admin user to ensure we stay logged in as admin
-        if (currentSession?.session) {
-          await supabase.auth.setSession({
-            access_token: currentSession.session.access_token,
-            refresh_token: currentSession.session.refresh_token
-          });
-        }
+        // 5. Make sure we stay logged in as the admin
+        await supabase.auth.setSession({
+          access_token: adminSession.session.access_token,
+          refresh_token: adminSession.session.refresh_token
+        });
         
         setAccountCreationSuccess(true);
       }

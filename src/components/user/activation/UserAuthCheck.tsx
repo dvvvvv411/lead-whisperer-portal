@@ -39,10 +39,18 @@ const UserAuthCheck = ({
   
   return (
     <UserAuthWrapper 
-      onUserLoaded={onUserLoaded}
-      redirectToActivation={redirectToActivation}
+      redirectTo="/admin"
+      minCredit={0}
     >
-      {children}
+      {(user) => {
+        // Pass the user to the onUserLoaded callback
+        if (onUserLoaded) {
+          onUserLoaded(user);
+        }
+        
+        // Return the children directly
+        return children;
+      }}
     </UserAuthWrapper>
   );
 };

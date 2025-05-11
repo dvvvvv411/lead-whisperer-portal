@@ -11,11 +11,12 @@ import { cn } from "@/lib/utils";
 interface AITradingBotProps {
   userId?: string;
   userCredit?: number;
+  userEmail?: string;
   onTradeExecuted?: () => void;
   className?: string;
 }
 
-const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AITradingBotProps) => {
+const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, className }: AITradingBotProps) => {
   const { 
     settings, 
     status, 
@@ -59,6 +60,9 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AI
     simulationInProgressRef
   );
 
+  // Get user's first name from email if available
+  const userName = userEmail ? userEmail.split('@')[0].split('.')[0] : undefined;
+
   return (
     <div className={cn(
       "w-full rounded-xl overflow-hidden border border-gold/10 bg-gradient-to-br from-casino-darker to-casino-card/90 shadow-xl", 
@@ -77,6 +81,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AI
         <TradingBotHeader 
           onManualTrade={handleManualTrade}
           tradesRemaining={status.tradesRemaining}
+          userName={userName}
         />
         <div className="p-4 pt-6">
           <TradingBotContent
@@ -87,6 +92,8 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted, className }: AI
             botTrades={botTrades}
             tradesLoading={tradesLoading}
             formatCurrency={formatCurrency}
+            onManualTrade={handleManualTrade}
+            userName={userName}
           />
         </div>
       </div>

@@ -6,9 +6,10 @@ import { cn } from "@/lib/utils";
 interface TradingBotHeaderProps {
   onManualTrade: () => void;
   tradesRemaining: number;
+  userName?: string;
 }
 
-const TradingBotHeader = ({ onManualTrade, tradesRemaining }: TradingBotHeaderProps) => {
+const TradingBotHeader = ({ onManualTrade, tradesRemaining, userName }: TradingBotHeaderProps) => {
   return (
     <div className="p-6 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gradient-to-r from-casino-darker/80 to-casino-dark/80 backdrop-blur-xl border-b border-gold/10">
       <div className="flex items-center">
@@ -29,8 +30,6 @@ const TradingBotHeader = ({ onManualTrade, tradesRemaining }: TradingBotHeaderPr
           </CardDescription>
         </div>
       </div>
-      
-      {/* Empty placeholder - control buttons are now in the RankDisplay */}
     </div>
   );
 };

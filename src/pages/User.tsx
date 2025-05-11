@@ -151,6 +151,7 @@ const User = () => {
           <div className="lg:col-span-2">
             <AITradingBot 
               userId={user?.id} 
+              userEmail={user?.email}
               userCredit={userCredit || 0}
               onTradeExecuted={handleCreditUpdated}
               className="transform transition-all duration-500 hover:translate-y-[-2px] hover:shadow-2xl"

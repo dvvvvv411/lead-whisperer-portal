@@ -9,6 +9,9 @@ export const AdminNavbar = () => {
         <MenubarTrigger>Navigation</MenubarTrigger>
         <MenubarContent>
           <MenubarItem asChild>
+            <Link to="/admin">Dashboard</Link>
+          </MenubarItem>
+          <MenubarItem asChild>
             <Link to="/admin/leads">Leads</Link>
           </MenubarItem>
           <MenubarItem asChild>

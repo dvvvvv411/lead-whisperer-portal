@@ -7,9 +7,10 @@ export interface CryptoComparisonProps {
   symbol: string;
   price: number;
   change: number;
+  logoUrl?: string;
 }
 
-const CryptoComparison = ({ symbol, price, change }: CryptoComparisonProps) => {
+const CryptoComparison = ({ symbol, price, change, logoUrl }: CryptoComparisonProps) => {
   // Generate miniature chart for visualization
   const generateMiniChart = () => {
     const points = 5;
@@ -49,8 +50,12 @@ const CryptoComparison = ({ symbol, price, change }: CryptoComparisonProps) => {
   return (
     <div className="flex items-center justify-between py-2.5 px-3 border-b border-gold/5 transition-all duration-200 hover:bg-casino-highlight/10 animate-fade-in">
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-casino-card to-casino-darker border border-gold/10 flex items-center justify-center">
-          <span className="font-mono text-xs font-semibold">{symbol}</span>
+        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-casino-card to-casino-darker border border-gold/10 flex items-center justify-center overflow-hidden">
+          {logoUrl ? (
+            <img src={logoUrl} alt={symbol} className="w-6 h-6 object-contain" />
+          ) : (
+            <span className="font-mono text-xs font-semibold">{symbol}</span>
+          )}
         </div>
         <div>
           <div className="text-sm font-medium">{price.toFixed(2)} €</div>

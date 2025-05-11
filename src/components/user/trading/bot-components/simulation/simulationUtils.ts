@@ -67,29 +67,28 @@ export function calculateBuyPrice(currentPrice: number, profitPercentage: number
 
 // Utility function to generate random crypto comparison data
 export function generateCryptoComparison(cryptoData: any[]): CryptoComparisonProps {
-  // Generate random comparison data
-  const symbols = ["BTC", "ETH", "ADA", "SOL", "DOT", "AVAX", "MATIC"];
-  const prices = [50000, 3500, 1.2, 150, 20, 35, 2.5];
-  const changes = [-3.5, 2.8, 5.2, -1.5, 4.1, -2.3, 1.8];
-  
-  // Pick two random indexes
-  const idx1 = Math.floor(Math.random() * symbols.length);
-  let idx2 = Math.floor(Math.random() * symbols.length);
-  
-  // Make sure idx2 is different from idx1
-  while (idx2 === idx1) {
-    idx2 = Math.floor(Math.random() * symbols.length);
+  if (cryptoData && cryptoData.length > 0) {
+    // Use real crypto data if available
+    const randomCrypto = cryptoData[Math.floor(Math.random() * cryptoData.length)];
+    return {
+      symbol: randomCrypto.symbol,
+      price: randomCrypto.current_price,
+      change: randomCrypto.price_change_percentage_24h || (Math.random() > 0.5 ? Math.random() * 8 : -Math.random() * 5),
+      logoUrl: randomCrypto.image_url
+    };
+  } else {
+    // Fallback to default values if no crypto data is available
+    const symbols = ["BTC", "ETH", "ADA", "SOL", "DOT", "AVAX", "MATIC"];
+    const prices = [50000, 3500, 1.2, 150, 20, 35, 2.5];
+    const idx = Math.floor(Math.random() * symbols.length);
+    
+    return {
+      symbol: symbols[idx],
+      price: prices[idx],
+      change: Math.random() > 0.5 ? Math.random() * 8 : -Math.random() * 5,
+      logoUrl: undefined
+    };
   }
-  
-  return {
-    symbol: cryptoData && cryptoData.length > 0 
-      ? cryptoData[Math.floor(Math.random() * cryptoData.length)].symbol
-      : symbols[idx1],
-    price: cryptoData && cryptoData.length > 0 
-      ? cryptoData[Math.floor(Math.random() * cryptoData.length)].current_price
-      : prices[idx1],
-    change: Math.random() > 0.5 ? Math.random() * 8 : -Math.random() * 5
-  };
 }
 
 // Utility to select a random crypto for trading

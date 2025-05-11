@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from 'react';
 import { CryptoComparisonProps } from "./CryptoComparison";
 import { algorithmSteps, generateCryptoComparison, selectRandomCrypto } from "./simulationUtils";
@@ -66,7 +65,7 @@ export const useSimulation = ({
       const currentTime = Date.now();
       const elapsed = currentTime - startTimeRef.current;
       
-      // Ensure the simulation completes at exactly 60 seconds
+      // Ensure the simulation completes at exactly simulation duration
       // Create a strict linear progress that always increases and never goes backward
       let newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
       
@@ -78,7 +77,6 @@ export const useSimulation = ({
       }
       
       setProgress(newProgress);
-      console.log("Progress updated:", newProgress, "elapsed:", elapsed, "ms");
       
       // Update current step based on progress with fixed thresholds
       const stepThresholds = [0, 10, 20, 30, 40, 50, 60, 70, 80, 90];

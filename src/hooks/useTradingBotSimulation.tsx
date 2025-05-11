@@ -71,31 +71,45 @@ export const useTradingBotSimulation = (
         // Close simulation dialog first
         setSimulationOpen(false);
         
-        // Execute the trade and get results
-        const tradeResult = await completeTradeAfterSimulation();
-        
-        if (tradeResult && typeof tradeResult === 'object' && 'success' in tradeResult && tradeResult.success) {
-          // Prepare data for result dialog with new detailed information
-          setTradeResult({
-            cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
-            cryptoName: tradeResult.crypto?.name || selectedCrypto?.name || "Bitcoin",
-            profitAmount: tradeResult.profit || 0,
-            profitPercentage: tradeResult.profitPercentage || 0,
-            tradeAmount: tradeResult.tradeAmount || 0,
-            buyPrice: tradeResult.buyPrice || 0,
-            sellPrice: tradeResult.sellPrice || 0,
-            quantity: tradeResult.quantity || 0,
-            tradeDate: new Date()
-          });
+        try {
+          // Execute the trade and get results
+          const tradeResult = await completeTradeAfterSimulation();
+          console.log("Trade completed with result:", tradeResult);
           
-          // Show result dialog
-          setResultDialogOpen(true);
+          if (tradeResult && typeof tradeResult === 'object' && 'success' in tradeResult && tradeResult.success) {
+            // Prepare data for result dialog with new detailed information
+            setTradeResult({
+              cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
+              cryptoName: tradeResult.crypto?.name || selectedCrypto?.name || "Bitcoin",
+              profitAmount: tradeResult.profit || 0,
+              profitPercentage: tradeResult.profitPercentage || 0,
+              tradeAmount: tradeResult.tradeAmount || 0,
+              buyPrice: tradeResult.buyPrice || 0,
+              sellPrice: tradeResult.sellPrice || 0,
+              quantity: tradeResult.quantity || 0,
+              tradeDate: new Date()
+            });
+            
+            // Ensure we show the result dialog
+            console.log("Opening result dialog");
+            setTimeout(() => {
+              setResultDialogOpen(true);
+            }, 300);
+          } else {
+            console.error("Trade completion failed or returned unexpected result:", tradeResult);
+          }
+        } catch (error) {
+          console.error("Error completing trade:", error);
+        } finally {
+          // Set simulating to false regardless of success or failure
+          setIsSimulating(false);
         }
       }, 500);
     } else {
       setSimulationOpen(false);
+      setIsSimulating(false);
     }
-  }, [completeTradeAfterSimulation]);
+  }, [completeTradeAfterSimulation, setIsSimulating]);
   
   // Handle dialog open state changes
   const handleDialogOpenChange = useCallback((open: boolean) => {
@@ -113,6 +127,7 @@ export const useTradingBotSimulation = (
   
   // Handle closing the result dialog
   const handleResultDialogClose = useCallback(() => {
+    console.log("Closing result dialog");
     setResultDialogOpen(false);
   }, []);
   

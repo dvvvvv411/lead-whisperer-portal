@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -6,6 +5,7 @@ import { LeadFilterBar } from "./LeadFilterBar";
 import { LeadTableHeader } from "./LeadTableHeader";
 import { LeadTableRow } from "./LeadTableRow";
 import { CreateAccountDialog } from "./CreateAccountDialog";
+import { AdminNavbar } from "../AdminNavbar";
 
 interface Lead {
   id: string;
@@ -258,6 +258,8 @@ const LeadsTable = () => {
   
   return (
     <div className="container mx-auto p-4">
+      <AdminNavbar />
+      
       <LeadTableHeader 
         userEmail={user?.email}
         onLogout={handleLogout}

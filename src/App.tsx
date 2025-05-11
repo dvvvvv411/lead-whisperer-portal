@@ -8,9 +8,9 @@ import Index from "./pages/Index";
 import Admin from "./pages/Admin";
 import AdminRegister from "./pages/AdminRegister";
 import AdminLeads from "./pages/AdminLeads";
+import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import User from "./pages/User";
 import NotFound from "./pages/NotFound";
-import { supabase } from "@/integrations/supabase/client";
 
 const queryClient = new QueryClient();
 
@@ -25,6 +25,7 @@ const App = () => (
           <Route path="/admin" element={<Admin />} />
           <Route path="/admin/register" element={<AdminRegister />} />
           <Route path="/admin/leads" element={<AdminLeads />} />
+          <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
           <Route path="/nutzer" element={<User />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />

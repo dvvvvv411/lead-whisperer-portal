@@ -41,6 +41,30 @@ export type Database = {
           },
         ]
       }
+      crypto_wallets: {
+        Row: {
+          created_at: string
+          currency: string
+          id: string
+          updated_at: string
+          wallet_address: string
+        }
+        Insert: {
+          created_at?: string
+          currency: string
+          id?: string
+          updated_at?: string
+          wallet_address: string
+        }
+        Update: {
+          created_at?: string
+          currency?: string
+          id?: string
+          updated_at?: string
+          wallet_address?: string
+        }
+        Relationships: []
+      }
       leads: {
         Row: {
           company: string | null

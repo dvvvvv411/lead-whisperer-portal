@@ -1,130 +1,159 @@
 
 import { useState } from "react";
-import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
+import { AdminNavbar } from "./AdminNavbar";
 
 const AdminRegister = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(false);
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-    confirmPassword: ""
-  });
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (formData.password !== formData.confirmPassword) {
-      toast({
-        title: "Passwörter stimmen nicht überein",
-        description: "Bitte überprüfe deine Eingabe",
-        variant: "destructive"
-      });
+    // Validate inputs
+    if (!email || !password || !passwordConfirm) {
+      setError("Bitte füllen Sie alle Felder aus.");
       return;
     }
     
-    setIsLoading(true);
+    if (password !== passwordConfirm) {
+      setError("Die Passwörter stimmen nicht überein.");
+      return;
+    }
+    
+    if (password.length < 6) {
+      setError("Das Passwort muss mindestens 6 Zeichen lang sein.");
+      return;
+    }
+    
+    setError("");
+    setLoading(true);
     
     try {
-      const { error } = await supabase.auth.signUp({
-        email: formData.email,
-        password: formData.password
+      // Register the user with Supabase
+      const { data, error: signUpError } = await supabase.auth.signUp({
+        email: email,
+        password: password,
       });
       
-      if (error) {
-        throw error;
+      if (signUpError) {
+        throw signUpError;
       }
       
-      toast({
-        title: "Registrierung erfolgreich",
-        description: "Ein Bestätigungslink wurde an deine E-Mail-Adresse gesendet.",
-      });
-      
+      if (data?.user) {
+        // Add admin role to the user
+        const { error: rolesError } = await supabase.rpc('add_user_role', { 
+          _user_id: data.user.id, 
+          _role: 'admin' 
+        });
+        
+        if (rolesError) {
+          throw rolesError;
+        }
+        
+        setSuccess(true);
+        toast({
+          title: "Benutzer erstellt",
+          description: "Der Admin-Benutzer wurde erfolgreich registriert.",
+        });
+      }
     } catch (error: any) {
-      console.error("Registrierungsfehler:", error);
+      console.error("Fehler bei der Registrierung:", error);
+      setError(error.message || "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.");
       toast({
-        title: "Registrierung fehlgeschlagen",
-        description: error.message || "Bitte versuche es erneut.",
+        title: "Fehler",
+        description: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
         variant: "destructive"
       });
     } finally {
-      setIsLoading(false);
+      setLoading(false);
     }
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gray-50">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Admin Registrierung</CardTitle>
-          <CardDescription className="text-center">
-            Erstelle ein neues Admin-Konto
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
+    <div className="container mx-auto p-4">
+      <AdminNavbar />
+      
+      <h1 className="text-3xl font-bold mb-6">Admin registrieren</h1>
+      
+      {success ? (
+        <div className="bg-green-100 border-l-4 border-green-500 p-4 mb-4">
+          <p className="text-green-700">
+            Admin-Benutzer erfolgreich registriert. Der Benutzer kann sich jetzt anmelden.
+          </p>
+          <Button 
+            onClick={() => window.location.href = "/admin/leads"} 
+            className="mt-4"
+          >
+            Zurück zur Übersicht
+          </Button>
+        </div>
+      ) : (
+        <div className="max-w-md mx-auto">
+          {error && (
+            <div className="bg-red-100 border-l-4 border-red-500 p-4 mb-4">
+              <p className="text-red-700">{error}</p>
+            </div>
+          )}
+          
+          <form onSubmit={handleRegister} className="space-y-4">
+            <div>
+              <label htmlFor="email" className="block text-sm font-medium mb-1">E-Mail</label>
+              <Input 
                 id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="admin@beispiel.de"
+                type="email" 
+                value={email} 
+                onChange={(e) => setEmail(e.target.value)}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Passwort</Label>
-              <Input
+            
+            <div>
+              <label htmlFor="password" className="block text-sm font-medium mb-1">Passwort</label>
+              <Input 
                 id="password"
-                name="password"
-                type="password"
-                value={formData.password}
-                onChange={handleChange}
+                type="password" 
+                value={password} 
+                onChange={(e) => setPassword(e.target.value)}
                 required
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="confirmPassword">Passwort bestätigen</Label>
-              <Input
-                id="confirmPassword"
-                name="confirmPassword"
-                type="password"
-                value={formData.confirmPassword}
-                onChange={handleChange}
+            
+            <div>
+              <label htmlFor="passwordConfirm" className="block text-sm font-medium mb-1">Passwort bestätigen</label>
+              <Input 
+                id="passwordConfirm"
+                type="password" 
+                value={passwordConfirm} 
+                onChange={(e) => setPasswordConfirm(e.target.value)}
                 required
               />
             </div>
+            
             <Button 
               type="submit" 
-              className="w-full" 
-              disabled={isLoading}
+              disabled={loading}
+              className="w-full"
             >
-              {isLoading ? "Wird registriert..." : "Registrieren"}
+              {loading ? "Wird registriert..." : "Registrieren"}
             </Button>
+            
+            <div className="text-center">
+              <a href="/admin/leads" className="text-blue-600 hover:text-blue-800 text-sm">
+                Zurück zur Übersicht
+              </a>
+            </div>
           </form>
-        </CardContent>
-        <CardFooter className="flex justify-center">
-          <p className="text-sm text-gray-500">
-            Bereits registriert? <a href="/admin" className="text-blue-600 hover:underline">Anmelden</a>
-          </p>
-        </CardFooter>
-      </Card>
+        </div>
+      )}
     </div>
   );
 };

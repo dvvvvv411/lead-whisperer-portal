@@ -6,9 +6,6 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     // Convert euro amount to cents
     const amountInCents = Math.round(amountInEuros * 100);
     
-    // First ensure the user has a credit entry
-    await supabase.rpc('initialize_user_credit', { user_id_param: userId });
-    
     // Get current credit value first
     const { data: creditData, error: fetchError } = await supabase
       .from('user_credits')

@@ -37,13 +37,14 @@ export const CreateAccountDialog = ({
     try {
       setIsCreatingAccount(true);
       
-      // 1. Create the user account
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // 1. Create the user using signUp
+      const { data: authData, error: authError } = await supabase.auth.signUp({
         email: formData.email,
         password: formData.password,
-        email_confirm: true, // Auto confirm email
-        user_metadata: {
-          name: formData.name
+        options: {
+          data: {
+            name: formData.name
+          }
         }
       });
       

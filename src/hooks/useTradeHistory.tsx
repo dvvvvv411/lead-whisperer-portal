@@ -33,7 +33,7 @@ export const useTradeHistory = (userId?: string) => {
     try {
       setLoading(true);
       
-      // Fetch trade history with crypto asset details
+      // Fetch trade history with crypto asset details and joined payment records for notes
       const { data, error } = await supabase
         .from('trade_simulations')
         .select(`

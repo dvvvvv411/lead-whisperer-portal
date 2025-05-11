@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import AdminLogin from "@/components/admin/AdminLogin";
+import AdminDashboard from "@/components/admin/AdminDashboard";
 import { checkUserRole } from "@/services/roleService";
 
 const Admin = () => {
@@ -63,10 +64,9 @@ const Admin = () => {
 
   // Wenn der Benutzer angemeldet ist
   if (session) {
-    // Wenn der Benutzer Admin ist, zur Leads-Seite weiterleiten
+    // Wenn der Benutzer Admin ist, zeige das Admin-Dashboard
     if (isAdmin) {
-      window.location.href = "/admin/leads";
-      return null;
+      return <AdminDashboard />;
     }
     // Wenn der Benutzer ein aktivierter normaler User ist, zum Benutzer-Dashboard weiterleiten
     else if (isUser) {

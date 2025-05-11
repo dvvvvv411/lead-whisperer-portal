@@ -42,8 +42,9 @@ const AdminLogin = () => {
         description: "Du wirst zum Admin-Bereich weitergeleitet.",
       });
       
-      // Weiterleitung nach erfolgreichem Login
-      window.location.href = "/admin/leads";
+      // Weiterleitung nach erfolgreichem Login - jetzt zum /admin
+      // Die Admin.tsx wird die weitere Umleitung basierend auf der Benutzerrolle vornehmen
+      window.location.href = "/admin";
       
     } catch (error: any) {
       console.error("Login-Fehler:", error);

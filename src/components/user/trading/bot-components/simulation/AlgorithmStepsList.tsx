@@ -4,7 +4,7 @@ import AlgorithmStep from "./AlgorithmStep";
 import { CircleCheck } from "lucide-react";
 
 interface AlgorithmStepsListProps {
-  steps: string[];
+  steps: { title: string; description: string }[];
   currentStep: number;
 }
 
@@ -37,7 +37,7 @@ const AlgorithmStepsList: React.FC<AlgorithmStepsListProps> = ({ steps, currentS
           {steps.map((step, idx) => (
             <AlgorithmStep 
               key={`step-${idx}`} 
-              name={step} 
+              name={step.title} 
               isComplete={idx < currentStep} 
               current={idx === currentStep} 
             />

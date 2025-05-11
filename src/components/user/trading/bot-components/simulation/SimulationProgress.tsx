@@ -5,9 +5,15 @@ import { CircleCheck } from "lucide-react";
 
 interface SimulationProgressProps {
   progress: number;
+  duration?: number;
+  elapsed?: number;
 }
 
-const SimulationProgress: React.FC<SimulationProgressProps> = ({ progress }) => {
+const SimulationProgress: React.FC<SimulationProgressProps> = ({ 
+  progress,
+  duration,
+  elapsed
+}) => {
   // Animation classes based on progress
   const getProgressClasses = () => {
     if (progress >= 100) return "bg-gradient-to-r from-green-500 to-green-400";

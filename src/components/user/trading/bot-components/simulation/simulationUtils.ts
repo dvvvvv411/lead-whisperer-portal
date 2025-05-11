@@ -1,100 +1,105 @@
+import { CryptoComparisonProps } from "./CryptoComparison";
 
-// Algorithm steps
-export const algorithmSteps = [
-  "Initialisiere KI-Algorithmus",
-  "Analyse historischer Kursdaten",
-  "Berechnung optimaler Einstiegspunkte",
-  "Sentiment-Analyse der Markttrends",
-  "Volumen-Korrelationsanalyse",
-  "Prüfung technischer Indikatoren",
-  "Bewertung der Handelsvolumina",
-  "Erkennung von Marktmustern",
-  "Berechnung der Gewinnwahrscheinlichkeit",
-  "Finale Handelsempfehlung"
+// Define algorithm steps with title and description
+export const algorithmSteps: { title: string; description: string }[] = [
+  { 
+    title: "Marktdaten sammeln", 
+    description: "Sammle aktuelle Marktdaten aus verschiedenen Quellen" 
+  },
+  { 
+    title: "Technische Analyse", 
+    description: "Berechne technische Indikatoren (RSI, MACD, Bollinger Bands)" 
+  },
+  { 
+    title: "Sentiment-Analyse", 
+    description: "Analysiere Marktstimmung aus sozialen Medien und Nachrichtenquellen" 
+  },
+  { 
+    title: "Volumen-Analyse", 
+    description: "Untersuche Handelsvolumen für Liquiditätsmuster" 
+  },
+  { 
+    title: "Korrelationsanalyse", 
+    description: "Vergleiche Korrelation mit anderen Kryptowährungen" 
+  },
+  { 
+    title: "Mustererkennungsalgorithmus", 
+    description: "Identifiziere bekannte Chart-Muster und Preisformationen" 
+  },
+  { 
+    title: "Wahrscheinlichkeitsberechnung", 
+    description: "Berechne Wahrscheinlichkeiten für verschiedene Preisszenarien" 
+  },
+  { 
+    title: "Risiko-Optimierung", 
+    description: "Optimiere die Position basierend auf Risikotoleranz" 
+  },
+  { 
+    title: "Gewinnpotenzial-Berechnung", 
+    description: "Berechne erwarteten Return-on-Investment" 
+  },
+  { 
+    title: "Handelsempfehlung", 
+    description: "Generiere finale Kauf/Verkauf Empfehlung" 
+  }
 ];
 
-// List of stablecoin symbols that should be excluded from trading
-const STABLECOIN_SYMBOLS = ['USDT', 'USDC', 'BUSD', 'DAI', 'UST', 'TUSD', 'USDP', 'GUSD', 'FRAX'];
+// Utility function to generate random crypto comparison data
+export function generateCryptoComparison(cryptoData: any[]): CryptoComparisonProps {
+  // Generate random comparison data
+  const metrics = ["Volatilität", "Momentum", "Handelsvolumen", "Korrelation", "Markttiefe"];
+  const metric = metrics[Math.floor(Math.random() * metrics.length)];
+  
+  // Use real crypto data if available, otherwise fallback to defaults
+  const cryptos = cryptoData && cryptoData.length >= 2 
+    ? [cryptoData[Math.floor(Math.random() * cryptoData.length)], cryptoData[Math.floor(Math.random() * cryptoData.length)]]
+    : [{ name: "Bitcoin", symbol: "BTC" }, { name: "Ethereum", symbol: "ETH" }];
+  
+  // Ensure we don't compare the same crypto
+  if (cryptos[0].symbol === cryptos[1].symbol) {
+    cryptos[1] = { name: "Cardano", symbol: "ADA" };
+  }
+  
+  // Generate random scores ensuring the first one is usually higher (for visual effect)
+  const score1 = Math.floor(Math.random() * 40) + 60; // 60-99
+  const score2 = Math.floor(Math.random() * 60) + 30; // 30-89
+  
+  return {
+    metric,
+    crypto1: {
+      name: cryptos[0].name,
+      symbol: cryptos[0].symbol,
+      score: score1
+    },
+    crypto2: {
+      name: cryptos[1].name,
+      symbol: cryptos[1].symbol,
+      score: score2
+    }
+  };
+}
 
-// Generate a realistic crypto comparison from real data
-export const generateCryptoComparison = (cryptoData: any[]) => {
+// Utility to select a random crypto for trading
+export function selectRandomCrypto(cryptoData: any[]) {
   if (!cryptoData || cryptoData.length === 0) {
     return {
       symbol: "BTC",
-      price: 42000,
-      change: 0.5
+      name: "Bitcoin",
+      currentPrice: 50000,
+      priceChangePercentage24h: 5.2
     };
   }
   
-  // Select random crypto from real data, excluding stablecoins
-  const tradableCryptos = cryptoData.filter(crypto => 
-    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
+  // Prefer cryptos with positive movement if available
+  const positiveMovers = cryptoData.filter(crypto => 
+    crypto.priceChangePercentage24h > 0
   );
   
-  if (tradableCryptos.length === 0) {
-    return {
-      symbol: "BTC",
-      price: 42000,
-      change: 0.5
-    };
-  }
-  
-  const randomIndex = Math.floor(Math.random() * tradableCryptos.length);
-  const selectedCrypto = tradableCryptos[randomIndex];
-  
-  // Use real price with small variation to simulate live updates
-  const priceVariation = selectedCrypto.current_price * (Math.random() * 0.02 - 0.01); // ±1%
-  const price = selectedCrypto.current_price + priceVariation;
-  
-  // Use real data for change if available, otherwise simulate one
-  const change = selectedCrypto.price_change_percentage_24h || (Math.random() * 6 - 3);
-  
-  return {
-    symbol: selectedCrypto.symbol,
-    price,
-    change
-  };
-};
+  const selection = positiveMovers.length > 0
+    ? positiveMovers[Math.floor(Math.random() * positiveMovers.length)]
+    : cryptoData[Math.floor(Math.random() * cryptoData.length)];
+    
+  return selection;
+}
 
-// Select a random crypto for trading, excluding stablecoins
-export const selectRandomCrypto = (cryptoData: any[]) => {
-  if (!cryptoData || cryptoData.length === 0) return null;
-  
-  // Filter out stablecoins
-  const tradableCryptos = cryptoData.filter(crypto => 
-    !STABLECOIN_SYMBOLS.includes(crypto.symbol.toUpperCase())
-  );
-  
-  if (tradableCryptos.length === 0) return null; // Safety check
-  
-  const randomIndex = Math.floor(Math.random() * tradableCryptos.length);
-  return tradableCryptos[randomIndex];
-};
-
-// Generate a profit percentage between 3-7.5%
-export const generateProfitPercentage = () => {
-  return 3 + Math.random() * 4.5; // Between 3% and 7.5%
-};
-
-// Calculate buy price based on current price and profit percentage
-export const calculateBuyPrice = (currentPrice: number, profitPercentage: number) => {
-  // If we want to make X% profit selling at current price, 
-  // we need to buy at a price that is X% lower
-  return currentPrice / (1 + (profitPercentage / 100));
-};
-
-// Calculate profit amount based on investment amount and profit percentage
-export const calculateProfit = (investmentAmount: number, profitPercentage: number) => {
-  return investmentAmount * (profitPercentage / 100);
-};
-
-// Format a date for display
-export const formatTradeDate = (date: Date) => {
-  return new Intl.DateTimeFormat('de-DE', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric',
-    hour: '2-digit',
-    minute: '2-digit'
-  }).format(date);
-};
+// Other utility functions can be added here

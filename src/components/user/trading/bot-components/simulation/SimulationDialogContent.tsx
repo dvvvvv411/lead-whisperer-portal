@@ -27,7 +27,7 @@ const SimulationDialogContent: React.FC<SimulationDialogContentProps> = ({
     <div className="flex flex-col gap-4 py-4">
       {/* Progress bar */}
       <SimulationProgress 
-        percent={progress} 
+        progress={progress} 
         duration={simulationDuration} 
         elapsed={elapsedTime / 1000} 
       />

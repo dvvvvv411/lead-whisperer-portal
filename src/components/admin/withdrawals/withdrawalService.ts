@@ -1,5 +1,6 @@
 
 import { supabase } from "@/integrations/supabase/client";
+import { Json } from "@/integrations/supabase/types";
 
 interface Withdrawal {
   id: string;
@@ -49,8 +50,8 @@ export async function processWithdrawal({
   try {
     console.log(`Calling secure database function to process withdrawal ${withdrawal.id}`);
     
-    // Use the new secure database function instead of directly updating the table
-    const { data, error } = await supabase.rpc<ProcessWithdrawalResponse>(
+    // Fix: Using the correct type parameters for rpc
+    const { data, error } = await supabase.rpc(
       'process_withdrawal_status',
       {
         withdrawal_id: withdrawal.id,
@@ -67,15 +68,17 @@ export async function processWithdrawal({
       throw error;
     }
     
-    if (!data || (data as ProcessWithdrawalResponse).success === false) {
-      console.error("Failed to process withdrawal:", data || "Unknown error");
-      throw new Error((data as ProcessWithdrawalResponse)?.message || "Failed to process withdrawal");
+    // Fix: Proper type checking and safe access
+    const responseData = data as unknown as ProcessWithdrawalResponse;
+    if (!responseData || responseData.success === false) {
+      console.error("Failed to process withdrawal:", responseData || "Unknown error");
+      throw new Error(responseData?.message || "Failed to process withdrawal");
     }
     
     return { 
       success: true, 
       statusUpdated: status,
-      data: data
+      data: responseData
     };
   } catch (error) {
     console.error("Fatal error in processWithdrawal:", error);

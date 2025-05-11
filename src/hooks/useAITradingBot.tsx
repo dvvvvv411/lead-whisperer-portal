@@ -7,6 +7,7 @@ import { useBotInterval } from "./ai-bot/useBotInterval";
 import { useBotState } from "./ai-bot/useBotState";
 import { useBotOperations } from "./ai-bot/useBotOperations";
 import { useDailyTradeCounter } from "./ai-bot/useDailyTradeCounter";
+import { BotSettings } from "./ai-bot/types";
 
 export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExecuted?: () => void) => {
   const { toast } = useToast();
@@ -18,6 +19,11 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
   
   // Track daily trades and update limits based on user rank
   useDailyTradeCounter(userId, userCredit, updateStatus);
+  
+  // Create a wrapper function for setSettings to match the expected type
+  const handleSetSettings = useCallback((newSettings: Partial<BotSettings>) => {
+    setSettings(prev => ({...prev, ...newSettings}));
+  }, [setSettings]);
   
   // Bot operations (start, stop, execute trade)
   const { 
@@ -37,7 +43,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     clearBotInterval,
     setNewBotInterval,
     setBotInterval,
-    setSettings,
+    handleSetSettings,  // Use the wrapper function instead of setSettings directly
     onTradeExecuted
   );
   

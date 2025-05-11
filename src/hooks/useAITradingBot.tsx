@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCryptos } from "@/hooks/useCryptos";
@@ -22,7 +23,7 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
   });
   const [botInterval, setBotInterval] = useState<NodeJS.Timeout | null>(null);
 
-  // Update bot status - explicitly type the update parameter
+  // Update bot status - explicitly type the update parameter with proper function typing
   const updateStatus = useCallback((update: Partial<BotStatus> | ((prev: BotStatus) => Partial<BotStatus>)) => {
     setStatus((prev) => {
       const newStatus = { ...prev };
@@ -39,8 +40,10 @@ export const useAITradingBot = (userId?: string, userCredit?: number) => {
           const updateValue = update[typedKey];
           
           if (typeof updateValue === 'function') {
-            // If the value is a function, call it with the previous value
-            (newStatus[typedKey] as any) = updateValue((prev[typedKey]));
+            // Properly type the function to avoid "not callable" error
+            type UpdateFunction = (prevValue: any) => any;
+            const typedUpdateFn = updateValue as UpdateFunction;
+            (newStatus[typedKey] as any) = typedUpdateFn(prev[typedKey]);
           } else {
             // Otherwise just update the value
             (newStatus[typedKey] as any) = updateValue;

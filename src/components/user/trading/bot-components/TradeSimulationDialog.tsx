@@ -71,7 +71,7 @@ const TradeSimulationDialog = React.memo(({
     // Select a crypto to trade at the start of simulation
     if (cryptoData && cryptoData.length > 0) {
       selectedCryptoRef.current = selectRandomCrypto(cryptoData);
-      console.log("Selected crypto for trade:", selectedCryptoRef.current);
+      console.log("Selected crypto for trade at start of simulation:", selectedCryptoRef.current);
     }
     
     // Mark simulation as active and record start time
@@ -196,5 +196,5 @@ const TradeSimulationDialog = React.memo(({
   );
 });
 
-TradeSimulationDialog.displayName = 'TradeSimulationDialog';
+TradeResultDialog.displayName = 'TradeResultDialog';
 export default TradeSimulationDialog;

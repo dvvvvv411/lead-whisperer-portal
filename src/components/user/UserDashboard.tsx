@@ -4,8 +4,10 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { checkUserRole } from "@/services/roleService";
+import { useToast } from "@/hooks/use-toast";
 
 const UserDashboard = () => {
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isActivated, setIsActivated] = useState(false);
@@ -22,6 +24,11 @@ const UserDashboard = () => {
         
         // Wenn nicht aktiviert, zur Aktivierungsseite weiterleiten
         if (!activated) {
+          console.log("Benutzer nicht aktiviert, Weiterleitung zur Aktivierungsseite");
+          toast({
+            title: "Aktivierung erforderlich",
+            description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
+          });
           window.location.href = "/nutzer/aktivierung";
           return;
         }
@@ -34,7 +41,7 @@ const UserDashboard = () => {
     };
     
     getUser();
-  }, []);
+  }, [toast]);
 
   const handleLogout = async () => {
     try {

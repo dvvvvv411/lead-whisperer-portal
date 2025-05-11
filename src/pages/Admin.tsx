@@ -8,6 +8,7 @@ const Admin = () => {
   const [session, setSession] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [isUser, setIsUser] = useState<boolean | null>(null);
 
   useEffect(() => {
     const checkSession = async () => {
@@ -19,10 +20,12 @@ const Admin = () => {
       
       setSession(data.session);
       
-      // Wenn der Benutzer eingeloggt ist, prüfen, ob er Admin ist
+      // Wenn der Benutzer eingeloggt ist, prüfen, ob er Admin oder User ist
       if (data.session) {
         const adminCheck = await checkUserRole('admin');
+        const userCheck = await checkUserRole('user');
         setIsAdmin(adminCheck);
+        setIsUser(userCheck);
       }
       
       setLoading(false);
@@ -36,9 +39,12 @@ const Admin = () => {
       
       if (newSession) {
         const adminCheck = await checkUserRole('admin');
+        const userCheck = await checkUserRole('user');
         setIsAdmin(adminCheck);
+        setIsUser(userCheck);
       } else {
         setIsAdmin(null);
+        setIsUser(null);
       }
     });
     
@@ -62,9 +68,14 @@ const Admin = () => {
       window.location.href = "/admin/leads";
       return null;
     }
-    // Wenn der Benutzer kein Admin ist, zum Benutzer-Dashboard weiterleiten
-    else {
+    // Wenn der Benutzer ein aktivierter normaler User ist, zum Benutzer-Dashboard weiterleiten
+    else if (isUser) {
       window.location.href = "/nutzer";
+      return null;
+    }
+    // Wenn der Benutzer angemeldet ist, aber nicht aktiviert, zur Aktivierungsseite weiterleiten
+    else {
+      window.location.href = "/nutzer/aktivierung";
       return null;
     }
   }

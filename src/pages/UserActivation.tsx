@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Euro, Bitcoin, Check, CreditCard } from "lucide-react";
+import { Euro, Bitcoin, Check, CreditCard, AlertCircle } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -18,9 +18,11 @@ const UserActivation = () => {
   const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [walletsLoading, setWalletsLoading] = useState(true);
   const [wallets, setWallets] = useState<CryptoWallet[]>([]);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [walletError, setWalletError] = useState<string | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -39,27 +41,37 @@ const UserActivation = () => {
 
   const fetchWallets = async () => {
     try {
-      setLoading(true);
+      setWalletsLoading(true);
+      setWalletError(null);
+      
+      console.log("Fetching crypto wallets...");
       const { data, error } = await supabase
         .from('crypto_wallets')
         .select('*')
         .order('currency');
       
       if (error) {
+        console.error("Error fetching wallets:", error);
         throw error;
       }
       
+      console.log("Fetched wallets:", data);
       if (data) {
         setWallets(data);
+        if (data.length === 0) {
+          setWalletError("Keine Zahlungsmethoden verfügbar. Bitte kontaktieren Sie den Support.");
+        }
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Fehler beim Abrufen der Wallets:", error);
+      setWalletError("Die Zahlungsmethoden konnten nicht geladen werden: " + error.message);
       toast({
         title: "Fehler beim Laden",
         description: "Die Zahlungsmethoden konnten nicht geladen werden.",
         variant: "destructive"
       });
     } finally {
+      setWalletsLoading(false);
       setLoading(false);
     }
   };
@@ -91,26 +103,20 @@ const UserActivation = () => {
 
       if (paymentError) throw paymentError;
 
-      // Nutzerrolle auf "user" setzen, um das Konto zu aktivieren
-      await supabase.rpc('add_user_role', {
-        _user_id: user.id,
-        _role: 'user'
-      });
-
       toast({
-        title: "Konto aktiviert",
-        description: "Vielen Dank für Ihre Zahlung! Ihr Konto wurde erfolgreich aktiviert.",
+        title: "Zahlung erfolgreich gemeldet",
+        description: "Vielen Dank! Ihre Zahlung wurde erfolgreich gemeldet und wird überprüft.",
       });
 
-      // Nutzer zum Dashboard weiterleiten
+      // Zur Warteseite weiterleiten
       setTimeout(() => {
         window.location.href = "/nutzer";
       }, 2000);
     } catch (error: any) {
-      console.error("Fehler bei der Aktivierung:", error);
+      console.error("Fehler bei der Zahlungsmeldung:", error);
       toast({
-        title: "Aktivierung fehlgeschlagen",
-        description: "Es gab ein Problem bei der Kontoaktivierung. Bitte versuchen Sie es später erneut.",
+        title: "Zahlung fehlgeschlagen",
+        description: "Es gab ein Problem bei der Zahlungsmeldung. Bitte versuchen Sie es später erneut.",
         variant: "destructive"
       });
     } finally {
@@ -165,7 +171,19 @@ const UserActivation = () => {
           <CardDescription>Wählen Sie eine der verfügbaren Kryptowährungen</CardDescription>
         </CardHeader>
         <CardContent>
-          {wallets.length === 0 ? (
+          {walletsLoading ? (
+            <div className="text-center p-6 bg-gray-50 rounded-lg">
+              <p>Zahlungsmethoden werden geladen...</p>
+            </div>
+          ) : walletError ? (
+            <div className="text-center p-6 bg-red-50 rounded-lg">
+              <AlertCircle className="h-6 w-6 text-red-500 mx-auto mb-2" />
+              <p className="text-red-600">{walletError}</p>
+              <Button variant="outline" className="mt-4" onClick={fetchWallets}>
+                Erneut versuchen
+              </Button>
+            </div>
+          ) : wallets.length === 0 ? (
             <div className="text-center p-6 bg-gray-50 rounded-lg">
               <p className="text-gray-600">Keine Zahlungsmethoden verfügbar. Bitte kontaktieren Sie den Support.</p>
             </div>
@@ -206,7 +224,7 @@ const UserActivation = () => {
         <CardFooter className="flex justify-end">
           <Button 
             onClick={handleConfirmPayment} 
-            disabled={!selectedWallet || wallets.length === 0}
+            disabled={!selectedWallet || wallets.length === 0 || walletsLoading || !!walletError}
             className="flex items-center"
           >
             <CreditCard className="mr-2 h-4 w-4" />

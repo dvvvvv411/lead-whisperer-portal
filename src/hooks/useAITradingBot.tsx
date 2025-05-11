@@ -20,7 +20,14 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
   useDailyTradeCounter(userId, userCredit, updateStatus);
   
   // Bot operations (start, stop, execute trade)
-  const { startBot, stopBot, executeSingleTrade } = useBotOperations(
+  const { 
+    startBot, 
+    stopBot, 
+    executeSingleTrade, 
+    completeTradeAfterSimulation,
+    isSimulating,
+    setIsSimulating
+  } = useBotOperations(
     userId,
     userCredit,
     settings,
@@ -40,6 +47,9 @@ export const useAITradingBot = (userId?: string, userCredit?: number, onTradeExe
     stopBot,
     updateBotSettings,
     executeSingleTrade,
+    completeTradeAfterSimulation,
+    isSimulating,
+    setIsSimulating,
     rankTiers,
   };
 };

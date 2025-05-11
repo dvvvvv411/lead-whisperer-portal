@@ -1,10 +1,8 @@
-
-import { useCallback, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { useCryptos } from "@/hooks/useCryptos";
 import { BotSettings, BotStatus } from "./types";
 import { executeAITrade } from "./executeBotTrade";
-import { getTradesExecutedToday } from "./botTradeUtils";
 
 export const useBotOperations = (
   userId?: string,
@@ -20,7 +18,8 @@ export const useBotOperations = (
 ) => {
   const { toast } = useToast();
   const { cryptos } = useCryptos();
-
+  const [isSimulating, setIsSimulating] = useState(false);
+  
   // Stop the AI trading bot
   const stopBot = useCallback(() => {
     if (!clearBotInterval || !setSettings || !updateStatus) return;
@@ -41,6 +40,15 @@ export const useBotOperations = (
       return false;
     }
     
+    // Check if already simulating
+    if (isSimulating) {
+      toast({
+        title: "Transaktion in Bearbeitung",
+        description: "Der KI-Bot analysiert bereits die Märkte für den optimalen Trade.",
+      });
+      return false;
+    }
+    
     // Check if user has reached daily limit
     if (status.tradesRemaining <= 0) {
       toast({
@@ -48,6 +56,20 @@ export const useBotOperations = (
         description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
         variant: "destructive"
       });
+      return false;
+    }
+    
+    // Set simulating state to true to show dialog
+    setIsSimulating(true);
+    
+    // Return true to indicate that simulation has started
+    return true;
+  }, [userId, userCredit, cryptos, settings, toast, updateStatus, status, isSimulating]);
+  
+  // Complete trade after simulation
+  const completeTradeAfterSimulation = useCallback(async () => {
+    if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
+      setIsSimulating(false);
       return false;
     }
     
@@ -62,6 +84,9 @@ export const useBotOperations = (
       status.maxTradesPerDay
     );
     
+    // Reset simulating state
+    setIsSimulating(false);
+    
     // Call the onTradeExecuted callback to update the parent components
     if (success && onTradeExecuted) {
       onTradeExecuted();
@@ -70,74 +95,18 @@ export const useBotOperations = (
     return success;
   }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted, status]);
   
-  // Start the AI trading bot
+  // Start the AI trading bot - no longer used but kept for compatibility
   const startBot = useCallback(() => {
-    if (!userId || !userCredit || !settings || !status || !updateStatus || !setSettings || 
-        !clearBotInterval || !setNewBotInterval || !executeSingleTrade || !stopBot) {
-      toast({
-        title: "Bot kann nicht aktiviert werden",
-        description: "Benutzer nicht angemeldet oder kein Guthaben verfügbar.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Check if user has reached daily limit
-    if (status.tradesRemaining <= 0) {
-      toast({
-        title: "Tägliches Limit erreicht",
-        description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    // Set interval time based on frequency setting
-    let intervalTime = 60000; // default 1 minute
-    switch(settings.tradeFrequency) {
-      case 'low':
-        intervalTime = 180000; // 3 minutes
-        break;
-      case 'high':
-        intervalTime = 30000; // 30 seconds
-        break;
-      case 'medium':
-      default:
-        intervalTime = 60000; // 1 minute
-        break;
-    }
-    
-    // Execute a trade immediately
-    executeSingleTrade();
-    
-    // Set up interval for recurring trades
-    const interval = setNewBotInterval(() => {
-      // Check if trades remaining before executing
-      if (status.tradesRemaining > 0) {
-        executeSingleTrade();
-      } else {
-        // Stop bot if daily limit reached
-        stopBot();
-        toast({
-          title: "Bot automatisch deaktiviert",
-          description: `Tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Bot wurde gestoppt.`,
-          variant: "default"
-        });
-      }
-    }, intervalTime);
-    
-    setSettings(prev => ({ ...prev, isActive: true }));
-    updateStatus({ isActive: true });
-    
-    toast({
-      title: "KI-Bot aktiviert",
-      description: "Der KI-Trading-Bot wurde erfolgreich aktiviert und wird nun automatisch handeln.",
-    });
-  }, [userId, userCredit, clearBotInterval, executeSingleTrade, settings, toast, status, updateStatus, setSettings, setNewBotInterval, stopBot]);
+    // This function is now empty as the bot activation is removed
+    // but we keep it for API compatibility
+  }, []);
 
   return {
     startBot,
     stopBot,
-    executeSingleTrade
+    executeSingleTrade,
+    completeTradeAfterSimulation,
+    isSimulating,
+    setIsSimulating
   };
 };

@@ -4,12 +4,15 @@ import { Badge } from "@/components/ui/badge";
 import { ZapIcon } from "lucide-react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
+import { useCryptos } from "@/hooks/useCryptos";
+import { useState } from "react";
 import RankDisplay from "./RankDisplay";
 import BotStatusOverview from "./bot-components/BotStatusOverview";
 import BotSettingsPanel from "./bot-components/BotSettingsPanel";
 import BotPerformance from "./bot-components/BotPerformance";
 import BotInfoCard from "./bot-components/BotInfoCard";
 import BotControlsHeader from "./bot-components/BotControlsHeader";
+import TradeSimulationDialog from "./bot-components/TradeSimulationDialog";
 
 interface AITradingBotProps {
   userId?: string;
@@ -21,13 +24,17 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   const { 
     settings, 
     status, 
-    startBot, 
-    stopBot, 
     updateBotSettings,
     executeSingleTrade,
+    completeTradeAfterSimulation,
+    isSimulating,
+    setIsSimulating,
     rankTiers
   } = useAITradingBot(userId, userCredit, onTradeExecuted);
+  
   const { botTrades, loading: tradesLoading } = useTradeHistory(userId);
+  const { cryptos } = useCryptos();
+  const [simulationOpen, setSimulationOpen] = useState(false);
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
@@ -35,20 +42,19 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
       currency: 'EUR'
     }).format(amount);
   };
-  
-  const handleToggleBot = () => {
-    if (settings.isActive) {
-      stopBot();
-    } else {
-      startBot();
-    }
-  };
 
   const handleManualTrade = async () => {
-    const success = await executeSingleTrade();
-    if (success && onTradeExecuted) {
-      onTradeExecuted();
+    const canStart = await executeSingleTrade();
+    if (canStart) {
+      setSimulationOpen(true);
     }
+  };
+  
+  const handleSimulationComplete = async (success: boolean) => {
+    if (success) {
+      await completeTradeAfterSimulation();
+    }
+    setSimulationOpen(false);
   };
 
   return (
@@ -57,19 +63,12 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         <div className="flex justify-between items-center">
           <div>
             <CardTitle className="flex items-center">
-              <ZapIcon className={`mr-2 h-5 w-5 ${settings.isActive ? 'text-yellow-400' : 'text-gray-400'}`} />
+              <ZapIcon className="mr-2 h-5 w-5 text-yellow-400" />
               KI-Trading Bot
-              {settings.isActive && (
-                <Badge variant="outline" className="ml-2 bg-green-100 text-green-800 animate-pulse">
-                  Aktiv
-                </Badge>
-              )}
             </CardTitle>
             <CardDescription>Automatisierte Trades mit KI-Optimierung</CardDescription>
           </div>
           <BotControlsHeader 
-            isActive={settings.isActive}
-            onToggleBot={handleToggleBot}
             onManualTrade={handleManualTrade}
             tradesRemaining={status.tradesRemaining}
           />
@@ -89,7 +88,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
 
           {/* Bot Status Overview */}
           <BotStatusOverview
-            isActive={settings.isActive}
+            isActive={false}
             totalProfitAmount={status.totalProfitAmount}
             totalProfitPercentage={status.totalProfitPercentage}
             tradesExecuted={status.tradesExecuted}
@@ -101,7 +100,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
           {/* Bot Settings */}
           <BotSettingsPanel
             settings={settings}
-            isActive={settings.isActive}
+            isActive={false}
             userCredit={userCredit}
             updateBotSettings={updateBotSettings}
             formatCurrency={formatCurrency}
@@ -118,6 +117,14 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
           <BotInfoCard />
         </div>
       </CardContent>
+      
+      {/* Trade Simulation Dialog */}
+      <TradeSimulationDialog
+        open={simulationOpen}
+        onOpenChange={setSimulationOpen}
+        onComplete={handleSimulationComplete}
+        cryptoData={cryptos || []}
+      />
     </Card>
   );
 };

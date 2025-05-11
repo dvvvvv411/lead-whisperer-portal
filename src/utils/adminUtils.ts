@@ -6,6 +6,8 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     // Convert euro amount to cents
     const amountInCents = Math.round(amountInEuros * 100);
     
+    console.log(`Starting credit operation for user ${userId} with amount ${amountInEuros}€ (${amountInCents} cents)`);
+    
     // Get current credit value first
     const { data: creditData, error: fetchError } = await supabase
       .from('user_credits')
@@ -16,7 +18,7 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     if (fetchError) {
       console.error("Error fetching current credit:", fetchError);
       
-      // If no credit record found, try to create one with the initial amount
+      // If no credit record found, create one with the initial amount
       if (fetchError.code === 'PGRST116') { // "No rows" error
         console.log("No credit record found, creating new record with amount:", amountInCents);
         
@@ -33,13 +35,15 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
           return false;
         }
         
+        console.log(`Successfully created new credit record with ${amountInCents} cents`);
         return true;
       }
       
       return false;
     }
     
-    // Calculate the new amount
+    // Calculate the new amount by adding to existing credit
+    // IMPORTANT: This is the key fix - we are ADDING the new amount to the current amount
     const currentAmount = creditData?.amount || 0;
     const newAmount = currentAmount + amountInCents;
     
@@ -61,6 +65,7 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
       return false;
     }
     
+    console.log(`Successfully updated credit to ${newAmount} cents (${newAmount/100}€)`);
     return true;
   } catch (error) {
     console.error("Exception adding credit:", error);
@@ -72,6 +77,8 @@ export const setUserCredit = async (userId: string, amountInEuros: number): Prom
   try {
     // Convert euro amount to cents
     const amountInCents = Math.round(amountInEuros * 100);
+    
+    console.log(`Setting fixed credit for user ${userId} to ${amountInEuros}€ (${amountInCents} cents)`);
     
     // Check if the user already has a credit record
     const { data: existingRecord, error: checkError } = await supabase
@@ -114,6 +121,7 @@ export const setUserCredit = async (userId: string, amountInEuros: number): Prom
       return false;
     }
     
+    console.log(`Successfully set credit to ${amountInCents} cents (${amountInEuros}€)`);
     return true;
   } catch (error) {
     console.error("Exception setting credit:", error);

@@ -20,26 +20,43 @@ export const UserManager = () => {
   const [users, setUsers] = useState<UserData[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
+  const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
 
   // Benutzer-Session abrufen
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setCurrentUser(data.user);
-      } else {
-        // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) {
+          throw error;
+        }
+        
+        if (data?.user) {
+          setCurrentUser(data.user);
+        } else {
+          // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
+          window.location.href = "/admin";
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+        toast({
+          title: "Fehler beim Laden des Benutzers",
+          description: "Ihre Sitzung könnte abgelaufen sein. Bitte melden Sie sich erneut an.",
+          variant: "destructive"
+        });
+        
+        // Redirect to login on error
         window.location.href = "/admin";
       }
     };
     
     getUser();
-  }, []);
+  }, [toast]);
 
-  // Benutzer und deren Guthaben abrufen - moved to a useCallback for reusability
+  // Benutzer und deren Guthaben abrufen
   const fetchUsers = useCallback(async () => {
     try {
-      console.log("Fetching all users data...");
+      console.log(`Fetching all users data... (update triggered at ${new Date().toISOString()})`);
       setIsLoading(true);
       
       // Benutzer aus der auth.users Tabelle abrufen (nur für Admins möglich)
@@ -69,7 +86,11 @@ export const UserManager = () => {
               console.log(`User ${user.email} has ${creditInEuros}€ credit (${creditData.amount} cents)`);
               return { ...user, credit: creditInEuros };
             } else {
-              console.log(`No credit found for user ${user.email}, defaulting to 0`);
+              if (creditError && creditError.code !== 'PGRST116') {
+                console.error(`Error fetching credit for user ${user.email}:`, creditError);
+              } else {
+                console.log(`No credit found for user ${user.email}, defaulting to 0`);
+              }
               return { ...user, credit: 0 };
             }
           } catch (creditFetchError) {
@@ -93,10 +114,16 @@ export const UserManager = () => {
     }
   }, [toast]);
   
-  // Initial load of users
+  // Function to trigger refresh with a timestamp to avoid stale data
+  const handleUserUpdated = useCallback(() => {
+    console.log("User update triggered, refreshing data...");
+    setLastUpdateTime(Date.now());
+  }, []);
+  
+  // Initial load of users and when lastUpdateTime changes
   useEffect(() => {
     fetchUsers();
-  }, [fetchUsers]);
+  }, [fetchUsers, lastUpdateTime]);
 
   // Setup subscription for credit updates
   useEffect(() => {
@@ -113,7 +140,8 @@ export const UserManager = () => {
         },
         (payload) => {
           console.log('Credit change detected:', payload);
-          fetchUsers();
+          // Use the timestamp approach to refresh
+          handleUserUpdated();
         }
       )
       .subscribe();
@@ -122,7 +150,7 @@ export const UserManager = () => {
       console.log("Cleaning up subscription");
       supabase.removeChannel(channel);
     };
-  }, [fetchUsers]);
+  }, [handleUserUpdated]);
 
   return (
     <div className="container mx-auto p-4">
@@ -138,7 +166,7 @@ export const UserManager = () => {
           <p>Wird geladen...</p>
         </div>
       ) : (
-        <UserTable users={users} onUserUpdated={fetchUsers} />
+        <UserTable users={users} onUserUpdated={handleUserUpdated} />
       )}
     </div>
   );

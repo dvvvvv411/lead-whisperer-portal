@@ -83,20 +83,28 @@ export const CreditEditDialog = ({
       // Use the actual fetched current credit for calculation
       const currentCreditForCalc = actualCurrentCredit !== null ? actualCurrentCredit : initialCredit;
       console.log(`Current credit (from DB): ${currentCreditForCalc}€`);
-      console.log(`New credit (user input): ${newCredit}€`);
+      console.log(`Target new credit (user input): ${newCredit}€`);
       
       // Calculate the difference to add (can be negative for reductions)
       const creditDifference = newCredit - currentCreditForCalc;
       console.log(`Adding difference of ${creditDifference}€ to user ${userId}`);
       
-      const success = creditDifference !== 0 
-        ? await addCreditToUser(userId, creditDifference) 
-        : true; // If no change, consider it successful
+      if (creditDifference === 0) {
+        console.log("No change in credit amount, skipping update");
+        toast({
+          title: "Keine Änderung",
+          description: `Das Guthaben für ${userEmail} wurde nicht geändert.`
+        });
+        onClose();
+        return;
+      }
+      
+      const success = await addCreditToUser(userId, creditDifference);
       
       if (success) {
         toast({
           title: "Guthaben aktualisiert",
-          description: `Das Guthaben für ${userEmail} wurde aktualisiert.`
+          description: `Das Guthaben für ${userEmail} wurde um ${creditDifference > 0 ? '+' : ''}${creditDifference}€ auf ${newCredit}€ aktualisiert.`
         });
         onCreditUpdated(); // Trigger data refresh in parent component
         onClose();

@@ -43,9 +43,10 @@ const TradeSimulationDialog = ({
     setComparisons([]);
     
     const startTime = Date.now();
-    let animationFrameId: number | null = null;
+    let intervalId: NodeJS.Timeout | null = null;
     
-    const updateProgress = () => {
+    // Use setInterval instead of requestAnimationFrame for more consistent updates
+    intervalId = setInterval(() => {
       const currentTime = Date.now();
       const elapsed = currentTime - startTime;
       const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
@@ -57,30 +58,24 @@ const TradeSimulationDialog = ({
       setCurrentStep(newStep);
       
       // Generate crypto comparison roughly every second
-      if (elapsed % 1000 < 50) {
+      if (elapsed % 1000 < 100) {
         const newComparison = generateCryptoComparison();
         setComparisons(prev => [newComparison, ...prev].slice(0, 5));
       }
       
-      // Continue animation or complete
-      if (newProgress < 100) {
-        animationFrameId = requestAnimationFrame(updateProgress);
-      } else {
+      // Complete simulation when progress reaches 100%
+      if (newProgress >= 100) {
+        if (intervalId) clearInterval(intervalId);
         // When complete, wait a second then call onComplete
         setTimeout(() => {
           onComplete(true);
         }, 1000);
       }
-    };
+    }, 250); // Update 4 times per second for smoother animation
     
-    // Start the animation immediately
-    animationFrameId = requestAnimationFrame(updateProgress);
-    
-    // Cleanup function to cancel animation when component unmounts or dialog closes
+    // Cleanup function to cancel interval when component unmounts or dialog closes
     return () => {
-      if (animationFrameId !== null) {
-        cancelAnimationFrame(animationFrameId);
-      }
+      if (intervalId) clearInterval(intervalId);
     };
   }, [open, simulationDuration, onComplete]);
   

@@ -28,8 +28,14 @@ export async function processWithdrawal({
   notes, 
   isApproved 
 }: ProcessWithdrawalParams) {
+  console.log(`Processing withdrawal (ID: ${withdrawal.id}):`, {
+    newStatus: status,
+    notes,
+    isApproved
+  });
+  
   // Update the withdrawal status
-  const { error: updateError } = await supabase
+  const { data: updateData, error: updateError } = await supabase
     .from('withdrawals')
     .update({ 
       status,
@@ -38,7 +44,25 @@ export async function processWithdrawal({
     })
     .eq('id', withdrawal.id);
   
-  if (updateError) throw updateError;
+  console.log("Withdrawal update result:", { updateData, updateError });
+  
+  if (updateError) {
+    console.error("Error updating withdrawal:", updateError);
+    throw updateError;
+  }
+  
+  // Fetch the withdrawal to verify the update was successful
+  const { data: verifyData, error: verifyError } = await supabase
+    .from('withdrawals')
+    .select('*')
+    .eq('id', withdrawal.id)
+    .single();
+    
+  console.log("Verification after update:", { 
+    verifyData, 
+    verifyError,
+    statusMatches: verifyData?.status === status 
+  });
   
   // If approved, update user credit by subtracting the withdrawal amount
   if (isApproved) {
@@ -48,13 +72,25 @@ export async function processWithdrawal({
       .eq('user_id', withdrawal.user_id)
       .single();
     
-    if (creditFetchError) throw creditFetchError;
+    console.log("Current user credit:", { currentCreditData, creditFetchError });
+    
+    if (creditFetchError) {
+      console.error("Error fetching user credit:", creditFetchError);
+      throw creditFetchError;
+    }
     
     const currentCredit = currentCreditData?.amount || 0;
     // Only subtract the amount of the withdrawal, not resetting the entire credit
     const newCredit = Math.max(0, currentCredit - withdrawal.amount);
     
-    const { error: creditUpdateError } = await supabase
+    console.log("Credit update calculation:", { 
+      userId: withdrawal.user_id,
+      currentCredit, 
+      withdrawalAmount: withdrawal.amount, 
+      newCredit 
+    });
+    
+    const { data: creditUpdateData, error: creditUpdateError } = await supabase
       .from('user_credits')
       .update({ 
         amount: newCredit,
@@ -62,8 +98,13 @@ export async function processWithdrawal({
       })
       .eq('user_id', withdrawal.user_id);
     
-    if (creditUpdateError) throw creditUpdateError;
+    console.log("Credit update result:", { creditUpdateData, creditUpdateError });
+    
+    if (creditUpdateError) {
+      console.error("Error updating user credit:", creditUpdateError);
+      throw creditUpdateError;
+    }
   }
   
-  return { success: true };
+  return { success: true, statusUpdated: status };
 }

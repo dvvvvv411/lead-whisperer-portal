@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -76,15 +75,18 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
       setProcessing(true);
       
       const newStatus = dialogAction === "approve" ? "completed" : "rejected";
+      console.log(`Changing withdrawal status to: ${newStatus} for ID: ${selectedWithdrawal.id}`);
       
-      await processWithdrawal({
+      const result = await processWithdrawal({
         withdrawal: selectedWithdrawal,
         status: newStatus,
         notes: notes || null,
         isApproved: dialogAction === "approve"
       });
       
-      // Update local state to reflect changes
+      console.log("Withdrawal processing result:", result);
+      
+      // Update local state to reflect changes immediately
       setUpdatedWithdrawals(prevWithdrawals => 
         prevWithdrawals.map(withdrawal => 
           withdrawal.id === selectedWithdrawal.id 

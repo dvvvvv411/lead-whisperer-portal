@@ -75,9 +75,10 @@ const TradeSimulationDialog = ({
   const [currentStep, setCurrentStep] = useState(0);
   const [comparisons, setComparisons] = useState<CryptoComparisonProps[]>([]);
   
-  // Simulation duration zwischen 30-90 Sekunden (30000-90000ms)
-  // Für die Entwicklung und Tests verwenden wir 5-15 Sekunden
-  const simulationDuration = Math.floor(Math.random() * 10000) + 5000;
+  // Set simulation duration between 30-90 seconds for production
+  // Use shorter duration (5-15 seconds) for testing
+  const simulationDuration = Math.floor(Math.random() * 60000) + 30000; // 30-90 seconds
+  // const simulationDuration = Math.floor(Math.random() * 10000) + 5000; // 5-15 seconds (for testing)
   
   // Algorithm steps
   const steps = [
@@ -96,60 +97,60 @@ const TradeSimulationDialog = ({
   useEffect(() => {
     if (!open) return;
     
-    // Reset states
+    // Reset states when dialog opens
     setProgress(0);
     setCurrentStep(0);
     setComparisons([]);
     
-    // Start progress animation
     const startTime = Date.now();
-    
-    // Use requestAnimationFrame for smoother animation
-    let requestId: number;
+    let animationFrameId: number | null = null;
     
     const updateProgress = () => {
-      const elapsed = Date.now() - startTime;
+      const currentTime = Date.now();
+      const elapsed = currentTime - startTime;
       const newProgress = Math.min(100, Math.floor((elapsed / simulationDuration) * 100));
+      
       setProgress(newProgress);
       
       // Update current step based on progress
       const newStep = Math.min(steps.length - 1, Math.floor((newProgress / 100) * steps.length));
       setCurrentStep(newStep);
       
-      // Add crypto comparisons periodically
-      if (elapsed % 1000 < 100 && cryptoData.length > 0) {
-        // Take a random crypto from the data
+      // Add crypto comparisons periodically (roughly every second)
+      if (elapsed % 1000 < 50 && cryptoData && cryptoData.length > 0) {
         const randomIndex = Math.floor(Math.random() * cryptoData.length);
         const randomCrypto = cryptoData[randomIndex];
+        
         if (randomCrypto) {
           const newComparison = {
             symbol: randomCrypto.symbol || `CRYPTO${randomIndex}`,
             price: randomCrypto.current_price || Math.random() * 1000,
             change: (Math.random() * 10) - 5 // Random change between -5% and +5%
           };
+          
           setComparisons(prev => [newComparison, ...prev].slice(0, 5));
         }
       }
       
-      // End simulation
-      if (newProgress >= 100) {
-        cancelAnimationFrame(requestId);
+      // Continue animation or complete
+      if (newProgress < 100) {
+        animationFrameId = requestAnimationFrame(updateProgress);
+      } else {
+        // When complete, wait a second then call onComplete
         setTimeout(() => {
           onComplete(true);
         }, 1000);
-        return;
       }
-      
-      // Continue animation
-      requestId = requestAnimationFrame(updateProgress);
     };
     
-    // Start the animation
-    requestId = requestAnimationFrame(updateProgress);
+    // Start the animation immediately
+    animationFrameId = requestAnimationFrame(updateProgress);
     
-    // Cleanup
+    // Cleanup function to cancel animation when component unmounts or dialog closes
     return () => {
-      cancelAnimationFrame(requestId);
+      if (animationFrameId !== null) {
+        cancelAnimationFrame(animationFrameId);
+      }
     };
   }, [open, cryptoData, simulationDuration, steps.length, onComplete]);
   

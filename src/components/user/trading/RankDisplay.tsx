@@ -3,7 +3,7 @@ import React from 'react';
 import { RankTier } from '@/hooks/ai-bot/types';
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Trophy, ChevronUp, Star, Award, Zap } from "lucide-react";
+import { Trophy, ChevronUp, Star, Zap, Power } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
@@ -14,6 +14,7 @@ interface RankDisplayProps {
   dailyTradesExecuted: number;
   userCredit: number;
   rankTiers: RankTier[];
+  onExecuteTrade?: () => void;
 }
 
 const RankDisplay = ({ 
@@ -22,7 +23,8 @@ const RankDisplay = ({
   tradesRemaining, 
   dailyTradesExecuted,
   userCredit,
-  rankTiers
+  rankTiers,
+  onExecuteTrade
 }: RankDisplayProps) => {
   // Find the current and next rank tier
   const currentTier = rankTiers.find(tier => tier.rankNumber === currentRank);
@@ -85,90 +87,142 @@ const RankDisplay = ({
         <div className="absolute -top-20 -right-20 w-40 h-40 rounded-full bg-gold/5 blur-3xl animate-glow-pulse"></div>
         <div className="absolute -bottom-40 -left-20 w-60 h-60 rounded-full bg-accent1/5 blur-3xl animate-glow-pulse"></div>
         
-        {/* Large rank display */}
-        <div className="flex items-center justify-between mb-6 relative z-10">
-          <div className="flex flex-col items-start">
-            <span className="text-sm text-muted-foreground">Aktueller Rang</span>
-            <div className="flex items-center gap-2 mt-1">
-              <Award className={cn(
-                "h-7 w-7",
-                currentRank >= 3 ? "text-yellow-400" : currentRank === 2 ? "text-slate-300" : "text-amber-600", 
-                "drop-shadow-md animate-pulse"
-              )} />
-              <span className={cn(
-                "text-2xl font-bold",
-                currentRank >= 3 ? "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500" : 
-                currentRank === 2 ? "text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-gray-400" : 
-                "text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-400"
-              )}>
-                {getRankName(currentRank)}
-              </span>
+        {/* Content layout */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          {/* Rank info */}
+          <div className="md:col-span-2">
+            <div className="flex flex-col items-start mb-4">
+              <span className="text-sm text-muted-foreground">Aktueller Rang</span>
+              <div className="flex items-center gap-2 mt-1">
+                <Award 
+                  className={cn(
+                    "h-7 w-7",
+                    currentRank >= 3 ? "text-yellow-400" : currentRank === 2 ? "text-slate-300" : "text-amber-600", 
+                    "drop-shadow-md animate-pulse"
+                  )}
+                />
+                <span className={cn(
+                  "text-2xl font-bold",
+                  currentRank >= 3 ? "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 to-amber-500" : 
+                  currentRank === 2 ? "text-transparent bg-clip-text bg-gradient-to-r from-slate-300 to-gray-400" : 
+                  "text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-400"
+                )}>
+                  {getRankName(currentRank)}
+                </span>
+              </div>
             </div>
-          </div>
-          <div className={cn(
-            "flex items-center justify-center w-20 h-20 rounded-full shadow-lg transition-all duration-500",
-            getRankBadgeBg(currentRank),
-            getRankGlow(currentRank),
-            "shadow-[0_0_30px_rgba(255,215,0,0.3)]"
-          )}>
-            <span className="text-5xl font-bold text-white drop-shadow-lg">
-              {currentRank}
-            </span>
-          </div>
-        </div>
-        
-        {/* Compact trades limit display */}
-        <div className="mb-4 p-3 bg-casino-darker/50 backdrop-blur-md rounded-lg border border-gold/10 relative z-10 shadow-inner">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2">
-              <Zap className="h-4 w-4 text-gold" />
-              <span className="text-sm font-medium">Tägliche Trades</span>
+            
+            {/* Account balance */}
+            <div className="mb-4">
+              <span className="text-sm text-muted-foreground">Kontoguthaben</span>
+              <div className="text-xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light">
+                {userCredit.toLocaleString('de-DE')} €
+              </div>
             </div>
-            <div className="flex items-center gap-1 bg-gold/10 px-2 py-1 rounded-full text-xs font-medium">
-              <span className="text-gold-light">{tradesRemaining}</span>
-              <span className="text-gray-400">/</span>
-              <span className="text-gray-400">{maxTradesPerDay}</span>
-            </div>
+            
+            {/* Next rank progress */}
+            {nextTier && (
+              <div className="mb-1 relative z-10">
+                <div className="flex justify-between mb-1">
+                  <div className="text-sm font-medium flex items-center gap-2">
+                    <Star className="h-4 w-4 text-gold-light" />
+                    <span>{currentTier?.label}</span>
+                  </div>
+                  <div className="text-xs text-muted-foreground flex items-center">
+                    <span>Nächster Rang: {nextTier.label} ({nextTier.minBalance}€)</span> 
+                    <ChevronUp className="ml-1 h-4 w-4" />
+                  </div>
+                </div>
+                <Progress 
+                  value={progressToNextRank} 
+                  className="h-1.5 bg-casino-darker" 
+                  indicatorClassName="bg-gradient-to-r from-accent1/70 to-accent1"
+                />
+                <div className="flex justify-between mt-1">
+                  <div className="text-xs text-muted-foreground">
+                    {currentTier?.minBalance}€
+                  </div>
+                  <div className="text-xs text-accent1">
+                    {progressToNextRank}%
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {nextTier.minBalance}€
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
           
-          <Progress 
-            value={(dailyTradesExecuted / maxTradesPerDay) * 100} 
-            className="h-2 bg-casino-darker"
-            indicatorClassName="bg-gradient-to-r from-gold/70 to-gold"
-          />
-        </div>
-        
-        {/* Next rank progress */}
-        {nextTier && (
-          <div className="mb-1 relative z-10">
-            <div className="flex justify-between mb-1">
-              <div className="text-sm font-medium flex items-center gap-2">
-                <Star className="h-4 w-4 text-gold-light" />
-                <span>{currentTier?.label}</span>
+          {/* Power button and trade execution */}
+          <div className="flex flex-col items-center justify-center">
+            {/* Power Button with Trading Execution */}
+            <button
+              onClick={onExecuteTrade}
+              disabled={tradesRemaining <= 0}
+              className={cn(
+                "relative w-20 h-20 rounded-full flex items-center justify-center",
+                "overflow-hidden group cursor-pointer",
+                "border border-gold/30 shadow-lg",
+                "bg-gradient-to-br from-black/40 to-black/20 backdrop-blur-md",
+                tradesRemaining <= 0 && "opacity-50 cursor-not-allowed"
+              )}
+            >
+              {/* Inner glow effect */}
+              <div className="absolute inset-0 bg-gradient-to-br from-gold/10 to-gold/5 rounded-full"></div>
+              
+              {/* Power button icon */}
+              <div className={cn(
+                "absolute inset-1 rounded-full",
+                "bg-gradient-to-br from-gold/20 to-gold/10",
+                "flex items-center justify-center",
+                "transform transition-all duration-500",
+                "group-hover:from-gold/30 group-hover:to-gold/20",
+                "group-active:scale-95"
+              )}>
+                <Power className={cn(
+                  "h-8 w-8 text-gold",
+                  "filter drop-shadow-lg",
+                  "animate-pulse",
+                  "transform transition-transform duration-300",
+                  "group-hover:scale-110"
+                )} />
               </div>
-              <div className="text-xs text-muted-foreground flex items-center">
-                <span>Nächster Rang: {nextTier.label} ({nextTier.minBalance}€)</span> 
-                <ChevronUp className="ml-1 h-4 w-4" />
+              
+              {/* Outer ring animation */}
+              <div className={cn(
+                "absolute inset-0 rounded-full",
+                "border-2 border-gold/30",
+                "animate-pulse-gold"
+              )}></div>
+              
+              {/* Circular ripple effect on hover */}
+              <div className={cn(
+                "absolute inset-0 rounded-full",
+                "bg-gold/5 scale-0 opacity-0",
+                "group-hover:scale-100 group-hover:opacity-100",
+                "transition-all duration-700 ease-out"
+              )}></div>
+            </button>
+            
+            {/* Trades counter */}
+            <div className="mt-3 text-center">
+              <div className="text-sm text-muted-foreground flex items-center justify-center">
+                <div className="w-2 h-2 rounded-full bg-gold animate-pulse mr-2"></div>
+                <span className="font-medium text-gold">{tradesRemaining}</span>
+                <span className="text-muted-foreground ml-1">/{maxTradesPerDay}</span>
+                <span className="text-muted-foreground ml-1">Trades</span>
               </div>
-            </div>
-            <Progress 
-              value={progressToNextRank} 
-              className="h-1.5 bg-casino-darker" 
-              indicatorClassName="bg-gradient-to-r from-accent1/70 to-accent1"
-            />
-            <div className="flex justify-between mt-1">
-              <div className="text-xs text-muted-foreground">
-                {currentTier?.minBalance}€
-              </div>
-              <div className="text-xs text-accent1">
-                {progressToNextRank}%
-              </div>
-              <div className="text-xs text-muted-foreground">
-                {nextTier.minBalance}€
+              
+              {/* Trades progress bar */}
+              <div className="w-full h-1.5 bg-casino-darker rounded-full overflow-hidden mt-1">
+                <div 
+                  className="h-full bg-gradient-to-r from-gold/70 to-gold rounded-full"
+                  style={{ width: `${(dailyTradesExecuted / maxTradesPerDay) * 100}%` }}
+                ></div>
               </div>
             </div>
           </div>
-        )}
+        </div>
       </Card>
       <style>
         {`

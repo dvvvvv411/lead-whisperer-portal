@@ -21,10 +21,13 @@ const UserDashboard = ({ user, userCredit, onCreditUpdated }: UserDashboardProps
   };
 
   const handleRefreshCredit = () => {
+    console.log("Refresh credit button clicked");
     if (onCreditUpdated) {
       onCreditUpdated();
     }
   };
+
+  console.log("UserDashboard received credit:", userCredit);
 
   return (
     <div className="container mx-auto p-4">

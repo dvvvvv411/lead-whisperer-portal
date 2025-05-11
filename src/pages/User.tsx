@@ -1,7 +1,4 @@
 
-// This file likely contains the user dashboard page
-// We need to ensure it refreshes the credit when returning from deposit page
-// Add code to refresh the credit when the page is loaded/mounted
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, Link } from "react-router-dom";
@@ -22,6 +19,7 @@ const User = () => {
   // Force refresh of credit when component mounts or when user changes
   useEffect(() => {
     if (user?.id) {
+      console.log("Forcing credit refresh for user:", user.id);
       fetchUserCredit();
     }
   }, [user?.id, fetchUserCredit]);
@@ -30,13 +28,16 @@ const User = () => {
     const getUser = async () => {
       try {
         setLoading(true);
+        console.log("Fetching current user");
         const { data } = await supabase.auth.getUser();
         
         if (data?.user) {
+          console.log("User found:", data.user);
           setUser(data.user);
           
           // Check if the user has the 'user' role (is activated)
           const activated = await checkUserRole('user');
+          console.log("User activated:", activated);
           setIsActivated(activated);
           
           // If not activated, redirect to activation page
@@ -46,6 +47,7 @@ const User = () => {
           }
         } else {
           // If no user is logged in, redirect to login page
+          console.log("No user found, redirecting to login");
           navigate("/admin");
         }
       } catch (error) {
@@ -71,6 +73,8 @@ const User = () => {
     console.log("Refreshing user credit...");
     fetchUserCredit();
   };
+
+  console.log("Current user credit:", userCredit);
 
   return (
     <>

@@ -17,8 +17,9 @@ export const useUserCredit = (userId?: string) => {
     
     try {
       setLoading(true);
+      console.log("Fetching credit for user:", userId);
       
-      // Directly fetch the credit without initializing
+      // Directly fetch the credit
       const { data, error } = await supabase
         .from('user_credits')
         .select('amount')
@@ -28,6 +29,7 @@ export const useUserCredit = (userId?: string) => {
       if (error) {
         console.error("Error fetching user credit:", error);
         if (error.code === 'PGRST116') { // "No rows" error
+          console.log("No credit record found, initializing...");
           // If there's no entry, initialize the user credit
           await supabase.rpc('initialize_user_credit', { user_id_param: userId });
           
@@ -42,6 +44,7 @@ export const useUserCredit = (userId?: string) => {
             console.error("Error on retry fetching user credit:", retryError);
             setUserCredit(0);
           } else {
+            console.log("Credit data after initialization:", retryData);
             setUserCredit(retryData ? retryData.amount / 100 : 0);
           }
         } else {
@@ -54,6 +57,7 @@ export const useUserCredit = (userId?: string) => {
           setUserCredit(0);
         }
       } else {
+        console.log("Credit data fetched successfully:", data);
         // Convert from cents to euros
         setUserCredit(data ? data.amount / 100 : 0);
       }
@@ -79,6 +83,8 @@ export const useUserCredit = (userId?: string) => {
   useEffect(() => {
     if (!userId) return;
     
+    console.log("Setting up realtime subscriptions for user credit:", userId);
+    
     const channel = supabase
       .channel('user_credit_changes')
       .on(
@@ -89,8 +95,8 @@ export const useUserCredit = (userId?: string) => {
           table: 'user_credits',
           filter: `user_id=eq.${userId}`
         },
-        () => {
-          console.log('Credit change detected, refreshing...');
+        (payload) => {
+          console.log('Credit change detected, refreshing...', payload);
           fetchUserCredit();
         }
       )
@@ -107,8 +113,8 @@ export const useUserCredit = (userId?: string) => {
           table: 'payments',
           filter: `user_id=eq.${userId} AND status=eq.completed`
         },
-        () => {
-          console.log('Payment status changed to completed, refreshing credit...');
+        (payload) => {
+          console.log('Payment status changed to completed, refreshing credit...', payload);
           fetchUserCredit();
         }
       )
@@ -125,14 +131,15 @@ export const useUserCredit = (userId?: string) => {
           table: 'trade_simulations',
           filter: `user_id=eq.${userId}`
         },
-        () => {
-          console.log('New trade detected, refreshing credit...');
+        (payload) => {
+          console.log('New trade detected, refreshing credit...', payload);
           fetchUserCredit();
         }
       )
       .subscribe();
     
     return () => {
+      console.log("Cleaning up subscriptions");
       supabase.removeChannel(channel);
       supabase.removeChannel(paymentsChannel);
       supabase.removeChannel(tradesChannel);

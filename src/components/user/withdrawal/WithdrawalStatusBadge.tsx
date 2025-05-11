@@ -6,7 +6,7 @@ interface WithdrawalStatusBadgeProps {
 }
 
 const WithdrawalStatusBadge = ({ status }: WithdrawalStatusBadgeProps) => {
-  console.log("Rendering status badge with status:", status);
+  console.log("User withdrawal status badge with status:", status);
   
   switch (status) {
     case "pending":

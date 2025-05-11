@@ -37,13 +37,18 @@ export async function processWithdrawal({
   });
   
   try {
+    // Ensure we're using the correct timestamp format
+    const currentTimestamp = new Date().toISOString();
+    
+    console.log(`Updating withdrawal ${withdrawal.id} to status: ${status}`);
+    
     // First try direct update with explicit status value to ensure it's passed correctly
     const { data: updateData, error: updateError } = await supabase
       .from('withdrawals')
       .update({ 
         status: status, 
         notes: notes,
-        updated_at: new Date().toISOString()
+        updated_at: currentTimestamp
       })
       .eq('id', withdrawal.id)
       .select();
@@ -55,13 +60,12 @@ export async function processWithdrawal({
       throw updateError;
     }
     
-    // Ändern Sie die Überprüfungsmethode - Verwenden Sie maybeSingle() statt single()
-    // und prüfen Sie, ob Daten zurückgegeben wurden, anstatt einen Fehler zu erwarten
+    // Verify the update was successful
     const { data: verifyData, error: verifyError } = await supabase
       .from('withdrawals')
-      .select('*')
+      .select('status, updated_at')
       .eq('id', withdrawal.id)
-      .maybeSingle();
+      .single();
       
     console.log("Verification after update:", { 
       verifyData, 
@@ -69,17 +73,16 @@ export async function processWithdrawal({
       statusMatches: verifyData?.status === status 
     });
     
-    // Wenn wir hier einen Fehler haben, der nicht PGRST116 ist, oder wenn wir verifyData haben und der Status nicht übereinstimmt,
-    // dann haben wir ein Problem
-    if (verifyError && verifyError.code !== 'PGRST116') {
+    if (verifyError) {
       console.error("Error verifying withdrawal update:", verifyError);
       throw verifyError;
     }
     
-    // Wenn wir keine Daten zurückbekommen, bedeutet das, dass der Datensatz nicht gefunden wurde
-    // Dies könnte auf ein Problem mit den RLS-Richtlinien oder einen bereits gelöschten Datensatz hindeuten
-    if (!verifyData) {
-      console.warn("Withdrawal record not found during verification, but update was attempted. This could be due to RLS policies or the record was deleted.");
+    if (verifyData?.status !== status) {
+      console.error("Status was not updated correctly:", {
+        expectedStatus: status,
+        actualStatus: verifyData?.status
+      });
     }
     
     // If approved, update user credit by subtracting the withdrawal amount
@@ -112,7 +115,7 @@ export async function processWithdrawal({
         .from('user_credits')
         .update({ 
           amount: newCredit,
-          last_updated: new Date().toISOString()
+          last_updated: currentTimestamp
         })
         .eq('user_id', withdrawal.user_id);
       

@@ -71,14 +71,15 @@ export const useWithdrawalHistory = (userId?: string) => {
           // Check the specific type of change
           if (payload.eventType === 'UPDATE') {
             console.log('Withdrawal status updated:', payload.new.status);
+            // Immediately refresh withdrawals to show new status
+            fetchWithdrawals();
           } else if (payload.eventType === 'INSERT') {
             console.log('New withdrawal created:', payload.new);
+            fetchWithdrawals();
           } else if (payload.eventType === 'DELETE') {
             console.log('Withdrawal deleted:', payload.old);
+            fetchWithdrawals();
           }
-          
-          // Refresh the withdrawals list
-          fetchWithdrawals();
         }
       )
       .subscribe((status) => {

@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from 'react';
 import { CryptoComparisonProps } from "./CryptoComparison";
 import { algorithmSteps, generateCryptoComparison, selectRandomCrypto } from "./simulationUtils";

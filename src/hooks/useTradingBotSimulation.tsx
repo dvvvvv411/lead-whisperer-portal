@@ -73,6 +73,7 @@ export const useTradingBotSimulation = (
         
         try {
           // Execute the trade and get results
+          console.log("Completing trade after simulation...");
           const tradeResult = await completeTradeAfterSimulation();
           console.log("Trade completed with result:", tradeResult);
           

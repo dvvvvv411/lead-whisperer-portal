@@ -1,144 +1,225 @@
 
-import { useCallback, useState, useRef } from "react";
+import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { useCryptos } from "@/hooks/useCryptos";
+import { executeBotTrade } from "./executeBotTrade";
 import { BotSettings, BotStatus } from "./types";
-import { executeAITrade } from "./executeBotTrade";
+import { checkCanExecuteTrade } from "./botTradeUtils";
 
 export const useBotOperations = (
-  userId?: string,
+  userId?: string, 
   userCredit?: number,
-  settings?: BotSettings,
+  settings?: BotSettings, 
   status?: BotStatus,
-  updateStatus?: (update: any) => void,
+  updateStatus?: (newStatus: Partial<BotStatus>) => void,
   clearBotInterval?: () => void,
-  setNewBotInterval?: (callback: () => void, intervalTime: number) => NodeJS.Timeout,
-  setBotInterval?: (interval: NodeJS.Timeout | null) => void,
-  setSettings?: (setter: (prev: BotSettings) => BotSettings) => void,
+  setNewBotInterval?: (callback: () => void, minutes: number) => void,
+  setBotInterval?: (minutes: number) => void,
+  setSettings?: (newSettings: Partial<BotSettings>) => void,
   onTradeExecuted?: () => void
 ) => {
   const { toast } = useToast();
-  const { cryptos } = useCryptos();
   const [isSimulating, setIsSimulating] = useState(false);
-  
-  // Use a ref to track dialog closing to prevent race conditions
   const simulationInProgressRef = useRef(false);
+  const lastExecutedRef = useRef<Date | null>(null);
   
-  // Stop the AI trading bot
-  const stopBot = useCallback(() => {
-    if (!clearBotInterval || !setSettings || !updateStatus) return;
-
-    clearBotInterval();
-    setSettings(prev => ({ ...prev, isActive: false }));
-    updateStatus({ isActive: false });
-    
-    toast({
-      title: "KI-Bot deaktiviert",
-      description: "Der KI-Trading-Bot wurde erfolgreich deaktiviert.",
-    });
-  }, [clearBotInterval, toast, setSettings, updateStatus]);
-  
-  // Start the AI trading bot
+  // Start the trading bot
   const startBot = useCallback(() => {
-    if (!setSettings || !updateStatus || !setNewBotInterval || !userId || !userCredit) return;
+    if (!userId || !status || !updateStatus || !setNewBotInterval || !settings) {
+      console.log("Cannot start bot: missing required data");
+      return;
+    }
     
-    // Set bot to active
-    setSettings(prev => ({ ...prev, isActive: true }));
-    updateStatus({ isActive: true });
+    // Only allow starting if not already running
+    if (status.isRunning) {
+      console.log("Bot is already running");
+      return;
+    }
     
-    toast({
-      title: "KI-Bot aktiviert",
-      description: "Der KI-Trading-Bot wurde erfolgreich aktiviert.",
+    console.log("Starting trading bot with interval:", settings.tradeInterval, "minutes");
+    
+    // Update status to running
+    updateStatus({
+      isRunning: true,
+      lastStarted: new Date(),
+      statusMessage: "Bot ist aktiv und handelt automatisch"
     });
     
-    // The bot execution is still handled by manual trades only
-  }, [userId, userCredit, toast, setSettings, updateStatus, setNewBotInterval]);
+    // Set the bot interval based on current settings
+    setNewBotInterval(() => {
+      executeSingleTrade().then(success => {
+        if (success) {
+          console.log("Bot executed first trade successfully");
+        }
+      });
+    }, settings.tradeInterval);
+    
+    toast({
+      title: "Trading Bot gestartet",
+      description: `Der Bot wird alle ${settings.tradeInterval} Minuten automatisch handeln.`
+    });
+    
+  }, [userId, status, updateStatus, setNewBotInterval, settings, toast]);
+  
+  // Stop the trading bot
+  const stopBot = useCallback(() => {
+    if (!status || !updateStatus || !clearBotInterval) {
+      console.log("Cannot stop bot: missing required data");
+      return;
+    }
+    
+    // Only stop if running
+    if (!status.isRunning) {
+      console.log("Bot is not running");
+      return;
+    }
+    
+    console.log("Stopping trading bot");
+    
+    // Clear the interval
+    clearBotInterval();
+    
+    // Update status to stopped
+    updateStatus({
+      isRunning: false,
+      statusMessage: "Bot ist gestoppt"
+    });
+    
+    toast({
+      title: "Trading Bot gestoppt",
+      description: "Der automatische Handel wurde beendet."
+    });
+    
+  }, [status, updateStatus, clearBotInterval, toast]);
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
-    if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
-      console.log("Missing required parameters for executeSingleTrade", { userId, userCredit, status, settings });
+    console.log("Checking if trade can be executed...");
+    
+    if (!userId || !settings || !status || !updateStatus) {
+      console.log("Cannot execute trade: missing required data");
       return false;
     }
     
-    // Check if already simulating
-    if (isSimulating || simulationInProgressRef.current) {
-      console.log("Already simulating, ignoring new trade request");
-      toast({
-        title: "Transaktion in Bearbeitung",
-        description: "Der KI-Bot analysiert bereits die Märkte für den optimalen Trade.",
-      });
-      return false;
-    }
+    // Check if we can execute a trade (daily limit, etc.)
+    const canExecute = checkCanExecuteTrade(
+      status.dailyTradesCount,
+      status.dailyTradeLimit,
+      lastExecutedRef.current
+    );
     
-    // Check if user has reached daily limit
-    if (status.tradesRemaining <= 0) {
-      console.log("Daily trade limit reached", { 
-        dailyTradesExecuted: status.dailyTradesExecuted, 
-        maxTradesPerDay: status.maxTradesPerDay 
-      });
+    if (!canExecute.canExecute) {
+      console.log("Cannot execute trade:", canExecute.reason);
       toast({
-        title: "Tägliches Limit erreicht",
-        description: `Sie haben bereits Ihr tägliches Limit von ${status.maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`,
+        title: "Handel nicht möglich",
+        description: canExecute.reason,
         variant: "destructive"
       });
       return false;
     }
     
-    // Set both state and ref to track simulation
-    console.log("Starting trade simulation");
-    setIsSimulating(true);
+    // Set simulation in progress
     simulationInProgressRef.current = true;
+    setIsSimulating(true);
     
-    // Return true to indicate that simulation has started
+    // Update last executed time
+    lastExecutedRef.current = new Date();
+    
+    // Update status
+    updateStatus({
+      lastTradeAttempt: new Date(),
+      statusMessage: "Trade wird ausgeführt...",
+      dailyTradesCount: status.dailyTradesCount + 1
+    });
+    
+    console.log("Trade can be executed, simulation starting...");
     return true;
-  }, [userId, userCredit, cryptos, settings, toast, updateStatus, status, isSimulating]);
+    
+  }, [userId, settings, status, updateStatus, toast]);
   
-  // Complete trade after simulation
+  // Complete trade after simulation is done
   const completeTradeAfterSimulation = useCallback(async () => {
-    console.log("Completing trade after simulation");
-    if (!userId || !userCredit || !updateStatus || !status || !settings || !cryptos) {
-      console.log("Missing required parameters for completeTradeAfterSimulation");
-      setIsSimulating(false);
-      simulationInProgressRef.current = false;
-      return { success: false };
+    console.log("Completing trade after simulation...");
+    
+    if (!userId || !userCredit || !settings) {
+      console.log("Cannot complete trade: missing required data");
+      return { success: false, error: "Missing required data" };
     }
     
     try {
-      const tradeResult = await executeAITrade(
-        userId, 
-        userCredit, 
-        cryptos, 
-        settings, 
-        toast, 
-        updateStatus, 
-        status.dailyTradesExecuted,
-        status.maxTradesPerDay
-      );
+      // Execute the actual trade with the bot's strategy
+      const result = await executeBotTrade({
+        userId,
+        userCredit,
+        tradeAmount: settings.tradeAmount,
+        riskLevel: settings.riskLevel,
+      });
       
-      console.log("AI trade execution completed with result:", tradeResult);
-      
-      // Call the onTradeExecuted callback to update the parent components
-      if (tradeResult.success && onTradeExecuted) {
-        onTradeExecuted();
+      if (result.success) {
+        // Update status with trade info
+        if (updateStatus) {
+          updateStatus({
+            statusMessage: "Letzter Trade erfolgreich",
+            lastSuccessfulTrade: new Date(),
+            totalProfitAmount: (status?.totalProfitAmount || 0) + result.profit,
+            totalTradesExecuted: (status?.totalTradesExecuted || 0) + 1
+          });
+        }
+        
+        // Call the onTradeExecuted callback if provided
+        if (onTradeExecuted) {
+          onTradeExecuted();
+        }
+        
+        console.log("Trade completed successfully:", result);
+        toast({
+          title: "Trade erfolgreich",
+          description: `${result.profit.toFixed(2)}€ Gewinn (${result.profitPercentage.toFixed(2)}%)`,
+        });
+      } else {
+        // Update status with failure
+        if (updateStatus) {
+          updateStatus({
+            statusMessage: "Letzter Trade fehlgeschlagen: " + result.error,
+          });
+        }
+        
+        console.log("Trade failed:", result.error);
+        toast({
+          title: "Trade fehlgeschlagen",
+          description: result.error,
+          variant: "destructive"
+        });
       }
       
-      return tradeResult;
+      // Reset simulation state
+      simulationInProgressRef.current = false;
+      
+      return result;
+      
     } catch (error) {
-      console.error("Error in completeTradeAfterSimulation:", error);
+      console.error("Error executing trade:", error);
+      
+      // Update status with error
+      if (updateStatus) {
+        updateStatus({
+          statusMessage: "Fehler beim Ausführen des Trades",
+        });
+      }
+      
       toast({
-        title: "Fehler bei der Ausführung des Trades",
-        description: "Bitte versuchen Sie es später erneut.",
+        title: "Fehler",
+        description: "Es ist ein Fehler beim Ausführen des Trades aufgetreten.",
         variant: "destructive"
       });
-      return { success: false };
-    } finally {
-      // Always reset simulating state, even on error
-      setIsSimulating(false);
+      
+      // Reset simulation state
       simulationInProgressRef.current = false;
+      
+      return { success: false, error: "Unerwarteter Fehler" };
     }
-  }, [userId, userCredit, cryptos, settings, toast, updateStatus, onTradeExecuted, status]);
-
+    
+  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, toast]);
+  
   return {
     startBot,
     stopBot,

@@ -5,12 +5,13 @@ import { cn } from "@/lib/utils";
 
 export interface CryptoComparisonProps {
   symbol: string;
+  name?: string;
   price: number;
   change: number;
   logoUrl?: string;
 }
 
-const CryptoComparison = ({ symbol, price, change, logoUrl }: CryptoComparisonProps) => {
+const CryptoComparison = ({ symbol, name, price, change, logoUrl }: CryptoComparisonProps) => {
   // Generate miniature chart for visualization
   const generateMiniChart = () => {
     const points = 5;
@@ -58,6 +59,7 @@ const CryptoComparison = ({ symbol, price, change, logoUrl }: CryptoComparisonPr
           )}
         </div>
         <div>
+          <div className="text-sm font-medium">{name || symbol}</div>
           <div className="text-sm font-medium">{price.toFixed(2)} €</div>
           <div className={cn(
             "text-xs",

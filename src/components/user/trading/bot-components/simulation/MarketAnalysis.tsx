@@ -1,7 +1,6 @@
 
 import React from 'react';
-import CryptoComparison, { CryptoComparisonProps } from "./CryptoComparison";
-import { Bitcoin } from "lucide-react";
+import CryptoComparison, { CryptoComparisonProps } from './CryptoComparison';
 
 interface MarketAnalysisProps {
   comparisons: CryptoComparisonProps[];
@@ -9,28 +8,29 @@ interface MarketAnalysisProps {
 
 const MarketAnalysis: React.FC<MarketAnalysisProps> = ({ comparisons }) => {
   return (
-    <div className="bg-casino-darker/60 backdrop-blur-sm border border-gold/10 rounded-lg overflow-hidden">
-      <div className="bg-gradient-to-r from-casino-darker to-casino-dark px-3 py-2 border-b border-gold/10">
-        <div className="flex justify-between items-center">
-          <div className="text-xs font-semibold text-accent1 flex items-center gap-1.5">
-            <div className="w-1.5 h-1.5 rounded-full bg-accent1"></div>
-            Markt-Analyse
-          </div>
-          
-          <div className="flex items-center">
-            <Bitcoin className="h-3.5 w-3.5 text-gold" />
-          </div>
-        </div>
+    <div className="border border-gold/10 rounded-md overflow-hidden bg-casino-darker/80">
+      <div className="p-3 border-b border-gold/10 bg-casino-dark/40">
+        <h3 className="text-sm font-semibold text-gold/80">Marktanalyse</h3>
+        <p className="text-xs text-muted-foreground mt-0.5">Echtzeit-Kryptowährungsdaten</p>
       </div>
       
-      <div className="p-0.5 max-h-[180px] overflow-y-auto">
-        {comparisons.length > 0 ? (
-          comparisons.map((comp, idx) => (
-            <CryptoComparison key={`comp-${idx}`} {...comp} />
-          ))
-        ) : (
-          <div className="text-xs text-muted-foreground p-3 text-center">Warte auf Marktdaten...</div>
+      <div className="max-h-[160px] overflow-y-auto scrollbar-thin">
+        {comparisons.length === 0 && (
+          <div className="text-center p-4 text-sm text-muted-foreground">
+            Lade Marktdaten...
+          </div>
         )}
+        
+        {comparisons.map((comparison, index) => (
+          <CryptoComparison 
+            key={`${comparison.symbol}-${index}`} 
+            symbol={comparison.symbol}
+            name={comparison.name}
+            price={comparison.price}
+            change={comparison.change}
+            logoUrl={comparison.logoUrl}
+          />
+        ))}
       </div>
     </div>
   );

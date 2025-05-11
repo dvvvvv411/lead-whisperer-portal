@@ -37,98 +37,35 @@ export async function processWithdrawal({
   });
   
   try {
-    // Ensure we're using the correct timestamp format
-    const currentTimestamp = new Date().toISOString();
+    console.log(`Calling secure database function to process withdrawal ${withdrawal.id}`);
     
-    console.log(`Updating withdrawal ${withdrawal.id} to status: ${status}`);
-    
-    // Update the withdrawal status - don't use .single() here as it's causing the error
-    const { data: updateData, error: updateError } = await supabase
-      .from('withdrawals')
-      .update({ 
-        status: status, 
-        notes: notes,
-        updated_at: currentTimestamp
-      })
-      .eq('id', withdrawal.id);
-    
-    console.log("Withdrawal update response:", { updateData, updateError });
-    
-    if (updateError) {
-      console.error("Error updating withdrawal status:", updateError);
-      throw updateError;
-    }
-    
-    // Verify the update was successful - don't use .single() here
-    const { data: verifyData, error: verifyError } = await supabase
-      .from('withdrawals')
-      .select('status, updated_at')
-      .eq('id', withdrawal.id);
-      
-    console.log("Verification after update:", { 
-      verifyData, 
-      verifyError,
-      statusMatches: verifyData && verifyData[0]?.status === status 
-    });
-    
-    if (verifyError) {
-      console.error("Error verifying withdrawal update:", verifyError);
-      throw verifyError;
-    }
-    
-    if (!verifyData || verifyData.length === 0 || verifyData[0]?.status !== status) {
-      console.error("Status was not updated correctly:", {
-        expectedStatus: status,
-        actualStatus: verifyData && verifyData[0]?.status
-      });
-    }
-    
-    // If approved, update user credit by subtracting the withdrawal amount
-    if (isApproved) {
-      const { data: currentCreditData, error: creditFetchError } = await supabase
-        .from('user_credits')
-        .select('amount')
-        .eq('user_id', withdrawal.user_id)
-        .maybeSingle();  // Use maybeSingle instead of single to avoid errors
-      
-      console.log("Current user credit:", { currentCreditData, creditFetchError });
-      
-      if (creditFetchError) {
-        console.error("Error fetching user credit:", creditFetchError);
-        throw creditFetchError;
+    // Use the new secure database function instead of directly updating the table
+    const { data, error } = await supabase.rpc(
+      'process_withdrawal_status',
+      {
+        withdrawal_id: withdrawal.id,
+        new_status: status,
+        withdrawal_notes: notes || null,
+        is_approved: isApproved
       }
-      
-      const currentCredit = currentCreditData?.amount || 0;
-      // Only subtract the amount of the withdrawal, not resetting the entire credit
-      const newCredit = Math.max(0, currentCredit - withdrawal.amount);
-      
-      console.log("Credit update calculation:", { 
-        userId: withdrawal.user_id,
-        currentCredit, 
-        withdrawalAmount: withdrawal.amount, 
-        newCredit 
-      });
-      
-      const { data: creditUpdateData, error: creditUpdateError } = await supabase
-        .from('user_credits')
-        .update({ 
-          amount: newCredit,
-          last_updated: currentTimestamp
-        })
-        .eq('user_id', withdrawal.user_id);
-      
-      console.log("Credit update result:", { creditUpdateData, creditUpdateError });
-      
-      if (creditUpdateError) {
-        console.error("Error updating user credit:", creditUpdateError);
-        throw creditUpdateError;
-      }
+    );
+    
+    console.log("Process withdrawal response:", { data, error });
+    
+    if (error) {
+      console.error("Error processing withdrawal:", error);
+      throw error;
+    }
+    
+    if (!data || !data.success) {
+      console.error("Failed to process withdrawal:", data || "Unknown error");
+      throw new Error(data?.message || "Failed to process withdrawal");
     }
     
     return { 
       success: true, 
       statusUpdated: status,
-      data: updateData
+      data: data
     };
   } catch (error) {
     console.error("Fatal error in processWithdrawal:", error);

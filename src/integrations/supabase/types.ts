@@ -422,6 +422,15 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: undefined
       }
+      process_withdrawal_status: {
+        Args: {
+          withdrawal_id: string
+          new_status: string
+          withdrawal_notes: string
+          is_approved: boolean
+        }
+        Returns: Json
+      }
       remove_user_role: {
         Args: {
           _user_id: string

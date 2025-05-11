@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TrendingUp, Zap, Star } from "lucide-react";
@@ -81,7 +80,7 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
   };
   
   return (
-    <div className="relative h-[200px] bg-gradient-to-br from-casino-darker to-casino-card rounded-lg p-4 overflow-hidden border border-gold/10 shadow-inner">
+    <div className="relative h-full w-full bg-gradient-to-br from-casino-darker to-casino-card rounded-lg p-4 overflow-hidden border border-gold/10 shadow-inner">
       {/* Background effects */}
       <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgxNDcsMTIxLDI0NywwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')] opacity-20"></div>
       
@@ -134,16 +133,6 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
             </div>
           </div>
         )}
-      </div>
-      
-      {/* Crypto Trader Logo - Bottom left */}
-      <div className="absolute bottom-2 left-2 opacity-70 hover:opacity-100 transition-opacity">
-        <div className="flex items-center gap-1.5">
-          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-gold to-accent1 shadow-glow flex items-center justify-center">
-            <span className="text-xs font-bold text-black">CT</span>
-          </div>
-          <span className="text-xs font-medium text-gold/80">Crypto Trader</span>
-        </div>
       </div>
       
       {/* Floating indicator icons */}

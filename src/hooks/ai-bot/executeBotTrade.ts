@@ -111,6 +111,7 @@ export const executeAITrade = async (
     console.log(`KI-Bot: Verkauf-Trade erstellt, ID: ${sellResult.data?.id}`);
     
     // Update bot status
+    // Note: We now consider a buy-sell pair as a single trade
     updateStatus({
       lastTradeTime: new Date(),
       totalProfitAmount: (prevAmount: number) => prevAmount + profit,

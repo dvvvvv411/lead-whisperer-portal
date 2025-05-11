@@ -89,7 +89,8 @@ export const getUserRank = (userCredit: number): RankTier => {
   return rankTiers[0];
 };
 
-// Function to check if user has reached daily trade limit
+// Modified function to count only buy transactions (treating a buy-sell pair as one trade)
+// This effectively counts each complete trade (buy+sell) as a single trade
 export const getTradesExecutedToday = async (userId: string): Promise<number> => {
   if (!userId) return 0;
   
@@ -100,6 +101,7 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
     .from('trade_simulations')
     .select('id')
     .eq('user_id', userId)
+    .eq('type', 'buy') // Only count buy operations as trades
     .gte('created_at', today.toISOString())
     .or('strategy.ilike.ai_%,strategy.ilike.bot_%');
   

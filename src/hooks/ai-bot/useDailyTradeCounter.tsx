@@ -24,7 +24,9 @@ export const useDailyTradeCounter = (
     if (!userId || !updateStatus) return;
 
     const fetchTodaysTrades = async () => {
+      // Get the count of buy transactions (each buy-sell pair counts as 1 trade)
       const todayTradesCount = await getTradesExecutedToday(userId);
+      
       updateStatus(prev => ({ 
         dailyTradesExecuted: todayTradesCount,
         tradesRemaining: Math.max(0, prev.maxTradesPerDay - todayTradesCount)
@@ -32,8 +34,7 @@ export const useDailyTradeCounter = (
     };
     
     fetchTodaysTrades();
-    // Set up an interval to update trade count periodically
-    // Changed from 30 seconds to 120 seconds (2 minutes) to reduce interference with simulation
+    // Use a longer interval (2 minutes) to reduce interference with simulation
     const interval = setInterval(fetchTodaysTrades, 120000);
     
     return () => clearInterval(interval);

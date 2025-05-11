@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -40,6 +40,7 @@ export const CreditEditDialog = ({
 
     try {
       setIsSubmitting(true);
+      console.log(`Setting credit for ${userId} to ${newCredit}`);
       const success = await setUserCredit(userId, newCredit);
       
       if (success) {
@@ -53,6 +54,7 @@ export const CreditEditDialog = ({
         throw new Error("Fehler beim Aktualisieren des Guthabens");
       }
     } catch (error: any) {
+      console.error("Error setting credit:", error);
       toast({
         title: "Fehler",
         description: `Das Guthaben konnte nicht aktualisiert werden: ${error.message}`,
@@ -68,6 +70,9 @@ export const CreditEditDialog = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle>Guthaben bearbeiten</DialogTitle>
+          <DialogDescription>
+            Aktualisieren Sie das Guthaben für den Benutzer {userEmail}.
+          </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
@@ -80,7 +85,7 @@ export const CreditEditDialog = ({
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="credit" className="text-right">
-              Aktuelles Guthaben
+              Guthaben (€)
             </Label>
             <div className="col-span-3">
               <Input

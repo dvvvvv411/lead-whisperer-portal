@@ -48,17 +48,44 @@ export const setUserCredit = async (userId: string, amountInEuros: number): Prom
     // Convert euro amount to cents
     const amountInCents = Math.round(amountInEuros * 100);
     
-    // Update or insert user credit
-    const { error } = await supabase
+    // Check if the user already has a credit record
+    const { data: existingRecord, error: checkError } = await supabase
       .from('user_credits')
-      .upsert({ 
-        user_id: userId,
-        amount: amountInCents,
-        last_updated: new Date().toISOString()
-      });
+      .select('id')
+      .eq('user_id', userId)
+      .maybeSingle();
     
-    if (error) {
-      console.error("Error setting credit:", error);
+    if (checkError && checkError.code !== 'PGRST116') {
+      console.error("Error checking existing credit:", checkError);
+      return false;
+    }
+    
+    let result;
+    
+    if (existingRecord) {
+      // Update existing record
+      console.log("Updating existing credit record for user:", userId);
+      result = await supabase
+        .from('user_credits')
+        .update({ 
+          amount: amountInCents,
+          last_updated: new Date().toISOString()
+        })
+        .eq('user_id', userId);
+    } else {
+      // Insert new record
+      console.log("Creating new credit record for user:", userId);
+      result = await supabase
+        .from('user_credits')
+        .insert({ 
+          user_id: userId,
+          amount: amountInCents,
+          last_updated: new Date().toISOString()
+        });
+    }
+    
+    if (result.error) {
+      console.error("Error setting credit:", result.error);
       return false;
     }
     

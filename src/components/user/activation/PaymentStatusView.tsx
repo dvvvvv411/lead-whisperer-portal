@@ -1,12 +1,57 @@
 
-import { Loader2, AlertCircle } from "lucide-react";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { useState } from "react";
+import { Loader2, AlertCircle, RefreshCw } from "lucide-react";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { checkUserRole } from "@/services/roleService";
+import { useToast } from "@/hooks/use-toast";
 
 interface PaymentStatusViewProps {
   paymentId: string | null;
 }
 
 const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
+  const [isChecking, setIsChecking] = useState(false);
+  const { toast } = useToast();
+
+  // Function to manually check activation status
+  const checkActivationStatus = async () => {
+    setIsChecking(true);
+    try {
+      const isActivated = await checkUserRole('user');
+      
+      if (isActivated) {
+        toast({
+          title: "Konto aktiviert",
+          description: "Ihr Konto wurde erfolgreich aktiviert! Die Seite wird aktualisiert..."
+        });
+        
+        setTimeout(() => {
+          window.location.href = '/nutzer';
+        }, 1500);
+      } else {
+        toast({
+          title: "Noch nicht aktiviert",
+          description: "Ihr Konto wurde noch nicht aktiviert. Bitte haben Sie etwas Geduld oder kontaktieren Sie den Support."
+        });
+      }
+    } catch (error) {
+      console.error("Error checking activation status:", error);
+      toast({
+        title: "Fehler beim Überprüfen",
+        description: "Es gab einen Fehler beim Überprüfen Ihres Aktivierungsstatus.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsChecking(false);
+    }
+  };
+
+  // Function to refresh the page
+  const refreshPage = () => {
+    window.location.reload();
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-3xl">
       <div className="mb-8 text-center">
@@ -40,6 +85,25 @@ const PaymentStatusView = ({ paymentId }: PaymentStatusViewProps) => {
             </div>
           </div>
         </CardContent>
+        <CardFooter className="flex justify-center gap-4 border-t pt-4">
+          <Button
+            variant="outline"
+            onClick={checkActivationStatus}
+            disabled={isChecking}
+            className="flex items-center gap-2"
+          >
+            {isChecking ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+            Status prüfen
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={refreshPage}
+            className="flex items-center gap-2"
+          >
+            <RefreshCw className="h-4 w-4" />
+            Seite aktualisieren
+          </Button>
+        </CardFooter>
       </Card>
     </div>
   );

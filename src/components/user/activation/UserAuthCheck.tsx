@@ -75,6 +75,47 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
     }
   };
 
+  // Set up periodic activation check for the activation page
+  useEffect(() => {
+    let activationCheckInterval: number | null = null;
+    
+    // If we're on the activation page with a user but not redirecting to activation
+    // (meaning we're already on the activation page), then check periodically for role changes
+    if (user && !redirectToActivation && window.location.pathname.includes('/aktivierung')) {
+      console.log("Setting up activation status check interval");
+      
+      activationCheckInterval = window.setInterval(async () => {
+        if (!user?.id) return;
+        
+        const isActivated = await checkUserRole(user.id, 'user');
+        if (isActivated && !user.isActivated) {
+          console.log("User activation status changed to active, refreshing data");
+          
+          // Update user object and refresh the page or redirect
+          const updatedUser = { ...user, isActivated: true };
+          setUser(updatedUser);
+          onUserLoaded(updatedUser);
+          
+          // If activation status changed, show a notification and redirect
+          toast({
+            title: "Konto aktiviert",
+            description: "Ihr Konto wurde aktiviert! Sie werden zum Dashboard weitergeleitet."
+          });
+          
+          setTimeout(() => {
+            navigate('/nutzer');
+          }, 1500);
+        }
+      }, 10000); // Check every 10 seconds
+    }
+    
+    return () => {
+      if (activationCheckInterval) {
+        clearInterval(activationCheckInterval);
+      }
+    };
+  }, [user, redirectToActivation, navigate, toast, onUserLoaded]);
+
   useEffect(() => {
     const getUser = async () => {
       try {

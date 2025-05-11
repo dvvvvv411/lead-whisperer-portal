@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { usePaymentStatus } from "./usePaymentStatus";
 import { supabase } from "@/integrations/supabase/client";
+import { checkUserRole } from "@/services/roleService";
 
 interface UsePaymentFlowProps {
   userId?: string;
@@ -31,6 +32,48 @@ export const usePaymentFlow = ({
     paymentId,
     enabled: paymentSubmitted
   });
+
+  // Add periodic role check for activation payments
+  useEffect(() => {
+    let roleCheckInterval: number | null = null;
+    
+    // Only start checking if this is an activation payment and we're waiting
+    if (isActivation && paymentSubmitted && !paymentCompleted && !paymentRejected && userId) {
+      console.log("Starting periodic role check for user:", userId);
+      
+      roleCheckInterval = window.setInterval(async () => {
+        try {
+          // Check if user has been activated (has 'user' role)
+          const hasUserRole = await checkUserRole('user');
+          console.log("Role check result:", hasUserRole);
+          
+          if (hasUserRole) {
+            console.log("User has been activated, refreshing page...");
+            toast({
+              title: "Konto aktiviert",
+              description: "Ihr Konto wurde erfolgreich aktiviert! Die Seite wird aktualisiert..."
+            });
+            
+            // Clear interval and redirect
+            if (roleCheckInterval) clearInterval(roleCheckInterval);
+            
+            // Add a short delay before reloading to ensure the toast is visible
+            setTimeout(() => {
+              window.location.href = redirectPath;
+            }, 1500);
+          }
+        } catch (error) {
+          console.error("Error checking user role:", error);
+        }
+      }, 5000); // Check every 5 seconds
+    }
+    
+    return () => {
+      if (roleCheckInterval) {
+        clearInterval(roleCheckInterval);
+      }
+    };
+  }, [isActivation, paymentSubmitted, paymentCompleted, paymentRejected, userId, toast, redirectPath]);
 
   // Assign user role when payment is completed (for activation payments)
   const assignUserRole = async (userId: string) => {

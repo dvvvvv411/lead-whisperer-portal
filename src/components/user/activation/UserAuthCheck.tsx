@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import { checkUserRole } from "@/services/roleService";
 
 interface UserAuthCheckProps {
   children: React.ReactNode;
@@ -16,22 +17,6 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-
-  // Check if user has been assigned a specific role
-  const checkUserRole = async (userId: string, role: 'admin' | 'user') => {
-    try {
-      const { data, error } = await supabase.rpc('has_role', {
-        _user_id: userId,
-        _role: role
-      });
-      
-      if (error) throw error;
-      return data;
-    } catch (error: any) {
-      console.error(`Error checking ${role} role:`, error.message);
-      return false;
-    }
-  };
 
   // Check if user has pending payments
   const checkPendingPayments = async (userId: string) => {
@@ -93,7 +78,9 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
         console.log("User role change detected:", payload);
         
         // Check if the user is now activated
-        const isActivated = await checkUserRole(user.id, 'user');
+        const isActivated = await checkUserRole('user');
+        console.log("User activation status after role change:", isActivated);
+        
         if (isActivated && !user.isActivated) {
           console.log("User is now activated, redirecting to dashboard");
           
@@ -121,7 +108,7 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
     };
   }, [user?.id, navigate, toast, onUserLoaded]);
 
-  // Set up periodic activation check for the activation page
+  // Set up periodic activation check 
   useEffect(() => {
     let activationCheckInterval: number | null = null;
     
@@ -133,7 +120,7 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
       activationCheckInterval = window.setInterval(async () => {
         if (!user?.id) return;
         
-        const isActivated = await checkUserRole(user.id, 'user');
+        const isActivated = await checkUserRole('user');
         if (isActivated && !user.isActivated) {
           console.log("User activation status changed to active, refreshing data");
           
@@ -152,7 +139,7 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
             navigate('/nutzer');
           }, 1500);
         }
-      }, 10000); // Check every 10 seconds
+      }, 5000); // Check every 5 seconds
     }
     
     return () => {
@@ -169,11 +156,10 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
         if (error) throw error;
         
         if (data?.user) {
-          console.log("User found:", data.user.email);
-          setUser(data.user);
+          console.log("User found in UserAuthCheck:", data.user.email);
           
           // Check if the user is an admin
-          const isAdmin = await checkUserRole(data.user.id, 'admin');
+          const isAdmin = await checkUserRole('admin');
           if (isAdmin) {
             console.log("User is admin, redirecting to admin dashboard");
             navigate('/admin');
@@ -181,12 +167,12 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
           }
           
           // Check if user is already activated (has user role)
-          const isActivated = await checkUserRole(data.user.id, 'user');
-          console.log("User activation status:", isActivated);
+          const isActivated = await checkUserRole('user');
+          console.log("User activation status in UserAuthCheck:", isActivated);
           
           // Check if user has any pending payments
           const paymentStatus = await checkPendingPayments(data.user.id);
-          console.log("User payment status:", paymentStatus);
+          console.log("User payment status in UserAuthCheck:", paymentStatus);
           
           // If user is activated, always redirect to the user dashboard if they try to access activation page
           if (isActivated && window.location.pathname.includes('/aktivierung')) {
@@ -196,29 +182,33 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
           }
           
           // If user is not activated and redirectToActivation is true, redirect to activation page
-          if (!isActivated && redirectToActivation) {
+          if (!isActivated && redirectToActivation && !window.location.pathname.includes('/aktivierung')) {
             console.log("User is not activated, redirecting to activation page");
             navigate('/nutzer/aktivierung');
             return;
           }
           
           // Pass user data to parent component
-          onUserLoaded({
+          const userData = {
             ...data.user,
             isActivated,
             paymentStatus
-          });
+          };
+          
+          setUser(userData);
+          onUserLoaded(userData);
         } else {
           console.log("No user found, redirecting to login");
           navigate("/admin");
         }
       } catch (error: any) {
-        console.error("Error getting user:", error.message);
+        console.error("Error getting user in UserAuthCheck:", error.message);
         toast({
           title: "Fehler",
           description: "Es gab ein Problem beim Laden Ihrer Benutzerdaten.",
           variant: "destructive"
         });
+        navigate("/admin");
       } finally {
         setLoading(false);
       }

@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { checkUserRole } from "@/services/roleService";
+import { supabase } from "@/integrations/supabase/client";
+import { useToast } from "@/hooks/use-toast";
 
 // Components
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
@@ -12,9 +14,11 @@ import LogoutButton from "@/components/user/activation/LogoutButton";
 
 const UserActivation = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [user, setUser] = useState<any>(null);
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
+  const [isCheckingActivation, setIsCheckingActivation] = useState(false);
   
   // Use the payment flow hook with isActivation flag
   const { paymentCompleted } = usePaymentFlow({
@@ -24,7 +28,39 @@ const UserActivation = () => {
     isActivation: true
   });
 
-  // Check if user is already activated when the component mounts
+  // Immediately check if user is already activated when component mounts
+  useEffect(() => {
+    const checkActivationOnLoad = async () => {
+      try {
+        setIsCheckingActivation(true);
+        const { data: userData } = await supabase.auth.getUser();
+        
+        if (userData?.user) {
+          // Check if the user already has the 'user' role
+          const isActivated = await checkUserRole('user');
+          
+          console.log("Initial activation check on activation page:", isActivated);
+          
+          if (isActivated) {
+            console.log("User is already activated, redirecting from activation page");
+            toast({
+              title: "Bereits aktiviert",
+              description: "Ihr Konto ist bereits aktiviert. Sie werden zum Dashboard weitergeleitet."
+            });
+            navigate('/nutzer');
+          }
+        }
+      } catch (error) {
+        console.error("Error checking activation status on load:", error);
+      } finally {
+        setIsCheckingActivation(false);
+      }
+    };
+    
+    checkActivationOnLoad();
+  }, [navigate, toast]);
+
+  // Regular check if user is already activated when the component mounts
   useEffect(() => {
     if (user?.id) {
       const checkActivationStatus = async () => {
@@ -67,6 +103,14 @@ const UserActivation = () => {
 
   // Call checkPaymentSubmission every 500ms
   setTimeout(checkPaymentSubmission, 500);
+
+  if (isCheckingActivation) {
+    return (
+      <div className="flex justify-center items-center min-h-screen">
+        <p>Aktivierungsstatus wird überprüft...</p>
+      </div>
+    );
+  }
 
   return (
     <UserAuthCheck onUserLoaded={handleUserLoaded} redirectToActivation={false}>

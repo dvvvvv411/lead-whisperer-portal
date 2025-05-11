@@ -11,7 +11,7 @@ import DepositForm from "@/components/user/deposit/DepositForm";
 import DepositHistory from "@/components/user/deposit/DepositHistory";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Loader2 } from "lucide-react";
 
 const UserDeposit = () => {
   const { toast } = useToast();
@@ -48,10 +48,12 @@ const UserDeposit = () => {
           
           // Check if the user has the 'user' role (is activated)
           const activated = await checkUserRole('user');
+          console.log("User activation status on deposit page:", activated);
           setIsActivated(activated);
           
           // If not activated, redirect to activation page
           if (!activated) {
+            console.log("User not activated, redirecting from deposit to activation page");
             toast({
               title: "Aktivierung erforderlich",
               description: "Bitte aktivieren Sie Ihr Konto, um fortzufahren.",
@@ -132,9 +134,17 @@ const UserDeposit = () => {
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
         <p>Wird geladen...</p>
       </div>
     );
+  }
+
+  // Additional check to ensure only activated users can view this page
+  if (!isActivated) {
+    console.log("User not activated, redirecting to activation page from deposit");
+    navigate("/nutzer/aktivierung");
+    return null;
   }
 
   return (

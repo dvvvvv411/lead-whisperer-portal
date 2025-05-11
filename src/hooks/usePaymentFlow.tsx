@@ -55,10 +55,8 @@ export const usePaymentFlow = ({
           description: "Ihr Konto wurde erfolgreich aktiviert! Sie werden zum Dashboard weitergeleitet."
         });
         
-        // Redirect to user dashboard after a short delay
-        setTimeout(() => {
-          navigate(redirectPath);
-        }, 1500);
+        // Redirect to user dashboard immediately
+        navigate(redirectPath);
       })
       .subscribe();
       
@@ -67,13 +65,13 @@ export const usePaymentFlow = ({
     };
   }, [isActivation, userId, paymentSubmitted, navigate, toast, redirectPath]);
 
-  // Add periodic role check for activation payments
+  // Add more frequent role check for activation payments
   useEffect(() => {
     let roleCheckInterval: number | null = null;
     
     // Only start checking if this is an activation payment and we're waiting
     if (isActivation && paymentSubmitted && !paymentCompleted && !paymentRejected && userId) {
-      console.log("Starting periodic role check for user:", userId);
+      console.log("Starting frequent role check for user:", userId);
       
       roleCheckInterval = window.setInterval(async () => {
         try {
@@ -91,15 +89,13 @@ export const usePaymentFlow = ({
             // Clear interval and redirect
             if (roleCheckInterval) clearInterval(roleCheckInterval);
             
-            // Add a short delay before redirecting to ensure the toast is visible
-            setTimeout(() => {
-              navigate(redirectPath);
-            }, 1500);
+            // Redirect immediately to ensure the user doesn't stay on the activation page
+            navigate(redirectPath);
           }
         } catch (error) {
           console.error("Error checking user role:", error);
         }
-      }, 5000); // Check every 5 seconds
+      }, 3000); // Check every 3 seconds (more frequent)
     }
     
     return () => {

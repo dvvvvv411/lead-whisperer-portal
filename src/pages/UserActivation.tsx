@@ -4,7 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Euro, Bitcoin, Check, CreditCard, AlertCircle } from "lucide-react";
+import { Euro, Bitcoin, Check, CreditCard, AlertCircle, Loader2 } from "lucide-react";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 
@@ -26,18 +26,32 @@ const UserActivation = () => {
 
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
-        fetchWallets();
-      } else {
-        // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
-        window.location.href = "/admin";
+      try {
+        const { data, error } = await supabase.auth.getUser();
+        if (error) throw error;
+        
+        if (data?.user) {
+          console.log("User found:", data.user.email);
+          setUser(data.user);
+          fetchWallets();
+        } else {
+          console.log("No user found, redirecting to login");
+          window.location.href = "/admin";
+        }
+      } catch (error: any) {
+        console.error("Error getting user:", error.message);
+        toast({
+          title: "Fehler",
+          description: "Es gab ein Problem beim Laden Ihrer Benutzerdaten.",
+          variant: "destructive"
+        });
+      } finally {
+        setLoading(false);
       }
     };
     
     getUser();
-  }, []);
+  }, [toast]);
 
   const fetchWallets = async () => {
     try {
@@ -57,9 +71,10 @@ const UserActivation = () => {
       
       console.log("Fetched wallets:", data);
       if (data) {
-        setWallets(data);
         if (data.length === 0) {
           setWalletError("Keine Zahlungsmethoden verfügbar. Bitte kontaktieren Sie den Support.");
+        } else {
+          setWallets(data);
         }
       }
     } catch (error: any) {
@@ -124,9 +139,14 @@ const UserActivation = () => {
     }
   };
 
+  const handleRetryWallets = () => {
+    fetchWallets();
+  };
+
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
+      <div className="flex flex-col justify-center items-center min-h-screen">
+        <Loader2 className="h-8 w-8 animate-spin text-primary mb-4" />
         <p>Wird geladen...</p>
       </div>
     );
@@ -172,14 +192,15 @@ const UserActivation = () => {
         </CardHeader>
         <CardContent>
           {walletsLoading ? (
-            <div className="text-center p-6 bg-gray-50 rounded-lg">
+            <div className="text-center p-6 bg-gray-50 rounded-lg flex flex-col items-center justify-center">
+              <Loader2 className="h-6 w-6 animate-spin text-primary mb-2" />
               <p>Zahlungsmethoden werden geladen...</p>
             </div>
           ) : walletError ? (
             <div className="text-center p-6 bg-red-50 rounded-lg">
               <AlertCircle className="h-6 w-6 text-red-500 mx-auto mb-2" />
               <p className="text-red-600">{walletError}</p>
-              <Button variant="outline" className="mt-4" onClick={fetchWallets}>
+              <Button variant="outline" className="mt-4" onClick={handleRetryWallets}>
                 Erneut versuchen
               </Button>
             </div>

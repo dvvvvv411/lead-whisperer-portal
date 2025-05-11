@@ -10,6 +10,7 @@ import {
   AlertDialogTitle
 } from "@/components/ui/alert-dialog";
 import { TrendingUpIcon } from "lucide-react";
+import { formatTradeDate } from "./simulation/simulationUtils";
 
 interface TradeResultDialogProps {
   open: boolean;
@@ -19,6 +20,10 @@ interface TradeResultDialogProps {
   profitAmount: number;
   profitPercentage: number;
   tradeAmount: number;
+  buyPrice?: number;
+  sellPrice?: number;
+  quantity?: number;
+  tradeDate?: Date;
 }
 
 const TradeResultDialog = ({
@@ -28,7 +33,11 @@ const TradeResultDialog = ({
   cryptoName,
   profitAmount,
   profitPercentage,
-  tradeAmount
+  tradeAmount,
+  buyPrice,
+  sellPrice,
+  quantity,
+  tradeDate = new Date()
 }: TradeResultDialogProps) => {
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
@@ -39,7 +48,7 @@ const TradeResultDialog = ({
 
   return (
     <AlertDialog open={open} onOpenChange={() => onClose()}>
-      <AlertDialogContent>
+      <AlertDialogContent className="max-w-md">
         <AlertDialogHeader>
           <AlertDialogTitle className="flex items-center text-green-600">
             <TrendingUpIcon className="mr-2 h-5 w-5" />
@@ -51,8 +60,32 @@ const TradeResultDialog = ({
                 <div className="font-medium">Kryptowährung:</div>
                 <div>{cryptoSymbol} ({cryptoName})</div>
                 
+                <div className="font-medium">Datum:</div>
+                <div>{formatTradeDate(tradeDate)}</div>
+                
                 <div className="font-medium">Handelsbetrag:</div>
                 <div>{formatCurrency(tradeAmount)}</div>
+                
+                {quantity && (
+                  <>
+                    <div className="font-medium">Menge:</div>
+                    <div>{quantity.toFixed(6)} {cryptoSymbol}</div>
+                  </>
+                )}
+                
+                {buyPrice && (
+                  <>
+                    <div className="font-medium">Kaufpreis:</div>
+                    <div>{formatCurrency(buyPrice)}</div>
+                  </>
+                )}
+                
+                {sellPrice && (
+                  <>
+                    <div className="font-medium">Verkaufspreis:</div>
+                    <div>{formatCurrency(sellPrice)}</div>
+                  </>
+                )}
                 
                 <div className="font-medium">Gewinn:</div>
                 <div className="text-green-600 font-bold">

@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { ZapIcon } from "lucide-react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
@@ -38,13 +37,16 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
   const [simulationOpen, setSimulationOpen] = useState(false);
   
   // State for trade result dialog
-  const [resultDialogOpen, setResultDialogOpen] = useState(false);
   const [tradeResult, setTradeResult] = useState({
     cryptoSymbol: "",
     cryptoName: "",
     profitAmount: 0,
     profitPercentage: 0,
-    tradeAmount: 0
+    tradeAmount: 0,
+    buyPrice: 0,
+    sellPrice: 0,
+    quantity: 0,
+    tradeDate: new Date()
   });
   
   // Use a ref to track dialog closing to prevent race conditions
@@ -80,7 +82,7 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
     }
   }, [executeSingleTrade]);
   
-  // Handle simulation completion
+  // Handle simulation completion with updated trade result details
   const handleSimulationComplete = useCallback(async (success: boolean, selectedCrypto?: any) => {
     console.log("Simulation completed, success:", success, "selected crypto:", selectedCrypto);
     
@@ -103,13 +105,17 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         const tradeResult = await completeTradeAfterSimulation();
         
         if (tradeResult && typeof tradeResult === 'object' && 'success' in tradeResult && tradeResult.success) {
-          // Prepare data for result dialog
+          // Prepare data for result dialog with new detailed information
           setTradeResult({
             cryptoSymbol: tradeResult.crypto?.symbol || selectedCrypto?.symbol || "BTC",
             cryptoName: tradeResult.crypto?.name || selectedCrypto?.name || "Bitcoin",
             profitAmount: tradeResult.profit || 0,
             profitPercentage: tradeResult.profitPercentage || 0,
-            tradeAmount: tradeResult.tradeAmount || 0
+            tradeAmount: tradeResult.tradeAmount || 0,
+            buyPrice: tradeResult.buyPrice || 0,
+            sellPrice: tradeResult.sellPrice || 0,
+            quantity: tradeResult.quantity || 0,
+            tradeDate: new Date()
           });
           
           // Show result dialog
@@ -221,6 +227,10 @@ const AITradingBot = ({ userId, userCredit = 0, onTradeExecuted }: AITradingBotP
         profitAmount={tradeResult.profitAmount}
         profitPercentage={tradeResult.profitPercentage}
         tradeAmount={tradeResult.tradeAmount}
+        buyPrice={tradeResult.buyPrice}
+        sellPrice={tradeResult.sellPrice}
+        quantity={tradeResult.quantity}
+        tradeDate={tradeResult.tradeDate}
       />
     </Card>
   );

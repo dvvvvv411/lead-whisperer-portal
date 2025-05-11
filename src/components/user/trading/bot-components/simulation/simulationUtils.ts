@@ -53,3 +53,26 @@ export const selectRandomCrypto = (cryptoData: any[]) => {
 export const generateProfitPercentage = () => {
   return 5 + Math.random() * 5; // Between 5% and 10%
 };
+
+// Calculate buy price based on current price and profit percentage
+export const calculateBuyPrice = (currentPrice: number, profitPercentage: number) => {
+  // If we want to make X% profit selling at current price, 
+  // we need to buy at a price that is X% lower
+  return currentPrice / (1 + (profitPercentage / 100));
+};
+
+// Calculate profit amount based on investment amount and profit percentage
+export const calculateProfit = (investmentAmount: number, profitPercentage: number) => {
+  return investmentAmount * (profitPercentage / 100);
+};
+
+// Format a date for display
+export const formatTradeDate = (date: Date) => {
+  return new Intl.DateTimeFormat('de-DE', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+};

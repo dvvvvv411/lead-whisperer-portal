@@ -20,6 +20,7 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
   const navigate = useNavigate();
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [redirectChecked, setRedirectChecked] = useState(false);
   
   // Use the credit hook to check user's credit
   const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(user?.id);
@@ -85,68 +86,13 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
         
         // Refresh credit
         await fetchUserCredit();
-        
-        // Check if user now has sufficient credit
-        if (userCredit >= CREDIT_ACTIVATION_THRESHOLD) {
-          console.log(`User now has sufficient credit (${userCredit}€), can access dashboard`);
-          
-          // Show notification if on activation page
-          if (window.location.pathname.includes('/aktivierung')) {
-            toast({
-              title: "Konto aktiviert",
-              description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Sie werden zum Dashboard weitergeleitet.`
-            });
-            
-            // Redirect to user dashboard
-            setTimeout(() => {
-              navigate('/nutzer');
-            }, 1500);
-          }
-        }
       })
       .subscribe();
       
     return () => {
       supabase.removeChannel(creditSubscription);
     };
-  }, [user?.id, navigate, toast, fetchUserCredit, userCredit]);
-
-  // Set up periodic credit check 
-  useEffect(() => {
-    let creditCheckInterval: number | null = null;
-    
-    // If we're on the activation page with a user but not redirecting to activation
-    // (meaning we're already on the activation page), then check periodically for credit changes
-    if (user && !redirectToActivation && window.location.pathname.includes('/aktivierung')) {
-      console.log("Setting up credit status check interval");
-      
-      creditCheckInterval = window.setInterval(async () => {
-        if (!user?.id) return;
-        
-        await fetchUserCredit();
-        
-        if (userCredit >= CREDIT_ACTIVATION_THRESHOLD) {
-          console.log(`User now has sufficient credit (${userCredit}€), can access dashboard`);
-          
-          // If credit status changed, show a notification and redirect
-          toast({
-            title: "Konto aktiviert",
-            description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Sie werden zum Dashboard weitergeleitet.`
-          });
-          
-          setTimeout(() => {
-            navigate('/nutzer');
-          }, 1500);
-        }
-      }, 5000); // Check every 5 seconds
-    }
-    
-    return () => {
-      if (creditCheckInterval) {
-        clearInterval(creditCheckInterval);
-      }
-    };
-  }, [user, redirectToActivation, navigate, toast, fetchUserCredit, userCredit]);
+  }, [user?.id, fetchUserCredit]);
 
   useEffect(() => {
     const getUser = async () => {
@@ -177,20 +123,6 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
           const paymentStatus = await checkPendingPayments(data.user.id);
           console.log("User payment status in UserAuthCheck:", paymentStatus);
           
-          // If user has sufficient credit, always redirect to the user dashboard if they try to access activation page
-          if (!creditLoading && userCredit >= CREDIT_ACTIVATION_THRESHOLD && window.location.pathname.includes('/aktivierung')) {
-            console.log("User has sufficient credit, redirecting to dashboard from activation page");
-            navigate('/nutzer');
-            return;
-          }
-          
-          // If user doesn't have sufficient credit and redirectToActivation is true, redirect to activation page
-          if (!creditLoading && userCredit < CREDIT_ACTIVATION_THRESHOLD && redirectToActivation && !window.location.pathname.includes('/aktivierung')) {
-            console.log("User doesn't have sufficient credit, redirecting to activation page");
-            navigate('/nutzer/aktivierung');
-            return;
-          }
-          
           // Pass user data to parent component
           const userData = {
             ...data.user,
@@ -218,7 +150,28 @@ const UserAuthCheck = ({ children, onUserLoaded, redirectToActivation = true }: 
     };
     
     getUser();
-  }, [toast, navigate, onUserLoaded, redirectToActivation, userCredit, creditLoading]);
+  }, [toast, navigate, onUserLoaded, userCredit]);
+
+  // Check redirect only once after user and credit are loaded
+  useEffect(() => {
+    if (!user?.id || creditLoading || redirectChecked) return;
+
+    // Check if we need to redirect based on credit status
+    if (redirectToActivation && userCredit < CREDIT_ACTIVATION_THRESHOLD && !window.location.pathname.includes('/aktivierung')) {
+      console.log("User doesn't have sufficient credit, redirecting to activation page");
+      navigate('/nutzer/aktivierung');
+    } else if (userCredit >= CREDIT_ACTIVATION_THRESHOLD && window.location.pathname.includes('/aktivierung')) {
+      console.log("User has sufficient credit, redirecting to dashboard from activation page");
+      toast({
+        title: "Konto aktiviert",
+        description: "Ihr Konto wurde aktiviert! Sie werden zum Dashboard weitergeleitet."
+      });
+      navigate('/nutzer');
+    }
+    
+    // Mark this check as done
+    setRedirectChecked(true);
+  }, [user?.id, navigate, toast, redirectToActivation, userCredit, creditLoading, redirectChecked]);
   
   if (loading || creditLoading) {
     return (

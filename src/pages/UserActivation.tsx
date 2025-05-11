@@ -22,6 +22,7 @@ const UserActivation = () => {
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [isCheckingCredit, setIsCheckingCredit] = useState(false);
+  const [redirectedToUser, setRedirectedToUser] = useState(false);
   
   // Use the user credit hook to check if the user has enough credit
   const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(user?.id);
@@ -34,15 +35,17 @@ const UserActivation = () => {
     isActivation: true
   });
 
-  // Immediately check if user already has enough credit when component mounts
+  // Only check once if user already has enough credit when component mounts
   useEffect(() => {
     const checkCreditOnLoad = async () => {
       try {
+        if (redirectedToUser) return;
+        
         setIsCheckingCredit(true);
         const { data: userData } = await supabase.auth.getUser();
         
         if (userData?.user) {
-          // If we have user data but credit is still loading, wait for it
+          // If we have user data and credit is loaded, check it
           if (user?.id && !creditLoading && userCredit !== null) {
             console.log("Initial credit check on activation page:", userCredit);
             
@@ -52,6 +55,8 @@ const UserActivation = () => {
                 title: "Konto bereits aktiviert",
                 description: "Ihr Konto ist bereits aktiviert. Sie werden zum Dashboard weitergeleitet."
               });
+              
+              setRedirectedToUser(true);
               navigate('/nutzer');
             }
           }
@@ -64,19 +69,7 @@ const UserActivation = () => {
     };
     
     checkCreditOnLoad();
-  }, [navigate, toast, user?.id, userCredit, creditLoading]);
-
-  // Regular check if user already has enough credit
-  useEffect(() => {
-    if (user?.id && !creditLoading && userCredit !== null) {
-      if (userCredit >= CREDIT_ACTIVATION_THRESHOLD) {
-        console.log(`User has sufficient credit (${userCredit}€), redirecting from activation page`);
-        navigate('/nutzer');
-      } else {
-        console.log(`User credit (${userCredit}€) is below threshold (${CREDIT_ACTIVATION_THRESHOLD}€), staying on activation page`);
-      }
-    }
-  }, [user?.id, navigate, userCredit, creditLoading]);
+  }, [navigate, toast, user?.id, userCredit, creditLoading, redirectedToUser]);
 
   const handleUserLoaded = (userData: any) => {
     setUser(userData);

@@ -14,6 +14,7 @@ const User = () => {
   const [user, setUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [authChecked, setAuthChecked] = useState(false);
+  const [redirectChecked, setRedirectChecked] = useState(false);
 
   // Use the credit hook with a key that forces refresh when coming back to this page
   const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(user?.id);
@@ -26,6 +27,7 @@ const User = () => {
     }
   }, [user?.id, fetchUserCredit]);
 
+  // Check authentication once
   useEffect(() => {
     const getUser = async () => {
       try {
@@ -36,8 +38,6 @@ const User = () => {
         if (data?.user) {
           console.log("User found on /nutzer page:", data.user.id);
           setUser(data.user);
-          
-          // Once user is set, userCredit will automatically load via the hook
         } else {
           // If no user is logged in, redirect to login page
           console.log("No user found, redirecting to login");
@@ -57,43 +57,23 @@ const User = () => {
     getUser();
   }, [navigate]);
 
-  // Check if user has enough credit after credit is loaded
+  // Check credit threshold only once after user and credit are loaded
   useEffect(() => {
-    if (!user?.id || creditLoading) return;
+    if (!user?.id || creditLoading || redirectChecked) return;
     
     console.log("Checking user credit for activation:", userCredit);
     
     // If user has less than the threshold, redirect to activation page
-    if (userCredit < CREDIT_ACTIVATION_THRESHOLD) {
+    if (userCredit !== null && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
       console.log(`User credit (${userCredit}€) is below threshold (${CREDIT_ACTIVATION_THRESHOLD}€), redirecting to activation page`);
       navigate("/nutzer/aktivierung");
-      return;
+    } else {
+      console.log(`User credit (${userCredit}€) is adequate, staying on dashboard page`);
     }
     
-    console.log(`User credit (${userCredit}€) is above threshold (${CREDIT_ACTIVATION_THRESHOLD}€), access granted`);
-  }, [userCredit, creditLoading, user?.id, navigate]);
-
-  // Periodically check credit status to ensure user is still allowed to access the page
-  useEffect(() => {
-    if (!user?.id) return;
-    
-    const creditCheckInterval = setInterval(async () => {
-      try {
-        // Re-fetch credit to ensure it's current
-        await fetchUserCredit();
-        
-        // If credit falls below threshold, redirect to activation page
-        if (userCredit < CREDIT_ACTIVATION_THRESHOLD) {
-          console.log("User credit has fallen below threshold, redirecting to activation page");
-          navigate("/nutzer/aktivierung");
-        }
-      } catch (error) {
-        console.error("Error checking credit status:", error);
-      }
-    }, 60000); // Check every minute
-    
-    return () => clearInterval(creditCheckInterval);
-  }, [user?.id, userCredit, navigate, fetchUserCredit]);
+    // Mark this check as done
+    setRedirectChecked(true);
+  }, [userCredit, creditLoading, user?.id, navigate, redirectChecked]);
 
   // Early return to prevent any content rendering before verification is complete
   if (loading || creditLoading) {
@@ -104,13 +84,6 @@ const User = () => {
     );
   }
 
-  // Second security check - if auth is checked and user doesn't have enough credit, redirect
-  if (authChecked && userCredit < CREDIT_ACTIVATION_THRESHOLD) {
-    console.log("Auth checked and credit below threshold, redirecting");
-    navigate("/nutzer/aktivierung");
-    return null;
-  }
-
   const handleCreditUpdated = () => {
     console.log("Refreshing user credit...");
     fetchUserCredit();
@@ -118,8 +91,8 @@ const User = () => {
 
   console.log("Current user credit:", userCredit);
 
-  // Only render the dashboard if user has sufficient credit
-  return userCredit >= CREDIT_ACTIVATION_THRESHOLD ? (
+  // Only render the dashboard if authentication is checked
+  return authChecked ? (
     <>
       <UserDashboard 
         user={user} 

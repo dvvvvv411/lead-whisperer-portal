@@ -134,9 +134,10 @@ const UserDeposit = () => {
             <LevelProgressChart currentBalance={userCredit || 0} />
           </Card>
           
-          {/* Right section - Deposit form */}
-          <div className="h-full flex flex-col">
-            <Card className="casino-card overflow-hidden h-full flex-1">
+          {/* Right section - Two stacked cards */}
+          <div className="flex flex-col space-y-6">
+            {/* Deposit Form Card */}
+            <Card className="casino-card overflow-hidden flex-1">
               {paymentSubmitted ? (
                 <PaymentStatusView paymentId={paymentId} />
               ) : (
@@ -147,7 +148,7 @@ const UserDeposit = () => {
                       Einzahlung durchführen
                     </h2>
                   </div>
-                  <div className="flex-1 p-6">
+                  <div className="p-5">
                     <DepositForm 
                       wallets={wallets}
                       walletsLoading={walletsLoading}
@@ -160,32 +161,12 @@ const UserDeposit = () => {
               )}
             </Card>
             
-            {/* Visual balancer card to match height with level chart */}
-            {!paymentSubmitted && (
-              <Card className="casino-card mt-4 p-4 border border-gold/20 bg-gradient-to-r from-casino-card to-casino-highlight">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <p className="text-sm text-muted-foreground">Schnellere Verifizierung mit</p>
-                    <h3 className="font-semibold">Bitcoin & Ethereum</h3>
-                  </div>
-                  <div className="flex gap-3">
-                    <div className="p-2 bg-black/30 rounded-full">
-                      <CircleDollarSign className="h-5 w-5 text-gold" />
-                    </div>
-                    <div className="p-2 bg-black/30 rounded-full">
-                      <Wallet className="h-5 w-5 text-accent1-light" />
-                    </div>
-                  </div>
-                </div>
-              </Card>
-            )}
+            {/* Deposit History Card */}
+            <Card className="casino-card p-6">
+              <DepositHistory userId={user?.id} />
+            </Card>
           </div>
         </div>
-        
-        {/* Transaction history section */}
-        <Card className="casino-card mt-6 p-6">
-          <DepositHistory userId={user?.id} />
-        </Card>
       </div>
     </UserAuthCheck>
   );

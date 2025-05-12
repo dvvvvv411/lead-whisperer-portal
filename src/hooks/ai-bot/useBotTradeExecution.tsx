@@ -1,10 +1,10 @@
-
 import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { executeAITrade } from "./executeBotTrade";
 import { BotSettings, BotStatus } from "./types";
 import { checkCanExecuteTrade } from "./botTradeUtils";
 import { useCryptos } from "@/hooks/useCryptos";
+import { generateTradeSimulationData } from "@/components/user/trading/bot-components/simulation/simulationUtils";
 
 export const useBotTradeExecution = (
   userId?: string,
@@ -18,6 +18,9 @@ export const useBotTradeExecution = (
   const [isSimulating, setIsSimulating] = useState(false);
   const simulationInProgressRef = useRef(false);
   const { cryptos, fetchCryptos } = useCryptos();
+  
+  // Store the simulated trade data for consistent display throughout the process
+  const simulatedTradeDataRef = useRef<any>(null);
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
@@ -69,6 +72,15 @@ export const useBotTradeExecution = (
     // Make sure we have fresh crypto data
     await fetchCryptos();
     
+    // Pre-generate the trade simulation data to keep it consistent throughout the process
+    if (cryptos && cryptos.length > 0 && settings.maxTradeAmount > 0) {
+      simulatedTradeDataRef.current = generateTradeSimulationData(
+        cryptos,
+        settings.maxTradeAmount
+      );
+      console.log("Pre-generated simulated trade data:", simulatedTradeDataRef.current);
+    }
+    
     // Set simulation in progress
     simulationInProgressRef.current = true;
     setIsSimulating(true);
@@ -82,7 +94,7 @@ export const useBotTradeExecution = (
     
     console.log("Trade can be executed, simulation starting...");
     return true;
-  }, [userId, userCredit, settings, status, updateStatus, toast, fetchCryptos]);
+  }, [userId, userCredit, settings, status, updateStatus, toast, fetchCryptos, cryptos]);
   
   // Complete trade after simulation is done
   const completeTradeAfterSimulation = useCallback(async () => {
@@ -115,10 +127,45 @@ export const useBotTradeExecution = (
     try {
       console.log("Executing AI trade with:", { userId, userCredit, riskLevel: settings.riskLevel, maxTradeAmount: settings.maxTradeAmount });
       
+      // Use our pre-generated trade data if available
+      if (simulatedTradeDataRef.current) {
+        console.log("Using pre-generated trade data:", simulatedTradeDataRef.current);
+        
+        const tradeData = simulatedTradeDataRef.current;
+        
+        // Simulate a successful API response with our pregenerated data
+        const result = {
+          success: true,
+          crypto: tradeData.crypto,
+          strategy: tradeData.strategy,
+          tradeAmount: tradeData.tradeDetails.tradeAmount,
+          buyPrice: tradeData.tradeDetails.buyPrice,
+          sellPrice: tradeData.tradeDetails.sellPrice,
+          quantity: tradeData.tradeDetails.quantity,
+          profit: tradeData.tradeDetails.profitAmount,
+          profitPercentage: tradeData.tradeDetails.profitPercentage
+        };
+        
+        // Log the result before returning
+        console.log("Trade execution result (from simulated data):", result);
+        
+        // Update status with trade info
+        if (updateStatus && status) {
+          updateStatus({
+            statusMessage: "Letzter Trade erfolgreich",
+            lastSuccessfulTrade: new Date(),
+            totalProfitAmount: (status.totalProfitAmount || 0) + result.profit,
+            tradesExecuted: (status.tradesExecuted || 0) + 1
+          });
+        }
+        
+        // Note: Don't reset simulation state here - let the dialog handle that
+        return result;
+      }
+      
+      // Fallback to the real API call if no pre-generated data is available
       // Make sure we have fresh crypto data before executing the trade
-      if (cryptos && cryptos.length > 0) {
-        console.log(`Using ${cryptos.length} cryptos from cache for trade execution`);
-      } else {
+      if (cryptos && cryptos.length === 0) {
         await fetchCryptos();
         console.log("Fetched fresh crypto data for trade execution");
       }
@@ -145,13 +192,8 @@ export const useBotTradeExecution = (
           });
         }
         
-        // Call the onTradeExecuted callback if provided
-        if (onTradeExecuted) {
-          console.log("Calling onTradeExecuted to refresh data");
-          onTradeExecuted();
-        }
-        
-        console.log("Trade completed successfully:", result);
+        // Call the onTradeExecuted callback when the result dialog is closed
+        // (this is handled in the result dialog close handler)
       } else {
         // Update status with failure
         if (updateStatus) {
@@ -161,6 +203,10 @@ export const useBotTradeExecution = (
         }
         
         console.log("Trade failed:", result.error);
+        
+        // Reset simulation state
+        simulationInProgressRef.current = false;
+        setIsSimulating(false);
       }
       
       return result;
@@ -175,12 +221,11 @@ export const useBotTradeExecution = (
         });
       }
       
+      // Reset simulation state
+      simulationInProgressRef.current = false;
+      setIsSimulating(false);
+      
       return { success: false, error: error.message || "Unerwarteter Fehler" };
-    } finally {
-      console.log("Trade execution completed, resetting simulation state");
-      // IMPORTANT: Don't reset the simulation state here, let the dialog handle it
-      // simulationInProgressRef.current = false;
-      // setIsSimulating(false);
     }
   }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, cryptos, fetchCryptos]);
   

@@ -100,7 +100,7 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Enhanced CTA button with pulse and glow effect - fixing size for consistency */}
+        {/* Enhanced CTA button - fixing width to be consistent in mobile view */}
         <motion.div
           whileHover={{ scale: isMobile ? 1 : 1.05 }}
           whileTap={{ scale: 0.98 }}
@@ -141,7 +141,7 @@ const HeroContent = () => {
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}
           variant="outline"
-          className="w-full border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
+          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
         >
           Mehr erfahren
         </Button>

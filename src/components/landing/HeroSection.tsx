@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Bitcoin, Bot, Star, Sparkles } from "lucide-react";
@@ -31,7 +30,7 @@ const cryptoIcons = [
     icon: (
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="24" height="24">
         <circle cx="16" cy="16" r="16" fill="#23292F" />
-        <path d="M22.1 9.7c.6 0 1.1.2 1.5.6.4.3.6.8.6 1.4 0 .6-.2 1-.6 1.4-.4.4-.9.6-1.5.6s-1.1-.2-1.5-.6c-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .6-1.4.4-.4.9-.6 1.5-.6zm-12.2 0c.6 0 1.1.2 1.5.6.4.3.6.8.6 1.4 0 .6-.2 1-.6 1.4-.4.4-.9.6-1.5.6s-1.1-.2-1.5-.6c-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .6-1.4.4-.4.9-.6 1.5-.6zm6.1 3.2c.5 0 1 .1 1.4.4.4.3.6.7.6 1.1 0 .4-.2.8-.6 1.1-.4.3-.9.4-1.4.4-.5 0-1-.1-1.4-.4-.4-.3-.6-.7-.6-1.1 0-.4.2-.8.6-1.1.4-.3.9-.4 1.4-.4zm9.9 4.1c.4.4.5.9.5 1.5s-.1 1.1-.5 1.5c-.3.4-.8.6-1.3.6-.5 0-1-.2-1.3-.6-.4-.4-.5-.9-.5-1.5s.1-1.1.5-1.5c.3-.4.8-.6 1.3-.6.6 0 1 .2 1.3.6zm-3.1-4.9c-.3.4-.5.8-.5 1.3 0 .5.2.9.5 1.3.3.4.7.5 1.2.5.5 0 .9-.2 1.2-.5.3-.4.5-.8.5-1.3 0-.5-.2-.9-.5-1.3-.3-.4-.7-.5-1.2-.5-.4 0-.9.2-1.2.5zm-8.1 6.4c-.3.4-.5.8-.5 1.3 0 .5.2.9.5 1.3.3.4.7.5 1.2.5.5 0 .9-.2 1.2-.5.3-.4.5-.8.5-1.3 0-.5-.2-.9-.5-1.3-.3-.4-.7-.5-1.2-.5-.4 0-.9.2-1.2.5zm8.4-1.4c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zM10 17c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zm9.8 0c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zm-8.2-5.7c-.3.3-.4.7-.4 1.1 0 .4.1.8.4 1.1.3.3.6.4 1.1.4.4 0 .8-.1 1.1-.4.3-.3.4-.7.4-1.1 0-.4-.1-.8-.4-1.1-.3-.3-.6-.4-1.1-.4-.4 0-.8.1-1.1.4z" fill="#23292F" />
+        <path d="M22.1 9.7c.6 0 1.1.2 1.5.6.4.3.6.8.6 1.4 0 .6-.2 1-.6 1.4-.4.4-.9.6-1.5.6s-1.1-.2-1.5-.6c-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .6-1.4.4-.4.9-.6 1.5-.6zm-12.2 0c.6 0 1.1.2 1.5.6.4.3.6.8.6 1.4 0 .6-.2 1-.6 1.4-.4.4-.9.6-1.5.6s-1.1-.2-1.5-.6c-.4-.4-.6-.8-.6-1.4 0-.6.2-1 .6-1.4.4-.4.9-.6 1.5-.6zm6.1 3.2c.5 0 1 .1 1.4.4.4.3.6.7.6 1.1 0 .4-.2.8-.6 1.1-.4.3-.9.4-1.4.4-.5 0-1-.1-1.4-.4-.4-.3-.6-.7-.6-1.1 0-.4.2-.8.6-1.1.4-.3.9-.4 1.4-.4zm9.9 4.1c.4.4.5.9.5 1.5s-.1 1.1-.5 1.5c-.3.4-.8.6-1.3.6-.5 0-1-.2-1.3-.6-.4-.4-.5-.9-.5-1.5s.1-1.1.5-1.5c.3-.4.8-.6 1.3-.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zM10 17c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zm9.8 0c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6z" fill="#23292F" />
         <path fill="#fff" d="M17.1 12.9c.5 0 1 .1 1.4.4.4.3.6.7.6 1.1 0 .4-.2.8-.6 1.1-.4.3-.9.4-1.4.4-.5 0-1-.1-1.4-.4-.4-.3-.6-.7-.6-1.1 0-.4.2-.8.6-1.1.4-.3.9-.4 1.4-.4zm9.3 5.6c-.3.4-.8.6-1.3.6-.5 0-1-.2-1.3-.6-.3-.4-.5-.9-.5-1.4s.2-1 .5-1.4c.3-.4.8-.6 1.3-.6.5 0 1 .2 1.3.6.3.4.5.9.5 1.4s-.2 1-.5 1.4zM10 17c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6zm1-5.8c-.3.3-.4.7-.4 1.1 0 .4.1.8.4 1.1.3.3.6.4 1.1.4.4 0 .8-.1 1.1-.4.3-.3.4-.7.4-1.1 0-.4-.1-.8-.4-1.1-.3-.3-.6-.4-1.1-.4-.5.1-.8.2-1.1.4zm8.8 5.8c-.3.4-.5.9-.5 1.4s.2 1 .5 1.4c.3.4.8.6 1.3.6.5 0 .9-.2 1.3-.6.3-.4.5-.9.5-1.4s-.2-1-.5-1.4c-.3-.4-.8-.6-1.3-.6-.5 0-.9.2-1.3.6z" />
       </svg>
     ),
@@ -177,29 +176,23 @@ const HeroSection = () => {
                   Revolutioniere dein
                 </motion.span>
                 
-                {/* Updated gold animated text with horizontal gradient transition */}
+                {/* Fixed gold animated text with horizontal gradient animation */}
                 <motion.span 
-                  className="block relative"
+                  className="block gold-gradient-text relative"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
+                  style={{
+                    backgroundImage: "linear-gradient(90deg, #FFD700, #FEC6A1, #FFD700)",
+                    backgroundSize: "200% auto",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    color: "transparent",
+                    animation: "goldGradientShift 3s linear infinite"
+                  }}
                 >
-                  <span className="text-gold">Krypto-Trading</span>
-                  <motion.div 
-                    className="absolute inset-0 bg-gradient-to-r from-[#FFD700] to-[#FEC6A1] bg-clip-text text-transparent"
-                    animate={{ 
-                      opacity: [0, 1, 0],
-                      x: [-10, 200]
-                    }}
-                    transition={{ 
-                      repeat: Infinity,
-                      duration: 3,
-                      repeatDelay: 1,
-                      ease: "easeInOut"
-                    }}
-                  >
-                    Krypto-Trading
-                  </motion.div>
+                  Krypto-Trading
                 </motion.span>
                 
                 <motion.span 
@@ -352,47 +345,6 @@ const HeroSection = () => {
                     opacity="0.15"
                     animate={{ d: `M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1].x},50 L${chartData[0].x},50 Z` }}
                     transition={{ duration: 0.5, ease: "easeInOut" }}
-                  />
-                  
-                  {/* Small glowing dots along the path */}
-                  {chartData.map((point, i) => (
-                    <motion.circle 
-                      key={i}
-                      cx={point.x} 
-                      cy={point.y} 
-                      r="0.7"
-                      fill="#FFD700"
-                      animate={{ 
-                        cy: point.y,
-                        opacity: i % 2 === 0 ? [0.5, 1, 0.5] : [1, 0.5, 1]
-                      }}
-                      transition={{ 
-                        duration: 2 + (i * 0.2),
-                        repeat: Infinity,
-                        ease: "easeInOut"
-                      }}
-                    />
-                  ))}
-                  
-                  {/* Activity indicator pulse rings */}
-                  <motion.circle 
-                    cx={chartData[Math.floor(chartData.length / 2)].x} 
-                    cy={chartData[Math.floor(chartData.length / 2)].y}
-                    r="3" 
-                    fill="none"
-                    stroke="#FFD700"
-                    strokeWidth="0.3"
-                    animate={{ 
-                      opacity: [0.8, 0],
-                      r: [1, 10],
-                      cx: chartData[Math.floor(chartData.length / 2)].x,
-                      cy: chartData[Math.floor(chartData.length / 2)].y
-                    }}
-                    transition={{
-                      repeat: Infinity,
-                      duration: 2,
-                      ease: "easeOut"
-                    }}
                   />
                   
                   {/* Enhanced gradients */}

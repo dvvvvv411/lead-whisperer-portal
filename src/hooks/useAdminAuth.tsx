@@ -2,11 +2,13 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
 
 export function useAdminAuth() {
   const [user, setUser] = useState<any>(null);
   const [authLoading, setAuthLoading] = useState(true);
   const navigate = useNavigate();
+  const { toast } = useToast();
 
   // Benutzer-Session abrufen und auf Auth-Änderungen reagieren
   useEffect(() => {
@@ -22,7 +24,7 @@ export function useAdminAuth() {
       } else if (event === 'SIGNED_OUT') {
         console.log("useAdminAuth: User signed out");
         setUser(null);
-        navigate("/admin");
+        navigate("/");
       }
     });
     
@@ -66,9 +68,18 @@ export function useAdminAuth() {
     try {
       console.log("useAdminAuth: Logging out");
       await supabase.auth.signOut();
-      navigate("/admin");
+      toast({
+        title: "Erfolgreich abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet."
+      });
+      navigate("/");
     } catch (error) {
       console.error("Fehler beim Abmelden:", error);
+      toast({
+        title: "Fehler beim Abmelden",
+        description: "Es gab ein Problem beim Abmelden.",
+        variant: "destructive"
+      });
     }
   };
 

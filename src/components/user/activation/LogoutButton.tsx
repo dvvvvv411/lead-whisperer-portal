@@ -19,7 +19,7 @@ const LogoutButton = () => {
         title: "Abgemeldet",
         description: "Sie wurden erfolgreich abgemeldet."
       });
-      navigate("/admin");
+      navigate("/");
     } catch (error: any) {
       console.error("Error signing out:", error.message);
       toast({

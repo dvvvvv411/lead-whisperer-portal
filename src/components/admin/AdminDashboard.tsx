@@ -15,11 +15,12 @@ import {
   CreditCard,
   ArrowUpRight
 } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export const AdminDashboard = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -42,7 +43,7 @@ export const AdminDashboard = () => {
         title: "Erfolgreich abgemeldet",
         description: "Sie wurden erfolgreich abgemeldet."
       });
-      window.location.href = "/admin";
+      navigate("/");
     } catch (error: any) {
       console.error("Fehler beim Abmelden:", error);
       toast({

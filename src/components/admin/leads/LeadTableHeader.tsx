@@ -2,6 +2,9 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { useToast } from "@/hooks/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 
 interface LeadTableHeaderProps {
   userEmail: string | undefined;
@@ -14,6 +17,26 @@ export const LeadTableHeader = ({
   onLogout,
   onRefresh 
 }: LeadTableHeaderProps) => {
+  const navigate = useNavigate();
+  const { toast } = useToast();
+
+  const handleLogout = async () => {
+    try {
+      await supabase.auth.signOut();
+      toast({
+        title: "Erfolgreich abgemeldet",
+        description: "Sie wurden erfolgreich abgemeldet."
+      });
+      navigate("/");
+    } catch (error: any) {
+      toast({
+        title: "Fehler beim Abmelden",
+        description: error.message || "Ein unerwarteter Fehler ist aufgetreten.",
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <motion.div 
       className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
@@ -38,7 +61,7 @@ export const LeadTableHeader = ({
         </Button>
         <Button 
           variant="destructive" 
-          onClick={onLogout}
+          onClick={handleLogout}
           className="bg-red-900/50 border border-red-500/30 hover:bg-red-800/30 text-red-300"
         >
           Ausloggen

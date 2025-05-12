@@ -4,6 +4,7 @@ import { LogOut } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useNavigate } from "react-router-dom";
 
 interface LogoutButtonProps {
   className?: string;
@@ -11,6 +12,7 @@ interface LogoutButtonProps {
 
 const LogoutButton = ({ className }: LogoutButtonProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   
   const handleLogout = async () => {
     try {
@@ -19,7 +21,7 @@ const LogoutButton = ({ className }: LogoutButtonProps) => {
         title: "Erfolgreich abgemeldet",
         description: "Sie wurden erfolgreich abgemeldet."
       });
-      window.location.href = "/admin";
+      navigate("/");
     } catch (error: any) {
       toast({
         title: "Fehler beim Abmelden",

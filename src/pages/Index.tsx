@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
+import HeroSection from "@/components/landing/hero/HeroSection";
 import CtaSection from "@/components/landing/CtaSection";
 import ContactSection from "@/components/landing/ContactSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";

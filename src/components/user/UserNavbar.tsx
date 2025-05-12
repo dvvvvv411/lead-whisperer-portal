@@ -7,7 +7,6 @@ import DesktopNavigation from "./navbar/DesktopNavigation";
 import MobileNavigation from "./navbar/MobileNavigation";
 import UserCreditDisplay from "./navbar/UserCreditDisplay";
 import LogoutButton from "./navbar/LogoutButton";
-import { useIsMobile } from "@/hooks/use-mobile";
 
 interface UserNavbarProps {
   userId?: string;
@@ -18,7 +17,6 @@ interface UserNavbarProps {
 const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(userId);
-  const isMobile = useIsMobile();
 
   useEffect(() => {
     setIsMounted(true);
@@ -39,26 +37,24 @@ const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
         {/* Desktop Navigation */}
         <DesktopNavigation />
         
-        {/* User info and controls - only show on desktop */}
-        {!isMobile && (
-          <div className="flex items-center gap-4">
-            {/* Credit display with animation */}
-            <UserCreditDisplay userCredit={userCredit} loading={creditLoading} />
-            
-            {/* User email (visible on larger screens) */}
-            {userEmail && (
-              <div className="hidden md:block text-sm text-muted-foreground">
-                {userEmail}
-              </div>
-            )}
-            
-            {/* Logout button */}
-            <LogoutButton />
-          </div>
-        )}
+        {/* User info and controls */}
+        <div className="flex items-center gap-4">
+          {/* Credit display with animation */}
+          <UserCreditDisplay userCredit={userCredit} loading={creditLoading} />
+          
+          {/* User email (visible on larger screens) */}
+          {userEmail && (
+            <div className="hidden md:block text-sm text-muted-foreground">
+              {userEmail}
+            </div>
+          )}
+          
+          {/* Logout button */}
+          <LogoutButton />
+        </div>
       </div>
       
-      {/* Mobile navigation with hamburger menu */}
+      {/* Mobile navigation */}
       <MobileNavigation />
     </header>
   );

@@ -39,6 +39,8 @@ const TradeResultDialog = ({
   quantity,
   tradeDate = new Date()
 }: TradeResultDialogProps) => {
+  console.log("TradeResultDialog render - open:", open);
+
   // Animation states
   const [showConfetti, setShowConfetti] = useState(false);
   const [animateProfit, setAnimateProfit] = useState(false);
@@ -49,7 +51,18 @@ const TradeResultDialog = ({
   
   // Reset animations when dialog opens/closes
   useEffect(() => {
+    console.log("TradeResultDialog - open state changed to:", open);
+    
     if (open) {
+      // Log important properties for debugging
+      console.log("TradeResultDialog - Data:", {
+        cryptoSymbol,
+        cryptoName,
+        profitAmount,
+        profitPercentage,
+        tradeAmount
+      });
+      
       // Reset states
       setShowConfetti(false);
       setAnimateProfit(false);
@@ -87,7 +100,7 @@ const TradeResultDialog = ({
         clearInterval(counterInterval);
       };
     }
-  }, [open, profitAmount]);
+  }, [open, profitAmount, cryptoSymbol, cryptoName, profitPercentage, tradeAmount]);
   
   const formatCurrency = (amount: number) => {
     return new Intl.NumberFormat('de-DE', {
@@ -124,8 +137,16 @@ const TradeResultDialog = ({
     return <div className="confetti-container absolute inset-0 overflow-hidden pointer-events-none">{particles}</div>;
   };
 
+  // Force AlertDialog to re-render completely when open status changes
+  if (!open) {
+    return null;
+  }
+
   return (
-    <AlertDialog open={open} onOpenChange={() => onClose()}>
+    <AlertDialog open={open} onOpenChange={() => {
+      console.log("AlertDialog onOpenChange triggered, calling onClose");
+      onClose();
+    }}>
       <AlertDialogContent className="max-w-md bg-gradient-to-b from-casino-darker to-casino-card border border-gold/20 shadow-xl overflow-hidden">
         {renderConfetti()}
         
@@ -228,7 +249,10 @@ const TradeResultDialog = ({
         
         <AlertDialogFooter className="mt-4">
           <AlertDialogAction 
-            onClick={onClose}
+            onClick={() => {
+              console.log("Close button clicked");
+              onClose();
+            }}
             className="w-full bg-gradient-to-r from-gold to-accent1 hover:from-gold hover:to-gold text-black font-medium transition-all duration-300"
           >
             Schließen

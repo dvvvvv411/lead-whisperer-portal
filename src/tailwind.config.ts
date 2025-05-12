@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss"
 
 import { fontFamily } from "tailwindcss/defaultTheme"
@@ -56,6 +57,7 @@ const config: Config = {
         },
         "casino-card": "#131517",
         "casino-darker": "#0B0D0E",
+        "casino-dark": "#16181a", // Adding a slightly lighter card color for nested elements
         gold: "#FFD700",
         accent1: "#64CCC9",
       },
@@ -84,6 +86,14 @@ const config: Config = {
           "0%": { transform: "translateY(-10px)" },
           "100%": { transform: "translateY(100vh)" },
         },
+        "fade-in": {
+          "0%": { opacity: "0", transform: "translateY(10px)" },
+          "100%": { opacity: "1", transform: "translateY(0)" }
+        },
+        "scale-in": {
+          "0%": { transform: "scale(0.95)", opacity: "0" },
+          "100%": { transform: "scale(1)", opacity: "1" }
+        }
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -91,6 +101,8 @@ const config: Config = {
         "gradient-shift": "gradient-shift 3s ease infinite",
         "confetti": "confetti 5s ease-in-out forwards",
         "pulse": "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
+        "fade-in": "fade-in 0.3s ease-out",
+        "scale-in": "scale-in 0.2s ease-out",
       },
       boxShadow: {
         glow: "0 0 15px rgba(255, 215, 0, 0.5)",

@@ -92,7 +92,9 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     executeSingleTrade,
     async () => {
       try {
+        console.log("AITradingBot: Executing trade after simulation");
         const result = await completeTradeAfterSimulation();
+        console.log("AITradingBot: Trade execution result:", result);
         // Refresh trade history immediately after trade execution
         fetchTradeHistory();
         return result;
@@ -121,6 +123,16 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
       fetchTradeHistory();
     }
   }, [simulationOpen, resultDialogOpen, isSimulating, fetchTradeHistory]);
+
+  useEffect(() => {
+    // Debug log for dialog states
+    console.log("AITradingBot - Dialog states:", {
+      simulationOpen,
+      resultDialogOpen,
+      isSimulating,
+      simulationInProgress: simulationInProgressRef.current
+    });
+  }, [simulationOpen, resultDialogOpen, isSimulating, simulationInProgressRef]);
 
   return (
     <div className={cn(
@@ -157,6 +169,7 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
         </div>
       </div>
       
+      {/* Pass resultDialogOpen explicitly and log it */}
       <TradingBotDialogs
         simulationOpen={simulationOpen}
         resultDialogOpen={resultDialogOpen}

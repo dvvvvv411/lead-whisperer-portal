@@ -152,13 +152,6 @@ export const useBotTradeExecution = (
         }
         
         console.log("Trade completed successfully:", result);
-        
-        // Display success toast
-        toast({
-          title: "Trade erfolgreich",
-          description: `Gewinn: ${result.profit.toFixed(2)}€ (${result.profitPercentage.toFixed(2)}%)`,
-          variant: "default"
-        });
       } else {
         // Update status with failure
         if (updateStatus) {
@@ -168,11 +161,6 @@ export const useBotTradeExecution = (
         }
         
         console.log("Trade failed:", result.error);
-        toast({
-          title: "Trade fehlgeschlagen",
-          description: result.error || "Unbekannter Fehler",
-          variant: "destructive"
-        });
       }
       
       return result;
@@ -187,23 +175,14 @@ export const useBotTradeExecution = (
         });
       }
       
-      toast({
-        title: "Fehler",
-        description: error.message || "Es ist ein Fehler beim Ausführen des Trades aufgetreten.",
-        variant: "destructive"
-      });
-      
-      // Reset simulation state
-      simulationInProgressRef.current = false;
-      setIsSimulating(false);
-      
       return { success: false, error: error.message || "Unerwarteter Fehler" };
     } finally {
       console.log("Trade execution completed, resetting simulation state");
-      simulationInProgressRef.current = false;
-      setIsSimulating(false);
+      // IMPORTANT: Don't reset the simulation state here, let the dialog handle it
+      // simulationInProgressRef.current = false;
+      // setIsSimulating(false);
     }
-  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, toast, cryptos, fetchCryptos]);
+  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, cryptos, fetchCryptos]);
   
   return {
     executeSingleTrade,

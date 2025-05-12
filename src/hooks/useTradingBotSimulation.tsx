@@ -130,11 +130,12 @@ export const useTradingBotSimulation = (
               setResultDialogOpen(true);
               simulationInProgressRef.current = false;
               
-              // Still show a small toast notification but make it non-intrusive
+              // Show a small toast notification but make it less prominent
+              // This toast will appear alongside the dialog for users who might miss the dialog
               toast({
                 title: "Trade erfolgreich",
                 description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${resultData.profitPercentage.toFixed(2)}%)`,
-                variant: "default" // Changed from "success" to "default"
+                variant: "default"
               });
             }, 300);
           } else {

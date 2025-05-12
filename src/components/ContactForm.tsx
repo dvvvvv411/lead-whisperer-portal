@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -15,7 +14,9 @@ const ContactForm = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: ""
+    phone: "",
+    company: "",
+    message: ""
   });
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -42,16 +43,20 @@ const ContactForm = () => {
         return;
       }
       
-      // In Supabase speichern - message ist jetzt optional in der Datenbank
+      // Defaultwerte für leere Felder setzen
+      const finalData = {
+        name: formData.name,
+        email: formData.email, 
+        phone: formData.phone,
+        status: 'neu',
+        company: formData.company || "Leer",
+        message: formData.message || "Leer"
+      };
+      
+      // In Supabase speichern
       const { error } = await supabase
         .from('leads')
-        .insert({
-          name: formData.name,
-          email: formData.email, 
-          phone: formData.phone,
-          status: 'neu',
-          message: null // Nachricht wird als null gesendet
-        });
+        .insert(finalData);
         
       if (error) {
         console.error("Formular-Fehler:", error);
@@ -69,7 +74,9 @@ const ContactForm = () => {
       setFormData({
         name: "",
         email: "",
-        phone: ""
+        phone: "",
+        company: "",
+        message: ""
       });
       
     } catch (error) {
@@ -189,6 +196,23 @@ const ContactForm = () => {
             onChange={handleChange}
             placeholder="Deine Telefonnummer"
             required
+            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
+          />
+        </motion.div>
+        
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Label htmlFor="company" className="text-white">Firma</Label>
+          <Input
+            id="company"
+            name="company"
+            value={formData.company}
+            onChange={handleChange}
+            placeholder="Firmenname (optional)"
             className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>

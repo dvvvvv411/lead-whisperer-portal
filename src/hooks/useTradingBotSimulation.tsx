@@ -134,7 +134,7 @@ export const useTradingBotSimulation = (
               toast({
                 title: "Trade erfolgreich",
                 description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${resultData.profitPercentage.toFixed(2)}%)`,
-                variant: "success"
+                variant: "default" // Changed from "success" to "default"
               });
             }, 300);
           } else {

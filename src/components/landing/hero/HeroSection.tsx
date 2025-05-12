@@ -7,7 +7,7 @@ import CryptoIconBubbles from "./CryptoIconBubbles";
 
 const HeroSection = () => {
   return (
-    <section id="hero" className="py-28 md:py-32 px-4 relative overflow-hidden">
+    <section id="hero" className="py-36 md:py-40 px-4 relative overflow-hidden">
       <BackgroundEffects />
       
       {/* Hero content */}

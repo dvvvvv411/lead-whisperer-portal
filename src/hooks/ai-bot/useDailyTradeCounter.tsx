@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
 import { getUserRank } from "./botTradeUtils";
-import { getTradesExecutedToday } from "./botTradeUtils";
+import { getTradesExecutedToday, getTotalTradesExecuted } from "./botTradeUtils";
 
 export const useDailyTradeCounter = (
   userId?: string,
@@ -19,32 +19,42 @@ export const useDailyTradeCounter = (
     }
   }, [userCredit, updateStatus]);
 
-  // Fetch today's trades on mount and update remaining trades
+  // Fetch today's trades and total trades on mount and update remaining trades
   useEffect(() => {
     if (!userId || !updateStatus) return;
 
-    const fetchTodaysTrades = async () => {
+    const fetchTradesData = async () => {
       try {
-        // Get the count of buy transactions (each buy-sell pair counts as 1 trade)
+        // Get the count of trades executed today
         const todayTradesCount = await getTradesExecutedToday(userId);
         
-        // Each trade now counts as 0.5, so we divide by 2 to get the actual trade count
-        const actualTradeCount = Math.ceil(todayTradesCount / 2);
+        // Get the total count of trades executed (all time)
+        const totalTradesCount = await getTotalTradesExecuted(userId);
+        
+        // Each trade now counts as 0.5, so we divide by 2 to get the actual trade count for today
+        const actualDailyTradeCount = Math.ceil(todayTradesCount / 2);
+        
+        console.log("Trade counts fetched:", {
+          todayRawCount: todayTradesCount,
+          dailyTradeCount: actualDailyTradeCount,
+          totalTradesCount
+        });
         
         updateStatus(prev => ({ 
-          dailyTradesExecuted: actualTradeCount,
-          tradesRemaining: Math.max(0, prev.maxTradesPerDay - actualTradeCount)
+          dailyTradesExecuted: actualDailyTradeCount,
+          tradesRemaining: Math.max(0, prev.maxTradesPerDay - actualDailyTradeCount),
+          tradesExecuted: totalTradesCount // Update the total trades count
         }));
       } catch (error) {
-        console.error("Error fetching today's trades:", error);
+        console.error("Error fetching trades data:", error);
       }
     };
     
     // Initial fetch
-    fetchTodaysTrades();
+    fetchTradesData();
     
     // Use a longer interval (2 minutes) to reduce interference with simulation
-    const interval = setInterval(fetchTodaysTrades, 120000);
+    const interval = setInterval(fetchTradesData, 120000);
     
     return () => clearInterval(interval);
   }, [userId, updateStatus]);

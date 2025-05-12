@@ -94,6 +94,30 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
   return data.length;
 };
 
+// New function to get total trades executed (all time)
+export const getTotalTradesExecuted = async (userId: string): Promise<number> => {
+  try {
+    // Count completed sell trades to represent full trade cycles
+    // Each sell trade corresponds to a completed buy-sell cycle
+    const { data, error } = await supabase
+      .from('trade_simulations')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('type', 'sell')
+      .eq('status', 'completed');
+    
+    if (error) {
+      console.error("Error fetching total trades:", error);
+      return 0;
+    }
+    
+    return data?.length || 0;
+  } catch (err) {
+    console.error("Unexpected error counting total trades:", err);
+    return 0;
+  }
+};
+
 // Modified to make the cooldown check optional
 export const checkCanExecuteTrade = (
   dailyTradesExecuted: number,

@@ -3,7 +3,7 @@ import { useState, useRef, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { executeAITrade } from "./executeBotTrade";
 import { BotSettings, BotStatus } from "./types";
-import { checkCanExecuteTrade } from "./botTradeUtils";
+import { checkCanExecuteTrade, getTotalTradesExecuted } from "./botTradeUtils";
 import { useCryptos } from "@/hooks/useCryptos";
 
 export const useBotTradeExecution = (
@@ -135,13 +135,18 @@ export const useBotTradeExecution = (
       console.log("Trade execution result:", result);
       
       if (result.success) {
+        // Get updated total trades count
+        const totalTradesCount = await getTotalTradesExecuted(userId);
+        console.log("Updated total trades count:", totalTradesCount);
+        
         // Update status with trade info
         if (updateStatus && status) {
           updateStatus({
             statusMessage: "Letzter Trade erfolgreich",
             lastSuccessfulTrade: new Date(),
             totalProfitAmount: (status.totalProfitAmount || 0) + result.profit,
-            tradesExecuted: (status.tradesExecuted || 0) + 1
+            tradesExecuted: totalTradesCount, // Use count from database
+            lastTradeTime: new Date()
           });
         }
         

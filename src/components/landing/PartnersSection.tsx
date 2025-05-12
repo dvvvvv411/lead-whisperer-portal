@@ -43,31 +43,16 @@ const exchanges = [
 
 const PartnersSection = () => {
   return (
-    <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5 }}
-        className="bg-casino-card/50 border border-gold/10 rounded-xl p-6 mb-8"
-      >
-        <p className="text-center text-gray-300">
-          Unser KI-Trading-System arbeitet mit den weltweit führenden Kryptobörsen zusammen.
-          Klicken Sie auf ein Logo, um mehr zu erfahren.
-        </p>
-      </motion.div>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
-        {exchanges.map((exchange, index) => (
-          <ExchangeCard
-            key={exchange.id}
-            name={exchange.name}
-            logo={exchange.logo}
-            websiteUrl={exchange.websiteUrl}
-            index={index}
-          />
-        ))}
-      </div>
+    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+      {exchanges.map((exchange, index) => (
+        <ExchangeCard
+          key={exchange.id}
+          name={exchange.name}
+          logo={exchange.logo}
+          websiteUrl={exchange.websiteUrl}
+          index={index}
+        />
+      ))}
     </div>
   );
 };

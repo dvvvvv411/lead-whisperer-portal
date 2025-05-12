@@ -15,15 +15,15 @@ const ExchangeCard = ({ name, logo, websiteUrl, index }: ExchangeCardProps) => {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl overflow-hidden shadow-lg p-4"
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-xl overflow-hidden shadow-lg p-3"
       onClick={() => window.open(websiteUrl, '_blank')}
       whileHover={{ scale: 1.05 }}
       whileTap={{ scale: 0.95 }}
       style={{ cursor: 'pointer' }}
     >
-      <div className="flex flex-col items-center justify-center gap-3">
-        {/* Logo - Standardized size container */}
-        <div className="w-24 h-24 bg-white/5 rounded-lg flex items-center justify-center p-3 border border-white/10">
+      <div className="flex flex-col items-center justify-center gap-2">
+        {/* Logo - Smaller size container */}
+        <div className="w-16 h-16 bg-white/5 rounded-lg flex items-center justify-center p-2 border border-white/10">
           <img 
             src={logo} 
             alt={`${name} logo`} 
@@ -38,7 +38,7 @@ const ExchangeCard = ({ name, logo, websiteUrl, index }: ExchangeCardProps) => {
         </div>
         
         {/* Name */}
-        <h3 className="text-xl font-bold text-gold text-center">{name}</h3>
+        <h3 className="text-sm font-medium text-gold text-center">{name}</h3>
       </div>
     </motion.div>
   );

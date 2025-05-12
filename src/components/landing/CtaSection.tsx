@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Users } from "lucide-react";
+import { AlertCircle, Users, ArrowRight } from "lucide-react";
 
 const CtaSection = () => {
   const [availablePlaces, setAvailablePlaces] = useState(50);
@@ -40,9 +39,28 @@ const CtaSection = () => {
 
   return (
     <section id="cta" className="py-16 relative bg-casino-dark overflow-hidden">
-      {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 opacity-30"></div>
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      {/* Enhanced background elements */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-blue-900/30 opacity-40"></div>
+      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      
+      {/* Animated light beams */}
+      <motion.div 
+        className="absolute -top-40 left-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl"
+        animate={{ 
+          opacity: [0.1, 0.2, 0.1],
+          scale: [1, 1.1, 1],
+        }}
+        transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+      />
+      
+      <motion.div 
+        className="absolute -bottom-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
+        animate={{ 
+          opacity: [0.1, 0.15, 0.1],
+          scale: [1, 1.2, 1],
+        }}
+        transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+      />
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -63,17 +81,30 @@ const CtaSection = () => {
         </motion.div>
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+          {/* Left section - Enhanced with better spacing and animations */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
+            className="flex flex-col h-full"
           >
-            <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg relative overflow-hidden">
-              {/* Glow effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-purple-500/20 rounded-xl blur opacity-30"></div>
+            <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg relative overflow-hidden h-full">
+              {/* Enhanced glow effect */}
+              <motion.div 
+                className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-purple-500/20 rounded-xl blur opacity-30"
+                animate={{
+                  opacity: [0.2, 0.4, 0.2],
+                  backgroundPosition: ['0% 50%', '100% 50%', '0% 50%'],
+                }}
+                transition={{
+                  duration: 5,
+                  repeat: Infinity,
+                  ease: "easeInOut"
+                }}
+              />
               
-              <div className="relative">
+              <div className="relative h-full flex flex-col">
                 <div className="flex items-center justify-between mb-6">
                   <h3 className="text-2xl font-bold">Exklusiver Zugang</h3>
                   <div className="flex items-center text-green-500">
@@ -82,7 +113,7 @@ const CtaSection = () => {
                   </div>
                 </div>
                 
-                <div className="space-y-6">
+                <div className="space-y-6 flex-grow">
                   <div>
                     <div className="flex justify-between mb-2">
                       <span className="text-gray-300">Verfügbare Plätze:</span>
@@ -109,17 +140,57 @@ const CtaSection = () => {
                     </p>
                   </div>
                   
-                  <Button 
-                    onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-                    className="w-full bg-gold hover:bg-gold-light text-black text-lg py-6"
-                  >
-                    Jetzt deinen Platz sichern
-                  </Button>
+                  <div className="mt-auto">
+                    {/* Enhanced animated button */}
+                    <motion.div
+                      whileHover={{ scale: 1.03 }}
+                      whileTap={{ scale: 0.97 }}
+                      className="w-full"
+                    >
+                      <Button 
+                        onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+                        className="w-full bg-gold hover:bg-gold-light text-black text-lg py-6 relative overflow-hidden group"
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2 font-medium">
+                          Jetzt deinen Platz sichern
+                          <motion.div
+                            animate={{
+                              x: [0, 5, 0],
+                            }}
+                            transition={{
+                              duration: 1.5,
+                              repeat: Infinity,
+                              repeatType: "reverse",
+                              ease: "easeInOut",
+                            }}
+                          >
+                            <ArrowRight className="h-5 w-5" />
+                          </motion.div>
+                        </span>
+                        
+                        {/* Shine effect animation */}
+                        <motion.div
+                          className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                          initial={{ x: "-100%" }}
+                          animate={{
+                            x: ["120%", "-120%"],
+                          }}
+                          transition={{
+                            duration: 2.5,
+                            repeat: Infinity,
+                            repeatDelay: 3,
+                            ease: "easeInOut",
+                          }}
+                        />
+                      </Button>
+                    </motion.div>
+                  </div>
                 </div>
               </div>
             </div>
           </motion.div>
           
+          {/* Right section - Keeping existing functionality */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -170,7 +241,7 @@ const CtaSection = () => {
         </div>
       </div>
       
-      {/* Bottom wave separator */}
+      {/* Enhanced bottom wave separator */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full">
           <path 

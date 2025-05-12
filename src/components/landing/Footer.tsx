@@ -21,7 +21,11 @@ const Footer = () => {
             className="col-span-1 md:col-span-2 lg:col-span-1"
           >
             <div className="mb-4">
-              <span className="text-2xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">KRYPTO AI</span>
+              <img 
+                src="https://i.imgur.com/Q191f5z.png" 
+                alt="KRYPTO AI Logo" 
+                className="h-14 object-contain"
+              />
             </div>
             <p className="text-gray-400 mb-4">
               Die Zukunft des Krypto-Tradings mit KI-Unterstützung. Maximiere deine Renditen durch unseren fortschrittlichen Algorithmus.

@@ -80,7 +80,7 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
   
   const { data, error } = await supabase
     .from('trade_simulations')
-    .select('id')
+    .select('id, type')
     .eq('user_id', userId)
     .gte('created_at', today.toISOString());
   
@@ -89,6 +89,8 @@ export const getTradesExecutedToday = async (userId: string): Promise<number> =>
     return 0;
   }
   
+  // Count both buy and sell trades, each type counts as 0.5 trades
+  // This way a buy-sell pair will count as 1 complete trade
   return data.length;
 };
 

@@ -28,9 +28,12 @@ export const useDailyTradeCounter = (
         // Get the count of buy transactions (each buy-sell pair counts as 1 trade)
         const todayTradesCount = await getTradesExecutedToday(userId);
         
+        // Each trade now counts as 0.5, so we divide by 2 to get the actual trade count
+        const actualTradeCount = Math.ceil(todayTradesCount / 2);
+        
         updateStatus(prev => ({ 
-          dailyTradesExecuted: todayTradesCount,
-          tradesRemaining: Math.max(0, prev.maxTradesPerDay - todayTradesCount)
+          dailyTradesExecuted: actualTradeCount,
+          tradesRemaining: Math.max(0, prev.maxTradesPerDay - actualTradeCount)
         }));
       } catch (error) {
         console.error("Error fetching today's trades:", error);

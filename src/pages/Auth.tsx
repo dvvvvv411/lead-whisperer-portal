@@ -94,27 +94,15 @@ const Auth = () => {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-casino-darker">
-      {/* Header */}
-      <motion.header
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="p-6 text-center"
-      >
-        <h1 className="text-3xl font-bold text-white">
-          Sicherer <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">Anmeldebereich</span>
-        </h1>
-      </motion.header>
-
-      {/* Main Content - Two Sections */}
-      <main className="flex-grow flex flex-col lg:flex-row w-full px-4 py-6 md:p-8">
+    <div className="flex min-h-screen bg-casino-darker">
+      {/* Main Content - Two Sections Side by Side */}
+      <main className="flex flex-col lg:flex-row w-full">
         {/* Left Section - Animation */}
         <motion.div 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="w-full lg:w-1/2 flex flex-col justify-center items-center p-4 lg:p-12"
+          transition={{ duration: 0.7 }}
+          className="w-full lg:w-1/2 flex flex-col justify-center items-center p-4 lg:p-8 bg-casino-dark border-r border-gold/10"
         >
           <LoginAnimation />
         </motion.div>
@@ -123,8 +111,8 @@ const Auth = () => {
         <motion.div 
           initial={{ opacity: 0, x: 50 }}
           animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.7, delay: 0.3 }}
-          className="w-full lg:w-1/2 flex justify-center items-center p-4 lg:p-12"
+          transition={{ duration: 0.7 }}
+          className="w-full lg:w-1/2 flex justify-center items-center p-4 lg:p-8 bg-casino-darker"
         >
           <Card className="w-full max-w-md bg-casino-dark border-gold/20">
             <CardContent className="pt-6">
@@ -308,14 +296,18 @@ const Auth = () => {
   );
 };
 
-// Login Animation Component
+// Login Animation Component with enhanced animations
 const LoginAnimation = () => {
   return (
     <div className="w-full h-full flex flex-col justify-center items-center">
       <div className="w-full max-w-md p-6 relative">
         {/* Background Elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-gold/5 to-accent1/5 rounded-xl" />
-        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-accent1 to-gold bg-[length:200%_auto] animate-gradient-shift" />
+        <motion.div 
+          className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-gold via-accent1 to-gold bg-[length:200%_auto]" 
+          animate={{ backgroundPosition: ["0% center", "100% center"] }}
+          transition={{ duration: 3, repeat: Infinity, repeatType: "reverse" }}
+        />
         
         {/* Abstract visualization */}
         <div className="relative w-full aspect-square">
@@ -370,10 +362,10 @@ const LoginAnimation = () => {
   );
 };
 
-// Cybersecurity Animation Component
+// Enhanced Cybersecurity Animation Component with more motion
 const CybersecurityAnimation = () => {
   // Generate random positions for nodes
-  const nodes = Array.from({ length: 8 }, (_, i) => ({
+  const nodes = Array.from({ length: 12 }, (_, i) => ({
     id: i,
     x: Math.random() * 80 + 10,
     y: Math.random() * 80 + 10,
@@ -383,17 +375,35 @@ const CybersecurityAnimation = () => {
 
   return (
     <div className="w-full h-full relative">
-      {/* Background circle */}
+      {/* Background circle with animation */}
       <motion.div
         animate={{ 
           boxShadow: [
             "0 0 0 rgba(255, 215, 0, 0.1)",
-            "0 0 20px rgba(255, 215, 0, 0.2)",
+            "0 0 30px rgba(255, 215, 0, 0.3)",
             "0 0 0 rgba(255, 215, 0, 0.1)"
-          ]
+          ],
+          scale: [1, 1.03, 1]
         }}
-        transition={{ repeat: Infinity, duration: 3 }}
+        transition={{ repeat: Infinity, duration: 4 }}
         className="absolute w-4/5 h-4/5 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold/20"
+      />
+      
+      {/* Animated inner circle */}
+      <motion.div
+        animate={{ 
+          boxShadow: [
+            "0 0 0 rgba(100, 204, 201, 0.1)",
+            "0 0 20px rgba(100, 204, 201, 0.2)",
+            "0 0 0 rgba(100, 204, 201, 0.1)"
+          ],
+          rotate: [0, 360]
+        }}
+        transition={{ 
+          boxShadow: { repeat: Infinity, duration: 3, delay: 1.5 },
+          rotate: { repeat: Infinity, duration: 30, ease: "linear" }
+        }}
+        className="absolute w-3/5 h-3/5 left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-accent1/20"
       />
       
       {/* Connection lines */}
@@ -409,7 +419,10 @@ const CybersecurityAnimation = () => {
             <motion.line
               key={`line-${i}-${j}`}
               initial={{ opacity: 0 }}
-              animate={{ opacity: [0.1, 0.3, 0.1] }}
+              animate={{ 
+                opacity: [0.1, 0.4, 0.1],
+                strokeWidth: [0.3, 1, 0.3]
+              }}
               transition={{ 
                 repeat: Infinity, 
                 duration: 3 + Math.random() * 2,
@@ -426,7 +439,7 @@ const CybersecurityAnimation = () => {
         ))}
       </svg>
 
-      {/* Nodes */}
+      {/* Animated nodes */}
       {nodes.map((node) => (
         <motion.div
           key={node.id}
@@ -439,17 +452,20 @@ const CybersecurityAnimation = () => {
             transform: 'translate(-50%, -50%)'
           }}
           animate={{ 
-            scale: [1, 1.3, 1],
+            scale: [1, 1.5, 1],
             boxShadow: [
               "0 0 0 rgba(255, 215, 0, 0)",
-              "0 0 10px rgba(255, 215, 0, 0.5)",
+              "0 0 15px rgba(255, 215, 0, 0.7)",
               "0 0 0 rgba(255, 215, 0, 0)"
-            ] 
+            ],
+            x: [0, Math.random() * 10 - 5, 0],
+            y: [0, Math.random() * 10 - 5, 0]
           }}
           transition={{ 
             repeat: Infinity, 
-            duration: 3, 
-            delay: node.pulseDelay
+            duration: 4, 
+            delay: node.pulseDelay,
+            repeatType: "reverse"
           }}
         />
       ))}
@@ -461,18 +477,34 @@ const CybersecurityAnimation = () => {
         animate={{ scale: 1, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.7 }}
       >
-        <div className="w-16 h-16 rounded-full bg-gradient-to-br from-gold/20 to-accent1/20 flex items-center justify-center">
+        <motion.div
+          className="w-16 h-16 rounded-full bg-gradient-to-br from-gold/20 to-accent1/20 flex items-center justify-center"
+          animate={{ 
+            boxShadow: [
+              "0 0 0 rgba(255, 215, 0, 0.1)",
+              "0 0 25px rgba(255, 215, 0, 0.4)",
+              "0 0 0 rgba(255, 215, 0, 0.1)"
+            ]
+          }}
+          transition={{ repeat: Infinity, duration: 3 }}
+        >
           <motion.div
-            animate={{ scale: [1, 1.1, 1] }}
-            transition={{ repeat: Infinity, duration: 3 }}
+            animate={{ 
+              scale: [1, 1.2, 1],
+              rotate: [0, 10, 0, -10, 0]
+            }}
+            transition={{ 
+              scale: { repeat: Infinity, duration: 2 },
+              rotate: { repeat: Infinity, duration: 5, ease: "easeInOut" }
+            }}
           >
             <ShieldCheck className="h-8 w-8 text-gold" />
           </motion.div>
-        </div>
+        </motion.div>
       </motion.div>
       
-      {/* Floating particles */}
-      {Array.from({ length: 15 }).map((_, i) => {
+      {/* Floating particles with more animation */}
+      {Array.from({ length: 25 }).map((_, i) => {
         const size = Math.random() * 3 + 1;
         const left = Math.random() * 100;
         const top = Math.random() * 100;
@@ -482,26 +514,60 @@ const CybersecurityAnimation = () => {
         return (
           <motion.div
             key={`particle-${i}`}
-            className="absolute rounded-full bg-gold/30"
-            initial={{ 
+            className="absolute rounded-full"
+            style={{ 
+              background: i % 2 === 0 ? "#FFD700" : "#64CCC9",
               left: `${left}%`, 
               top: `${top}%`, 
               width: `${size}px`, 
               height: `${size}px`,
-              opacity: 0
             }}
+            initial={{ opacity: 0 }}
             animate={{ 
               y: [0, -30, 0],
-              opacity: [0, 0.5, 0]
+              x: [0, Math.random() * 20 - 10, 0],
+              opacity: [0, 0.7, 0]
             }}
             transition={{ 
               repeat: Infinity, 
               duration: duration, 
-              delay: delay
+              delay: delay,
+              ease: "easeInOut"
             }}
           />
         );
       })}
+      
+      {/* Data flow effect */}
+      <motion.div 
+        className="absolute inset-0 overflow-hidden"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 1 }}
+      >
+        {[...Array(5)].map((_, index) => (
+          <motion.div
+            key={`data-flow-${index}`}
+            className="absolute h-0.5 bg-gradient-to-r from-transparent via-gold/40 to-transparent"
+            style={{ 
+              left: `${Math.random() * 80 + 10}%`,
+              width: `${Math.random() * 40 + 20}%`,
+              transform: "rotate(${Math.random() * 360}deg)",
+              top: `${Math.random() * 100}%`
+            }}
+            animate={{ 
+              y: [100, -100],
+              opacity: [0, 0.8, 0]
+            }}
+            transition={{ 
+              repeat: Infinity, 
+              duration: 3 + Math.random() * 4,
+              delay: Math.random() * 2,
+              ease: "linear"
+            }}
+          />
+        ))}
+      </motion.div>
     </div>
   );
 };

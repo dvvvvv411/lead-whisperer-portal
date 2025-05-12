@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -38,7 +39,7 @@ const CtaSection = () => {
   }, [availablePlaces, controls]);
 
   return (
-    <section id="cta" className="py-0 mt-0 relative overflow-hidden">
+    <section id="cta" className="mt-0 pt-4 relative overflow-hidden">
       {/* Background elements */}
       <div className="absolute inset-0 bg-gradient-to-b from-casino-darker via-casino-card to-casino-darker opacity-40"></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>

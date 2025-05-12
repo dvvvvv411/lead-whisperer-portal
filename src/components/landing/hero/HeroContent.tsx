@@ -100,25 +100,27 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Modified CTA button - ensuring gold background covers the entire button */}
-        <Button 
-          onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-          className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 flex items-center justify-center"
-        >
-          <motion.span
-            animate={{
-              x: [0, 4, 0],
-            }}
-            transition={{
-              duration: 1.5,
-              repeat: Infinity,
-              repeatDelay: 1,
-            }}
-            className="flex items-center gap-2"
+        {/* Gold CTA button - hidden on mobile */}
+        {!isMobile && (
+          <Button 
+            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+            className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 flex items-center justify-center"
           >
-            Jetzt starten <ArrowRight className="h-4 w-4" />
-          </motion.span>
-        </Button>
+            <motion.span
+              animate={{
+                x: [0, 4, 0],
+              }}
+              transition={{
+                duration: 1.5,
+                repeat: Infinity,
+                repeatDelay: 1,
+              }}
+              className="flex items-center gap-2"
+            >
+              Jetzt starten <ArrowRight className="h-4 w-4" />
+            </motion.span>
+          </Button>
+        )}
         
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}

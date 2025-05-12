@@ -1,3 +1,4 @@
+
 import { CardTitle, CardDescription } from "@/components/ui/card";
 import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -22,7 +23,7 @@ const TradingBotHeader = ({
             <Sparkles className="h-5 w-5 ml-2 text-gold animate-pulse" />
           </CardTitle>
           <CardDescription className="text-muted-foreground">
-            Automatisierte Trades mit KI-Optimierung für maximale Gewinne
+            {userName ? `Hallo ${userName}, a` : "A"}utomatisierte Trades mit KI-Optimierung für maximale Gewinne
           </CardDescription>
         </div>
       </div>

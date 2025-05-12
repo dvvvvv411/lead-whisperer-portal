@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -7,17 +6,11 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { CheckCircle, ShieldCheck, Lock, Sparkles, Award } from "lucide-react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter
-} from "@/components/ui/dialog";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
 const ContactForm = () => {
-  const { toast } = useToast();
+  const {
+    toast
+  } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [formData, setFormData] = useState({
@@ -26,19 +19,19 @@ const ContactForm = () => {
     phone: "",
     message: ""
   });
-
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
+    const {
+      name,
+      value
+    } = e.target;
+    setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
-
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
-    
     try {
       // Validierung
       if (!formData.name || !formData.email || !formData.phone) {
@@ -50,22 +43,21 @@ const ContactForm = () => {
         setIsSubmitting(false);
         return;
       }
-      
+
       // Defaultwerte für leere Felder setzen
       const finalData = {
         name: formData.name,
-        email: formData.email, 
+        email: formData.email,
         phone: formData.phone,
         status: 'neu',
         company: "Leer",
         message: formData.message || "Leer"
       };
-      
+
       // In Supabase speichern
-      const { error } = await supabase
-        .from('leads')
-        .insert(finalData);
-        
+      const {
+        error
+      } = await supabase.from('leads').insert(finalData);
       if (error) {
         console.error("Formular-Fehler:", error);
         throw error;
@@ -73,7 +65,7 @@ const ContactForm = () => {
 
       // Show success dialog
       setShowSuccessDialog(true);
-      
+
       // Formular zurücksetzen
       setFormData({
         name: "",
@@ -81,7 +73,6 @@ const ContactForm = () => {
         phone: "",
         message: ""
       });
-      
     } catch (error) {
       console.error("Fehler beim Absenden des Formulars:", error);
       toast({
@@ -93,50 +84,38 @@ const ContactForm = () => {
       setIsSubmitting(false);
     }
   };
-  
+
   // Success Dialog Component
   const SuccessDialog = () => {
     const [showConfetti, setShowConfetti] = useState(false);
-    
+
     // Show confetti effect after dialog opens
     useState(() => {
       const timer = setTimeout(() => setShowConfetti(true), 400);
       return () => clearTimeout(timer);
     });
-    
+
     // Generate confetti particles
     const renderConfetti = () => {
       if (!showConfetti) return null;
-      
-      const particles = Array.from({ length: 80 }).map((_, i) => {
+      const particles = Array.from({
+        length: 80
+      }).map((_, i) => {
         const size = Math.floor(Math.random() * 8) + 5;
         const left = Math.random() * 100;
         const animationDelay = Math.random() * 0.5;
-        const color = i % 3 === 0 ? 'bg-gold' : (i % 3 === 1 ? 'bg-accent1' : 'bg-white');
-        
-        return (
-          <div 
-            key={i} 
-            className={`absolute z-50 rounded-full ${color} animate-confetti`}
-            style={{
-              width: size + 'px',
-              height: size + 'px',
-              left: left + '%',
-              animationDelay: animationDelay + 's',
-              opacity: Math.random() * 0.8 + 0.2
-            }}
-          />
-        );
+        const color = i % 3 === 0 ? 'bg-gold' : i % 3 === 1 ? 'bg-accent1' : 'bg-white';
+        return <div key={i} className={`absolute z-50 rounded-full ${color} animate-confetti`} style={{
+          width: size + 'px',
+          height: size + 'px',
+          left: left + '%',
+          animationDelay: animationDelay + 's',
+          opacity: Math.random() * 0.8 + 0.2
+        }} />;
       });
-      
       return <div className="confetti-container absolute inset-0 overflow-hidden pointer-events-none">{particles}</div>;
     };
-    
-    return (
-      <Dialog 
-        open={showSuccessDialog} 
-        onOpenChange={setShowSuccessDialog}
-      >
+    return <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
         <DialogContent className="max-w-md bg-gradient-to-b from-casino-darker to-casino-card border border-gold/20 shadow-xl overflow-hidden">
           {renderConfetti()}
           
@@ -189,43 +168,38 @@ const ContactForm = () => {
           </DialogHeader>
           
           <DialogFooter className="mt-4">
-            <Button 
-              onClick={() => setShowSuccessDialog(false)}
-              className="w-full bg-gradient-to-r from-gold to-accent1 hover:from-gold hover:to-gold text-black font-medium transition-all duration-300"
-            >
+            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-gradient-to-r from-gold to-accent1 hover:from-gold hover:to-gold text-black font-medium transition-all duration-300">
               Schließen
             </Button>
           </DialogFooter>
         </DialogContent>
-      </Dialog>
-    );
+      </Dialog>;
   };
-
-  return (
-    <div className="w-full max-w-md mx-auto">
+  return <div className="w-full max-w-md mx-auto">
       {/* Show success dialog */}
       {showSuccessDialog && <SuccessDialog />}
       
       {/* Logo added above the motivational text */}
-      <motion.div
-        initial={{ opacity: 0, y: -10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex justify-center mb-4"
-      >
-        <img 
-          src="/logo.png" 
-          alt="KI-Trading Logo" 
-          className="h-16 object-contain"
-        />
+      <motion.div initial={{
+      opacity: 0,
+      y: -10
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} className="flex justify-center mb-4">
+        <img alt="KI-Trading Logo" src="https://i.imgur.com/ESfBVvP.png" className="h-16 object-contain" />
       </motion.div>
       
       {/* Motivational text section */}
-      <motion.div
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.2 }}
-        className="mb-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20"
-      >
+      <motion.div initial={{
+      opacity: 0,
+      y: 10
+    }} animate={{
+      opacity: 1,
+      y: 0
+    }} transition={{
+      delay: 0.2
+    }} className="mb-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20">
         <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
           Jetzt mit KI-Trading starten!
         </h3>
@@ -236,84 +210,69 @@ const ContactForm = () => {
       </motion.div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.1 }}
-        >
+        <motion.div className="space-y-2" initial={{
+        opacity: 0,
+        x: 20
+      }} animate={{
+        opacity: 1,
+        x: 0
+      }} transition={{
+        delay: 0.1
+      }}>
           <Label htmlFor="name" className="text-white">Dein Name *</Label>
-          <Input
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Dein vollständiger Name"
-            required
-            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
-          />
+          <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Dein vollständiger Name" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
         </motion.div>
         
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.2 }}
-        >
+        <motion.div className="space-y-2" initial={{
+        opacity: 0,
+        x: 20
+      }} animate={{
+        opacity: 1,
+        x: 0
+      }} transition={{
+        delay: 0.2
+      }}>
           <Label htmlFor="email" className="text-white">E-Mail *</Label>
-          <Input
-            id="email"
-            name="email"
-            type="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="deine@email.de"
-            required
-            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
-          />
+          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="deine@email.de" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
         </motion.div>
         
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.3 }}
-        >
+        <motion.div className="space-y-2" initial={{
+        opacity: 0,
+        x: 20
+      }} animate={{
+        opacity: 1,
+        x: 0
+      }} transition={{
+        delay: 0.3
+      }}>
           <Label htmlFor="phone" className="text-white">Telefon *</Label>
-          <Input
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="Deine Telefonnummer"
-            required
-            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
-          />
+          <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Deine Telefonnummer" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
         </motion.div>
         
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-          whileHover={{ scale: 1.03 }}
-          className="pt-4" 
-        >
-          <Button 
-            type="submit" 
-            className="w-full bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-medium py-6"
-            disabled={isSubmitting}
-          >
+        <motion.div initial={{
+        opacity: 0,
+        y: 10
+      }} animate={{
+        opacity: 1,
+        y: 0
+      }} transition={{
+        delay: 0.6
+      }} whileHover={{
+        scale: 1.03
+      }} className="pt-4">
+          <Button type="submit" className="w-full bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-medium py-6" disabled={isSubmitting}>
             {isSubmitting ? "Wird gesendet..." : "Jetzt Zugang sichern"}
           </Button>
         </motion.div>
         
         {/* Security reassurance section */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.8 }}
-          className="mt-6"
-        >
+        <motion.div initial={{
+        opacity: 0
+      }} animate={{
+        opacity: 1
+      }} transition={{
+        delay: 0.8
+      }} className="mt-6">
           <div className="flex flex-col items-center space-y-3 py-4 border-t border-white/10">
             <div className="flex items-center justify-center gap-4">
               <div className="flex items-center p-2 bg-white/5 rounded-full">
@@ -333,8 +292,6 @@ const ContactForm = () => {
           </div>
         </motion.div>
       </form>
-    </div>
-  );
+    </div>;
 };
-
 export default ContactForm;

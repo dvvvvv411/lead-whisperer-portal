@@ -15,6 +15,7 @@ import { Calendar, Check, X, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
+import { motion } from "framer-motion";
 
 export interface User {
   id: string;
@@ -72,32 +73,43 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader>
-          <TableRow>
-            <TableHead>E-Mail</TableHead>
-            <TableHead>Rolle</TableHead>
-            <TableHead>Aktiviert</TableHead>
-            <TableHead>Guthaben</TableHead>
-            <TableHead>Registriert am</TableHead>
-            <TableHead>Letzter Login</TableHead>
-            <TableHead className="text-right">Aktionen</TableHead>
+    <div className="rounded-md">
+      <Table className="border-collapse">
+        <TableHeader className="bg-casino-darker">
+          <TableRow className="border-gold/10">
+            <TableHead className="text-gray-300">E-Mail</TableHead>
+            <TableHead className="text-gray-300">Rolle</TableHead>
+            <TableHead className="text-gray-300">Aktiviert</TableHead>
+            <TableHead className="text-gray-300">Guthaben</TableHead>
+            <TableHead className="text-gray-300">Registriert am</TableHead>
+            <TableHead className="text-gray-300">Letzter Login</TableHead>
+            <TableHead className="text-right text-gray-300">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {users.length === 0 ? (
-            <TableRow>
-              <TableCell colSpan={7} className="text-center py-6">
+            <TableRow className="border-t border-gold/10">
+              <TableCell colSpan={7} className="text-center py-6 text-gray-400">
                 Keine Benutzer gefunden
               </TableCell>
             </TableRow>
           ) : (
-            users.map((user) => (
-              <TableRow key={user.id}>
-                <TableCell>{user.email}</TableCell>
+            users.map((user, index) => (
+              <motion.tr 
+                key={user.id}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.3, delay: index * 0.05 }}
+                className="border-t border-gold/10 hover:bg-casino-highlight"
+              >
+                <TableCell className="text-gray-300">{user.email}</TableCell>
                 <TableCell>
-                  <Badge variant={user.role === "admin" ? "default" : "outline"}>
+                  <Badge 
+                    variant={user.role === "admin" ? "default" : "outline"} 
+                    className={user.role === "admin" 
+                      ? "bg-gold/30 text-gold border-gold/50" 
+                      : "bg-gray-800/30 text-gray-300 border-gray-500/50"}
+                  >
                     {user.role}
                   </Badge>
                 </TableCell>
@@ -110,17 +122,21 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
-                    <Wallet className="mr-2 h-4 w-4 text-gray-500" />
-                    {user.credit !== undefined ? `${user.credit.toFixed(2)}€` : "-"}
+                    <Wallet className="mr-2 h-4 w-4 text-gold" />
+                    <span className="text-gray-300">
+                      {user.credit !== undefined ? `${user.credit.toFixed(2)}€` : "-"}
+                    </span>
                   </div>
                 </TableCell>
                 <TableCell>
                   <div className="flex items-center">
                     <Calendar className="mr-2 h-4 w-4 text-gray-500" />
-                    {user.created_at ? format(new Date(user.created_at), 'dd.MM.yyyy') : '-'}
+                    <span className="text-gray-400">
+                      {user.created_at ? format(new Date(user.created_at), 'dd.MM.yyyy') : '-'}
+                    </span>
                   </div>
                 </TableCell>
-                <TableCell>
+                <TableCell className="text-gray-400">
                   {user.last_sign_in_at ? format(new Date(user.last_sign_in_at), 'dd.MM.yyyy') : '-'}
                 </TableCell>
                 <TableCell className="text-right">
@@ -128,6 +144,7 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                     <Button
                       variant="outline"
                       size="sm"
+                      className="bg-gold/10 border-gold/30 hover:bg-gold/20 text-gold"
                       onClick={() => setEditingCredit(user)}
                     >
                       Guthaben
@@ -136,13 +153,16 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                       variant="outline"
                       size="sm"
                       disabled={processing === user.id}
+                      className={user.role === "admin" 
+                        ? "bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400" 
+                        : "bg-purple-900/20 border-purple-500/30 hover:bg-purple-800/30 text-purple-400"}
                       onClick={() => toggleUserRole(user.id, user.role)}
                     >
                       {user.role === "admin" ? "Zum Benutzer" : "Zum Admin"}
                     </Button>
                   </div>
                 </TableCell>
-              </TableRow>
+              </motion.tr>
             ))
           )}
         </TableBody>

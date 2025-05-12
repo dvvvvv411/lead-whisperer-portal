@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
+import { motion } from "framer-motion";
 
 interface UserData {
   id: string;
@@ -153,21 +154,41 @@ export const UserManager = () => {
   }, [handleUserUpdated]);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
       
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Benutzerverwaltung</h1>
-        <p className="text-gray-600">Eingeloggt als: {currentUser?.email}</p>
-      </div>
+      <div className="container mx-auto p-4">
+        <motion.div 
+          className="mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Benutzerverwaltung</h1>
+          <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
+        </motion.div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <p>Wird geladen...</p>
-        </div>
-      ) : (
-        <UserTable users={users} onUserUpdated={handleUserUpdated} />
-      )}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-12 bg-gold/20 rounded-full mb-4 flex items-center justify-center">
+                <div className="h-6 w-6 bg-gold rounded-full animate-ping"></div>
+              </div>
+              <p>Wird geladen...</p>
+            </div>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
+              <UserTable users={users} onUserUpdated={handleUserUpdated} />
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };

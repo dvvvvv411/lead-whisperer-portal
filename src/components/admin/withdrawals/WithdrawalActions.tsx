@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { CheckCircle, XCircle } from "lucide-react";
+import { motion } from "framer-motion";
 
 interface Withdrawal {
   id: string;
@@ -25,7 +26,7 @@ interface WithdrawalActionsProps {
 const WithdrawalActions = ({ withdrawal, onApprove, onReject }: WithdrawalActionsProps) => {
   if (withdrawal.status !== "pending") {
     return (
-      <span className="text-sm text-gray-500">
+      <span className="text-sm text-gray-400">
         {withdrawal.notes || "Keine Anmerkung"}
       </span>
     );
@@ -33,25 +34,29 @@ const WithdrawalActions = ({ withdrawal, onApprove, onReject }: WithdrawalAction
 
   return (
     <div className="flex space-x-2">
-      <Button 
-        variant="outline" 
-        size="sm"
-        className="text-green-700 border-green-300 hover:bg-green-50"
-        onClick={() => onApprove(withdrawal)}
-      >
-        <CheckCircle className="h-4 w-4 mr-1" />
-        Genehmigen
-      </Button>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="bg-green-900/20 border-green-500/30 hover:bg-green-800/30 text-green-400"
+          onClick={() => onApprove(withdrawal)}
+        >
+          <CheckCircle className="h-4 w-4 mr-1" />
+          Genehmigen
+        </Button>
+      </motion.div>
       
-      <Button 
-        variant="outline" 
-        size="sm"
-        className="text-red-700 border-red-300 hover:bg-red-50"
-        onClick={() => onReject(withdrawal)}
-      >
-        <XCircle className="h-4 w-4 mr-1" />
-        Ablehnen
-      </Button>
+      <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.95 }}>
+        <Button 
+          variant="outline" 
+          size="sm"
+          className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
+          onClick={() => onReject(withdrawal)}
+        >
+          <XCircle className="h-4 w-4 mr-1" />
+          Ablehnen
+        </Button>
+      </motion.div>
     </div>
   );
 };

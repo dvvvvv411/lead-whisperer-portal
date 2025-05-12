@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import AdminLogin from "@/components/admin/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import { checkUserRole } from "@/services/roleService";
+import { motion } from "framer-motion";
 
 const Admin = () => {
   const [session, setSession] = useState<any>(null);
@@ -56,8 +57,17 @@ const Admin = () => {
 
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Wird geladen...</p>
+      <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          className="animate-pulse flex flex-col items-center"
+        >
+          <div className="h-12 w-12 bg-gold/20 rounded-full mb-4 flex items-center justify-center">
+            <div className="h-6 w-6 bg-gold rounded-full animate-ping"></div>
+          </div>
+          <p>Wird geladen...</p>
+        </motion.div>
       </div>
     );
   }
@@ -81,7 +91,11 @@ const Admin = () => {
   }
 
   // Wenn der Benutzer nicht angemeldet ist, Login-Formular anzeigen
-  return <AdminLogin />;
+  return (
+    <div className="bg-casino-darker">
+      <AdminLogin />
+    </div>
+  );
 };
 
 export default Admin;

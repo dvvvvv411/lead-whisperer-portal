@@ -1,6 +1,7 @@
 
 import { Button } from "@/components/ui/button";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
+import { motion } from "framer-motion";
 
 interface LeadFilterBarProps {
   statusFilter: string | undefined;
@@ -9,17 +10,31 @@ interface LeadFilterBarProps {
 
 export const LeadFilterBar = ({ statusFilter, onStatusFilterChange }: LeadFilterBarProps) => {
   return (
-    <div className="mb-6">
-      <h2 className="text-sm text-gray-500 mb-2">Nach Status filtern:</h2>
-      <div className="flex justify-start">
-        <ToggleGroup type="single" value={statusFilter} onValueChange={onStatusFilterChange}>
-          <ToggleGroupItem value="neu" className="bg-blue-100 text-blue-800 border-blue-300 data-[state=on]:bg-blue-200">
+    <motion.div 
+      className="mb-6 p-4 bg-casino-dark rounded-lg border border-gold/10 shadow-md"
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.4, delay: 0.1 }}
+    >
+      <h2 className="text-sm text-gray-400 mb-3">Nach Status filtern:</h2>
+      <div className="flex flex-wrap justify-start gap-2">
+        <ToggleGroup type="single" value={statusFilter} onValueChange={onStatusFilterChange} className="flex flex-wrap gap-2">
+          <ToggleGroupItem 
+            value="neu" 
+            className="bg-blue-900/20 text-blue-400 border-blue-500/30 data-[state=on]:bg-blue-700/30 data-[state=on]:text-blue-300"
+          >
             Neu
           </ToggleGroupItem>
-          <ToggleGroupItem value="akzeptiert" className="bg-green-100 text-green-800 border-green-300 data-[state=on]:bg-green-200">
+          <ToggleGroupItem 
+            value="akzeptiert" 
+            className="bg-green-900/20 text-green-400 border-green-500/30 data-[state=on]:bg-green-700/30 data-[state=on]:text-green-300"
+          >
             Akzeptiert
           </ToggleGroupItem>
-          <ToggleGroupItem value="abgelehnt" className="bg-red-100 text-red-800 border-red-300 data-[state=on]:bg-red-200">
+          <ToggleGroupItem 
+            value="abgelehnt" 
+            className="bg-red-900/20 text-red-400 border-red-500/30 data-[state=on]:bg-red-700/30 data-[state=on]:text-red-300"
+          >
             Abgelehnt
           </ToggleGroupItem>
         </ToggleGroup>
@@ -27,11 +42,11 @@ export const LeadFilterBar = ({ statusFilter, onStatusFilterChange }: LeadFilter
           variant="outline" 
           size="sm" 
           onClick={() => onStatusFilterChange(undefined)}
-          className="ml-2"
+          className="border-gold/30 text-gray-300 hover:text-gold hover:bg-gold/10"
         >
           Alle anzeigen
         </Button>
       </div>
-    </div>
+    </motion.div>
   );
 };

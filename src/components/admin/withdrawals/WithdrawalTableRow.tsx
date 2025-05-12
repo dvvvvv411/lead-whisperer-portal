@@ -29,14 +29,14 @@ const WithdrawalTableRow = ({
   onReject 
 }: WithdrawalTableRowProps) => {
   return (
-    <TableRow key={withdrawal.id}>
-      <TableCell>
+    <TableRow className="border-t border-gold/10 hover:bg-casino-highlight">
+      <TableCell className="text-gray-300">
         {new Date(withdrawal.created_at).toLocaleDateString('de-DE')}
       </TableCell>
-      <TableCell>{withdrawal.user_email}</TableCell>
-      <TableCell>{(withdrawal.amount / 100).toFixed(2)}€</TableCell>
-      <TableCell>{withdrawal.wallet_currency}</TableCell>
-      <TableCell className="font-mono text-xs max-w-[200px] truncate">
+      <TableCell className="text-gray-300">{withdrawal.user_email}</TableCell>
+      <TableCell className="text-gold">{(withdrawal.amount / 100).toFixed(2)}€</TableCell>
+      <TableCell className="text-teal-400">{withdrawal.wallet_currency}</TableCell>
+      <TableCell className="font-mono text-xs max-w-[200px] truncate text-gray-400">
         {withdrawal.wallet_address}
       </TableCell>
       <TableCell>

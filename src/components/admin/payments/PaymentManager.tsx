@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { PaymentTable, Payment } from "./PaymentTable";
+import { motion } from "framer-motion";
 
 export const PaymentManager = () => {
   const { toast } = useToast();
@@ -59,21 +60,43 @@ export const PaymentManager = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
       
-      <div className="mb-6">
-        <h1 className="text-3xl font-bold">Zahlungsverwaltung</h1>
-        <p className="text-gray-600">Eingeloggt als: {currentUser?.email}</p>
-      </div>
+      <div className="container mx-auto p-4">
+        <motion.div 
+          className="mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+        >
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-400 via-purple-300 to-purple-400 bg-clip-text text-transparent">
+            Zahlungsverwaltung
+          </h1>
+          <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
+        </motion.div>
 
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <p>Wird geladen...</p>
-        </div>
-      ) : (
-        <PaymentTable payments={payments} onPaymentUpdated={fetchPayments} />
-      )}
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-12 bg-purple-500/20 rounded-full mb-4 flex items-center justify-center">
+                <div className="h-6 w-6 bg-purple-500/60 rounded-full animate-ping"></div>
+              </div>
+              <p>Wird geladen...</p>
+            </div>
+          </div>
+        ) : (
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.4, delay: 0.1 }}
+          >
+            <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
+              <PaymentTable payments={payments} onPaymentUpdated={fetchPayments} />
+            </div>
+          </motion.div>
+        )}
+      </div>
     </div>
   );
 };

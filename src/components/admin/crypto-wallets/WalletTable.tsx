@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Pencil, Trash2 } from "lucide-react";
 import { WalletForm } from "./WalletForm";
+import { motion } from "framer-motion";
 
 export interface CryptoWallet {
   id: string;
@@ -54,8 +55,8 @@ export const WalletTable = ({ wallets, onWalletUpdated }: WalletTableProps) => {
 
   if (wallets.length === 0) {
     return (
-      <div className="text-center p-10 bg-gray-50 rounded-lg">
-        <p className="text-gray-600">Keine Wallets vorhanden. Fügen Sie eine neue Wallet hinzu.</p>
+      <div className="text-center p-10 bg-casino-darker rounded-lg border border-gold/10">
+        <p className="text-gray-400">Keine Wallets vorhanden. Fügen Sie eine neue Wallet hinzu.</p>
       </div>
     );
   }
@@ -63,42 +64,58 @@ export const WalletTable = ({ wallets, onWalletUpdated }: WalletTableProps) => {
   return (
     <div className="overflow-x-auto">
       {editMode && editWallet && (
-        <WalletForm 
-          mode="edit"
-          walletId={editWallet.id}
-          initialData={{
-            currency: editWallet.currency,
-            wallet_address: editWallet.wallet_address
-          }}
-          onCancel={() => {
-            setEditMode(null);
-            setEditWallet(null);
-          }}
-          onSuccess={() => {
-            setEditMode(null);
-            setEditWallet(null);
-            onWalletUpdated();
-          }}
-        />
+        <motion.div 
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
+          className="mb-6"
+        >
+          <div className="bg-casino-darker border border-green-500/20 p-6 rounded-lg mb-6">
+            <h3 className="text-lg font-medium mb-4 text-green-400">Wallet bearbeiten</h3>
+            <WalletForm 
+              mode="edit"
+              walletId={editWallet.id}
+              initialData={{
+                currency: editWallet.currency,
+                wallet_address: editWallet.wallet_address
+              }}
+              onCancel={() => {
+                setEditMode(null);
+                setEditWallet(null);
+              }}
+              onSuccess={() => {
+                setEditMode(null);
+                setEditWallet(null);
+                onWalletUpdated();
+              }}
+            />
+          </div>
+        </motion.div>
       )}
 
-      <Table className="min-w-full bg-white rounded-lg overflow-hidden shadow">
-        <TableHeader className="bg-gray-100">
+      <Table className="min-w-full rounded-lg overflow-hidden">
+        <TableHeader className="bg-casino-darker border-b border-gold/10">
           <TableRow>
-            <TableHead>Währung</TableHead>
-            <TableHead>Wallet-Adresse</TableHead>
-            <TableHead>Letzte Änderung</TableHead>
-            <TableHead className="text-right">Aktionen</TableHead>
+            <TableHead className="text-gray-300">Währung</TableHead>
+            <TableHead className="text-gray-300">Wallet-Adresse</TableHead>
+            <TableHead className="text-gray-300">Letzte Änderung</TableHead>
+            <TableHead className="text-right text-gray-300">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {wallets.map((wallet) => (
-            <TableRow key={wallet.id}>
-              <TableCell className="font-medium">{wallet.currency}</TableCell>
+          {wallets.map((wallet, index) => (
+            <motion.tr 
+              key={wallet.id}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.3, delay: index * 0.05 }}
+              className="border-t border-gold/10 hover:bg-casino-highlight"
+            >
+              <TableCell className="font-medium text-green-400">{wallet.currency}</TableCell>
               <TableCell>
-                <code className="bg-gray-50 px-2 py-1 rounded">{wallet.wallet_address}</code>
+                <code className="bg-casino-darker px-2 py-1 rounded text-gray-300 text-xs">{wallet.wallet_address}</code>
               </TableCell>
-              <TableCell className="text-sm text-gray-600">
+              <TableCell className="text-sm text-gray-400">
                 {new Date(wallet.updated_at).toLocaleString('de-DE')}
               </TableCell>
               <TableCell className="text-right">
@@ -106,6 +123,7 @@ export const WalletTable = ({ wallets, onWalletUpdated }: WalletTableProps) => {
                   <Button 
                     variant="outline" 
                     size="sm"
+                    className="bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400"
                     onClick={() => {
                       setEditMode(wallet.id);
                       setEditWallet(wallet);
@@ -116,13 +134,14 @@ export const WalletTable = ({ wallets, onWalletUpdated }: WalletTableProps) => {
                   <Button 
                     variant="destructive" 
                     size="sm"
+                    className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
                     onClick={() => handleDeleteWallet(wallet.id)}
                   >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </TableCell>
-            </TableRow>
+            </motion.tr>
           ))}
         </TableBody>
       </Table>

@@ -6,6 +6,7 @@ import WithdrawalTableRow from "./WithdrawalTableRow";
 import WithdrawalEmptyState from "./WithdrawalEmptyState";
 import WithdrawalActionDialog from "./WithdrawalActionDialog";
 import { useWithdrawalActions } from "@/hooks/useWithdrawalActions";
+import { motion } from "framer-motion";
 
 interface Withdrawal {
   id: string;
@@ -46,27 +47,48 @@ const WithdrawalTable = ({ withdrawals, onWithdrawalUpdated }: WithdrawalTablePr
     setUpdatedWithdrawals(withdrawals);
   }, [withdrawals]);
 
+  const container = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.05
+      }
+    }
+  };
+  
+  const item = {
+    hidden: { y: 10, opacity: 0 },
+    show: { y: 0, opacity: 1 }
+  };
+
   return (
     <>
-      <div className="rounded-md border">
-        <Table>
+      <motion.div
+        className="rounded-md"
+        variants={container}
+        initial="hidden"
+        animate="show"
+      >
+        <Table className="border-collapse">
           <WithdrawalTableHeader />
           <TableBody>
             {updatedWithdrawals.length === 0 ? (
               <WithdrawalEmptyState />
             ) : (
-              updatedWithdrawals.map((withdrawal) => (
-                <WithdrawalTableRow
-                  key={withdrawal.id}
-                  withdrawal={withdrawal}
-                  onApprove={handleApproveClick}
-                  onReject={handleRejectClick}
-                />
+              updatedWithdrawals.map((withdrawal, index) => (
+                <motion.tr key={withdrawal.id} variants={item} className="contents">
+                  <WithdrawalTableRow
+                    withdrawal={withdrawal}
+                    onApprove={handleApproveClick}
+                    onReject={handleRejectClick}
+                  />
+                </motion.tr>
               ))
             )}
           </TableBody>
         </Table>
-      </div>
+      </motion.div>
 
       <WithdrawalActionDialog
         selectedWithdrawal={selectedWithdrawal}

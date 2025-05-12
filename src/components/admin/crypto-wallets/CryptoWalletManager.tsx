@@ -7,6 +7,7 @@ import { AdminNavbar } from "../AdminNavbar";
 import { Plus } from "lucide-react";
 import { WalletTable, CryptoWallet } from "./WalletTable";
 import { WalletForm } from "./WalletForm";
+import { motion } from "framer-motion";
 
 export const CryptoWalletManager = () => {
   const { toast } = useToast();
@@ -64,51 +65,82 @@ export const CryptoWalletManager = () => {
   }, []);
 
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
       
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6">
-        <div className="mb-4 md:mb-0">
-          <h1 className="text-3xl font-bold">Krypto Wallet-Verwaltung</h1>
-          <p className="text-gray-600">Eingeloggt als: {user?.email}</p>
-        </div>
-        <Button 
-          onClick={() => {
-            setAddMode(true);
-          }}
-          disabled={addMode}
-          className="flex items-center gap-2"
+      <div className="container mx-auto p-4">
+        <motion.div 
+          className="flex flex-col md:flex-row justify-between items-start md:items-center mb-6"
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4 }}
         >
-          <Plus className="h-4 w-4" />
-          Neue Wallet hinzufügen
-        </Button>
+          <div className="mb-4 md:mb-0">
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 via-green-300 to-green-400 bg-clip-text text-transparent">
+              Krypto Wallet-Verwaltung
+            </h1>
+            <p className="text-gray-400">Eingeloggt als: {user?.email}</p>
+          </div>
+          <Button 
+            onClick={() => {
+              setAddMode(true);
+            }}
+            disabled={addMode}
+            className="flex items-center gap-2 bg-green-900/40 border border-green-500/30 hover:bg-green-800/30 text-green-300"
+          >
+            <Plus className="h-4 w-4" />
+            Neue Wallet hinzufügen
+          </Button>
+        </motion.div>
+
+        {isLoading ? (
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-12 bg-green-500/20 rounded-full mb-4 flex items-center justify-center">
+                <div className="h-6 w-6 bg-green-500/60 rounded-full animate-ping"></div>
+              </div>
+              <p>Wird geladen...</p>
+            </div>
+          </div>
+        ) : (
+          <>
+            {addMode && (
+              <motion.div
+                initial={{ opacity: 0, y: -20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.4 }}
+                className="mb-6"
+              >
+                <div className="bg-casino-card border border-green-500/20 p-6 rounded-lg shadow-lg">
+                  <WalletForm 
+                    mode="add"
+                    onCancel={() => {
+                      setAddMode(false);
+                    }}
+                    onSuccess={() => {
+                      setAddMode(false);
+                      fetchWallets();
+                    }}
+                  />
+                </div>
+              </motion.div>
+            )}
+
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: 0.1 }}
+            >
+              <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
+                <WalletTable 
+                  wallets={wallets} 
+                  onWalletUpdated={fetchWallets} 
+                />
+              </div>
+            </motion.div>
+          </>
+        )}
       </div>
-
-      {isLoading ? (
-        <div className="flex justify-center items-center h-40">
-          <p>Wird geladen...</p>
-        </div>
-      ) : (
-        <>
-          {addMode && (
-            <WalletForm 
-              mode="add"
-              onCancel={() => {
-                setAddMode(false);
-              }}
-              onSuccess={() => {
-                setAddMode(false);
-                fetchWallets();
-              }}
-            />
-          )}
-
-          <WalletTable 
-            wallets={wallets} 
-            onWalletUpdated={fetchWallets} 
-          />
-        </>
-      )}
     </div>
   );
 };

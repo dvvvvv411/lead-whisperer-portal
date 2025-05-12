@@ -33,35 +33,49 @@ const LeadsTable = () => {
 
   if (isLoading || authLoading) {
     return (
-      <div className="flex justify-center items-center h-40">
-        <p>Wird geladen...</p>
+      <div className="min-h-screen bg-casino-darker text-gray-300">
+        <AdminNavbar />
+        <div className="container mx-auto p-4">
+          <div className="flex justify-center items-center h-40">
+            <div className="animate-pulse flex flex-col items-center">
+              <div className="h-12 w-12 bg-gold/20 rounded-full mb-4 flex items-center justify-center">
+                <div className="h-6 w-6 bg-gold rounded-full animate-ping"></div>
+              </div>
+              <p>Wird geladen...</p>
+            </div>
+          </div>
+        </div>
       </div>
     );
   }
   
   return (
-    <div className="container mx-auto p-4">
+    <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
       
-      <LeadTableHeader 
-        userEmail={user?.email}
-        onLogout={handleLogout}
-        onRefresh={handleRefresh}
-      />
-      
-      <LeadFilterBar
-        statusFilter={statusFilter}
-        onStatusFilterChange={setStatusFilter}
-      />
-      
-      <LeadsTableContent
-        leads={filteredLeads}
-        comments={comments}
-        onStatusChange={handleStatusChange}
-        onCommentAdded={handleCommentAdded}
-        userEmail={user?.email || ''}
-        isRefreshing={isRefreshing}
-      />
+      <div className="container mx-auto p-4">
+        <LeadTableHeader 
+          userEmail={user?.email}
+          onLogout={handleLogout}
+          onRefresh={handleRefresh}
+        />
+        
+        <LeadFilterBar
+          statusFilter={statusFilter}
+          onStatusFilterChange={setStatusFilter}
+        />
+        
+        <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
+          <LeadsTableContent
+            leads={filteredLeads}
+            comments={comments}
+            onStatusChange={handleStatusChange}
+            onCommentAdded={handleCommentAdded}
+            userEmail={user?.email || ''}
+            isRefreshing={isRefreshing}
+          />
+        </div>
+      </div>
     </div>
   );
 };

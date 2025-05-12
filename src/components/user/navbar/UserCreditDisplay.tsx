@@ -41,14 +41,14 @@ const UserCreditDisplay = ({ userCredit, loading }: UserCreditDisplayProps) => {
   return (
     <div 
       className={cn(
-        "px-4 py-2 rounded-md transition-all duration-500",
+        "px-4 py-2 rounded-md transition-all duration-500 shadow-md",
         creditIncreased === true ? "bg-green-500/20 text-green-300 animate-pulse-gold" : 
         creditIncreased === false ? "bg-red-500/20 text-red-300" : 
         "bg-casino-card"
       )}
     >
-      <div className="text-xs text-white/80 mb-0.5">Guthaben</div>
-      <div className="font-bold text-lg text-white">
+      <div className="text-xs text-white/80 mb-0.5 font-medium">Guthaben</div>
+      <div className="font-bold text-lg text-white drop-shadow-sm">
         {loading ? (
           <span className="animate-pulse">...</span>
         ) : (

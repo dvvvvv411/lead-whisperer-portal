@@ -99,9 +99,13 @@ const TradingBotContent = ({
         userCredit={userCredit}
         rankTiers={rankTiers}
         onExecuteTrade={onManualTrade}
+        userName={userName}
       />
 
       {/* Bot Status Overview with daily stats */}
+      <div className="flex items-center justify-between mb-2">
+        <h3 className="font-medium text-white drop-shadow-sm">Bot Trading Aktivität</h3>
+      </div>
       <BotStatusOverview
         isActive={status.isActive || simulationOpen}
         totalProfitAmount={dailyProfitAmount} // Changed to daily profit

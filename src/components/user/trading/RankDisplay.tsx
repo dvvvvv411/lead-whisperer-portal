@@ -40,7 +40,7 @@ const RankDisplay = ({
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-gold" />
-          <h3 className="font-medium">Trading-Rang</h3>
+          <h3 className="font-medium text-white drop-shadow-sm">Trading-Rang</h3>
         </div>
       </div>
       

@@ -33,7 +33,10 @@ const LogoutButton = ({ className }: LogoutButtonProps) => {
     <Button 
       variant="outline" 
       onClick={handleLogout}
-      className={cn("border-gold/20 hover:bg-gold/10", className)}
+      className={cn(
+        "border-gold/30 hover:bg-gold/10 text-white shadow-sm", 
+        className
+      )}
     >
       <LogOut className="h-4 w-4 mr-2" />
       <span className="hidden md:inline">Abmelden</span>

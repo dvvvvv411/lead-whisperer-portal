@@ -5,7 +5,7 @@ const BackgroundEffects = () => {
   return (
     <>
       {/* Dark background gradient */}
-      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D0E]/90 via-[#0B0D0E]/80 to-[#0B0D0E]/90 z-0"></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0A0C10] via-[#0B0D0E]/90 to-[#0B0D0E] z-0"></div>
       
       {/* Subtle animated grid pattern */}
       <div className="absolute inset-0 z-0">

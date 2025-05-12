@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Bitcoin, Bot, Sparkles } from "lucide-react";
@@ -123,9 +124,9 @@ const ChartSection = () => {
       animate={{ opacity: 1, scale: 1 }}
       transition={{ duration: 0.8, delay: 0.7 }}
     >
-      {/* Modernes Chart-Grafik mit dünneren Linien und mehr Transparenz */}
+      {/* Chart graphic with chart container */}
       <div className="relative backdrop-blur-md border border-[#9b87f5]/20 rounded-xl p-6 shadow-lg shadow-[#9b87f5]/5 bg-black/20">
-        {/* Akzent-Elemente */}
+        {/* Accent elements */}
         <motion.div 
           className="absolute -top-3 -left-3 bg-black/40 p-3 rounded-lg border border-gold/20 backdrop-blur-sm"
           whileHover={{ scale: 1.05, boxShadow: "0 0 15px rgba(255,215,0,0.3)" }}
@@ -146,10 +147,10 @@ const ChartSection = () => {
           <Sparkles className="h-4 w-4 text-gold animate-pulse" /> Live Trading Performance
         </h3>
         
-        {/* Enhanced Chart with advanced animations */}
+        {/* Chart with SVG visualization */}
         <div className="h-60 w-full relative">
           <svg width="100%" height="100%" viewBox="0 0 100 50" className="overflow-visible">
-            {/* Enhanced grid lines with subtle animation */}
+            {/* Grid lines with subtle animation */}
             <g className="grid-lines">
               {[0, 10, 20, 30, 40, 50].map((line) => (
                 <motion.line 
@@ -181,7 +182,7 @@ const ChartSection = () => {
               ))}
             </g>
             
-            {/* Data points with pulse effect on recent additions */}
+            {/* Data points with pulse effect */}
             {chartData.map((point, index) => (
               <motion.circle
                 key={`point-${index}`}
@@ -202,7 +203,7 @@ const ChartSection = () => {
               />
             ))}
             
-            {/* Enhanced animated chart line with dynamic path */}
+            {/* Chart line with dynamic path */}
             <motion.path
               d={`M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`}
               fill="none"
@@ -222,7 +223,7 @@ const ChartSection = () => {
               }}
             />
             
-            {/* Enhanced area gradient with subtle animation */}
+            {/* Area gradient with subtle animation */}
             <motion.path
               d={`M${chartData[0]?.x || 0},${chartData[0]?.y || 30} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1]?.x || 100},50 L${chartData[0]?.x || 0},50 Z`}
               fill="url(#area-gradient)"
@@ -260,7 +261,7 @@ const ChartSection = () => {
               }}
             />
             
-            {/* Advanced gradients with animated stops */}
+            {/* Gradients with animated stops */}
             <defs>
               <motion.linearGradient 
                 id="line-gradient" 
@@ -319,7 +320,7 @@ const ChartSection = () => {
             </defs>
           </svg>
           
-          {/* Enhanced glowing line effect with dynamic position */}
+          {/* Glowing line effect with dynamic position */}
           <motion.div 
             className="absolute h-0.5 bg-gradient-to-r from-transparent via-[#9b87f5]/70 to-transparent blur-md"
             style={{ top: '30%' }}
@@ -349,7 +350,7 @@ const ChartSection = () => {
           <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
         </div>
         
-        {/* Enhanced stats with animated values */}
+        {/* Stats with animated values */}
         <div className="grid grid-cols-3 gap-3 mt-4">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
@@ -423,7 +424,7 @@ const ChartSection = () => {
           </motion.div>
         </div>
 
-        {/* Animated edge effect with enhanced gradients */}
+        {/* Animated edge effect with gradients */}
         <div className="absolute inset-0 rounded-xl overflow-hidden">
           <div className="absolute inset-0 opacity-30">
             <motion.div
@@ -443,7 +444,7 @@ const ChartSection = () => {
         </div>
       </div>
       
-      {/* Additional floating animated elements around chart */}
+      {/* Floating animated elements around chart */}
       <motion.div 
         className="absolute -bottom-2 right-12 w-12 h-12 rounded-full"
         style={{ border: "1px solid rgba(255, 215, 0, 0.1)" }}

@@ -64,7 +64,7 @@ const cryptoIcons = [
 const CryptoIconBubbles = () => {
   return (
     <>
-      {/* Animierte Kryptowährungsblasen um das Diagramm herum */}
+      {/* Animated cryptocurrency bubbles around the chart */}
       {cryptoIcons.map((crypto, index) => (
         <motion.div
           key={crypto.name}

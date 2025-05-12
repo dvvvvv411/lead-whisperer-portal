@@ -33,9 +33,9 @@ const AlgorithmStepsList: React.FC<AlgorithmStepsListProps> = ({ steps, currentS
         </div>
       </div>
       
-      <div className="p-2.5">
-        <ScrollArea className="max-h-[180px]">
-          <div className="space-y-0.5">
+      <div className="h-[180px]">
+        <ScrollArea className="h-full">
+          <div className="space-y-0.5 p-2.5">
             {steps.map((step, idx) => (
               <AlgorithmStep 
                 key={`step-${idx}`} 

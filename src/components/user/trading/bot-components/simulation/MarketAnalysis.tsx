@@ -15,24 +15,28 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({ comparisons }) => {
         <p className="text-xs text-muted-foreground mt-0.5">Echtzeit-Kryptowährungsdaten</p>
       </div>
       
-      <ScrollArea className="max-h-[160px]">
-        {comparisons.length === 0 && (
-          <div className="text-center p-4 text-sm text-muted-foreground">
-            Lade Marktdaten...
+      <div className="h-[160px]">
+        <ScrollArea className="h-full">
+          <div className="p-1">
+            {comparisons.length === 0 && (
+              <div className="text-center p-4 text-sm text-muted-foreground">
+                Lade Marktdaten...
+              </div>
+            )}
+            
+            {comparisons.map((comparison, index) => (
+              <CryptoComparison 
+                key={`${comparison.symbol}-${index}`} 
+                symbol={comparison.symbol}
+                name={comparison.name}
+                price={comparison.price}
+                change={comparison.change}
+                logoUrl={comparison.logoUrl}
+              />
+            ))}
           </div>
-        )}
-        
-        {comparisons.map((comparison, index) => (
-          <CryptoComparison 
-            key={`${comparison.symbol}-${index}`} 
-            symbol={comparison.symbol}
-            name={comparison.name}
-            price={comparison.price}
-            change={comparison.change}
-            logoUrl={comparison.logoUrl}
-          />
-        ))}
-      </ScrollArea>
+        </ScrollArea>
+      </div>
     </div>
   );
 };

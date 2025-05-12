@@ -1,8 +1,8 @@
 
-import RankDisplay from "../RankDisplay";
-import BotStatusOverview from "./BotStatusOverview";
-import BotPerformance from "./BotPerformance";
-import BotInfoCard from "./BotInfoCard";
+import RankDisplay from "./RankDisplay";
+import BotStatusOverview from "./bot-components/BotStatusOverview";
+import BotPerformance from "./bot-components/BotPerformance";
+import BotInfoCard from "./bot-components/BotInfoCard";
 import { RankTier } from "@/hooks/ai-bot/types";
 
 interface TradingBotContentProps {

@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 
 const partners = [
@@ -11,13 +12,12 @@ const partners = [
 
 const PartnersSection = () => {
   return (
-    <section className="py-16 relative overflow-hidden bg-[#070809]">
+    <section className="py-16 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-[#080A0C] to-transparent"></div>
-        
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
         {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
         {/* Animated gradients */}
         <div className="absolute top-1/4 right-1/4 w-60 h-60 bg-gold/5 rounded-full filter blur-3xl"></div>
@@ -40,9 +40,6 @@ const PartnersSection = () => {
           }}
           transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
         />
-        
-        {/* Transition gradient to the next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#060708] to-transparent"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">

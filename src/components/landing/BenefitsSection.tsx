@@ -49,13 +49,12 @@ const BenefitsSection = () => {
   }, [controls]);
 
   return (
-    <section id="benefits" className="py-20 relative overflow-hidden bg-[#090B0D]">
+    <section id="benefits" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-[#0C0E10] to-transparent"></div>
-        
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-card to-transparent"></div>
         {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
         {/* Animated particles */}
         <motion.div 
@@ -74,27 +73,6 @@ const BenefitsSection = () => {
           }}
           transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         />
-
-        {/* Animated gold particles */}
-        <motion.div 
-          className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-gold/70"
-          animate={{ 
-            opacity: [0.3, 0.8, 0.3],
-            scale: [1, 1.5, 1]
-          }}
-          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-40 right-1/4 w-1 h-1 rounded-full bg-gold/60"
-          animate={{ 
-            opacity: [0.2, 0.7, 0.2],
-            scale: [1, 1.8, 1]
-          }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-        />
-        
-        {/* Transition gradient to the next section */}
-        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#080A0C] to-transparent"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">

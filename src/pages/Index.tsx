@@ -12,15 +12,15 @@ import Footer from "@/components/landing/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-[#0B0D0E] text-white overflow-x-hidden">
+    <div className="min-h-screen bg-casino-darker text-white overflow-x-hidden">
       <Navbar />
       <main>
         <HeroSection />
+        <CtaSection />
+        <ContactSection />
         <BenefitsSection />
         <TestimonialsSection />
         <PartnersSection />
-        <CtaSection />
-        <ContactSection />
       </main>
       <Footer />
     </div>

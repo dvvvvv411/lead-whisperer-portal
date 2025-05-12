@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Star } from "lucide-react";
@@ -46,12 +45,13 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-20 relative overflow-hidden bg-casino-darker">
+    <section className="py-20 relative overflow-hidden bg-[#080A0C]">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
+        <div className="absolute top-0 w-full h-16 bg-gradient-to-b from-[#090B0D] to-transparent"></div>
+        
         {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
         {/* Animated gradients */}
         <div className="absolute top-1/3 left-[15%] w-64 h-64 bg-gold/5 rounded-full filter blur-3xl"></div>
@@ -74,6 +74,9 @@ const TestimonialsSection = () => {
           }}
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         />
+        
+        {/* Transition gradient to the next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#070809] to-transparent"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">

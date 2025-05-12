@@ -5,8 +5,8 @@ const BackgroundEffects = () => {
   return (
     <>
       {/* Unified background elements with consistent color scheme */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0B0D0E]/70 to-[#0B0D0E]/90 opacity-80"></div>
-      <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0C0E10]/90 to-[#0B0D0E]/95 opacity-90"></div>
+      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       
       {/* Animated light beams with gold and purple tones */}
       <motion.div 
@@ -19,7 +19,7 @@ const BackgroundEffects = () => {
       />
       
       <motion.div 
-        className="absolute -bottom-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
+        className="absolute -bottom-20 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
         animate={{ 
           opacity: [0.1, 0.15, 0.1],
           scale: [1, 1.2, 1],
@@ -27,16 +27,18 @@ const BackgroundEffects = () => {
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
 
-      {/* Enhanced bottom wave separator */}
-      <div className="absolute bottom-0 left-0 right-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full">
-          <path 
-            fill="#0B0D0E" 
-            fillOpacity="1" 
-            d="M0,64L60,58.7C120,53,240,43,360,48C480,53,600,75,720,80C840,85,960,75,1080,58.7C1200,43,1320,21,1380,10.7L1440,0L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
-          ></path>
-        </svg>
-      </div>
+      {/* Animated gold particles */}
+      <motion.div 
+        className="absolute top-40 right-1/3 w-1 h-1 rounded-full bg-gold/70"
+        animate={{ 
+          opacity: [0.3, 0.8, 0.3],
+          scale: [1, 1.5, 1]
+        }}
+        transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Transition gradient to the next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#090B0D] to-transparent"></div>
     </>
   );
 };

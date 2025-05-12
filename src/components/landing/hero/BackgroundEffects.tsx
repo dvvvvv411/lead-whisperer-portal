@@ -11,7 +11,7 @@ const BackgroundEffects = () => {
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
-        {/* Animated gold particles with more animation */}
+        {/* Animated gold particles */}
         <motion.div 
           className="absolute top-20 left-1/4 w-1 h-1 rounded-full bg-gold"
           animate={{ 
@@ -28,27 +28,13 @@ const BackgroundEffects = () => {
           }}
           transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
         />
-        <motion.div 
-          className="absolute bottom-40 right-1/3 w-1 h-1 rounded-full bg-gold/30"
-          animate={{ 
-            opacity: [0.1, 0.6, 0.1],
-            scale: [1, 1.6, 1]
-          }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 0.8 }}
-        />
-        <motion.div 
-          className="absolute top-60 right-1/4 w-1 h-1 rounded-full bg-gold/40"
-          animate={{ 
-            opacity: [0.2, 0.7, 0.2],
-            scale: [1, 1.7, 1]
-          }}
-          transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-        />
         
         {/* Purple glowing orbs */}
         <div className="absolute top-1/4 left-1/5 w-60 h-60 bg-accent1/5 rounded-full filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/5 w-60 h-60 bg-accent1/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-2/3 left-1/3 w-40 h-40 bg-accent1/5 rounded-full filter blur-2xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        
+        {/* Transition gradient to the next section */}
+        <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-[#0C0E10] to-transparent"></div>
       </div>
     </>
   );

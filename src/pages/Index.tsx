@@ -1,19 +1,28 @@
 
-import ContactForm from "@/components/ContactForm";
+import { useState, useEffect } from "react";
+import { motion } from "framer-motion";
+import Navbar from "@/components/landing/Navbar";
+import HeroSection from "@/components/landing/HeroSection";
+import CtaSection from "@/components/landing/CtaSection";
+import ContactSection from "@/components/landing/ContactSection";
+import TestimonialsSection from "@/components/landing/TestimonialsSection";
+import BenefitsSection from "@/components/landing/BenefitsSection";
+import PartnersSection from "@/components/landing/PartnersSection";
+import Footer from "@/components/landing/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-gray-50 py-12">
-      <div className="container mx-auto px-4">
-        <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-4">Willkommen bei unserem Service</h1>
-          <p className="text-xl text-gray-600 max-w-2xl mx-auto">
-            Kontaktiere uns noch heute, und wir werden uns so schnell wie möglich bei dir melden.
-          </p>
-        </header>
-        
-        <ContactForm />
-      </div>
+    <div className="min-h-screen bg-casino-darker text-white overflow-x-hidden">
+      <Navbar />
+      <main>
+        <HeroSection />
+        <CtaSection />
+        <ContactSection />
+        <TestimonialsSection />
+        <BenefitsSection />
+        <PartnersSection />
+      </main>
+      <Footer />
     </div>
   );
 };

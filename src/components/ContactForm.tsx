@@ -6,6 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
+import { motion } from "framer-motion";
 
 const ContactForm = () => {
   const { toast } = useToast();
@@ -87,23 +88,34 @@ const ContactForm = () => {
   };
 
   return (
-    <div className="max-w-md mx-auto bg-white p-6 rounded-lg shadow-lg">
-      <h2 className="text-2xl font-bold text-center mb-6">Kontaktiere uns</h2>
+    <div className="w-full max-w-md mx-auto">
+      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">Kontaktiere uns</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
-        <div className="space-y-2">
-          <Label htmlFor="name">Name *</Label>
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.1 }}
+        >
+          <Label htmlFor="name" className="text-white">Dein Name *</Label>
           <Input
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
-            placeholder="Dein Name"
+            placeholder="Dein vollständiger Name"
             required
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
           />
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
-          <Label htmlFor="email">Email *</Label>
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.2 }}
+        >
+          <Label htmlFor="email" className="text-white">E-Mail *</Label>
           <Input
             id="email"
             name="email"
@@ -112,33 +124,51 @@ const ContactForm = () => {
             onChange={handleChange}
             placeholder="deine@email.de"
             required
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
           />
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
-          <Label htmlFor="phone">Telefon</Label>
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.3 }}
+        >
+          <Label htmlFor="phone" className="text-white">Telefon</Label>
           <Input
             id="phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="Deine Telefonnummer"
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
           />
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
-          <Label htmlFor="company">Unternehmen</Label>
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.4 }}
+        >
+          <Label htmlFor="company" className="text-white">Unternehmen</Label>
           <Input
             id="company"
             name="company"
             value={formData.company}
             onChange={handleChange}
-            placeholder="Dein Unternehmen"
+            placeholder="Dein Unternehmen (optional)"
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
           />
-        </div>
+        </motion.div>
         
-        <div className="space-y-2">
-          <Label htmlFor="message">Nachricht *</Label>
+        <motion.div 
+          className="space-y-2"
+          initial={{ opacity: 0, x: 20 }}
+          animate={{ opacity: 1, x: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <Label htmlFor="message" className="text-white">Nachricht *</Label>
           <Textarea
             id="message"
             name="message"
@@ -147,16 +177,33 @@ const ContactForm = () => {
             placeholder="Wie können wir dir helfen?"
             rows={4}
             required
+            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
           />
-        </div>
+        </motion.div>
         
-        <Button 
-          type="submit" 
-          className="w-full" 
-          disabled={isSubmitting}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          whileHover={{ scale: 1.03 }}
         >
-          {isSubmitting ? "Wird gesendet..." : "Absenden"}
-        </Button>
+          <Button 
+            type="submit" 
+            className="w-full bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-medium py-6"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? "Wird gesendet..." : "Jetzt starten"}
+          </Button>
+        </motion.div>
+        
+        <motion.p
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
+          className="text-xs text-center text-gray-400 mt-4"
+        >
+          Durch Absenden des Formulars stimmst du unserer Datenschutzerklärung zu.
+        </motion.p>
       </form>
     </div>
   );

@@ -64,13 +64,24 @@ const cryptoIcons = [
 
 const HeroSection = () => {
   const [count, setCount] = useState(0);
+  const [chartData, setChartData] = useState({
+    x: 0,
+    y: 35
+  });
 
+  // Animation for the chart's active dot to simulate trading activity
   useEffect(() => {
     const interval = setInterval(() => {
-      setCount((prevCount) => (prevCount < 100 ? prevCount + 1 : prevCount));
-    }, 30);
+      setCount((prevCount) => (prevCount < 100 ? prevCount + 1 : 0));
+
+      // Simulate random trading activity with smoother transitions
+      setChartData({
+        x: count,
+        y: 35 - count/4 + Math.sin(count/10) * 3
+      });
+    }, 100);
     return () => clearInterval(interval);
-  }, []);
+  }, [count]);
 
   return (
     <section id="hero" className="py-20 px-4 relative overflow-hidden">
@@ -158,17 +169,17 @@ const HeroSection = () => {
                   Revolutioniere dein
                 </motion.span>
                 
-                {/* Animated gold text with shimmer effect */}
+                {/* Gold animated text with enhanced shimmer effect */}
                 <motion.span 
-                  className="block bg-gradient-to-r from-gold to-yellow-300 bg-clip-text text-transparent relative"
+                  className="block text-gold relative"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
                 >
-                  <span className="relative inline-block">
+                  <span className="relative inline-block bg-gradient-to-r from-gold to-yellow-300 bg-clip-text text-transparent">
                     Krypto-Trading
                     <motion.span 
-                      className="absolute inset-0 w-full bg-gradient-to-r from-transparent via-white/30 to-transparent"
+                      className="absolute inset-0 w-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
                       initial={{ x: -200, opacity: 0 }}
                       animate={{ 
                         x: 200, 
@@ -176,8 +187,8 @@ const HeroSection = () => {
                       }}
                       transition={{ 
                         repeat: Infinity,
-                        repeatDelay: 2.5,
-                        duration: 1.5,
+                        repeatDelay: 1.5,
+                        duration: 1.2,
                         ease: "easeInOut",
                       }}
                     />
@@ -210,7 +221,7 @@ const HeroSection = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1.4 }}
             >
-              {/* Animated CTA button with pulse and glow effect */}
+              {/* Enhanced CTA button with stronger pulse and glow effect */}
               <motion.div
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.98 }}
@@ -219,7 +230,7 @@ const HeroSection = () => {
                 <motion.div
                   className="absolute inset-0 rounded-md bg-gold/30"
                   animate={{ 
-                    boxShadow: ["0 0 0px rgba(255, 215, 0, 0)", "0 0 15px rgba(255, 215, 0, 0.5)", "0 0 0px rgba(255, 215, 0, 0)"]
+                    boxShadow: ["0 0 0px rgba(255, 215, 0, 0)", "0 0 20px rgba(255, 215, 0, 0.7)", "0 0 0px rgba(255, 215, 0, 0)"]
                   }}
                   transition={{ 
                     duration: 2,
@@ -259,7 +270,7 @@ const HeroSection = () => {
           </motion.div>
           
           <motion.div
-            className="md:col-span-2"
+            className="md:col-span-2 relative"
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             transition={{ duration: 0.8, delay: 0.7 }}
@@ -287,7 +298,7 @@ const HeroSection = () => {
                 <Sparkles className="h-4 w-4 text-gold animate-pulse" /> Live Trading Performance
               </h3>
               
-              {/* Modern chart with thinner lines */}
+              {/* Modern chart with thinner lines and enhanced activity */}
               <div className="h-60 w-full relative">
                 <svg width="100%" height="100%" viewBox="0 0 100 50" className="overflow-visible">
                   {/* Thinner grid lines */}
@@ -361,15 +372,36 @@ const HeroSection = () => {
                     </motion.circle>
                   ))}
                   
-                  {/* Animated dot */}
+                  {/* Live animated data point with dynamic movement */}
                   <motion.circle 
-                    cx={count} 
-                    cy={35 - count/4} 
+                    cx={chartData.x} 
+                    cy={chartData.y} 
                     r="1.2" 
                     fill="#FFD700"
                   >
-                    <animate attributeName="r" values="1.2;1.8;1.2" dur="2s" repeatCount="indefinite" />
+                    <animate attributeName="r" values="1.2;1.8;1.2" dur="1s" repeatCount="indefinite" />
+                    <animate attributeName="fill" values="#FFD700;#9b87f5;#FFD700" dur="3s" repeatCount="indefinite" />
                   </motion.circle>
+
+                  {/* Activity indicator pulse rings */}
+                  <motion.circle 
+                    cx={chartData.x} 
+                    cy={chartData.y} 
+                    r="3" 
+                    fill="none"
+                    stroke="#FFD700"
+                    strokeWidth="0.3"
+                    initial={{ opacity: 0 }}
+                    animate={{ 
+                      opacity: [0.8, 0],
+                      r: [1, 10]
+                    }}
+                    transition={{
+                      repeat: Infinity,
+                      duration: 2,
+                      ease: "easeOut"
+                    }}
+                  />
                   
                   {/* Enhanced gradients */}
                   <defs>
@@ -454,14 +486,12 @@ const HeroSection = () => {
               </div>
             </div>
 
-            {/* Animated Cryptocurrency bubbles around chart */}
+            {/* Animated Cryptocurrency bubbles around chart only */}
             {cryptoIcons.map((crypto, index) => (
               <motion.div
                 key={crypto.name}
                 className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`}
                 initial={{ 
-                  x: 0, 
-                  y: 0, 
                   opacity: 0,
                   scale: 0 
                 }}
@@ -479,10 +509,11 @@ const HeroSection = () => {
                   ease: "easeInOut"
                 }}
                 style={{
-                  top: `${20 + (index * 15) % 60}%`,
+                  // Position bubbles only around the chart
+                  top: `${(index * 20 + 10) % 100}%`,
                   left: index % 2 === 0 
-                    ? `${(index * 20) % 30 - 10}%` 
-                    : `${80 + (index * 10) % 30}%`,
+                    ? `${index < 2 ? -10 : 105}%` 
+                    : `${index < 3 ? 105 : -10}%`,
                 }}
                 whileHover={{
                   scale: 1.2,
@@ -493,7 +524,7 @@ const HeroSection = () => {
               </motion.div>
             ))}
 
-            {/* Floating animated elements */}
+            {/* Additional floating animated elements around chart */}
             <motion.div 
               className="absolute -bottom-2 right-12 w-12 h-12 rounded-full"
               style={{ border: "1px solid rgba(255, 215, 0, 0.1)" }}
@@ -554,3 +585,4 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
+

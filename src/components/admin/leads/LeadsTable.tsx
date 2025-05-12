@@ -19,12 +19,22 @@ const LeadsTable = () => {
     statusFilter, 
     setStatusFilter, 
     fetchLeads,
-    handleStatusChange
+    handleStatusChange,
+    setLeads
   } = useLeads();
   
   const { comments, fetchComments, handleCommentAdded } = useComments();
   const { user, authLoading, handleLogout } = useAdminAuth();
   const [searchQuery, setSearchQuery] = useState("");
+
+  // Handler für aktualisierte Leads
+  const handleLeadUpdated = (updatedLead: Lead) => {
+    setLeads(prevLeads => 
+      prevLeads.map(lead => 
+        lead.id === updatedLead.id ? updatedLead : lead
+      )
+    );
+  };
 
   // Filtered leads based on search query
   const searchFilteredLeads = filteredLeads.filter(lead => {
@@ -86,6 +96,7 @@ const LeadsTable = () => {
             comments={comments}
             onStatusChange={handleStatusChange}
             onCommentAdded={handleCommentAdded}
+            onLeadUpdated={handleLeadUpdated}
             userEmail={user?.email || ''}
             isRefreshing={isRefreshing}
           />

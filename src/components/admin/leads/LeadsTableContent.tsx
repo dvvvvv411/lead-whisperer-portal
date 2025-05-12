@@ -15,6 +15,7 @@ interface LeadsTableContentProps {
   comments: Comment[];
   onStatusChange: (id: string, status: 'akzeptiert' | 'abgelehnt') => void;
   onCommentAdded: (newComment: Comment) => void;
+  onLeadUpdated?: (updatedLead: Lead) => void;
   userEmail: string;
   isRefreshing: boolean;
 }
@@ -24,6 +25,7 @@ export const LeadsTableContent = ({
   comments,
   onStatusChange,
   onCommentAdded,
+  onLeadUpdated,
   userEmail,
   isRefreshing
 }: LeadsTableContentProps) => {
@@ -77,6 +79,7 @@ export const LeadsTableContent = ({
                 comments={comments}
                 onStatusChange={onStatusChange}
                 onCommentAdded={onCommentAdded}
+                onLeadUpdated={onLeadUpdated}
                 userEmail={userEmail || ''}
               />
             </motion.tr>

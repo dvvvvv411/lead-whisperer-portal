@@ -10,6 +10,7 @@ interface LeadTableRowProps {
   comments: Comment[];
   onStatusChange: (id: string, status: 'akzeptiert' | 'abgelehnt') => void;
   onCommentAdded: (newComment: Comment) => void;
+  onLeadUpdated?: (updatedLead: Lead) => void;
   userEmail: string;
 }
 
@@ -18,6 +19,7 @@ export const LeadTableRow = ({
   comments, 
   onStatusChange, 
   onCommentAdded,
+  onLeadUpdated,
   userEmail
 }: LeadTableRowProps) => {
   return (
@@ -43,7 +45,8 @@ export const LeadTableRow = ({
       <td className="px-4 py-3">
         <LeadActions 
           lead={lead}
-          onStatusChange={(status) => onStatusChange(lead.id, status)} 
+          onStatusChange={(status) => onStatusChange(lead.id, status)}
+          onLeadUpdated={onLeadUpdated}
         />
       </td>
     </tr>

@@ -10,9 +10,10 @@ import { Edit } from "lucide-react";
 interface LeadActionsProps {
   lead: Lead;
   onStatusChange: (status: 'akzeptiert' | 'abgelehnt') => void;
+  onLeadUpdated?: (updatedLead: Lead) => void;
 }
 
-export const LeadActions = ({ lead, onStatusChange }: LeadActionsProps) => {
+export const LeadActions = ({ lead, onStatusChange, onLeadUpdated }: LeadActionsProps) => {
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
   const [isCreateAccountOpen, setIsCreateAccountOpen] = useState(false);
   
@@ -46,6 +47,7 @@ export const LeadActions = ({ lead, onStatusChange }: LeadActionsProps) => {
         lead={lead}
         open={isDetailsOpen}
         onOpenChange={setIsDetailsOpen}
+        onLeadUpdated={onLeadUpdated}
       />
       
       <CreateAccountDialog

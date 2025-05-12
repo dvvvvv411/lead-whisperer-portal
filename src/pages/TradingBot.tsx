@@ -1,7 +1,7 @@
-
 import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
 import { Activity, Lock, TrendingUp, WalletCards } from "lucide-react";
+import CtaBanner from "@/components/landing/CtaBanner";
 
 const steps = [
   {
@@ -80,26 +80,7 @@ const TradingBot = () => {
           ))}
         </div>
         
-        <motion.div 
-          initial={{ opacity: 0 }}
-          whileInView={{ opacity: 1 }}
-          viewport={{ once: true }}
-          transition={{ delay: 0.5 }}
-          className="mt-16 text-center"
-        >
-          <div className="p-6 bg-gradient-to-r from-gold/10 to-gold/5 rounded-lg border border-gold/20 shadow-lg">
-            <h3 className="text-xl font-bold text-gold mb-4">Haben Sie Fragen oder benötigen Sie mehr Informationen?</h3>
-            <p className="text-gray-300 mb-6">Kontaktieren Sie unser Expertenteam für eine persönliche Beratung zu unserer KI-Trading-Lösung</p>
-            <motion.button 
-              whileHover={{ scale: 1.05 }} 
-              whileTap={{ scale: 0.95 }}
-              className="bg-gold hover:bg-gold-dark text-black font-bold py-3 px-8 rounded-lg shadow-lg shadow-gold/20 transition-all"
-              onClick={() => window.location.href = '/#contact'}
-            >
-              Jetzt Beratung anfordern
-            </motion.button>
-          </div>
-        </motion.div>
+        <CtaBanner />
       </div>
     </PageLayout>
   );

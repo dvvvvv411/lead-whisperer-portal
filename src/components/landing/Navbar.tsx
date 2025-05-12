@@ -66,7 +66,7 @@ const Navbar = () => {
               className="h-12 object-contain"
             />
             
-            {/* Trading badge positioned below logo in mobile view */}
+            {/* Trading badge positioned below logo in mobile view - will only show here */}
             {isMobile && (
               <motion.div 
                 className="inline-flex items-center rounded-full border border-gold/30 bg-gold/5 px-3 py-1 mt-2"

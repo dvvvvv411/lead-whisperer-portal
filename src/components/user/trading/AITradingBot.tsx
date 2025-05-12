@@ -95,8 +95,6 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
         console.log("AITradingBot: Executing trade after simulation");
         const result = await completeTradeAfterSimulation();
         console.log("AITradingBot: Trade execution result:", result);
-        // Refresh trade history immediately after trade execution
-        fetchTradeHistory();
         return result;
       } catch (error) {
         console.error("Error in trade execution:", error);
@@ -116,13 +114,24 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
   // Get user's first name from email if available
   const userName = userEmail ? userEmail.split('@')[0].split('.')[0] : undefined;
   
-  // Refresh trade history when dialogs close
+  // Only refresh trade history when result dialog is closed
   useEffect(() => {
     if (!simulationOpen && !resultDialogOpen && !isSimulating) {
-      console.log("Dialogs closed, refreshing trade history");
+      console.log("All dialogs closed, refreshing trade history");
       fetchTradeHistory();
     }
   }, [simulationOpen, resultDialogOpen, isSimulating, fetchTradeHistory]);
+
+  // Only update data after result dialog closes
+  const handleAfterResultDialogClose = () => {
+    console.log("Result dialog closed, refreshing data");
+    handleResultDialogClose();
+    // Refresh trade history and update credit
+    fetchTradeHistory();
+    if (onTradeExecuted) {
+      onTradeExecuted();
+    }
+  };
 
   useEffect(() => {
     // Debug log for dialog states
@@ -169,7 +178,7 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
         </div>
       </div>
       
-      {/* Pass resultDialogOpen explicitly and log it */}
+      {/* Pass resultDialogOpen explicitly and use the new close handler */}
       <TradingBotDialogs
         simulationOpen={simulationOpen}
         resultDialogOpen={resultDialogOpen}
@@ -177,7 +186,7 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
         tradeResult={tradeResult}
         handleDialogOpenChange={handleDialogOpenChange}
         handleSimulationComplete={handleSimulationComplete}
-        handleResultDialogClose={handleResultDialogClose}
+        handleResultDialogClose={handleAfterResultDialogClose}
       />
     </div>
   );

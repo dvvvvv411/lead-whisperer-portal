@@ -145,12 +145,8 @@ export const useBotTradeExecution = (
           });
         }
         
-        // Call the onTradeExecuted callback if provided
-        if (onTradeExecuted) {
-          console.log("Calling onTradeExecuted to refresh data");
-          onTradeExecuted();
-        }
-        
+        // Note: We're not calling onTradeExecuted here anymore
+        // This will be done after the user closes the result dialog
         console.log("Trade completed successfully:", result);
       } else {
         // Update status with failure
@@ -176,13 +172,8 @@ export const useBotTradeExecution = (
       }
       
       return { success: false, error: error.message || "Unerwarteter Fehler" };
-    } finally {
-      console.log("Trade execution completed, resetting simulation state");
-      // IMPORTANT: Don't reset the simulation state here, let the dialog handle it
-      // simulationInProgressRef.current = false;
-      // setIsSimulating(false);
     }
-  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, cryptos, fetchCryptos]);
+  }, [userId, userCredit, settings, updateStatus, status, cryptos, fetchCryptos, toast]);
   
   return {
     executeSingleTrade,

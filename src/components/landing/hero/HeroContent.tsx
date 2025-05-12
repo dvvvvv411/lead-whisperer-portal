@@ -100,48 +100,30 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Enhanced CTA button - fixing width to be consistent in mobile view */}
-        <motion.div
-          whileHover={{ scale: isMobile ? 1 : 1.05 }}
-          whileTap={{ scale: 0.98 }}
-          className="relative w-full sm:w-auto"
+        {/* Modified CTA button - ensuring gold background covers the entire button */}
+        <Button 
+          onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
+          className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 flex items-center justify-center"
         >
-          <motion.div
-            className="absolute inset-0 rounded-md bg-gold/30"
-            animate={{ 
-              boxShadow: ["0 0 0px rgba(255, 215, 0, 0)", "0 0 20px rgba(255, 215, 0, 0.7)", "0 0 0px rgba(255, 215, 0, 0)"]
+          <motion.span
+            animate={{
+              x: [0, 4, 0],
             }}
-            transition={{ 
-              duration: 2,
+            transition={{
+              duration: 1.5,
               repeat: Infinity,
-              repeatType: "reverse",
-              ease: "easeInOut" 
+              repeatDelay: 1,
             }}
-          />
-          <Button 
-            onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="w-full bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
+            className="flex items-center gap-2"
           >
-            <motion.span
-              animate={{
-                x: [0, 4, 0],
-              }}
-              transition={{
-                duration: 1.5,
-                repeat: Infinity,
-                repeatDelay: 1,
-              }}
-              className="flex items-center gap-2"
-            >
-              Jetzt starten <ArrowRight className="h-4 w-4" />
-            </motion.span>
-          </Button>
-        </motion.div>
+            Jetzt starten <ArrowRight className="h-4 w-4" />
+          </motion.span>
+        </Button>
         
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}
           variant="outline"
-          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
+          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300 flex items-center justify-center"
         >
           Mehr erfahren
         </Button>

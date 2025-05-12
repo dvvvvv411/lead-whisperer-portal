@@ -2,6 +2,7 @@
 import React from 'react';
 import AlgorithmStep from "./AlgorithmStep";
 import { CircleCheck } from "lucide-react";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface AlgorithmStepsListProps {
   steps: { title: string; description: string }[];
@@ -32,17 +33,19 @@ const AlgorithmStepsList: React.FC<AlgorithmStepsListProps> = ({ steps, currentS
         </div>
       </div>
       
-      <div className="p-2.5 max-h-[180px] overflow-y-auto">
-        <div className="space-y-0.5">
-          {steps.map((step, idx) => (
-            <AlgorithmStep 
-              key={`step-${idx}`} 
-              name={step.title} 
-              isComplete={idx < currentStep} 
-              current={idx === currentStep} 
-            />
-          ))}
-        </div>
+      <div className="p-2.5">
+        <ScrollArea className="max-h-[180px]">
+          <div className="space-y-0.5">
+            {steps.map((step, idx) => (
+              <AlgorithmStep 
+                key={`step-${idx}`} 
+                name={step.title} 
+                isComplete={idx < currentStep} 
+                current={idx === currentStep} 
+              />
+            ))}
+          </div>
+        </ScrollArea>
       </div>
     </div>
   );

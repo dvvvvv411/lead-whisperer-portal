@@ -1,6 +1,7 @@
 
 import React from 'react';
 import CryptoComparison, { CryptoComparisonProps } from './CryptoComparison';
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface MarketAnalysisProps {
   comparisons: CryptoComparisonProps[];
@@ -14,7 +15,7 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({ comparisons }) => {
         <p className="text-xs text-muted-foreground mt-0.5">Echtzeit-Kryptowährungsdaten</p>
       </div>
       
-      <div className="max-h-[160px] overflow-y-auto scrollbar-thin">
+      <ScrollArea className="max-h-[160px]">
         {comparisons.length === 0 && (
           <div className="text-center p-4 text-sm text-muted-foreground">
             Lade Marktdaten...
@@ -31,7 +32,7 @@ const MarketAnalysis: React.FC<MarketAnalysisProps> = ({ comparisons }) => {
             logoUrl={comparison.logoUrl}
           />
         ))}
-      </div>
+      </ScrollArea>
     </div>
   );
 };

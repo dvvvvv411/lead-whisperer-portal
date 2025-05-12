@@ -1,9 +1,9 @@
 
-import { motion, useAnimation } from "framer-motion";
+import { motion } from "framer-motion";
 import { useEffect, useState } from "react";
 import SharedBackgroundEffects from "../common/SharedBackgroundEffects";
 
-// Sparkle effect component - simplified
+// Vereinfachte Sparkle-Effekt-Komponente
 const Sparkle = ({ delay = 0 }: { delay?: number }) => {
   return (
     <motion.div
@@ -13,24 +13,24 @@ const Sparkle = ({ delay = 0 }: { delay?: number }) => {
         bottom: `-5%`,
       }}
       animate={{
-        y: [0, -Math.random() * 150 - 80], // Reduced distance
-        opacity: [0, 0.6, 0], // Reduced opacity
-        scale: [0, Math.random() * 0.4 + 0.5, 0], // Reduced scale
+        y: [0, -Math.random() * 100 - 50], // Reduzierte Distanz
+        opacity: [0, 0.4, 0], // Reduzierte Opazität
+        scale: [0, Math.random() * 0.3 + 0.3, 0], // Reduzierte Skalierung
       }}
       transition={{
-        duration: Math.random() * 2 + 3,
+        duration: Math.random() * 2 + 4, // Langsamere Animation
         delay: delay,
         repeat: Infinity,
-        repeatDelay: Math.random() * 4
+        repeatDelay: Math.random() * 6 // Längere Pause zwischen Wiederholungen
       }}
     >
-      {/* Sparkle glow */}
-      <div className="absolute inset-0 scale-[1.5] rounded-full bg-gold/30 blur-sm"></div> {/* Reduced scale */}
+      {/* Vereinfachtes Funkeln-Glühen */}
+      <div className="absolute inset-0 scale-[1.3] rounded-full bg-gold/20 blur-sm"></div>
     </motion.div>
   );
 };
 
-// Light cone component
+// Vereinfachte Lichtstrahl-Komponente
 const LightCone = ({ x, width, height, rotation, delay }: { 
   x: string, 
   width: number, 
@@ -40,7 +40,7 @@ const LightCone = ({ x, width, height, rotation, delay }: {
 }) => {
   return (
     <motion.div
-      className="absolute bottom-0 bg-gradient-to-t from-gold/5 to-transparent"
+      className="absolute bottom-0 bg-gradient-to-t from-gold/3 to-transparent" // Reduzierte Opazität
       style={{
         left: x,
         width: width,
@@ -49,11 +49,10 @@ const LightCone = ({ x, width, height, rotation, delay }: {
         rotate: rotation,
       }}
       animate={{
-        opacity: [0.05, 0.2, 0.05], // Reduced opacity
-        height: [height, height * 1.05, height], // Reduced height change
+        opacity: [0.03, 0.1, 0.03], // Reduzierte Opazität
       }}
       transition={{
-        duration: 7, // Slower
+        duration: 9, // Langsamere Animation
         delay: delay,
         repeat: Infinity,
         ease: "easeInOut"
@@ -65,53 +64,39 @@ const LightCone = ({ x, width, height, rotation, delay }: {
 const BackgroundEffects = () => {
   const [sparkles, setSparkles] = useState<number[]>([]);
   
-  // Generate sparkles with different delays - reduced count
+  // Stark reduzierte Anzahl an Sparkles
   useEffect(() => {
-    setSparkles(Array.from({ length: 8 }, (_, i) => i * 0.6)); // Reduced from 20 to 8
+    setSparkles(Array.from({ length: 4 }, (_, i) => i * 1.2)); // Reduziert von 8 auf 4
   }, []);
   
   const additionalElements = (
     <>
-      {/* CTA-specific animated light beam - reduced count and complexity */}
+      {/* Vereinfachter animierter Lichtstrahl */}
       <motion.div 
-        className="absolute -top-40 left-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl"
+        className="absolute -top-40 left-1/4 w-96 h-96 bg-gold/5 rounded-full blur-3xl" // Reduzierte Opazität
         animate={{ 
-          opacity: [0.08, 0.15, 0.08],
-          scale: [1, 1.1, 1],
+          opacity: [0.05, 0.08, 0.05], // Reduzierte Opazität
+          scale: [1, 1.05, 1], // Reduzierte Skalierung
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 15, repeat: Infinity, ease: "easeInOut" }} // Langsamere Animation
       />
       
-      {/* Multiple light cones - reduced from 3 to 2 */}
-      <LightCone x="25%" width={90} height={250} rotation={-3} delay={0} />
-      <LightCone x="65%" width={100} height={270} rotation={3} delay={2} />
+      {/* Nur ein Lichtkegel statt zwei */}
+      <LightCone x="45%" width={120} height={250} rotation={0} delay={1} />
       
-      {/* Sparkling particles rising from the bottom - reduced count above */}
+      {/* Reduzierte Funkelpartikel */}
       {sparkles.map((delay, index) => (
         <Sparkle key={index} delay={delay} />
       ))}
       
-      {/* Animated gradient overlay */}
+      {/* Vereinfachter animierter Gradient-Overlay */}
       <motion.div
-        className="absolute inset-0 bg-gradient-to-b from-transparent to-gold/5 opacity-0"
+        className="absolute inset-0 bg-gradient-to-b from-transparent to-gold/3 opacity-0" // Reduzierte Opazität
         animate={{
-          opacity: [0, 0.08, 0], // Reduced opacity
+          opacity: [0, 0.05, 0], // Reduzierte Opazität
         }}
         transition={{
-          duration: 12, // Slower
-          repeat: Infinity,
-          ease: "easeInOut"
-        }}
-      />
-      
-      {/* Moving fog effect - simplified */}
-      <motion.div
-        className="absolute inset-x-0 bottom-0 h-40 bg-gradient-to-t from-black/15 to-transparent"
-        animate={{
-          opacity: [0.1, 0.15, 0.1]
-        }}
-        transition={{
-          duration: 10, // Slower
+          duration: 15, // Langsamere Animation
           repeat: Infinity,
           ease: "easeInOut"
         }}
@@ -125,9 +110,9 @@ const BackgroundEffects = () => {
       showTopGradient={true}
       showBottomWave={true}
       additionalElements={additionalElements}
-      interactive={false} // Changed to false
-      particleDensity="low" // Reduced from high
-      glowIntensity="low" // Reduced from high
+      interactive={false}
+      particleDensity="low"
+      glowIntensity="low"
     />
   );
 };

@@ -32,7 +32,7 @@ const ContactForm = () => {
     
     try {
       // Validierung
-      if (!formData.name || !formData.email) {
+      if (!formData.name || !formData.email || !formData.phone) {
         toast({
           title: "Fehlerhafte Eingabe",
           description: "Bitte fülle alle Pflichtfelder aus.",
@@ -42,7 +42,7 @@ const ContactForm = () => {
         return;
       }
       
-      // In Supabase speichern - fixed to match the required schema
+      // In Supabase speichern - mit leerer Nachricht
       const { error } = await supabase
         .from('leads')
         .insert({
@@ -50,16 +50,17 @@ const ContactForm = () => {
           email: formData.email, 
           phone: formData.phone,
           status: 'neu',
-          message: '' // Adding required message field with empty string
+          message: '' // Leere Nachricht wird mitgesendet
         });
         
       if (error) {
+        console.error("Formular-Fehler:", error);
         throw error;
       }
 
       toast({
         title: "Anfrage erhalten!",
-        description: "Vielen Dank für deine Nachricht. Wir werden uns bald bei dir melden.",
+        description: "Vielen Dank für deine Anfrage. Wir werden uns bald bei dir melden.",
       });
       
       setIsSuccess(true);
@@ -180,13 +181,14 @@ const ContactForm = () => {
           animate={{ opacity: 1, x: 0 }}
           transition={{ delay: 0.3 }}
         >
-          <Label htmlFor="phone" className="text-white">Telefon</Label>
+          <Label htmlFor="phone" className="text-white">Telefon *</Label>
           <Input
             id="phone"
             name="phone"
             value={formData.phone}
             onChange={handleChange}
             placeholder="Deine Telefonnummer"
+            required
             className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>

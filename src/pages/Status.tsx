@@ -23,7 +23,7 @@ const Status = () => {
   const { cryptos, loading, updateCryptoPrices } = useCryptos();
   const [serverLatency, setServerLatency] = useState(23);
   const [dbLatency, setDbLatency] = useState(12);
-  const [activeTraders, setActiveTraders] = useState(78);
+  const [activeTraders, setActiveTraders] = useState(1980);
   const [lastTrades, setLastTrades] = useState<Trade[]>([]);
   const [serverLoad, setServerLoad] = useState(35);
 
@@ -34,8 +34,8 @@ const Status = () => {
       setServerLatency(prev => Math.max(15, Math.min(50, prev + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 5))));
       setDbLatency(prev => Math.max(8, Math.min(25, prev + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 3))));
       
-      // Vary active traders
-      setActiveTraders(prev => Math.max(60, Math.min(120, prev + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 3))));
+      // Vary active traders around 2000
+      setActiveTraders(prev => Math.max(1950, Math.min(2050, prev + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 10))));
       
       // Vary server load
       setServerLoad(prev => Math.max(20, Math.min(75, prev + (Math.random() > 0.5 ? 1 : -1) * Math.floor(Math.random() * 5))));
@@ -108,6 +108,9 @@ const Status = () => {
       updateCryptoPrices();
     }
   }, [cryptos.length, updateCryptoPrices]);
+
+  // Calculate the current trades (between 4000-4500) based on active traders
+  const currentTrades = Math.floor(activeTraders * 2.2);
 
   return (
     <PageLayout 
@@ -206,7 +209,7 @@ const Status = () => {
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-300">Aktuelle Trades</span>
-                <span className="text-green-400 font-bold">{Math.floor(activeTraders * 1.6)}</span>
+                <span className="text-green-400 font-bold">{currentTrades}</span>
               </div>
               <div className="flex items-center justify-between">
                 <span className="text-gray-300">Erfolgsrate (24h)</span>

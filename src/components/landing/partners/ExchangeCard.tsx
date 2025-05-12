@@ -23,12 +23,18 @@ const ExchangeCard = ({ name, logo, description, metrics, websiteUrl, index }: E
     >
       <div className="p-6">
         <div className="flex flex-col md:flex-row items-center md:items-start gap-4">
-          {/* Logo */}
-          <div className="w-24 h-24 bg-white/5 rounded-lg flex items-center justify-center p-3 border border-white/10">
+          {/* Logo - Standardized size container */}
+          <div className="w-24 h-24 min-w-[6rem] bg-white/5 rounded-lg flex items-center justify-center p-3 border border-white/10">
             <img 
               src={logo} 
               alt={`${name} logo`} 
-              className="max-w-full max-h-full object-contain"
+              className="max-w-full max-h-full object-contain" 
+              style={{ width: "auto", height: "auto", maxHeight: "100%", maxWidth: "100%" }}
+              onError={(e) => {
+                // Fallback if image loading fails
+                const target = e.target as HTMLImageElement;
+                target.src = "https://placehold.co/100x100?text=" + name;
+              }}
             />
           </div>
           

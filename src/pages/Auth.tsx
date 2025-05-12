@@ -4,7 +4,6 @@ import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { motion } from "framer-motion";
@@ -80,7 +79,7 @@ const Auth = () => {
     }
   };
 
-  // Animation variants for motion components
+  // Animation variants
   const fadeIn = {
     hidden: { opacity: 0, y: 20 },
     visible: (i: number) => ({ 
@@ -94,14 +93,29 @@ const Auth = () => {
   };
 
   return (
-    <div className="min-h-screen bg-casino-darker flex">
-      <main className="w-full flex flex-row">
-        {/* Left Section - Simple secure icon display instead of complex animation */}
+    <div className="min-h-screen bg-casino-darker flex flex-col items-center justify-center p-4">
+      {/* Logo at the top */}
+      <motion.div 
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.7 }}
+        className="mb-8"
+      >
+        <img 
+          src="https://i.imgur.com/lL2FhfD.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-16 object-contain"
+        />
+      </motion.div>
+      
+      {/* Main content with two connected boxes */}
+      <div className="w-full max-w-5xl flex flex-col md:flex-row bg-casino-dark rounded-2xl overflow-hidden shadow-2xl border border-gold/10">
+        {/* Left Box - Security Visual */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="w-1/2 flex flex-col justify-center items-center p-8 bg-casino-dark border-r border-gold/10"
+          className="w-full md:w-1/2 flex flex-col justify-center items-center p-8 bg-casino-dark border-r border-gold/10"
         >
           <div className="flex flex-col items-center justify-center h-full w-full">
             <motion.div 
@@ -162,15 +176,24 @@ const Auth = () => {
           </div>
         </motion.div>
 
-        {/* Right Section - Login Form */}
+        {/* Center connector - visual element to connect the boxes */}
+        <div className="hidden md:flex flex-col items-center justify-center">
+          <div className="w-1 h-24 bg-gradient-to-b from-gold/0 via-gold/30 to-gold/0"></div>
+          <div className="w-6 h-6 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center">
+            <div className="w-2 h-2 rounded-full bg-gold animate-pulse"></div>
+          </div>
+          <div className="w-1 h-24 bg-gradient-to-b from-gold/0 via-gold/30 to-gold/0"></div>
+        </div>
+
+        {/* Right Box - Login Form */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ duration: 0.7 }}
-          className="w-1/2 flex justify-center items-center p-8 bg-casino-darker"
+          className="w-full md:w-1/2 flex justify-center items-center p-8 bg-casino-darker"
         >
-          <Card className="w-full max-w-md bg-casino-dark border-gold/20">
-            <CardContent className="pt-6">
+          <div className="w-full max-w-md">
+            <div className="bg-casino-dark border border-gold/20 rounded-xl shadow-lg p-6">
               <form onSubmit={handleLogin} className="space-y-6">
                 <div className="flex justify-center mb-6">
                   <div className="h-16 w-16 rounded-full bg-gradient-to-br from-gold/20 to-accent1/20 flex items-center justify-center">
@@ -284,10 +307,10 @@ const Auth = () => {
                   </div>
                 </motion.div>
               </form>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </motion.div>
-      </main>
+      </div>
 
       {/* Password Reset Dialog */}
       <Dialog open={isResetModalOpen} onOpenChange={setIsResetModalOpen}>

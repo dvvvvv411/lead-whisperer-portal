@@ -15,8 +15,8 @@ const DesktopNavigation = () => {
           <Link to="/nutzer">
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
-              "bg-transparent hover:bg-casino-highlight",
-              location.pathname === "/nutzer" && "text-gold"
+              "bg-transparent hover:bg-casino-highlight text-white",
+              location.pathname === "/nutzer" && "text-gold font-medium"
             )}>
               <Home className="mr-1 h-4 w-4" />
               Dashboard
@@ -27,8 +27,8 @@ const DesktopNavigation = () => {
           <Link to="/nutzer/einzahlen">
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
-              "bg-transparent hover:bg-casino-highlight",
-              location.pathname === "/nutzer/einzahlen" && "text-gold"
+              "bg-transparent hover:bg-casino-highlight text-white",
+              location.pathname === "/nutzer/einzahlen" && "text-gold font-medium"
             )}>
               <Wallet className="mr-1 h-4 w-4" />
               Einzahlen
@@ -39,8 +39,8 @@ const DesktopNavigation = () => {
           <Link to="/nutzer/auszahlen">
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
-              "bg-transparent hover:bg-casino-highlight",
-              location.pathname === "/nutzer/auszahlen" && "text-gold"
+              "bg-transparent hover:bg-casino-highlight text-white",
+              location.pathname === "/nutzer/auszahlen" && "text-gold font-medium"
             )}>
               <TrendingUp className="mr-1 h-4 w-4" />
               Auszahlen
@@ -51,8 +51,8 @@ const DesktopNavigation = () => {
           <Link to="/nutzer/einstellungen">
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
-              "bg-transparent hover:bg-casino-highlight",
-              location.pathname === "/nutzer/einstellungen" && "text-gold"
+              "bg-transparent hover:bg-casino-highlight text-white",
+              location.pathname === "/nutzer/einstellungen" && "text-gold font-medium"
             )}>
               <Settings className="mr-1 h-4 w-4" />
               Einstellungen

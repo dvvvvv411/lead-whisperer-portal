@@ -47,8 +47,8 @@ const UserCreditDisplay = ({ userCredit, loading }: UserCreditDisplayProps) => {
         "bg-casino-card"
       )}
     >
-      <div className="text-xs text-muted-foreground mb-0.5">Guthaben</div>
-      <div className="font-bold text-lg">
+      <div className="text-xs text-white/80 mb-0.5">Guthaben</div>
+      <div className="font-bold text-lg text-white">
         {loading ? (
           <span className="animate-pulse">...</span>
         ) : (

@@ -29,7 +29,7 @@ const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
   if (!isMounted) return null;
 
   return (
-    <header className={cn("w-full border-b border-gold/20 bg-casino-darker px-4 py-3", className)}>
+    <header className={cn("w-full border-b border-gold/30 bg-casino-darker px-4 py-3 shadow-md", className)}>
       <div className="container mx-auto flex items-center justify-between">
         {/* Logo and title */}
         <UserNavbarLogo />
@@ -44,7 +44,7 @@ const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
           
           {/* User email (visible on larger screens) */}
           {userEmail && (
-            <div className="hidden md:block text-sm text-muted-foreground">
+            <div className="hidden md:block text-sm text-white/90">
               {userEmail}
             </div>
           )}

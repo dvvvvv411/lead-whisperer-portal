@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Bitcoin, Bot } from "lucide-react";
@@ -101,7 +100,7 @@ const HeroSection = () => {
               </div>
               
               <div className="absolute -top-3 -right-3 bg-casino-darker p-3 rounded-lg border border-gold/20">
-                <Robot className="h-6 w-6 text-gold" />
+                <Bot className="h-6 w-6 text-gold" />
               </div>
               
               <h3 className="text-xl font-bold text-gold mb-4">Live Trading Performance</h3>

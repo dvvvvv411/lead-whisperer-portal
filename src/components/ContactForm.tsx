@@ -187,7 +187,7 @@ const ContactForm = () => {
       opacity: 1,
       y: 0
     }} className="flex justify-center mb-4">
-        <img alt="KI-Trading Logo" src="https://i.imgur.com/lL2FhfD.png" className="h-14 object-contain" />
+        <img alt="KI-Trading Logo" className="h-14 object-contain" src="https://i.imgur.com/Q191f5z.png" />
       </motion.div>
       
       {/* Motivational text section */}

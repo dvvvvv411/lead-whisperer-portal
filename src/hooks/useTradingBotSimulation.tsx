@@ -99,6 +99,7 @@ export const useTradingBotSimulation = (
       // First close simulation dialog
       setSimulationOpen(false);
       
+      // Short delay to allow simulation dialog to close properly
       setTimeout(async () => {
         try {
           // Execute trade and get results
@@ -128,13 +129,28 @@ export const useTradingBotSimulation = (
               console.log("Opening result dialog");
               setResultDialogOpen(true);
               simulationInProgressRef.current = false;
+              
+              // Notify user of successful trade through toast as well
+              toast({
+                title: "Trade erfolgreich",
+                description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${resultData.profitPercentage.toFixed(2)}%)`,
+                variant: "success"
+              });
             }, 300);
           } else {
             console.error("Trade completion failed:", tradeResult?.error || "Unknown error");
             simulationInProgressRef.current = false;
+            
+            // Show more descriptive error message
+            let errorMessage = tradeResult?.error || "Der Trade konnte nicht abgeschlossen werden";
+            
+            if (errorMessage === "Keine geeignete Kryptowährung gefunden") {
+              errorMessage = "Keine geeignete Kryptowährung gefunden. Bitte versuchen Sie es später erneut.";
+            }
+            
             toast({
               title: "Trade fehlgeschlagen",
-              description: tradeResult?.error || "Der Trade konnte nicht abgeschlossen werden",
+              description: errorMessage,
               variant: "destructive"
             });
           }

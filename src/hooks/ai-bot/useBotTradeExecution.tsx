@@ -4,6 +4,7 @@ import { useToast } from "@/hooks/use-toast";
 import { executeAITrade } from "./executeBotTrade";
 import { BotSettings, BotStatus } from "./types";
 import { checkCanExecuteTrade } from "./botTradeUtils";
+import { useCryptos } from "@/hooks/useCryptos";
 
 export const useBotTradeExecution = (
   userId?: string,
@@ -16,6 +17,7 @@ export const useBotTradeExecution = (
   const { toast } = useToast();
   const [isSimulating, setIsSimulating] = useState(false);
   const simulationInProgressRef = useRef(false);
+  const { cryptos, fetchCryptos } = useCryptos();
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
@@ -64,6 +66,9 @@ export const useBotTradeExecution = (
       return true;
     }
     
+    // Make sure we have fresh crypto data
+    await fetchCryptos();
+    
     // Set simulation in progress
     simulationInProgressRef.current = true;
     setIsSimulating(true);
@@ -77,7 +82,7 @@ export const useBotTradeExecution = (
     
     console.log("Trade can be executed, simulation starting...");
     return true;
-  }, [userId, userCredit, settings, status, updateStatus, toast]);
+  }, [userId, userCredit, settings, status, updateStatus, toast, fetchCryptos]);
   
   // Complete trade after simulation is done
   const completeTradeAfterSimulation = useCallback(async () => {
@@ -110,12 +115,21 @@ export const useBotTradeExecution = (
     try {
       console.log("Executing AI trade with:", { userId, userCredit, riskLevel: settings.riskLevel, maxTradeAmount: settings.maxTradeAmount });
       
+      // Make sure we have fresh crypto data before executing the trade
+      if (cryptos && cryptos.length > 0) {
+        console.log(`Using ${cryptos.length} cryptos from cache for trade execution`);
+      } else {
+        await fetchCryptos();
+        console.log("Fetched fresh crypto data for trade execution");
+      }
+      
       // Execute the actual trade with the bot's strategy
       const result = await executeAITrade({
         userId,
         userCredit,
         tradeAmount: settings.maxTradeAmount,
         riskLevel: settings.riskLevel,
+        cryptos: cryptos || []
       });
       
       console.log("Trade execution result:", result);
@@ -189,7 +203,7 @@ export const useBotTradeExecution = (
       simulationInProgressRef.current = false;
       setIsSimulating(false);
     }
-  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, toast]);
+  }, [userId, userCredit, settings, updateStatus, status, onTradeExecuted, toast, cryptos, fetchCryptos]);
   
   return {
     executeSingleTrade,

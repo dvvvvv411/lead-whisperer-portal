@@ -28,13 +28,14 @@ export const useTradeHistory = (userId?: string) => {
   const [trades, setTrades] = useState<TradeHistoryItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [botTrades, setBotTrades] = useState<TradeHistoryItem[]>([]);
+  const [lastRefresh, setLastRefresh] = useState<Date>(new Date());
   
   const fetchTradeHistory = useCallback(async () => {
     if (!userId) return;
     
     try {
       setLoading(true);
-      console.log("Fetching trade history for user:", userId);
+      console.log("Fetching trade history for user:", userId, "at", new Date().toISOString());
       
       // Fetch trade history with crypto asset details and joined payment records for notes
       const { data, error } = await supabase
@@ -66,6 +67,7 @@ export const useTradeHistory = (userId?: string) => {
         
         console.log("Bot trades filtered, count:", botTradesFiltered.length);
         setBotTrades(botTradesFiltered);
+        setLastRefresh(new Date());
       }
     } catch (error: any) {
       console.error('Error fetching trade history:', error.message);
@@ -83,12 +85,13 @@ export const useTradeHistory = (userId?: string) => {
   useEffect(() => {
     if (!userId) return;
     
+    // Initial fetch
     fetchTradeHistory();
     
-    // Ensure realtime is enabled for trade_simulations table on Supabase
+    // Enable realtime for trade_simulations table on Supabase
     const enableRealtimeQuery = async () => {
       try {
-        // This is just a check to see if the user can connect
+        // This is just a dummy query to ensure we have access
         const { data, error } = await supabase
           .from('trade_simulations')
           .select('id')
@@ -97,7 +100,7 @@ export const useTradeHistory = (userId?: string) => {
         if (error) {
           console.error("Error checking trade_simulations access:", error);
         } else {
-          console.log("Successfully connected to trade_simulations table");
+          console.log("Successfully connected to trade_simulations table for realtime updates");
         }
       } catch (e) {
         console.error("Error enabling realtime:", e);
@@ -128,9 +131,16 @@ export const useTradeHistory = (userId?: string) => {
     
     console.log("Supabase real-time channel subscribed for trade history");
     
+    // Set up manual refresh interval as a backup
+    const refreshInterval = setInterval(() => {
+      console.log("Performing scheduled trade history refresh");
+      fetchTradeHistory();
+    }, 30000); // Refresh every 30 seconds as a backup
+    
     return () => {
-      console.log("Cleaning up real-time subscription");
+      console.log("Cleaning up real-time subscription and refresh interval");
       supabase.removeChannel(channel);
+      clearInterval(refreshInterval);
     };
   }, [userId, fetchTradeHistory]);
   
@@ -138,6 +148,7 @@ export const useTradeHistory = (userId?: string) => {
     trades, 
     botTrades,
     loading,
-    fetchTradeHistory
+    fetchTradeHistory,
+    lastRefresh
   };
 };

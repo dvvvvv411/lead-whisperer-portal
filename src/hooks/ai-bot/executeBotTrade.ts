@@ -49,12 +49,54 @@ export const executeAITrade = async ({
       };
     }
 
-    // Get random crypto, getRandomCrypto will filter out stablecoins
-    const crypto = getRandomCrypto(cryptos);
+    // If no cryptos were provided, fetch them from the database
+    let cryptoData = cryptos;
+    if (!cryptoData || cryptoData.length === 0) {
+      console.log("KI-Bot: Keine Kryptowährungen übergeben, hole sie aus der Datenbank");
+      
+      const { data, error } = await supabase
+        .from('crypto_assets')
+        .select('*')
+        .order('market_cap', { ascending: false });
+        
+      if (error) {
+        console.error("KI-Bot: Fehler beim Laden der Kryptowährungen:", error);
+        return { success: false, error: "Fehler beim Laden der Kryptowährungen" };
+      }
+      
+      cryptoData = data || [];
+      console.log(`KI-Bot: ${cryptoData.length} Kryptowährungen aus der Datenbank geladen`);
+    }
+
+    // Ensure we have crypto data to work with
+    if (!cryptoData || cryptoData.length === 0) {
+      console.log("KI-Bot: Keine Kryptowährungen verfügbar");
+      return { success: false, error: "Keine Kryptowährungen verfügbar" };
+    }
+    
+    // Filter out stablecoins and any invalid entries
+    const validCryptos = cryptoData.filter(crypto => 
+      crypto && 
+      crypto.id && 
+      crypto.symbol && 
+      crypto.current_price > 0 && 
+      !['usdt', 'usdc', 'busd', 'dai', 'tusd'].includes(crypto.symbol.toLowerCase())
+    );
+    
+    console.log(`KI-Bot: ${validCryptos.length} gültige Kryptowährungen nach Filterung`);
+    
+    if (validCryptos.length === 0) {
+      return { success: false, error: "Keine geeigneten Kryptowährungen nach Filterung verfügbar" };
+    }
+
+    // Get random crypto from filtered list
+    const crypto = getRandomCrypto(validCryptos);
     if (!crypto) {
-      console.log("KI-Bot: Keine geeignete Kryptowährung gefunden");
+      console.log("KI-Bot: Keine geeignete Kryptowährung gefunden, obwohl ${validCryptos.length} verfügbar sind");
       return { success: false, error: "Keine geeignete Kryptowährung gefunden" };
     }
+
+    console.log(`KI-Bot: Kryptowährung für Trade ausgewählt: ${crypto.symbol} (${crypto.name})`);
 
     // Use entire account balance for the trade (minus a small safety buffer)
     const safetyBuffer = 0.5; // 50 cents buffer

@@ -8,6 +8,7 @@ import TradingBotHeader from "./bot-components/TradingBotHeader";
 import TradingBotContent from "./bot-components/TradingBotContent";
 import TradingBotDialogs from "./bot-components/TradingBotDialogs";
 import { cn } from "@/lib/utils";
+import { useToast } from "@/hooks/use-toast";
 
 interface AITradingBotProps {
   userId?: string;
@@ -18,6 +19,8 @@ interface AITradingBotProps {
 }
 
 const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, className }: AITradingBotProps) => {
+  const { toast } = useToast();
+  
   const { 
     settings, 
     status, 
@@ -61,6 +64,19 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     }
   }, [userId, fetchTradeHistory]);
   
+  // Periodically refresh data
+  useEffect(() => {
+    if (!userId) return;
+    
+    const refreshInterval = setInterval(() => {
+      console.log("Performing scheduled data refresh");
+      fetchTradeHistory();
+      fetchCryptos();
+    }, 30000); // Refresh every 30 seconds
+    
+    return () => clearInterval(refreshInterval);
+  }, [userId, fetchTradeHistory, fetchCryptos]);
+  
   // Use our custom hook for simulation logic
   const {
     simulationOpen,
@@ -75,10 +91,20 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
     stopBot,
     executeSingleTrade,
     async () => {
-      const result = await completeTradeAfterSimulation();
-      // Refresh trade history immediately after trade execution
-      fetchTradeHistory();
-      return result;
+      try {
+        const result = await completeTradeAfterSimulation();
+        // Refresh trade history immediately after trade execution
+        fetchTradeHistory();
+        return result;
+      } catch (error) {
+        console.error("Error in trade execution:", error);
+        toast({
+          title: "Fehler bei der Handelsausführung",
+          description: error instanceof Error ? error.message : "Unbekannter Fehler",
+          variant: "destructive"
+        });
+        return { success: false, error: "Fehler bei der Handelsausführung" };
+      }
     },
     isSimulating,
     setIsSimulating,

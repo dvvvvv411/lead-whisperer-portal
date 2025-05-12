@@ -14,9 +14,9 @@ const Logo = () => {
       className={`flex flex-col items-center ${isMobile ? 'mx-auto' : ''}`}
     >
       <img 
-        src="https://i.imgur.com/UA0DBN4.png" 
+        src="https://i.imgur.com/Q191f5z.png" 
         alt="KRYPTO AI Logo" 
-        className="h-12 object-contain" 
+        className="h-14 object-contain" 
       />
       
       {/* Trading badge positioned below logo in mobile view */}

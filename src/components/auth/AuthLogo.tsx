@@ -11,9 +11,9 @@ const AuthLogo = () => {
       className="mb-8 flex flex-col items-center gap-4"
     >
       <img 
-        src="https://i.imgur.com/UA0DBN4.png" 
+        src="https://i.imgur.com/Q191f5z.png" 
         alt="KRYPTO AI Logo" 
-        className="h-16 object-contain"
+        className="h-20 object-contain"
       />
       
       {/* Back to homepage button */}

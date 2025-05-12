@@ -6,9 +6,9 @@ const UserNavbarLogo = () => {
     <div className="flex items-center">
       <Link to="/nutzer" className="flex items-center">
         <img 
-          src="https://i.imgur.com/UA0DBN4.png" 
+          src="https://i.imgur.com/Q191f5z.png" 
           alt="KRYPTO AI Logo" 
-          className="h-8 object-contain" 
+          className="h-10 object-contain" 
         />
       </Link>
     </div>

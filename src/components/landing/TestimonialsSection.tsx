@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Star } from "lucide-react";
@@ -9,7 +10,7 @@ const testimonials = [
     id: 1,
     name: "Michael Schmidt",
     position: "Neueinsteiger",
-    image: "https://i.imgur.com/jQzW1xe.png",
+    image: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=200&auto=format&fit=crop",
     rating: 5,
     text: "Nach nur 3 Wochen mit dem KI-Trading-Bot habe ich bereits 920€ Gewinn gemacht. Die automatischen Trades sind ein Gamechanger für mich als Anfänger. Die Aktivierungsgebühr von 250€ hat sich schnell amortisiert."
   },
@@ -17,7 +18,7 @@ const testimonials = [
     id: 2,
     name: "Hannah Weber",
     position: "Erfahrene Traderin",
-    image: "https://i.imgur.com/LVQAWtB.png",
+    image: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?q=80&w=200&auto=format&fit=crop",
     rating: 5,
     text: "Ich trade seit 5 Jahren und war skeptisch. Nach einem Monat mit der KI habe ich meine bisherigen Ergebnisse verdreifacht. Die KI erkennt Muster, die ich verpasst hätte. Die Rendite von 28% im letzten Monat hat meine Erwartungen übertroffen."
   },
@@ -25,7 +26,7 @@ const testimonials = [
     id: 3,
     name: "Thomas Müller",
     position: "Teilzeit-Investor",
-    image: "https://i.imgur.com/XKpedxL.png",
+    image: "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?q=80&w=200&auto=format&fit=crop",
     rating: 4,
     text: "Endlich kann ich nebenbei investieren, ohne ständig die Märkte beobachten zu müssen. Der Bot handelt für mich rund um die Uhr und erzielt durchschnittlich 3-7% Gewinn pro Trade. Die 250€ Aktivierungsgebühr ist fair und wird als Trading-Guthaben gutgeschrieben."
   },
@@ -33,7 +34,7 @@ const testimonials = [
     id: 4,
     name: "Julia Fischer",
     position: "Finanzberaterin",
-    image: "https://i.imgur.com/6pAGskz.png",
+    image: "https://images.unsplash.com/photo-1580489944761-15a19d654956?q=80&w=200&auto=format&fit=crop",
     rating: 5,
     text: "Als Fachfrau bin ich begeistert von der Technologie. Die Algorithmen sind beeindruckend und die Erfolgsquote von über 90% spricht für sich. Dass die Plattform die Nutzerzahl limitiert, um die Performance hoch zu halten, ist ein kluger Schritt. Klare Empfehlung!"
   }
@@ -87,17 +88,11 @@ const TestimonialsSection = () => {
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                 <div className="flex items-center">
                   <div className="w-16 h-16 rounded-full bg-black/40 border-2 border-gold/30 overflow-hidden mr-4 flex items-center justify-center">
-                    {testimonials[activeIndex].image ? (
-                      <img 
-                        src={testimonials[activeIndex].image} 
-                        alt={testimonials[activeIndex].name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-2xl font-bold text-white/30">
-                        {testimonials[activeIndex].name.charAt(0)}
-                      </span>
-                    )}
+                    <img 
+                      src={testimonials[activeIndex].image} 
+                      alt={testimonials[activeIndex].name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white">{testimonials[activeIndex].name}</h3>
@@ -158,17 +153,11 @@ const TestimonialsSection = () => {
               >
                 <div className="flex items-center mb-2">
                   <div className="w-10 h-10 rounded-full bg-black/40 border border-gold/20 overflow-hidden mr-3 flex items-center justify-center">
-                    {testimonial.image ? (
-                      <img 
-                        src={testimonial.image} 
-                        alt={testimonial.name}
-                        className="w-full h-full object-cover"
-                      />
-                    ) : (
-                      <span className="text-sm font-bold text-white/30">
-                        {testimonial.name.charAt(0)}
-                      </span>
-                    )}
+                    <img 
+                      src={testimonial.image} 
+                      alt={testimonial.name}
+                      className="w-full h-full object-cover"
+                    />
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-white">{testimonial.name}</h4>

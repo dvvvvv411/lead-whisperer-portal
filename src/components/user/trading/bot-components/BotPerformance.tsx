@@ -1,11 +1,10 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Bot, TrendingUp, TrendingDown, Clock } from "lucide-react";
-import { format } from "date-fns";
-import { de } from "date-fns/locale";
+import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import BotTradeCard from "./BotTradeCard";
 
 interface BotPerformanceProps {
   botTrades: any[];
@@ -14,28 +13,86 @@ interface BotPerformanceProps {
 }
 
 const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformanceProps) => {
-  // Format date
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
-    return format(date, 'HH:mm', { locale: de });
+  // Group trades by pairs of buy and sell transactions for the same crypto
+  const groupTrades = () => {
+    // Create a deep copy of trades to avoid modifying the original array
+    const tradesCopy = JSON.parse(JSON.stringify(botTrades));
+    
+    // Sort trades by created_at
+    const sortedTrades = tradesCopy.sort((a: any, b: any) => 
+      new Date(a.created_at).getTime() - new Date(b.created_at).getTime()
+    );
+    
+    const groupedTrades = [];
+    
+    // Group by crypto asset and by pairs (buy and sell)
+    const buyTrades: Record<string, any> = {}; // Map to store buy trades by crypto
+    
+    for (const trade of sortedTrades) {
+      const cryptoSymbol = trade.crypto_asset?.symbol;
+      if (!cryptoSymbol) continue;
+      
+      // Store buy trades, looking for a matching sell trade later
+      if (trade.type === 'buy') {
+        if (!buyTrades[cryptoSymbol]) {
+          buyTrades[cryptoSymbol] = [];
+        }
+        buyTrades[cryptoSymbol].push(trade);
+      } 
+      // Match with previous buy trade
+      else if (trade.type === 'sell') {
+        if (buyTrades[cryptoSymbol] && buyTrades[cryptoSymbol].length > 0) {
+          const buyTrade = buyTrades[cryptoSymbol].shift(); // Get the oldest buy trade
+          groupedTrades.push({
+            buy: buyTrade,
+            sell: trade,
+            cryptoSymbol,
+            id: `${buyTrade.id}-${trade.id}`
+          });
+        } else {
+          // Standalone sell trade (shouldn't happen in normal flow, but handle it)
+          groupedTrades.push({
+            buy: null,
+            sell: trade,
+            cryptoSymbol,
+            id: trade.id
+          });
+        }
+      }
+    }
+    
+    // Add remaining buy trades without matching sells
+    Object.keys(buyTrades).forEach(symbol => {
+      buyTrades[symbol].forEach((buyTrade: any) => {
+        groupedTrades.push({
+          buy: buyTrade,
+          sell: null,
+          cryptoSymbol: symbol,
+          id: buyTrade.id
+        });
+      });
+    });
+    
+    // Sort final pairs by most recent activity
+    return groupedTrades.sort((a, b) => {
+      const aDate = a.sell ? new Date(a.sell.created_at) : new Date(a.buy.created_at);
+      const bDate = b.sell ? new Date(b.sell.created_at) : new Date(b.buy.created_at);
+      return bDate.getTime() - aDate.getTime(); // Descending order
+    });
   };
-  
-  // Get trend icon based on trade type
-  const getTrendIcon = (type: 'buy' | 'sell') => {
-    if (type === 'buy') return <TrendingUp className="h-3 w-3" />;
-    return <TrendingDown className="h-3 w-3" />;
-  };
+
+  const tradePairs = groupTrades();
 
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-medium flex items-center">
           <Bot className="h-4 w-4 mr-2 text-accent1-light" />
-          Letzte Bot-Trades
+          Bot-Trading Aktivität
         </h3>
         {botTrades.length > 0 && (
           <Badge variant="outline" className="bg-accent1/10 text-accent1-light border-accent1/30">
-            {botTrades.length} 
+            {tradePairs.length} 
             <span className="ml-1 text-xs">Trades</span>
           </Badge>
         )}
@@ -43,61 +100,22 @@ const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformancePr
       
       {loading ? (
         <div className="space-y-2">
-          <Skeleton className="h-12 w-full bg-casino-card" />
-          <Skeleton className="h-12 w-full bg-casino-card" />
-          <Skeleton className="h-12 w-full bg-casino-card" />
+          <Skeleton className="h-36 w-full bg-casino-card" />
+          <Skeleton className="h-36 w-full bg-casino-card" />
         </div>
-      ) : botTrades.length > 0 ? (
-        <div className="h-[250px]">
-          <ScrollArea className="h-full">
-            <div className="space-y-2 pr-2">
-              {botTrades.slice(0, 5).map((trade) => (
-                <div 
-                  key={trade.id} 
-                  className={cn(
-                    "border rounded-md p-3 transition-all",
-                    "bg-casino-darker border-gold/10 hover:border-gold/20",
-                    "transform hover:translate-y-[-2px] hover:shadow-md",
-                    "duration-300"
-                  )}
-                >
-                  <div className="flex justify-between items-center">
-                    <div className="flex items-center">
-                      {trade.crypto_asset?.image_url && (
-                        <div className="h-8 w-8 rounded-full overflow-hidden border border-gold/20 mr-3 p-1 bg-casino-card flex items-center justify-center">
-                          <img 
-                            src={trade.crypto_asset.image_url} 
-                            alt={trade.crypto_asset.symbol} 
-                            className="h-5 w-5"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        <div className="font-bold text-sm">{trade.crypto_asset?.symbol?.toUpperCase()}</div>
-                        <div className="flex items-center text-xs text-muted-foreground">
-                          <Clock className="h-3 w-3 mr-1" />
-                          {formatDate(trade.created_at)}
-                        </div>
-                      </div>
-                    </div>
-                    
-                    <div className="flex flex-col items-end">
-                      <Badge 
-                        variant={trade.type === 'buy' ? 'default' : 'secondary'}
-                        className={cn(
-                          "mb-1 flex items-center",
-                          trade.type === 'buy' 
-                            ? "bg-green-500/20 text-green-400 hover:bg-green-500/30 border-green-500/30" 
-                            : "bg-red-500/20 text-red-400 hover:bg-red-500/30 border-red-500/30"
-                        )}
-                      >
-                        {getTrendIcon(trade.type)}
-                        <span className="ml-1">{trade.type === 'buy' ? 'KAUF' : 'VERKAUF'}</span>
-                      </Badge>
-                      <span className="text-gold font-medium">{formatCurrency(trade.total_amount)}</span>
-                    </div>
-                  </div>
-                </div>
+      ) : tradePairs.length > 0 ? (
+        <div className="h-[400px]">
+          <ScrollArea className="h-full pr-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-2">
+              {tradePairs.slice(0, 10).map((pair) => (
+                pair.buy && (
+                  <BotTradeCard
+                    key={pair.id}
+                    buyTrade={pair.buy}
+                    sellTrade={pair.sell}
+                    formatCurrency={formatCurrency}
+                  />
+                )
               ))}
             </div>
           </ScrollArea>

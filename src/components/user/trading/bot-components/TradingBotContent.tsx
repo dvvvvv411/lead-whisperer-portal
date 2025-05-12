@@ -62,7 +62,7 @@ const TradingBotContent = ({
         formatCurrency={formatCurrency}
       />
       
-      {/* Bot Performance */}
+      {/* Bot Performance with Trade Cards */}
       <BotPerformance
         botTrades={botTrades}
         loading={tradesLoading}

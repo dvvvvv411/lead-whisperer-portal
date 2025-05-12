@@ -42,7 +42,7 @@ const ContactForm = () => {
         return;
       }
       
-      // In Supabase speichern - mit leerer Nachricht
+      // In Supabase speichern - message ist jetzt optional in der Datenbank
       const { error } = await supabase
         .from('leads')
         .insert({
@@ -50,7 +50,7 @@ const ContactForm = () => {
           email: formData.email, 
           phone: formData.phone,
           status: 'neu',
-          message: '' // Leere Nachricht wird mitgesendet
+          message: null // Nachricht wird als null gesendet
         });
         
       if (error) {

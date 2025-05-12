@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Button } from "@/components/ui/button";
@@ -168,7 +169,7 @@ const CtaSection = () => {
                           </motion.div>
                         </span>
                         
-                        {/* Shine effect animation */}
+                        {/* Enhanced shine effect animation */}
                         <motion.div
                           className="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent"
                           initial={{ x: "-100%" }}
@@ -190,7 +191,7 @@ const CtaSection = () => {
             </div>
           </motion.div>
           
-          {/* Right section - Keeping existing functionality */}
+          {/* Right section */}
           <motion.div
             initial={{ opacity: 0, x: 30 }}
             whileInView={{ opacity: 1, x: 0 }}

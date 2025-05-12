@@ -11,7 +11,7 @@ interface DesktopNavigationProps {
 
 const DesktopNavigation = ({ activeSection, scrollToSection }: DesktopNavigationProps) => {
   return (
-    <div className="hidden md:flex items-center space-x-8">
+    <div className="hidden md:flex items-center space-x-6">
       <NavLink 
         active={activeSection === "hero"} 
         onClick={() => scrollToSection("hero")}
@@ -21,27 +21,27 @@ const DesktopNavigation = ({ activeSection, scrollToSection }: DesktopNavigation
       </NavLink>
       <NavLink 
         active={activeSection === "cta"} 
-        onClick={() => scrollToSection("cta")}
+        onClick={() => window.location.href = '/trading-bot'}
       >
         Trading Bot
       </NavLink>
       <NavLink 
-        active={activeSection === "contact"} 
-        onClick={() => scrollToSection("contact")}
-      >
-        Kontakt
-      </NavLink>
-      <NavLink 
         active={activeSection === "testimonials"} 
-        onClick={() => scrollToSection("testimonials")}
+        onClick={() => window.location.href = '/erfahrungen'}
       >
         Erfahrungen
       </NavLink>
       <NavLink 
-        active={activeSection === "benefits"} 
-        onClick={() => scrollToSection("benefits")}
+        active={activeSection === "status"} 
+        onClick={() => window.location.href = '/status'}
       >
-        Vorteile
+        Status
+      </NavLink>
+      <NavLink 
+        active={activeSection === "faq"} 
+        onClick={() => window.location.href = '/faq'}
+      >
+        FAQ
       </NavLink>
       
       <motion.div

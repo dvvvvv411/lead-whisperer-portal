@@ -28,28 +28,28 @@ const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps)
           Home
         </MobileNavLink>
         <MobileNavLink 
-          active={activeSection === "cta"} 
-          onClick={() => scrollToSection("cta")}
+          active={false}
+          onClick={() => window.location.href = '/trading-bot'}
         >
           Trading Bot
         </MobileNavLink>
         <MobileNavLink 
-          active={activeSection === "contact"} 
-          onClick={() => scrollToSection("contact")}
-        >
-          Kontakt
-        </MobileNavLink>
-        <MobileNavLink 
-          active={activeSection === "testimonials"} 
-          onClick={() => scrollToSection("testimonials")}
+          active={false}
+          onClick={() => window.location.href = '/erfahrungen'}
         >
           Erfahrungen
         </MobileNavLink>
         <MobileNavLink 
-          active={activeSection === "benefits"} 
-          onClick={() => scrollToSection("benefits")}
+          active={false} 
+          onClick={() => window.location.href = '/status'}
         >
-          Vorteile
+          Status
+        </MobileNavLink>
+        <MobileNavLink 
+          active={false} 
+          onClick={() => window.location.href = '/faq'}
+        >
+          FAQ
         </MobileNavLink>
         
         {/* Login button in mobile menu */}

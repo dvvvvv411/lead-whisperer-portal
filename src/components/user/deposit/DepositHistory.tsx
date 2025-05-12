@@ -44,6 +44,7 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
       if (!userId) return;
 
       try {
+        setLoading(true);
         const { data, error } = await supabase
           .from("payments")
           .select("id, amount, wallet_currency, status, created_at")
@@ -67,7 +68,7 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin mr-2" />
+        <Loader2 className="h-6 w-6 animate-spin mr-2 text-accent1" />
         <span>Zahlungsverlauf wird geladen...</span>
       </div>
     );
@@ -75,48 +76,52 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
 
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md flex items-start">
+      <div className="bg-red-900/20 border border-red-500/30 p-4 rounded-md flex items-start">
         <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
         <div>
-          <p className="text-red-800">{error}</p>
+          <p className="text-red-400">{error}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="mt-8">
+    <div>
       <div className="flex items-center mb-4">
-        <History className="mr-2 h-5 w-5" />
-        <h2 className="text-xl font-semibold">Einzahlungsverlauf</h2>
+        <History className="mr-2 h-5 w-5 text-accent1-light" />
+        <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">Einzahlungsverlauf</h2>
       </div>
       
       {payments.length === 0 ? (
-        <p className="text-gray-500 italic">Keine Einzahlungen gefunden.</p>
+        <div className="text-center p-8 border border-gold/10 rounded-lg bg-casino-darker">
+          <p className="text-gray-500 italic">Keine Einzahlungen gefunden.</p>
+        </div>
       ) : (
-        <Table>
-          <TableCaption>Liste Ihrer Einzahlungen</TableCaption>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Datum</TableHead>
-              <TableHead>Betrag (€)</TableHead>
-              <TableHead>Kryptowährung</TableHead>
-              <TableHead>Status</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {payments.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell>
-                  {format(new Date(payment.created_at), "dd.MM.yyyy HH:mm")}
-                </TableCell>
-                <TableCell>{formatAmount(payment.amount)}€</TableCell>
-                <TableCell>{payment.wallet_currency}</TableCell>
-                <TableCell>{getStatusBadge(payment.status)}</TableCell>
+        <div className="overflow-hidden rounded-lg border border-gold/10">
+          <Table>
+            <TableCaption>Liste Ihrer Einzahlungen</TableCaption>
+            <TableHeader className="bg-casino-darker">
+              <TableRow>
+                <TableHead>Datum</TableHead>
+                <TableHead>Betrag (€)</TableHead>
+                <TableHead>Kryptowährung</TableHead>
+                <TableHead>Status</TableHead>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+            </TableHeader>
+            <TableBody>
+              {payments.map((payment) => (
+                <TableRow key={payment.id} className="hover:bg-gold/5">
+                  <TableCell>
+                    {format(new Date(payment.created_at), "dd.MM.yyyy HH:mm")}
+                  </TableCell>
+                  <TableCell className="text-accent1-light font-semibold">{formatAmount(payment.amount)}€</TableCell>
+                  <TableCell>{payment.wallet_currency}</TableCell>
+                  <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
       )}
     </div>
   );

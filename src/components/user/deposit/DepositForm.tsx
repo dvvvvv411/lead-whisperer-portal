@@ -3,7 +3,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -105,47 +105,46 @@ const DepositForm = ({
 
   return (
     <>
-      <Card className="w-full max-w-3xl mx-auto">
-        <CardHeader>
-          <CardTitle>Guthaben einzahlen</CardTitle>
-          <CardDescription>
-            Wählen Sie den Betrag und die Zahlungsmethode für Ihre Einzahlung
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          <WalletLoadingState 
-            loading={walletsLoading} 
-            error={walletError} 
-            onRetry={onRetryWallets} 
-          />
-          
-          {!walletsLoading && !walletError && (
-            <Form {...form}>
-              <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-6">
-                <AmountInput control={form.control} />
-                <WalletSelector 
-                  control={form.control} 
-                  wallets={wallets} 
-                  onWalletChange={handleWalletChange} 
+      <CardHeader className="bg-casino-darker border-b border-gold/10">
+        <CardTitle className="text-lg text-accent1-light">Einzahlung durchführen</CardTitle>
+        <CardDescription>
+          Wählen Sie den Betrag und die Kryptowährung für Ihre Einzahlung
+        </CardDescription>
+      </CardHeader>
+      <CardContent className="p-6 space-y-4">
+        <WalletLoadingState 
+          loading={walletsLoading} 
+          error={walletError} 
+          onRetry={onRetryWallets} 
+        />
+        
+        {!walletsLoading && !walletError && (
+          <Form {...form}>
+            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-5">
+              <AmountInput control={form.control} />
+              
+              <WalletSelector 
+                control={form.control} 
+                wallets={wallets} 
+                onWalletChange={handleWalletChange} 
+              />
+              
+              {form.watch("walletCurrency") && (
+                <WalletAddressDisplay 
+                  currency={form.watch("walletCurrency")} 
+                  address={selectedWalletAddress}
+                  amount={form.watch("amount")}
                 />
-                
-                {form.watch("walletCurrency") && (
-                  <WalletAddressDisplay 
-                    currency={form.watch("walletCurrency")} 
-                    address={selectedWalletAddress}
-                    amount={form.watch("amount")}
-                  />
-                )}
-                
-                <Button type="submit" className="w-full">
-                  <CreditCard className="mr-2 h-4 w-4" />
-                  Zahlung bestätigen
-                </Button>
-              </form>
-            </Form>
-          )}
-        </CardContent>
-      </Card>
+              )}
+              
+              <Button type="submit" className="w-full bg-accent1 hover:bg-accent1-light">
+                <CreditCard className="mr-2 h-4 w-4" />
+                Zahlung bestätigen
+              </Button>
+            </form>
+          </Form>
+        )}
+      </CardContent>
       
       <PaymentConfirmationDialog
         showDialog={showConfirmation}

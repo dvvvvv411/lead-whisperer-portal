@@ -12,6 +12,8 @@ import { ArrowLeft } from "lucide-react";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
+import LevelProgressChart from "@/components/user/deposit/LevelProgressChart";
+import { Card } from "@/components/ui/card";
 
 const UserDeposit = () => {
   const navigate = useNavigate();
@@ -96,7 +98,7 @@ const UserDeposit = () => {
       onUserLoaded={handleUserLoaded}
       redirectToActivation={false}
     >
-      <div className="container mx-auto px-4 py-8">
+      <div className="container mx-auto px-4 py-6">
         <div className="mb-6">
           <Button
             variant="ghost"
@@ -107,28 +109,46 @@ const UserDeposit = () => {
             Zurück zum Dashboard
           </Button>
           
-          <h1 className="text-3xl font-bold">Guthaben einzahlen</h1>
+          <h1 className="text-2xl md:text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent animate-gradient-shift">
+            Guthaben einzahlen
+          </h1>
           {userCredit !== null && (
-            <p className="text-lg text-gray-600 mt-2">
+            <p className="text-lg text-accent1-light mt-2">
               Aktuelles Guthaben: {userCredit.toFixed(2)}€
             </p>
           )}
         </div>
         
-        {paymentSubmitted ? (
-          <PaymentStatusView paymentId={paymentId} />
-        ) : (
-          <DepositForm 
-            wallets={wallets}
-            walletsLoading={walletsLoading}
-            walletError={walletError}
-            onRetryWallets={fetchWallets}
-            onSubmit={handleDepositSubmit}
-          />
-        )}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Left section - Level chart */}
+          <Card className="casino-card p-6 relative overflow-hidden">
+            <div className="absolute top-0 right-0 w-24 h-24 bg-accent1/10 rounded-full blur-xl"></div>
+            <h2 className="text-xl font-semibold mb-4">Level & Handelsvorteile</h2>
+            <LevelProgressChart currentBalance={userCredit || 0} />
+          </Card>
+          
+          {/* Right section - Deposit form */}
+          <div>
+            {paymentSubmitted ? (
+              <PaymentStatusView paymentId={paymentId} />
+            ) : (
+              <Card className="casino-card overflow-hidden">
+                <DepositForm 
+                  wallets={wallets}
+                  walletsLoading={walletsLoading}
+                  walletError={walletError}
+                  onRetryWallets={fetchWallets}
+                  onSubmit={handleDepositSubmit}
+                />
+              </Card>
+            )}
+          </div>
+        </div>
         
-        {/* Add the transaction history component */}
-        <DepositHistory userId={user?.id} />
+        {/* Transaction history section */}
+        <Card className="casino-card mt-6 p-6">
+          <DepositHistory userId={user?.id} />
+        </Card>
       </div>
     </UserAuthCheck>
   );

@@ -1,6 +1,6 @@
 
 import { CardTitle, CardDescription } from "@/components/ui/card";
-import { Bot, Sparkles } from "lucide-react";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface TradingBotHeaderProps {
@@ -14,11 +14,14 @@ const TradingBotHeader = ({ onManualTrade, tradesRemaining, userName }: TradingB
     <div className="p-6 flex flex-col md:flex-row justify-between md:items-center gap-4 bg-gradient-to-r from-casino-darker/80 to-casino-dark/80 backdrop-blur-xl border-b border-gold/10">
       <div className="flex items-center">
         <div className={cn(
-          "p-2 rounded-full bg-gradient-to-br from-gold/20 to-accent1/10 mr-3",
-          "shadow-lg shadow-gold/10",
-          "animate-pulse-gold"
+          "mr-3",
+          "shadow-lg shadow-gold/10"
         )}>
-          <Bot className="h-6 w-6 text-gold" />
+          <img 
+            src="https://i.imgur.com/hNtMxev.png" 
+            alt="KRYPTO AI Logo" 
+            className="h-8 w-auto object-contain" 
+          />
         </div>
         <div>
           <CardTitle className="text-2xl font-bold flex items-center text-transparent bg-clip-text bg-gradient-to-r from-gold to-gold-light">

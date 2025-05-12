@@ -1,13 +1,15 @@
 
 import { Link } from "react-router-dom";
-import { CircleDollarSign } from "lucide-react";
 
 const UserNavbarLogo = () => {
   return (
     <div className="flex items-center">
       <Link to="/nutzer" className="flex items-center">
-        <CircleDollarSign className="h-6 w-6 mr-2 text-gold" />
-        <span className="text-xl font-bold text-white drop-shadow-sm">Crypto Trader</span>
+        <img 
+          src="https://i.imgur.com/hNtMxev.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-8 object-contain" 
+        />
       </Link>
     </div>
   );

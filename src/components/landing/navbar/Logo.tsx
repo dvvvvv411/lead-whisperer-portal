@@ -1,6 +1,6 @@
 
 import { motion } from "framer-motion";
-import { Star, TrendingUp } from "lucide-react";
+import { TrendingUp } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 const Logo = () => {
@@ -14,7 +14,7 @@ const Logo = () => {
       className={`flex flex-col items-center ${isMobile ? 'mx-auto' : ''}`}
     >
       <img 
-        src="https://i.imgur.com/lL2FhfD.png" 
+        src="https://i.imgur.com/hNtMxev.png" 
         alt="KRYPTO AI Logo" 
         className="h-12 object-contain" 
       />

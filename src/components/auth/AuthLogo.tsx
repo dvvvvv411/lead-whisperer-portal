@@ -10,7 +10,7 @@ const AuthLogo = () => {
       className="mb-8"
     >
       <img 
-        src="https://i.imgur.com/lL2FhfD.png" 
+        src="https://i.imgur.com/hNtMxev.png" 
         alt="KRYPTO AI Logo" 
         className="h-16 object-contain"
       />

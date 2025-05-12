@@ -64,26 +64,9 @@ const CtaSection = () => {
       />
       
       <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
-              Limitierte Plätze verfügbar
-            </span>
-          </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            Unser KI Trading Bot ist nur für eine begrenzte Anzahl von Nutzern verfügbar, um optimale Performance zu gewährleisten.
-          </p>
-        </motion.div>
-        
-        {/* Modified grid layout to ensure equal column sizes */}
+        {/* Clean two-column layout with nothing above */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-          {/* Left section - Enhanced with better spacing and animations */}
+          {/* Left section - Now includes the title within the box */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
@@ -106,8 +89,18 @@ const CtaSection = () => {
               />
               
               <div className="relative h-full flex flex-col">
+                {/* Title now inside the left box */}
+                <h2 className="text-2xl md:text-3xl font-bold mb-4">
+                  <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
+                    Limitierte Plätze verfügbar
+                  </span>
+                </h2>
+                <p className="text-gray-300 mb-6">
+                  Unser KI Trading Bot ist nur für eine begrenzte Anzahl von Nutzern verfügbar, um optimale Performance zu gewährleisten.
+                </p>
+
                 <div className="flex items-center justify-between mb-6">
-                  <h3 className="text-2xl font-bold">Exklusiver Zugang</h3>
+                  <h3 className="text-xl font-bold">Exklusiver Zugang</h3>
                   <div className="flex items-center text-green-500">
                     <Users className="h-5 w-5 mr-2" />
                     <span>{activeUsers} aktive Nutzer</span>

@@ -48,18 +48,25 @@ const CryptoComparison = ({ symbol, name, price, change, logoUrl }: CryptoCompar
       </svg>
     );
   };
+
+  // Get cryptocurrency logo URL based on the symbol
+  const getCryptoLogoUrl = (symbol: string): string => {
+    const normalizedSymbol = symbol.toLowerCase();
+    return `https://cryptologos.cc/logos/${normalizedSymbol}-${normalizedSymbol}-logo.png`;
+  };
   
   return (
     <div className="flex items-center justify-between py-2.5 px-3 border-b border-gold/5 transition-all duration-200 hover:bg-casino-highlight/10 animate-fade-in">
       <div className="flex items-center gap-2">
         <Avatar className="h-8 w-8 rounded-md overflow-hidden bg-gradient-to-br from-casino-card to-casino-darker border border-gold/10">
-          {logoUrl ? (
-            <AvatarImage src={logoUrl} alt={symbol} className="object-contain" />
-          ) : (
-            <AvatarFallback className="bg-gradient-to-br from-casino-card to-casino-darker text-xs font-mono">
-              {symbol}
-            </AvatarFallback>
-          )}
+          <AvatarImage 
+            src={logoUrl || getCryptoLogoUrl(symbol)} 
+            alt={symbol}
+            className="object-contain p-1" 
+          />
+          <AvatarFallback className="bg-gradient-to-br from-casino-card to-casino-darker text-xs font-mono">
+            {symbol}
+          </AvatarFallback>
         </Avatar>
         <div>
           <div className="text-sm font-medium">{name || symbol}</div>

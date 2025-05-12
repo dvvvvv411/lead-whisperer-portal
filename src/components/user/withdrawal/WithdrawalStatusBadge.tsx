@@ -10,13 +10,13 @@ const WithdrawalStatusBadge = ({ status }: WithdrawalStatusBadgeProps) => {
   
   switch (status) {
     case "pending":
-      return <Badge variant="outline" className="bg-yellow-50 text-yellow-700 hover:bg-yellow-50">Ausstehend</Badge>;
+      return <Badge variant="outline" className="bg-yellow-900/30 border-gold/30 text-gold-light hover:bg-yellow-900/40">Ausstehend</Badge>;
     case "completed":
-      return <Badge variant="outline" className="bg-green-50 text-green-700 hover:bg-green-50">Abgeschlossen</Badge>;
+      return <Badge variant="outline" className="bg-green-900/30 border-green-500/30 text-green-300 hover:bg-green-900/40">Abgeschlossen</Badge>;
     case "rejected":
-      return <Badge variant="outline" className="bg-red-50 text-red-700 hover:bg-red-50">Abgelehnt</Badge>;
+      return <Badge variant="outline" className="bg-red-900/30 border-red-500/30 text-red-300 hover:bg-red-900/40">Abgelehnt</Badge>;
     default:
-      return <Badge variant="outline">{status}</Badge>;
+      return <Badge variant="outline" className="border-gold/30 text-gold-light">{status}</Badge>;
   }
 };
 

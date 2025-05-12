@@ -9,22 +9,11 @@ import { de } from 'date-fns/locale';
 import { useWithdrawalHistory } from "@/hooks/useWithdrawalHistory";
 import WithdrawalEmptyState from "./WithdrawalEmptyState";
 import WithdrawalLoading from "./WithdrawalLoading";
+import WithdrawalStatusBadge from "./WithdrawalStatusBadge";
 
 interface WithdrawalHistoryProps {
   userId?: string;
 }
-
-const getStatusBadge = (status: string) => {
-  switch(status) {
-    case "completed":
-      return <Badge className="bg-green-500/80">Bestätigt</Badge>;
-    case "rejected":
-      return <Badge className="bg-red-500/80">Abgelehnt</Badge>;
-    case "pending":
-    default:
-      return <Badge className="bg-yellow-500/80">In Bearbeitung</Badge>;
-  }
-};
 
 const formatAmount = (amount: number) => {
   return (amount / 100).toLocaleString('de-DE', {
@@ -51,15 +40,17 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
     <div>
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center">
-          <History className="mr-2 h-5 w-5 text-white/70" />
-          <h2 className="text-xl font-semibold text-white">Auszahlungsverlauf</h2>
+          <History className="mr-2 h-5 w-5 text-gold/70" />
+          <h2 className="text-xl font-semibold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
+            Auszahlungsverlauf
+          </h2>
         </div>
         <Button 
           variant="outline" 
           size="icon" 
           onClick={handleRefresh} 
           disabled={refreshing}
-          className="border-white/20 hover:bg-white/10 text-white/70"
+          className="border-gold/20 hover:bg-gold/10 text-gold/70"
         >
           <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
         </Button>
@@ -68,28 +59,28 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
       {withdrawals.length === 0 ? (
         <WithdrawalEmptyState />
       ) : (
-        <div className="overflow-hidden rounded-lg border border-white/10 bg-black/20 backdrop-blur-sm">
+        <div className="overflow-hidden rounded-lg border border-gold/20 bg-black/20 backdrop-blur-xl">
           <Table>
-            <TableCaption className="mt-4 text-white/70">Liste Ihrer Auszahlungen</TableCaption>
-            <TableHeader className="bg-black/30">
+            <TableCaption className="mt-4 text-gold/60">Liste Ihrer Auszahlungen</TableCaption>
+            <TableHeader className="bg-black/30 border-b border-gold/10">
               <TableRow>
-                <TableHead className="text-white/90">Datum</TableHead>
-                <TableHead className="text-white/90">Betrag</TableHead>
-                <TableHead className="text-white/90">Kryptowährung</TableHead>
-                <TableHead className="text-white/90">Status</TableHead>
+                <TableHead className="text-gold/90">Datum</TableHead>
+                <TableHead className="text-gold/90">Betrag</TableHead>
+                <TableHead className="text-gold/90">Kryptowährung</TableHead>
+                <TableHead className="text-gold/90">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {withdrawals.map((withdrawal) => (
-                <TableRow key={withdrawal.id} className="hover:bg-white/5">
+                <TableRow key={withdrawal.id} className="hover:bg-gold/5 border-b border-gold/10">
                   <TableCell className="text-white/80">
                     {format(new Date(withdrawal.created_at), "dd. MMMM yyyy, HH:mm", { locale: de })}
                   </TableCell>
-                  <TableCell className="text-white/90 font-semibold">
+                  <TableCell className="text-gold-light font-semibold">
                     {formatAmount(withdrawal.amount)}€
                   </TableCell>
                   <TableCell className="text-white/80">{withdrawal.wallet_currency}</TableCell>
-                  <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
+                  <TableCell><WithdrawalStatusBadge status={withdrawal.status} /></TableCell>
                 </TableRow>
               ))}
             </TableBody>

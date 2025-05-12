@@ -15,7 +15,7 @@ const AmountInput = ({ control }: AmountInputProps) => {
       name="amount"
       render={({ field }) => (
         <FormItem>
-          <FormLabel className="text-white/90">Betrag (€)</FormLabel>
+          <FormLabel className="text-gold-light">Betrag (€)</FormLabel>
           <FormControl>
             <Input 
               type="number" 

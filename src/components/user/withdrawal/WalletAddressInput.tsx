@@ -15,11 +15,12 @@ const WalletAddressInput = ({ control }: WalletAddressInputProps) => {
       name="walletAddress"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Ihre Wallet-Adresse</FormLabel>
+          <FormLabel className="text-gold-light">Ihre Wallet-Adresse</FormLabel>
           <FormControl>
             <Input 
               placeholder="z.B. 0x1234..." 
               {...field} 
+              className="bg-black/30 border-gold/30 text-white/80 focus-visible:ring-gold-light focus-visible:border-gold-light"
             />
           </FormControl>
           <FormMessage />

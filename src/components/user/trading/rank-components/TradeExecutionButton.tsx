@@ -12,21 +12,14 @@ const TradeExecutionButton = ({ tradesRemaining, onExecuteTrade }: TradeExecutio
   return (
     <div className="flex flex-col items-center">
       {/* KI Bot text animation */}
-      <div className="mb-3 relative">
+      <div className="mb-2 relative">
         <span className={cn(
-          "font-bold tracking-wide",
-          "text-transparent bg-clip-text bg-gradient-to-r from-purple-400 via-indigo-500 to-purple-600",
+          "font-light text-sm", // Thinner font and smaller text
+          "text-transparent bg-clip-text bg-gradient-to-r from-orange-400 to-orange-500", // Orange color
           "animate-gradient-shift",
-          "text-lg"
         )}>
           KI Bot
         </span>
-        {/* Horizontal line below text */}
-        <div className={cn(
-          "h-0.5 w-full mt-1",
-          "bg-gradient-to-r from-purple-400/0 via-purple-500/80 to-purple-400/0",
-          "animate-pulse"
-        )}></div>
       </div>
       
       {/* Button */}

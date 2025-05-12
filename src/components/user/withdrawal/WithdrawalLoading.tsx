@@ -1,13 +1,13 @@
 
-import { CardContent } from "@/components/ui/card";
+import React from 'react';
+import { Loader2 } from 'lucide-react';
 
 const WithdrawalLoading = () => {
   return (
-    <CardContent>
-      <div className="flex justify-center p-4">
-        <p>Wird geladen...</p>
-      </div>
-    </CardContent>
+    <div className="flex justify-center items-center p-8">
+      <Loader2 className="h-6 w-6 animate-spin mr-2 text-accent1" />
+      <span>Auszahlungsverlauf wird geladen...</span>
+    </div>
   );
 };
 

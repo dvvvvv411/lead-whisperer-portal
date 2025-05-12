@@ -1,13 +1,11 @@
 
-import { CardContent } from "@/components/ui/card";
+import React from 'react';
 
 const WithdrawalEmptyState = () => {
   return (
-    <CardContent>
-      <div className="text-center p-4 text-gray-500">
-        Keine Auszahlungen gefunden.
-      </div>
-    </CardContent>
+    <div className="text-center p-8 border border-gold/10 rounded-lg bg-casino-darker">
+      <p className="text-gray-500 italic">Keine Auszahlungen gefunden.</p>
+    </div>
   );
 };
 

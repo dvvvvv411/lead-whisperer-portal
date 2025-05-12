@@ -3,7 +3,7 @@ import { motion, useAnimation } from "framer-motion";
 import { useEffect, useState } from "react";
 import SharedBackgroundEffects from "../common/SharedBackgroundEffects";
 
-// Typing indicator component for the contact form background
+// Typing indicator component for the contact form background - simplified
 const TypingIndicator = ({ x, y }: { x: number, y: number }) => {
   return (
     <motion.div 
@@ -11,11 +11,11 @@ const TypingIndicator = ({ x, y }: { x: number, y: number }) => {
       style={{ left: `${x}%`, top: `${y}%` }}
       initial={{ opacity: 0 }}
       animate={{ 
-        opacity: [0, 1, 0],
-        y: [-10, -20, -10]
+        opacity: [0, 0.7, 0],
+        y: [-5, -15, -5]
       }}
       transition={{ 
-        duration: 2, 
+        duration: 3, // Slower
         repeat: Infinity, 
         repeatType: "reverse", 
         ease: "easeInOut",
@@ -25,12 +25,12 @@ const TypingIndicator = ({ x, y }: { x: number, y: number }) => {
       {[0, 1, 2].map(i => (
         <motion.div 
           key={i}
-          className="w-1 h-1 rounded-full bg-gold/70"
+          className="w-1 h-1 rounded-full bg-gold/60" // Reduced opacity
           animate={{
-            y: [0, -5, 0]
+            y: [0, -4, 0] // Reduced movement
           }}
           transition={{
-            duration: 0.5,
+            duration: 0.6,
             repeat: Infinity,
             repeatType: "reverse",
             ease: "easeInOut",
@@ -39,27 +39,6 @@ const TypingIndicator = ({ x, y }: { x: number, y: number }) => {
         />
       ))}
     </motion.div>
-  );
-};
-
-// Wave effect component
-const WaveEffect = ({ delay }: { delay: number }) => {
-  return (
-    <motion.div
-      className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border border-gold/10"
-      initial={{ width: 10, height: 10, opacity: 0.8 }}
-      animate={{ 
-        width: ['10%', '80%'], 
-        height: ['10%', '80%'], 
-        opacity: [0.3, 0] 
-      }}
-      transition={{
-        duration: 4,
-        repeat: Infinity,
-        delay: delay,
-        ease: "easeOut"
-      }}
-    />
   );
 };
 
@@ -77,9 +56,9 @@ const BackgroundEffects = () => {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  // Generate typing indicators
+  // Generate typing indicators - reduced count
   useEffect(() => {
-    const indicators = Array.from({ length: 8 }, () => ({
+    const indicators = Array.from({ length: 4 }, () => ({ // Reduced from 8 to 4
       x: Math.random() * 100,
       y: Math.random() * 100
     }));
@@ -88,115 +67,71 @@ const BackgroundEffects = () => {
 
   const additionalElements = (
     <>
-      {/* Contact-specific enhanced background elements */}
+      {/* Contact-specific enhanced background elements - simplified */}
       <motion.div 
-        className="absolute top-1/3 left-1/4 w-80 h-80 bg-accent1/10 rounded-full filter blur-3xl"
+        className="absolute top-1/3 left-1/4 w-80 h-80 bg-accent1/8 rounded-full filter blur-3xl" // Reduced opacity
         animate={{
-          scale: [1, 1.1, 1],
-          x: [0, -20, 0],
-          y: [0, 20, 0],
-          opacity: [0.1, 0.2, 0.1]
+          scale: [1, 1.07, 1], // Reduced scale effect
+          opacity: [0.08, 0.12, 0.08] // Reduced opacity
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
         style={{
-          y: scrollY * 0.05 // Parallax effect based on scroll
+          y: scrollY * 0.04 // Reduced parallax effect
         }}
       />
       
       <motion.div 
-        className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/10 rounded-full filter blur-3xl"
+        className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/7 rounded-full filter blur-3xl" // Reduced opacity
         animate={{
-          scale: [1, 1.15, 1],
-          x: [0, 30, 0],
-          y: [0, -15, 0],
-          opacity: [0.1, 0.25, 0.1]
+          scale: [1, 1.1, 1], // Reduced scale effect
+          opacity: [0.07, 0.15, 0.07] // Reduced opacity
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
         style={{
-          y: scrollY * -0.03 // Opposite parallax effect
+          y: scrollY * -0.02 // Reduced parallax effect
         }}
       />
       
-      {/* "Typing" indicators scattered around */}
+      {/* "Typing" indicators scattered around - reduced count above */}
       {typingIndicators.map((indicator, i) => (
         <TypingIndicator key={i} x={indicator.x} y={indicator.y} />
       ))}
       
-      {/* Concentric wave animations */}
-      <WaveEffect delay={0} />
-      <WaveEffect delay={1} />
-      <WaveEffect delay={2} />
-      
-      {/* Contact form highlight zone */}
+      {/* Contact form highlight zone - simplified */}
       <motion.div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-1/2 h-1/2 rounded-lg"
         animate={{
           boxShadow: [
-            "0 0 0 rgba(255,215,0,0.05)",
-            "0 0 50px rgba(255,215,0,0.1)",
-            "0 0 0 rgba(255,215,0,0.05)",
+            "0 0 0 rgba(255,215,0,0.02)",
+            "0 0 30px rgba(255,215,0,0.06)",
+            "0 0 0 rgba(255,215,0,0.02)",
           ]
         }}
         transition={{
-          duration: 7,
+          duration: 8, // Slower
           repeat: Infinity,
           ease: "easeInOut"
         }}
       />
       
-      {/* Data flow lines (symbolic of message sending) */}
+      {/* Data flow lines (symbolic of message sending) - reduced to 1 */}
       <svg className="absolute inset-0 w-full h-full">
         <motion.path
-          d="M 100,300 C 200,100 300,500 900,300"
-          stroke="rgba(255, 215, 0, 0.1)"
-          strokeWidth="2"
-          fill="none"
-          strokeDasharray="10,10"
-          animate={{
-            strokeDashoffset: [0, -100]
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear"
-          }}
-        />
-        
-        <motion.path
           d="M 300,500 C 400,300 600,700 1100,400"
-          stroke="rgba(255, 215, 0, 0.05)"
-          strokeWidth="3"
+          stroke="rgba(255, 215, 0, 0.04)" // Reduced opacity
+          strokeWidth="2"
           fill="none"
           strokeDasharray="15,15"
           animate={{
             strokeDashoffset: [0, -150]
           }}
           transition={{
-            duration: 15,
+            duration: 20, // Slower
             repeat: Infinity,
             ease: "linear"
           }}
         />
       </svg>
-      
-      {/* Glowing cursor dots that follow a path */}
-      <motion.div
-        className="absolute w-2 h-2 rounded-full bg-gold"
-        animate={{
-          x: [100, 200, 300, 400, 500, 600, 700, 800],
-          y: [500, 300, 500, 200, 400, 300, 500, 200],
-          opacity: [0, 1, 1, 1, 1, 1, 1, 0],
-          scale: [0.5, 1, 1, 1, 1, 1, 1, 0.5],
-        }}
-        transition={{
-          duration: 20,
-          repeat: Infinity,
-          ease: "easeInOut",
-          times: [0, 0.1, 0.3, 0.4, 0.6, 0.7, 0.9, 1]
-        }}
-      >
-        <div className="absolute inset-0 scale-[2] rounded-full bg-gold/30 blur-sm"></div>
-      </motion.div>
     </>
   );
 
@@ -206,8 +141,9 @@ const BackgroundEffects = () => {
       showTopWave={true}
       showBottomGradient={true}
       additionalElements={additionalElements}
-      interactive={true}
-      particleColor="rgba(100, 204, 201, 0.7)" // Using accent1 color for particles
+      interactive={false} // Changed to false
+      particleDensity="low" // Reduced from medium/high
+      particleColor="rgba(100, 204, 201, 0.5)" // Reduced opacity
     />
   );
 };

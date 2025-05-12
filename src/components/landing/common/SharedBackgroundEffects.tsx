@@ -2,7 +2,7 @@
 import { motion } from "framer-motion";
 import React, { useState, useEffect } from "react";
 
-// Define a reusable particle component for advanced animations
+// Define a reusable particle component for advanced animations - simplified version
 const Particle = ({ 
   x, 
   y, 
@@ -29,9 +29,9 @@ const Particle = ({
         background: color 
       }}
       animate={{
-        y: [y, y - 100, y],
-        opacity: [0.1, 0.8, 0.1],
-        scale: [1, 1.2, 1]
+        y: [y, y - 50, y], // Reduced movement range
+        opacity: [0.1, 0.6, 0.1], // Reduced opacity effect
+        scale: [1, 1.1, 1] // Reduced scale effect
       }}
       transition={{
         duration,
@@ -63,10 +63,10 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
   showTopGradient = false,
   showBottomGradient = false,
   additionalElements,
-  interactive = false,
-  particleDensity = "medium",
+  interactive = false, // Default to false now to reduce performance impact
+  particleDensity = "low", // Default to low now
   particleColor = "#FFD700",
-  glowIntensity = "medium"
+  glowIntensity = "low" // Default to low now
 }) => {
   const bgColor = variant === "primary" ? "#0B0D0E" : "#12151E";
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
@@ -80,12 +80,12 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
     duration: number;
   }>>([]);
   
-  // Generate particles based on density
+  // Generate particles based on density - reduced counts
   useEffect(() => {
     const count = 
-      particleDensity === "low" ? 10 : 
-      particleDensity === "medium" ? 20 : 
-      40;
+      particleDensity === "low" ? 5 : // Reduced from 10
+      particleDensity === "medium" ? 10 : // Reduced from 20
+      15; // Reduced from 40
     
     const newParticles = Array.from({ length: count }, (_, i) => ({
       id: i,
@@ -94,13 +94,13 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
       size: Math.random() * 2 + 1,
       color: particleColor,
       delay: Math.random() * 5,
-      duration: Math.random() * 5 + 3
+      duration: Math.random() * 3 + 3 // Slightly reduced animation duration
     }));
     
     setParticles(newParticles);
   }, [particleDensity, particleColor]);
   
-  // Handle mouse interaction if enabled
+  // Handle mouse interaction if enabled - with cleanup
   useEffect(() => {
     if (!interactive) return;
     
@@ -115,22 +115,22 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
   // Determine glow scale based on intensity
   const glowScale = 
     glowIntensity === "low" ? "scale-100 opacity-10" : 
-    glowIntensity === "medium" ? "scale-125 opacity-20" : 
-    "scale-150 opacity-30";
+    glowIntensity === "medium" ? "scale-110 opacity-15" : // Reduced scale
+    "scale-125 opacity-20"; // Reduced scale and opacity
   
   return (
     <>
       {/* Base background */}
       <div className="absolute inset-0 bg-gradient-to-br from-casino-darker to-casino-darker/90 z-0"></div>
       
-      {/* Enhanced grid pattern with animation */}
+      {/* Enhanced grid pattern with animation - simplified */}
       <motion.div 
         className="absolute inset-0 z-0"
         animate={{
           backgroundPosition: ['0% 0%', '100% 100%']
         }}
         transition={{
-          duration: 50,
+          duration: 60, // Slower animation to reduce GPU usage
           repeat: Infinity,
           repeatType: "reverse"
         }}
@@ -138,7 +138,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       </motion.div>
       
-      {/* Dynamic particles */}
+      {/* Dynamic particles - reduced count handled above */}
       {particles.map(particle => (
         <Particle
           key={particle.id}
@@ -154,87 +154,58 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
       {/* Interactive glow effect that follows mouse if interactive is enabled */}
       {interactive && (
         <motion.div
-          className={`absolute w-96 h-96 rounded-full bg-gold/10 filter blur-3xl pointer-events-none ${glowScale}`}
+          className={`absolute w-80 h-80 rounded-full bg-gold/10 filter blur-3xl pointer-events-none ${glowScale}`}
           animate={{
-            x: mousePosition.x - 192, // Center the 384px (96*4) element on cursor
-            y: mousePosition.y - 192,
+            x: mousePosition.x - 160, // Center the element on cursor
+            y: mousePosition.y - 160,
           }}
-          transition={{ type: "spring", stiffness: 50, damping: 20 }}
+          transition={{ type: "spring", stiffness: 40, damping: 20 }} // Smoother animation
         />
       )}
       
-      {/* Common animated elements with enhanced animations */}
+      {/* Common animated elements with simplified animations */}
       <motion.div 
         className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent1/10 rounded-full filter blur-3xl"
         animate={{ 
-          opacity: [0.1, 0.2, 0.1],
-          scale: [1, 1.2, 1],
-          x: [0, -20, 0],
-          y: [0, -20, 0]
+          opacity: [0.1, 0.15, 0.1],
+          scale: [1, 1.1, 1],
         }}
-        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
       />
       
       <motion.div 
         className="absolute bottom-1/4 right-1/4 w-72 h-72 bg-gold/10 rounded-full filter blur-3xl"
         animate={{ 
-          opacity: [0.1, 0.3, 0.1],
-          scale: [1, 1.15, 1],
-          x: [0, 30, 0],
-          y: [0, -15, 0]
+          opacity: [0.1, 0.2, 0.1],
+          scale: [1, 1.1, 1],
         }}
-        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
       
-      {/* Advanced gold particles with trails */}
+      {/* Single gold particle with trail - reduced from multiple */}
       <motion.div 
         className="absolute top-40 right-1/4 w-1 h-1 rounded-full bg-gold/80 z-10"
         animate={{ 
-          opacity: [0.2, 0.9, 0.2],
-          scale: [1, 2, 1],
-          y: [0, -50, 0],
-          x: [0, 30, 0],
+          opacity: [0.2, 0.7, 0.2],
+          scale: [1, 1.5, 1],
         }}
         transition={{ 
-          duration: 4, 
+          duration: 5, 
           repeat: Infinity, 
           ease: "easeInOut", 
           delay: 1 
         }}
       >
-        {/* Particle trail */}
+        {/* Simplified particle trail */}
         <motion.div 
           className="absolute inset-0 rounded-full bg-gold/40"
           initial={{ scale: 1, opacity: 0.7 }}
-          animate={{ scale: 3, opacity: 0 }}
+          animate={{ scale: 2, opacity: 0 }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeOut" }}
         />
       </motion.div>
       
-      <motion.div 
-        className="absolute bottom-32 left-1/3 w-1 h-1 rounded-full bg-gold/80 z-10"
-        animate={{ 
-          opacity: [0.3, 0.9, 0.3],
-          scale: [1, 1.8, 1],
-          y: [0, 40, 0],
-          x: [0, -20, 0],
-        }}
-        transition={{ 
-          duration: 3.5, 
-          repeat: Infinity, 
-          ease: "easeInOut" 
-        }}
-      >
-        {/* Particle trail */}
-        <motion.div 
-          className="absolute inset-0 rounded-full bg-gold/40"
-          initial={{ scale: 1, opacity: 0.7 }}
-          animate={{ scale: 2.5, opacity: 0 }}
-          transition={{ duration: 1.5, repeat: Infinity, ease: "easeOut" }}
-        />
-      </motion.div>
-      
-      {/* Top wave with animation */}
+      {/* Top wave with animation - simplified */}
       {showTopWave && (
         <div className="absolute top-0 left-0 right-0 z-10">
           <motion.svg 
@@ -242,14 +213,6 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
             viewBox="0 0 1440 100" 
             preserveAspectRatio="none" 
             className="w-full h-12"
-            animate={{
-              y: [0, -5, 0],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
           >
             <motion.path 
               fill={bgColor} 
@@ -262,7 +225,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
                 ]
               }}
               transition={{
-                duration: 10,
+                duration: 15, // Slower animation
                 repeat: Infinity,
                 repeatType: "reverse",
                 ease: "easeInOut"
@@ -272,7 +235,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
         </div>
       )}
       
-      {/* Top gradient with shimmer */}
+      {/* Top gradient with shimmer - simplified */}
       {showTopGradient && (
         <div className="absolute top-0 inset-x-0 h-24 z-10">
           <div className="absolute inset-0 bg-gradient-to-b from-casino-darker to-transparent"></div>
@@ -282,7 +245,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
               x: ['-100%', '100%']
             }}
             transition={{
-              duration: 8,
+              duration: 10, // Slower shimmer
               repeat: Infinity,
               ease: "easeInOut"
             }}
@@ -290,7 +253,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
         </div>
       )}
       
-      {/* Bottom wave with animation */}
+      {/* Bottom wave with animation - simplified */}
       {showBottomWave && (
         <div className="absolute bottom-0 left-0 right-0 z-10">
           <motion.svg 
@@ -298,14 +261,6 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
             viewBox="0 0 1440 100" 
             preserveAspectRatio="none" 
             className="w-full h-12"
-            animate={{
-              y: [0, 5, 0],
-            }}
-            transition={{
-              duration: 6,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
           >
             <motion.path 
               fill={bgColor} 
@@ -318,7 +273,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
                 ]
               }}
               transition={{
-                duration: 8,
+                duration: 15, // Slower animation
                 repeat: Infinity,
                 repeatType: "reverse",
                 ease: "easeInOut"
@@ -328,7 +283,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
         </div>
       )}
       
-      {/* Bottom gradient with shimmer */}
+      {/* Bottom gradient with shimmer - simplified */}
       {showBottomGradient && (
         <div className="absolute bottom-0 inset-x-0 h-24 z-10">
           <div className="absolute inset-0 bg-gradient-to-t from-casino-darker to-transparent"></div>
@@ -338,7 +293,7 @@ const SharedBackgroundEffects: React.FC<BackgroundProps> = ({
               x: ['-100%', '100%']
             }}
             transition={{
-              duration: 10,
+              duration: 12, // Slower shimmer
               repeat: Infinity,
               ease: "easeInOut"
             }}

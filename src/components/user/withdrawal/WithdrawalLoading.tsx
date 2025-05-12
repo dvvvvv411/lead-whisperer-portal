@@ -6,7 +6,7 @@ const WithdrawalLoading = () => {
   return (
     <div className="flex justify-center items-center p-8">
       <Loader2 className="h-6 w-6 animate-spin mr-2 text-accent1" />
-      <span>Auszahlungsverlauf wird geladen...</span>
+      <span className="text-white/80">Auszahlungsverlauf wird geladen...</span>
     </div>
   );
 };

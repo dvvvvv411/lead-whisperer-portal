@@ -47,10 +47,10 @@ const UserSettings = () => {
   
   if (loading) {
     return (
-      <div className="flex justify-center items-center min-h-screen bg-casino-dark">
+      <div className="flex justify-center items-center min-h-screen bg-casino-dark dark">
         <div className="flex flex-col items-center">
           <div className="h-12 w-12 rounded-full border-4 border-t-gold border-casino-card animate-spin mb-4"></div>
-          <p className="text-muted-foreground">Wird geladen...</p>
+          <p className="text-white/70">Wird geladen...</p>
         </div>
       </div>
     );
@@ -66,24 +66,24 @@ const UserSettings = () => {
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück
           </Button>
-          <h1 className="text-2xl font-bold gradient-text">Kontoeinstellungen</h1>
+          <h1 className="text-2xl font-bold text-transparent bg-gold-gradient bg-clip-text">Kontoeinstellungen</h1>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
+          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border-gold/10">
             <CardHeader className="bg-gold/5 border-b border-gold/10">
-              <CardTitle>Profil-Informationen</CardTitle>
-              <CardDescription>Aktualisieren Sie Ihre persönlichen Daten</CardDescription>
+              <CardTitle className="text-white">Profil-Informationen</CardTitle>
+              <CardDescription className="text-white/70">Aktualisieren Sie Ihre persönlichen Daten</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <UserSettingsForm user={user} onSuccess={() => setUpdateSuccess(true)} />
             </CardContent>
           </Card>
 
-          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
+          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border-gold/10">
             <CardHeader className="bg-gold/5 border-b border-gold/10">
-              <CardTitle>Passwort ändern</CardTitle>
-              <CardDescription>Aktualisieren Sie Ihr Passwort</CardDescription>
+              <CardTitle className="text-white">Passwort ändern</CardTitle>
+              <CardDescription className="text-white/70">Aktualisieren Sie Ihr Passwort</CardDescription>
             </CardHeader>
             <CardContent className="p-6">
               <PasswordChangeForm user={user} onSuccess={() => setUpdateSuccess(true)} />

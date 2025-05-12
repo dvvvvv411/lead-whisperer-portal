@@ -106,8 +106,8 @@ const UserActivation = () => {
 
   if (isCheckingCredit || creditLoading) {
     return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Aktivierungsstatus wird überprüft...</p>
+      <div className="flex justify-center items-center min-h-screen bg-casino-dark dark">
+        <p className="text-white/70">Aktivierungsstatus wird überprüft...</p>
       </div>
     );
   }
@@ -118,7 +118,7 @@ const UserActivation = () => {
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ duration: 0.5 }}
-        className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 pb-16"
+        className="min-h-screen bg-casino-dark dark"
       >
         <div className="container mx-auto p-4 max-w-7xl">
           <div className="flex justify-end mb-8 pt-4">
@@ -135,7 +135,7 @@ const UserActivation = () => {
               bounce: 0.4
             }}
           >
-            <h1 className="text-4xl md:text-5xl font-bold gradient-text py-2 px-4 inline-block relative">
+            <h1 className="text-4xl md:text-5xl font-bold text-transparent bg-gold-gradient bg-clip-text py-2 px-4 inline-block relative">
               Konto Aktivierung
               <motion.div 
                 className="absolute -z-10 inset-0 bg-gold/10 rounded-lg blur-xl"
@@ -152,7 +152,7 @@ const UserActivation = () => {
             </h1>
             
             {userCredit !== null && userCredit > 0 && (
-              <p className="mt-2 font-medium">
+              <p className="mt-2 font-medium text-white">
                 Aktuelles Guthaben: {userCredit.toFixed(2)}€ 
                 {userCredit < CREDIT_ACTIVATION_THRESHOLD && (
                   <span className="text-amber-500"> (Sie benötigen noch {(CREDIT_ACTIVATION_THRESHOLD - userCredit).toFixed(2)}€)</span>

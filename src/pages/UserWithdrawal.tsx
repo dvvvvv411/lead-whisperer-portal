@@ -81,122 +81,124 @@ const UserWithdrawal = () => {
       onUserLoaded={handleUserLoaded}
       redirectToActivation={false}
     >
-      {/* Navigation Bar */}
-      <UserNavbar userId={user?.id} userEmail={user?.email} />
-      
-      <div className="container mx-auto px-4 py-6 max-w-6xl">
-        <div className="mb-6">
-          <Button
-            variant="ghost"
-            onClick={handleBack}
-            className="mb-4"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Zurück zum Dashboard
-          </Button>
-          
-          <h1 className="text-2xl md:text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent animate-gradient-shift">
-            Guthaben auszahlen
-          </h1>
-          {userCredit !== null && (
-            <p className="text-lg text-accent1-light mt-2">
-              Aktuelles Guthaben: {userCredit.toFixed(2)}€
-            </p>
-          )}
-        </div>
+      <div className="flex flex-col min-h-screen bg-casino-dark dark">
+        {/* Navigation Bar */}
+        <UserNavbar userId={user?.id} userEmail={user?.email} />
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          {/* Left section - Withdrawal Illustration */}
-          <Card className="casino-card p-6 relative overflow-hidden h-full">
-            <div className="absolute top-0 right-0 w-24 h-24 bg-accent1/10 rounded-full blur-xl"></div>
-            <h2 className="text-xl font-semibold mb-4 flex items-center">
-              <Wallet className="h-5 w-5 mr-2 text-gold" />
-              <span className="bg-clip-text text-transparent bg-gold-gradient">Auszahlungsoptionen</span>
-            </h2>
+        <div className="container mx-auto px-4 py-6 max-w-6xl">
+          <div className="mb-6">
+            <Button
+              variant="ghost"
+              onClick={handleBack}
+              className="mb-4"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Zurück zum Dashboard
+            </Button>
             
-            <div className="space-y-6 relative p-2">
-              {/* Animated floating elements */}
-              <div className="absolute top-10 left-4 w-16 h-16 bg-gold/20 rounded-full blur-xl animate-float"></div>
-              <div className="absolute bottom-10 right-8 w-12 h-12 bg-accent1/20 rounded-full blur-xl animate-float" style={{animationDelay: "1s"}}></div>
-              
-              <div className="text-center mb-8">
-                <div className="flex justify-center py-6">
-                  <Wallet className="h-24 w-24 text-gold opacity-60" />
-                </div>
-                <h3 className="text-xl font-medium text-accent1-light mb-2">Schnelle und sichere Auszahlungen</h3>
-                <p className="text-muted-foreground">
-                  Ihre Auszahlungsanfragen werden innerhalb von 24 Stunden bearbeitet und an Ihre Krypto-Wallet überwiesen.
-                </p>
-              </div>
-              
-              <div className="space-y-4 mt-8">
-                <div className="text-lg font-medium mb-2 flex items-center">
-                  <TrendingUp className="mr-2 h-5 w-5 text-accent1-light" />
-                  <span>Vorteile unseres Auszahlungssystems</span>
-                </div>
-                
-                {/* Feature boxes */}
-                <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
-                  <div className="flex items-center mb-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
-                    <span className="text-gold font-medium">Niedrige Gebühren</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-4">
-                    Profitieren Sie von den niedrigsten Gebühren am Markt für Krypto-Auszahlungen.
-                  </p>
-                </div>
-                
-                <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
-                  <div className="flex items-center mb-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
-                    <span className="text-gold font-medium">Schnelle Abwicklung</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-4">
-                    Auszahlungen werden in der Regel innerhalb eines Werktages abgewickelt.
-                  </p>
-                </div>
-                
-                <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
-                  <div className="flex items-center mb-2">
-                    <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
-                    <span className="text-gold font-medium">Maximale Sicherheit</span>
-                  </div>
-                  <p className="text-sm text-muted-foreground ml-4">
-                    Unser Auszahlungssystem nutzt modernste Sicherheitstechnologien.
-                  </p>
-                </div>
-              </div>
-            </div>
-          </Card>
+            <h1 className="text-2xl md:text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent animate-gradient-shift">
+              Guthaben auszahlen
+            </h1>
+            {userCredit !== null && (
+              <p className="text-lg text-accent1-light mt-2">
+                Aktuelles Guthaben: {userCredit.toFixed(2)}€
+              </p>
+            )}
+          </div>
           
-          {/* Right section - Two stacked cards */}
-          <div className="flex flex-col space-y-6">
-            {/* Withdrawal Form Card */}
-            <Card className="casino-card overflow-hidden flex-1">
-              <div className="flex flex-col h-full">
-                <div className="bg-casino-darker p-4 border-b border-gold/10 flex items-center">
-                  <CreditCard className="h-5 w-5 mr-2 text-gold" />
-                  <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">
-                    Auszahlung durchführen
-                  </h2>
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            {/* Left section - Withdrawal Illustration */}
+            <Card className="casino-card p-6 relative overflow-hidden h-full border-gold/10">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-accent1/10 rounded-full blur-xl"></div>
+              <h2 className="text-xl font-semibold mb-4 flex items-center">
+                <Wallet className="h-5 w-5 mr-2 text-gold" />
+                <span className="bg-clip-text text-transparent bg-gold-gradient">Auszahlungsoptionen</span>
+              </h2>
+              
+              <div className="space-y-6 relative p-2">
+                {/* Animated floating elements */}
+                <div className="absolute top-10 left-4 w-16 h-16 bg-gold/20 rounded-full blur-xl animate-float"></div>
+                <div className="absolute bottom-10 right-8 w-12 h-12 bg-accent1/20 rounded-full blur-xl animate-float" style={{animationDelay: "1s"}}></div>
+                
+                <div className="text-center mb-8">
+                  <div className="flex justify-center py-6">
+                    <Wallet className="h-24 w-24 text-gold opacity-60" />
+                  </div>
+                  <h3 className="text-xl font-medium text-accent1-light mb-2">Schnelle und sichere Auszahlungen</h3>
+                  <p className="text-white/80">
+                    Ihre Auszahlungsanfragen werden innerhalb von 24 Stunden bearbeitet und an Ihre Krypto-Wallet überwiesen.
+                  </p>
                 </div>
-                <div className="p-5">
-                  <WithdrawalForm 
-                    wallets={wallets}
-                    walletsLoading={walletsLoading}
-                    walletError={walletError}
-                    onRetryWallets={fetchWallets}
-                    userCredit={userCredit || 0}
-                    onSubmit={handleWithdrawalSubmit}
-                  />
+                
+                <div className="space-y-4 mt-8">
+                  <div className="text-lg font-medium mb-2 flex items-center text-white">
+                    <TrendingUp className="mr-2 h-5 w-5 text-accent1-light" />
+                    <span>Vorteile unseres Auszahlungssystems</span>
+                  </div>
+                  
+                  {/* Feature boxes */}
+                  <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
+                      <span className="text-gold font-medium">Niedrige Gebühren</span>
+                    </div>
+                    <p className="text-sm text-white/70 ml-4">
+                      Profitieren Sie von den niedrigsten Gebühren am Markt für Krypto-Auszahlungen.
+                    </p>
+                  </div>
+                  
+                  <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
+                      <span className="text-gold font-medium">Schnelle Abwicklung</span>
+                    </div>
+                    <p className="text-sm text-white/70 ml-4">
+                      Auszahlungen werden in der Regel innerhalb eines Werktages abgewickelt.
+                    </p>
+                  </div>
+                  
+                  <div className="rounded-lg border border-gold/30 p-4 bg-gold/5">
+                    <div className="flex items-center mb-2">
+                      <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />
+                      <span className="text-gold font-medium">Maximale Sicherheit</span>
+                    </div>
+                    <p className="text-sm text-white/70 ml-4">
+                      Unser Auszahlungssystem nutzt modernste Sicherheitstechnologien.
+                    </p>
+                  </div>
                 </div>
               </div>
             </Card>
             
-            {/* Withdrawal History Card */}
-            <Card className="casino-card p-6">
-              <WithdrawalHistory userId={user?.id} />
-            </Card>
+            {/* Right section - Two stacked cards */}
+            <div className="flex flex-col space-y-6">
+              {/* Withdrawal Form Card */}
+              <Card className="casino-card overflow-hidden flex-1 border-gold/10">
+                <div className="flex flex-col h-full">
+                  <div className="bg-casino-darker p-4 border-b border-gold/10 flex items-center">
+                    <CreditCard className="h-5 w-5 mr-2 text-gold" />
+                    <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">
+                      Auszahlung durchführen
+                    </h2>
+                  </div>
+                  <div className="p-5">
+                    <WithdrawalForm 
+                      wallets={wallets}
+                      walletsLoading={walletsLoading}
+                      walletError={walletError}
+                      onRetryWallets={fetchWallets}
+                      userCredit={userCredit || 0}
+                      onSubmit={handleWithdrawalSubmit}
+                    />
+                  </div>
+                </div>
+              </Card>
+              
+              {/* Withdrawal History Card */}
+              <Card className="casino-card p-6 border-gold/10">
+                <WithdrawalHistory userId={user?.id} />
+              </Card>
+            </div>
           </div>
         </div>
       </div>

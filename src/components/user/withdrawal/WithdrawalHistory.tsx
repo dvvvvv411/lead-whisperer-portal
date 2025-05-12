@@ -70,25 +70,25 @@ const WithdrawalHistory = ({ userId }: WithdrawalHistoryProps) => {
       ) : (
         <div className="overflow-hidden rounded-lg border border-gold/10">
           <Table>
-            <TableCaption className="mt-4">Liste Ihrer Auszahlungen</TableCaption>
+            <TableCaption className="mt-4 text-white/70">Liste Ihrer Auszahlungen</TableCaption>
             <TableHeader className="bg-casino-darker">
               <TableRow>
-                <TableHead>Datum</TableHead>
-                <TableHead>Betrag</TableHead>
-                <TableHead>Kryptowährung</TableHead>
-                <TableHead>Status</TableHead>
+                <TableHead className="text-white/90">Datum</TableHead>
+                <TableHead className="text-white/90">Betrag</TableHead>
+                <TableHead className="text-white/90">Kryptowährung</TableHead>
+                <TableHead className="text-white/90">Status</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
               {withdrawals.map((withdrawal) => (
                 <TableRow key={withdrawal.id} className="hover:bg-gold/5">
-                  <TableCell>
+                  <TableCell className="text-white/80">
                     {format(new Date(withdrawal.created_at), "dd. MMMM yyyy, HH:mm", { locale: de })}
                   </TableCell>
                   <TableCell className="text-accent1-light font-semibold">
                     {formatAmount(withdrawal.amount)}€
                   </TableCell>
-                  <TableCell>{withdrawal.wallet_currency}</TableCell>
+                  <TableCell className="text-white/80">{withdrawal.wallet_currency}</TableCell>
                   <TableCell>{getStatusBadge(withdrawal.status)}</TableCell>
                 </TableRow>
               ))}

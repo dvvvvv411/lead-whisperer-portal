@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 const BackgroundEffects = () => {
   return (
     <>
-      {/* Unified background elements with consistent color scheme */}
-      <div className="absolute inset-0 bg-gradient-to-br from-[#0B0D0E]/70 to-[#0B0D0E]/90 opacity-80"></div>
+      {/* Angepasster Hintergrund für einen fließenden Übergang von PartnersSection */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#21283B]/90 via-[#21283B]/85 to-[#0B0D0E]/95 opacity-90"></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       
       {/* Animated light beams with gold and purple tones */}
@@ -19,7 +19,7 @@ const BackgroundEffects = () => {
       />
       
       <motion.div 
-        className="absolute -bottom-40 right-1/4 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl"
+        className="absolute -bottom-40 right-1/4 w-80 h-80 bg-accent1/10 rounded-full blur-3xl"
         animate={{ 
           opacity: [0.1, 0.15, 0.1],
           scale: [1, 1.2, 1],
@@ -27,7 +27,25 @@ const BackgroundEffects = () => {
         transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1 }}
       />
 
-      {/* Enhanced bottom wave separator */}
+      {/* Gold particles for consistency */}
+      <motion.div 
+        className="absolute top-1/4 right-1/3 w-1 h-1 rounded-full bg-gold/80"
+        animate={{ 
+          opacity: [0.3, 0.8, 0.3],
+          scale: [1, 1.5, 1]
+        }}
+        transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div 
+        className="absolute bottom-1/3 left-1/4 w-1 h-1 rounded-full bg-gold/60"
+        animate={{ 
+          opacity: [0.2, 0.7, 0.2],
+          scale: [1, 1.8, 1]
+        }}
+        transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.3 }}
+      />
+
+      {/* Bottom wave separator to Contact section */}
       <div className="absolute bottom-0 left-0 right-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full">
           <path 

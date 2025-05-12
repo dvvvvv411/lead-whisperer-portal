@@ -69,12 +69,44 @@ const ContactSection = () => {
     <section id="contact" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-dark to-transparent"></div>
-        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/5 rounded-full filter blur-3xl"></div>
+        {/* Grid pattern for consistency */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')] opacity-10"></div>
+        {/* Animated gradients */}
+        <motion.div 
+          className="absolute top-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"
+          animate={{ 
+            opacity: [0.1, 0.15, 0.1],
+            scale: [1, 1.05, 1]
+          }}
+          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/5 rounded-full filter blur-3xl"
+          animate={{ 
+            opacity: [0.1, 0.13, 0.1],
+            scale: [1, 1.08, 1]
+          }}
+          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
+        />
+        
+        {/* Animated gold particles for consistency */}
+        <motion.div 
+          className="absolute top-1/5 right-1/3 w-1 h-1 rounded-full bg-gold/80"
+          animate={{ 
+            opacity: [0.3, 0.8, 0.3],
+            scale: [1, 1.5, 1]
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-1/4 left-1/4 w-1 h-1 rounded-full bg-gold/60"
+          animate={{ 
+            opacity: [0.2, 0.7, 0.2],
+            scale: [1, 1.8, 1]
+          }}
+          transition={{ duration: 3.8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
       </div>
       
       <div className="container mx-auto px-4 relative z-10">

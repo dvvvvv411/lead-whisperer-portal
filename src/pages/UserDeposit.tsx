@@ -8,7 +8,7 @@ import DepositForm from "@/components/user/deposit/DepositForm";
 import DepositHistory from "@/components/user/deposit/DepositHistory";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CircleDollarSign, CreditCard, Wallet } from "lucide-react";
+import { ArrowLeft, CircleDollarSign, CreditCard, Wallet, Trophy } from "lucide-react";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";

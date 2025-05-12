@@ -74,8 +74,14 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
   const [animationComplete, setAnimationComplete] = useState(false);
 
   useEffect(() => {
-    // Determine current level
-    const current = levels.findLast(level => currentBalance >= level.minBalance) || levels[0];
+    // Find the current level (using reverse loop instead of findLast)
+    let current = levels[0]; // Default to first level
+    for (let i = levels.length - 1; i >= 0; i--) {
+      if (currentBalance >= levels[i].minBalance) {
+        current = levels[i];
+        break;
+      }
+    }
     setActiveLevel(current);
 
     // Find next level

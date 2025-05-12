@@ -62,7 +62,7 @@ const TradingBotContent = ({
         formatCurrency={formatCurrency}
       />
       
-      {/* Bot Performance with Trade Cards */}
+      {/* Bot Performance with Trade Cards - No ScrollArea now */}
       <BotPerformance
         botTrades={botTrades}
         loading={tradesLoading}

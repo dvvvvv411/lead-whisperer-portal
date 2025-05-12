@@ -3,7 +3,6 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Bot } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import BotTradeCard from "./BotTradeCard";
 
 interface BotPerformanceProps {
@@ -84,7 +83,7 @@ const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformancePr
   const tradePairs = groupTrades();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3">
       <div className="flex items-center justify-between">
         <h3 className="font-medium flex items-center">
           <Bot className="h-4 w-4 mr-2 text-accent1-light" />
@@ -99,32 +98,29 @@ const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformancePr
       </div>
       
       {loading ? (
-        <div className="space-y-2">
-          <Skeleton className="h-36 w-full bg-casino-card" />
-          <Skeleton className="h-36 w-full bg-casino-card" />
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-24 w-full bg-casino-card" />
+          ))}
         </div>
       ) : tradePairs.length > 0 ? (
-        <div className="h-[400px]">
-          <ScrollArea className="h-full pr-4">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pr-2">
-              {tradePairs.slice(0, 10).map((pair) => (
-                pair.buy && (
-                  <BotTradeCard
-                    key={pair.id}
-                    buyTrade={pair.buy}
-                    sellTrade={pair.sell}
-                    formatCurrency={formatCurrency}
-                  />
-                )
-              ))}
-            </div>
-          </ScrollArea>
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-2">
+          {tradePairs.slice(0, 10).map((pair) => (
+            pair.buy && (
+              <BotTradeCard
+                key={pair.id}
+                buyTrade={pair.buy}
+                sellTrade={pair.sell}
+                formatCurrency={formatCurrency}
+              />
+            )
+          ))}
         </div>
       ) : (
-        <div className="text-center py-8 px-4 border border-dashed border-casino-highlight rounded-lg bg-casino-darker">
-          <Bot className="h-8 w-8 text-muted-foreground mx-auto mb-2 opacity-50" />
-          <p className="text-muted-foreground">
-            Noch keine Bot-Trades vorhanden. Aktiviere den Bot, um zu beginnen.
+        <div className="text-center py-4 px-4 border border-dashed border-casino-highlight rounded-lg bg-casino-darker">
+          <Bot className="h-6 w-6 text-muted-foreground mx-auto mb-2 opacity-50" />
+          <p className="text-sm text-muted-foreground">
+            Noch keine Bot-Trades vorhanden.
           </p>
         </div>
       )}

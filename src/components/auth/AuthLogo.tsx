@@ -10,11 +10,13 @@ const AuthLogo = () => {
       transition={{ duration: 0.7 }}
       className="mb-8 flex flex-col items-center gap-4"
     >
-      <img 
-        src="https://i.imgur.com/Q191f5z.png" 
-        alt="KRYPTO AI Logo" 
-        className="h-20 object-contain"
-      />
+      <Link to="/">
+        <img 
+          src="https://i.imgur.com/Q191f5z.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-20 object-contain"
+        />
+      </Link>
       
       {/* Back to homepage button */}
       <Link 

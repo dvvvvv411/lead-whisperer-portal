@@ -2,6 +2,7 @@
 import { motion } from "framer-motion";
 import { TrendingUp } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Link } from "react-router-dom";
 
 const Logo = () => {
   const isMobile = useIsMobile();
@@ -13,11 +14,13 @@ const Logo = () => {
       }} 
       className={`flex flex-col items-center ${isMobile ? 'mx-auto' : ''}`}
     >
-      <img 
-        src="https://i.imgur.com/Q191f5z.png" 
-        alt="KRYPTO AI Logo" 
-        className="h-14 object-contain" 
-      />
+      <Link to="/">
+        <img 
+          src="https://i.imgur.com/Q191f5z.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-14 object-contain" 
+        />
+      </Link>
       
       {/* Trading badge positioned below logo in mobile view */}
       {isMobile && (

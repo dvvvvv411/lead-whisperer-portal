@@ -69,7 +69,7 @@ export const calculateBuyPrice = (basePrice: number, profitPercentage?: number):
   return basePrice * (1 + variation);
 };
 
-// Calculate profit based on trade amount and profit percentage (adjusted to match the expected signature)
+// Calculate profit based on trade amount and profit percentage - FIXED to not divide by 100 again
 export const calculateProfit = (tradeAmount: number, profitPercentage: number): number => {
-  return tradeAmount * (profitPercentage / 100);
+  return tradeAmount * profitPercentage;
 };

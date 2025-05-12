@@ -167,7 +167,7 @@ const TradeResultDialog = ({
             <h2 className="text-xl font-bold text-white">Trade erfolgreich!</h2>
             <div className={`text-3xl font-bold transition-all duration-700 ${animateProfit ? "scale-125 text-gold" : "text-white"}`}>
               {formatCurrency(displayedProfit)}
-              <span className="text-lg ml-1 text-green-500">+{profitPercentage.toFixed(2)}%</span>
+              <span className="text-lg ml-1 text-green-500">+{(profitPercentage * 100).toFixed(2)}%</span>
             </div>
           </div>
           
@@ -229,7 +229,7 @@ const TradeResultDialog = ({
                   <div className="flex items-center col-span-2 mt-2 pt-2 border-t border-gold/10">
                     <span className="text-muted-foreground">Gewinn:</span>
                     <div className="ml-auto text-green-500 font-bold text-base">
-                      {formatCurrency(profitAmount)} ({profitPercentage.toFixed(2)}%)
+                      {formatCurrency(profitAmount)} ({(profitPercentage * 100).toFixed(2)}%)
                     </div>
                   </div>
                 </div>

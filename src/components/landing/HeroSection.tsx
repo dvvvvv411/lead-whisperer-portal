@@ -1,7 +1,7 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowRight, TrendingUp, Bitcoin, Robot } from "lucide-react";
+import { ArrowRight, TrendingUp, Bitcoin, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 const HeroSection = () => {

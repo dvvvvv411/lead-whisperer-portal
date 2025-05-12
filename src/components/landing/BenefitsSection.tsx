@@ -4,7 +4,7 @@ import {
   TrendingUp, 
   Shield, 
   Zap, 
-  Robot, 
+  Bot, 
   ChartLine,
   Globe
 } from "lucide-react";
@@ -16,7 +16,7 @@ const benefits = [
     description: "Erziele überdurchschnittliche Renditen durch KI-gestützte Handelsentscheidungen, die auf komplexen Marktanalysen basieren."
   },
   {
-    icon: <Robot className="h-10 w-10 text-gold" />,
+    icon: <Bot className="h-10 w-10 text-gold" />,
     title: "Vollständig automatisiert",
     description: "Unser KI-Bot handelt vollautomatisch für dich - du musst keine Zeit investieren oder Marktkenntnisse besitzen."
   },

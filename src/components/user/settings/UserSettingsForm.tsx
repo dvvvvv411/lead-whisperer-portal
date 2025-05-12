@@ -17,6 +17,9 @@ const profileSchema = z.object({
   email: z.string().email({
     message: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   }).optional(),
+  phoneNumber: z.string().min(5, {
+    message: "Telefonnummer muss mindestens 5 Zeichen lang sein.",
+  }).optional(),
 });
 
 interface UserSettingsFormProps {
@@ -30,6 +33,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
   const [currentData, setCurrentData] = useState({
     fullName: "",
     email: "",
+    phoneNumber: "",
   });
 
   // Initialize form with react-hook-form
@@ -38,6 +42,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
     defaultValues: {
       fullName: "",
       email: "",
+      phoneNumber: "",
     },
   });
 
@@ -46,15 +51,18 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
     if (user) {
       const email = user.email || "";
       const fullName = user.user_metadata?.full_name || "";
+      const phoneNumber = user.user_metadata?.phone_number || "";
       
       setCurrentData({
         fullName,
         email,
+        phoneNumber,
       });
       
       form.reset({
         fullName,
         email,
+        phoneNumber,
       });
     }
   }, [user, form]);
@@ -65,16 +73,20 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
       setLoading(true);
       
       // Only update if values have changed
-      if (values.fullName !== currentData.fullName) {
+      if (values.fullName !== currentData.fullName || values.phoneNumber !== currentData.phoneNumber) {
         const { error } = await supabase.auth.updateUser({
-          data: { full_name: values.fullName }
+          data: { 
+            full_name: values.fullName,
+            phone_number: values.phoneNumber
+          }
         });
 
         if (error) throw error;
         
         setCurrentData(prev => ({
           ...prev,
-          fullName: values.fullName
+          fullName: values.fullName,
+          phoneNumber: values.phoneNumber || ""
         }));
       }
 
@@ -104,9 +116,31 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
           name="fullName"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="text-gold-light">Name</FormLabel>
               <FormControl>
-                <Input placeholder="Ihr vollständiger Name" {...field} />
+                <Input 
+                  placeholder="Ihr vollständiger Name" 
+                  {...field} 
+                  className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
+                />
+              </FormControl>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-gold-light">Telefonnummer</FormLabel>
+              <FormControl>
+                <Input 
+                  placeholder="Ihre Telefonnummer" 
+                  {...field} 
+                  className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -118,19 +152,24 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>E-Mail</FormLabel>
+              <FormLabel className="text-gold-light">E-Mail</FormLabel>
               <FormControl>
-                <Input placeholder="Ihre E-Mail Adresse" disabled {...field} />
+                <Input 
+                  placeholder="Ihre E-Mail Adresse" 
+                  disabled 
+                  {...field} 
+                  className="border-gold/30 bg-black/20 text-white/60"
+                />
               </FormControl>
               <FormMessage />
-              <p className="text-sm text-muted-foreground">Die E-Mail-Adresse kann nicht geändert werden.</p>
+              <p className="text-sm text-gold/60 italic">Die E-Mail-Adresse kann nicht geändert werden.</p>
             </FormItem>
           )}
         />
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full bg-gradient-to-r from-gold/80 to-gold hover:from-gold hover:to-gold-light text-black font-medium" 
           disabled={loading || !form.formState.isDirty}
         >
           {loading ? "Wird aktualisiert..." : "Speichern"}

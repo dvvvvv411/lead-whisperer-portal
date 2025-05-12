@@ -96,9 +96,14 @@ const PasswordChangeForm = ({ user, onSuccess }: PasswordChangeFormProps) => {
           name="currentPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Aktuelles Passwort</FormLabel>
+              <FormLabel className="text-gold-light">Aktuelles Passwort</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  {...field} 
+                  className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -110,9 +115,14 @@ const PasswordChangeForm = ({ user, onSuccess }: PasswordChangeFormProps) => {
           name="newPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Neues Passwort</FormLabel>
+              <FormLabel className="text-gold-light">Neues Passwort</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  {...field} 
+                  className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -124,9 +134,14 @@ const PasswordChangeForm = ({ user, onSuccess }: PasswordChangeFormProps) => {
           name="confirmPassword"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Passwort bestätigen</FormLabel>
+              <FormLabel className="text-gold-light">Passwort bestätigen</FormLabel>
               <FormControl>
-                <Input type="password" placeholder="••••••••" {...field} />
+                <Input 
+                  type="password" 
+                  placeholder="••••••••" 
+                  {...field} 
+                  className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
+                />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -135,7 +150,7 @@ const PasswordChangeForm = ({ user, onSuccess }: PasswordChangeFormProps) => {
 
         <Button 
           type="submit" 
-          className="w-full" 
+          className="w-full bg-gradient-to-r from-gold/80 to-gold hover:from-gold hover:to-gold-light text-black font-medium" 
           disabled={loading || !form.formState.isDirty}
         >
           {loading ? "Wird aktualisiert..." : "Passwort ändern"}

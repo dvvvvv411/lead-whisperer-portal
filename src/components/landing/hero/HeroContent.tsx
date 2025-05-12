@@ -100,11 +100,29 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Gold CTA button - hidden on mobile */}
-        {!isMobile && (
+        {/* Redesigned CTA button that works well on all devices */}
+        <motion.div
+          whileHover={{ scale: 1.03 }}
+          whileTap={{ scale: 0.98 }}
+          className="relative w-full sm:w-auto"
+        >
+          {/* Animated glow effect */}
+          <motion.div 
+            className="absolute inset-0 rounded-md bg-purple-500/20"
+            animate={{ 
+              boxShadow: ["0 0 0px rgba(139, 92, 246, 0)", "0 0 20px rgba(139, 92, 246, 0.5)", "0 0 0px rgba(139, 92, 246, 0)"]
+            }}
+            transition={{ 
+              duration: 2,
+              repeat: Infinity,
+              repeatType: "reverse",
+              ease: "easeInOut" 
+            }}
+          />
+          
           <Button 
             onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 flex items-center justify-center"
+            className="w-full bg-gradient-to-r from-[#8B5CF6] to-[#6366F1] hover:from-[#7C3AED] hover:to-[#4F46E5] text-white font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
           >
             <motion.span
               animate={{
@@ -120,7 +138,7 @@ const HeroContent = () => {
               Jetzt starten <ArrowRight className="h-4 w-4" />
             </motion.span>
           </Button>
-        )}
+        </motion.div>
         
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}

@@ -57,17 +57,27 @@ const Status = () => {
       const baseAmount = crypto.current_price * (1 + Math.random() * 3); // Between 1-4x of current price
       const amount = (baseAmount * (10 + Math.random() * 90)).toFixed(2); // €10-100 in crypto value
       
-      // Use actual price change percentage from API if available, or generate realistic one
-      const percentChange = crypto.price_change_percentage_24h 
-        ? (Math.abs(crypto.price_change_percentage_24h) * (0.1 + Math.random() * 0.5)).toFixed(2) // Use fraction of actual change
-        : (1 + Math.random() * 6).toFixed(2); // Fallback
+      // Calculate percent change - now modified to only show >3% profits or losses
+      let percentChange: number;
+      
+      if (isProfit) {
+        // For profit trades, ensure they are at least 3%
+        // Use a base of 3% plus additional random amount
+        percentChange = 3 + Math.random() * 7; // 3% to 10%
+      } else {
+        // For loss trades, can be any negative percentage
+        percentChange = -(0.5 + Math.random() * 8); // -0.5% to -8.5%
+      }
+      
+      // Format the percentage with 2 decimal places
+      const formattedChange = Math.abs(percentChange).toFixed(2);
       
       return {
         id: Date.now() + Math.random().toString(),
         crypto: crypto.name,
         symbol: crypto.symbol,
         amount: `€${amount}`,
-        change: isProfit ? `+${percentChange}%` : `-${percentChange}%`,
+        change: isProfit ? `+${formattedChange}%` : `-${formattedChange}%`,
         isProfit,
         timestamp: new Date().toISOString(),
         imageUrl: crypto.image_url

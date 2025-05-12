@@ -12,8 +12,35 @@ const partners = [
 
 const PartnersSection = () => {
   return (
-    <section className="py-16 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-b from-casino-darker to-casino-card opacity-80"></div>
+    <section className="py-16 relative overflow-hidden bg-casino-darker">
+      {/* Background elements */}
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        
+        {/* Animated gradients */}
+        <div className="absolute top-1/4 right-1/4 w-60 h-60 bg-gold/5 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
+        
+        {/* Animated particles */}
+        <motion.div 
+          className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-gold/80"
+          animate={{ 
+            opacity: [0.3, 0.8, 0.3],
+            scale: [1, 1.5, 1]
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-40 right-1/4 w-1 h-1 rounded-full bg-gold/60"
+          animate={{ 
+            opacity: [0.2, 0.7, 0.2],
+            scale: [1, 1.8, 1]
+          }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
+        />
+      </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -23,7 +50,7 @@ const PartnersSection = () => {
           transition={{ duration: 0.5 }}
           className="text-center mb-12"
         >
-          <h2 className="text-3xl font-bold mb-4">
+          <h2 className="text-3xl md:text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
               Unsere Partner
             </span>
@@ -33,7 +60,7 @@ const PartnersSection = () => {
           </p>
         </motion.div>
         
-        <div className="flex flex-wrap justify-center gap-8">
+        <div className="flex flex-wrap justify-center gap-8 mb-16">
           {partners.map((partner, index) => (
             <motion.div
               key={partner.id}
@@ -44,31 +71,38 @@ const PartnersSection = () => {
               whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
               className="flex flex-col items-center"
             >
-              <div className="w-32 h-32 bg-casino-card border border-white/10 rounded-xl flex items-center justify-center shadow-lg relative group">
+              <div className="w-32 h-32 bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl flex items-center justify-center shadow-lg relative group overflow-hidden">
                 {/* Hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-purple-500/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-accent1/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
+                
+                {/* Glow effect */}
+                <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/10 to-accent1/10 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
                 
                 {/* Logo placeholder */}
                 <span className="text-3xl font-bold relative z-10 bg-gradient-to-br from-gray-200 to-white bg-clip-text text-transparent group-hover:from-gold group-hover:to-amber-500 transition-all duration-300">
                   {partner.logo}
                 </span>
               </div>
-              <p className="mt-2 text-gray-400 text-sm">{partner.name}</p>
+              <p className="mt-2 text-gray-400 text-sm group-hover:text-white transition-colors duration-300">{partner.name}</p>
             </motion.div>
           ))}
         </div>
         
         {/* Trust indicators */}
-        <div className="mt-16 flex flex-wrap justify-center gap-8 text-center">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="flex flex-col items-center"
+            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
           >
-            <div className="text-4xl font-bold text-gold mb-2">5000+</div>
-            <p className="text-gray-300">Aktive Nutzer</p>
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
+            <div className="relative z-10">
+              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">5000+</div>
+              <p className="text-gray-300">Aktive Nutzer</p>
+            </div>
           </motion.div>
           
           <motion.div
@@ -76,10 +110,14 @@ const PartnersSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="flex flex-col items-center"
+            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
           >
-            <div className="text-4xl font-bold text-gold mb-2">€1.2M+</div>
-            <p className="text-gray-300">Trading Volumen/Monat</p>
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
+            <div className="relative z-10">
+              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">€1.2M+</div>
+              <p className="text-gray-300">Trading Volumen/Monat</p>
+            </div>
           </motion.div>
           
           <motion.div
@@ -87,13 +125,20 @@ const PartnersSection = () => {
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.5 }}
-            className="flex flex-col items-center"
+            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
           >
-            <div className="text-4xl font-bold text-gold mb-2">97%</div>
-            <p className="text-gray-300">Kundenzufriedenheit</p>
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
+            <div className="relative z-10">
+              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">97%</div>
+              <p className="text-gray-300">Kundenzufriedenheit</p>
+            </div>
           </motion.div>
         </div>
       </div>
+      
+      {/* Bottom gradient */}
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B0D0E] to-transparent"></div>
     </section>
   );
 };

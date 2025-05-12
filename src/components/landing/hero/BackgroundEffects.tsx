@@ -4,14 +4,14 @@ import { motion } from "framer-motion";
 const BackgroundEffects = () => {
   return (
     <>
-      {/* Modified background to match CTA section */}
+      {/* Dark background gradient */}
       <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D0E]/90 via-[#0B0D0E]/80 to-[#0B0D0E]/90 z-0"></div>
       
-      {/* Subtiles animiertes Rastermuster */}
+      {/* Subtle animated grid pattern */}
       <div className="absolute inset-0 z-0">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         
-        {/* Animierte Gold-Partikel mit mehr Animation */}
+        {/* Animated gold particles with more animation */}
         <motion.div 
           className="absolute top-20 left-1/4 w-1 h-1 rounded-full bg-gold"
           animate={{ 
@@ -45,10 +45,10 @@ const BackgroundEffects = () => {
           transition={{ duration: 3.2, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
         />
         
-        {/* Lila leuchtende Kugeln */}
-        <div className="absolute top-1/4 left-1/5 w-60 h-60 bg-[#9b87f5]/5 rounded-full filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/4 right-1/5 w-60 h-60 bg-[#8B5CF6]/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
-        <div className="absolute top-2/3 left-1/3 w-40 h-40 bg-[#7E69AB]/5 rounded-full filter blur-2xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        {/* Purple glowing orbs */}
+        <div className="absolute top-1/4 left-1/5 w-60 h-60 bg-accent1/5 rounded-full filter blur-3xl animate-pulse"></div>
+        <div className="absolute bottom-1/4 right-1/5 w-60 h-60 bg-accent1/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: "1s" }}></div>
+        <div className="absolute top-2/3 left-1/3 w-40 h-40 bg-accent1/5 rounded-full filter blur-2xl animate-pulse" style={{ animationDelay: "2s" }}></div>
       </div>
     </>
   );

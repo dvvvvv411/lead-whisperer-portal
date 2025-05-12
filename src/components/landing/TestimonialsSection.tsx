@@ -1,85 +1,80 @@
 
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, ArrowRight, Star } from "lucide-react";
+import { useState } from "react";
+import { Star } from "lucide-react";
 
-interface Testimonial {
-  id: number;
-  name: string;
-  role: string;
-  content: string;
-  rating: number;
-  avatar: string;
-}
-
-const testimonials: Testimonial[] = [
+const testimonials = [
   {
     id: 1,
-    name: "Markus Schmidt",
-    role: "Privatinvestor",
-    content: "Der KI Trading Bot hat meine Erwartungen übertroffen. In nur zwei Monaten konnte ich mein Portfolio um 23% steigern, ohne selbst aktiv handeln zu müssen.",
+    name: "Michael K.",
+    position: "Neueinsteiger",
+    image: "/placeholder.svg",
     rating: 5,
-    avatar: "MS"
+    text: "Nach nur 2 Wochen mit dem KI-Trading-Bot habe ich bereits 680€ Gewinn gemacht. Die automatischen Trades sind ein Gamechanger für mich als Anfänger."
   },
   {
     id: 2,
-    name: "Laura Weber",
-    role: "Finanzberaterin",
-    content: "Als Finanzberaterin war ich skeptisch gegenüber automatisierten Trading-Systemen. Dieser Bot hat mich jedoch überzeugt - die Algorithmen arbeiten präzise und die Renditen sind beeindruckend.",
+    name: "Sarah L.",
+    position: "Erfahrene Tradern",
+    image: "/placeholder.svg",
     rating: 5,
-    avatar: "LW"
+    text: "Ich trade seit 5 Jahren und war skeptisch. Nach einem Monat mit der KI habe ich meine bisherigen Ergebnisse verdoppelt. Die KI erkennt Muster, die ich verpasst hätte."
   },
   {
     id: 3,
-    name: "Thomas Becker",
-    role: "Selbstständiger",
-    content: "Endlich eine Möglichkeit, am Kryptomarkt zu partizipieren, ohne ständig den Markt beobachten zu müssen. Die Ergebnisse sprechen für sich - definitiv eine Empfehlung.",
+    name: "Thomas W.",
+    position: "Teilzeit-Investor",
+    image: "/placeholder.svg",
     rating: 4,
-    avatar: "TB"
+    text: "Endlich kann ich nebenbei investieren, ohne ständig die Märkte beobachten zu müssen. Der Bot handelt für mich rund um die Uhr und erzielt konstant gute Renditen."
   },
   {
     id: 4,
-    name: "Sophia Müller",
-    role: "Tech-Enthusiastin",
-    content: "Die Kombination aus KI und Blockchain-Technologie ist genial. Der Bot erkennt Muster, die ich selbst übersehen würde, und handelt zum optimalen Zeitpunkt.",
+    name: "Julia M.",
+    position: "Finanzberaterin",
+    image: "/placeholder.svg",
     rating: 5,
-    avatar: "SM"
+    text: "Als Fachfrau bin ich begeistert von der Technologie. Die Algorithmen sind beeindruckend und die Erfolgsquote spricht für sich. Klare Empfehlung!"
   }
 ];
 
 const TestimonialsSection = () => {
-  const [currentIndex, setCurrentIndex] = useState(0);
-  const [autoplay, setAutoplay] = useState(true);
-  const testimonialsPerView = 1;
+  const [activeIndex, setActiveIndex] = useState(0);
   
-  // Autoplay functionality
-  useEffect(() => {
-    if (!autoplay) return;
-    
-    const interval = setInterval(() => {
-      nextTestimonial();
-    }, 5000);
-    
-    return () => clearInterval(interval);
-  }, [currentIndex, autoplay]);
-  
-  const nextTestimonial = () => {
-    setCurrentIndex((prev) => 
-      prev + testimonialsPerView >= testimonials.length ? 0 : prev + testimonialsPerView
-    );
-  };
-  
-  const prevTestimonial = () => {
-    setCurrentIndex((prev) => 
-      prev - testimonialsPerView < 0 ? testimonials.length - testimonialsPerView : prev - testimonialsPerView
-    );
+  const handleDotClick = (index: number) => {
+    setActiveIndex(index);
   };
 
   return (
-    <section id="testimonials" className="py-20 relative">
+    <section className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-casino-darker to-casino-card opacity-50"></div>
-      <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
+      <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
+        
+        {/* Animated gradients */}
+        <div className="absolute top-1/3 left-[15%] w-64 h-64 bg-gold/5 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-[10%] w-72 h-72 bg-accent1/10 rounded-full filter blur-3xl"></div>
+        
+        {/* Animated particles */}
+        <motion.div 
+          className="absolute top-40 right-1/4 w-1 h-1 rounded-full bg-gold/80"
+          animate={{ 
+            opacity: [0.3, 0.8, 0.3],
+            scale: [1, 1.5, 1]
+          }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+        />
+        <motion.div 
+          className="absolute bottom-32 left-1/3 w-1 h-1 rounded-full bg-gold/60"
+          animate={{ 
+            opacity: [0.2, 0.7, 0.2],
+            scale: [1, 1.8, 1]
+          }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        />
+      </div>
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 
@@ -91,117 +86,113 @@ const TestimonialsSection = () => {
         >
           <h2 className="text-3xl md:text-4xl font-bold mb-4">
             <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
-              Was unsere Nutzer sagen
+              Das sagen unsere Kunden
             </span>
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Erfahre, wie unser KI Trading Bot das Leben unserer Nutzer verändert hat und welche Ergebnisse sie erzielen konnten.
+            Erfahre, wie unser KI-Trading-Bot bereits tausenden Nutzern geholfen hat,
+            ihr passives Einkommen zu steigern.
           </p>
         </motion.div>
         
-        <div className="relative">
-          <div 
-            className="overflow-hidden"
-            onMouseEnter={() => setAutoplay(false)}
-            onMouseLeave={() => setAutoplay(true)}
+        <div className="max-w-5xl mx-auto relative">
+          {/* Large testimonial display */}
+          <motion.div 
+            key={activeIndex}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-8 mb-8 shadow-lg shadow-black/40 relative overflow-hidden"
           >
-            <div 
-              className="flex transition-transform duration-500 ease-in-out"
-              style={{ transform: `translateX(-${currentIndex * 100}%)` }}
-            >
-              {testimonials.map((testimonial) => (
-                <motion.div
-                  key={testimonial.id}
-                  initial={{ opacity: 0, scale: 0.95 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  transition={{ duration: 0.5 }}
-                  className="min-w-full px-4"
-                >
-                  <div className="bg-casino-card border border-white/10 rounded-xl p-8 shadow-lg relative">
-                    {/* Glow effect */}
-                    <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-purple-500/20 rounded-xl blur opacity-20"></div>
-                    
-                    <div className="relative">
-                      {/* Quote mark */}
-                      <div className="absolute -top-4 -left-2 text-6xl text-gold/20 font-serif">"</div>
-                      
-                      <div className="flex flex-col md:flex-row gap-6 items-start">
-                        {/* Avatar and user info */}
-                        <div className="flex flex-col items-center mb-4 md:mb-0">
-                          <div className="w-20 h-20 rounded-full bg-gradient-to-br from-gold/80 to-amber-600/80 flex items-center justify-center text-2xl font-bold text-black mb-3">
-                            {testimonial.avatar}
-                          </div>
-                          <h4 className="font-bold">{testimonial.name}</h4>
-                          <p className="text-sm text-gray-400">{testimonial.role}</p>
-                          
-                          <div className="flex mt-2">
-                            {[...Array(5)].map((_, i) => (
-                              <Star
-                                key={i}
-                                className={`h-4 w-4 ${
-                                  i < testimonial.rating ? "text-gold" : "text-gray-600"
-                                }`}
-                                fill={i < testimonial.rating ? "#FFD700" : "none"}
-                              />
-                            ))}
-                          </div>
-                        </div>
-                        
-                        {/* Testimonial content */}
-                        <div className="flex-1">
-                          <p className="text-lg md:text-xl leading-relaxed italic">
-                            "{testimonial.content}"
-                          </p>
-                          
-                          <div className="mt-6 pt-6 border-t border-white/10">
-                            <div className="flex justify-between items-center">
-                              <p className="text-sm text-gray-400">Verifizierter Nutzer</p>
-                              <div className="bg-green-500/20 text-green-400 text-xs px-3 py-1 rounded-full">
-                                Verifiziert ✓
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    </div>
+            {/* Glow effect */}
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-accent1/20 rounded-xl blur opacity-20"></div>
+            
+            <div className="relative z-10">
+              <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
+                <div className="flex items-center">
+                  <div className="w-16 h-16 rounded-full bg-black/40 border-2 border-gold/30 overflow-hidden mr-4 flex items-center justify-center text-2xl font-bold text-white/30">
+                    {testimonials[activeIndex].name.charAt(0)}
                   </div>
-                </motion.div>
-              ))}
+                  <div>
+                    <h3 className="text-xl font-bold text-white">{testimonials[activeIndex].name}</h3>
+                    <p className="text-sm text-gray-400">{testimonials[activeIndex].position}</p>
+                  </div>
+                </div>
+                
+                <div className="flex">
+                  {[...Array(testimonials[activeIndex].rating)].map((_, i) => (
+                    <Star key={i} className="w-5 h-5 text-gold fill-gold" />
+                  ))}
+                  {[...Array(5 - testimonials[activeIndex].rating)].map((_, i) => (
+                    <Star key={i + testimonials[activeIndex].rating} className="w-5 h-5 text-gray-500" />
+                  ))}
+                </div>
+              </div>
+              
+              <p className="text-gray-300 italic text-lg md:text-xl leading-relaxed mb-6">
+                "{testimonials[activeIndex].text}"
+              </p>
+              
+              {/* Quote marks */}
+              <div className="absolute top-4 left-4 text-6xl opacity-10 text-gold">"</div>
+              <div className="absolute bottom-4 right-4 text-6xl opacity-10 text-gold">"</div>
             </div>
+          </motion.div>
+          
+          {/* Pagination dots */}
+          <div className="flex justify-center space-x-2">
+            {testimonials.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => handleDotClick(index)}
+                className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                  index === activeIndex ? "bg-gold scale-125" : "bg-gray-600 hover:bg-gray-400"
+                }`}
+                aria-label={`Go to testimonial ${index + 1}`}
+              />
+            ))}
           </div>
           
-          {/* Navigation arrows */}
-          <button
-            onClick={prevTestimonial}
-            className="absolute top-1/2 -left-4 -translate-y-1/2 bg-casino-darker border border-white/20 rounded-full p-2 text-white hover:bg-casino-card hover:border-gold/50 transition-all"
-            aria-label="Previous testimonial"
-          >
-            <ArrowLeft className="h-5 w-5" />
-          </button>
-          
-          <button
-            onClick={nextTestimonial}
-            className="absolute top-1/2 -right-4 -translate-y-1/2 bg-casino-darker border border-white/20 rounded-full p-2 text-white hover:bg-casino-card hover:border-gold/50 transition-all"
-            aria-label="Next testimonial"
-          >
-            <ArrowRight className="h-5 w-5" />
-          </button>
-          
-          {/* Dots indicator */}
-          <div className="flex justify-center mt-6 space-x-2">
-            {testimonials.map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentIndex(i)}
-                className={`w-2 h-2 rounded-full transition-all ${
-                  i === currentIndex ? "w-6 bg-gold" : "bg-gray-500"
+          {/* Thumbnails row for other testimonials */}
+          <div className="mt-8 grid grid-cols-2 md:grid-cols-4 gap-4">
+            {testimonials.map((testimonial, index) => (
+              <motion.button
+                key={testimonial.id}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.3, delay: index * 0.1 }}
+                whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
+                onClick={() => setActiveIndex(index)}
+                className={`p-4 rounded-lg text-left transition-all ${
+                  index === activeIndex
+                    ? "bg-gradient-to-br from-gold/20 to-black/40 border border-gold/30"
+                    : "bg-black/30 border border-white/5 hover:border-white/20"
                 }`}
-                aria-label={`Go to testimonial ${i + 1}`}
-              />
+              >
+                <div className="flex items-center mb-2">
+                  <div className="w-10 h-10 rounded-full bg-black/40 border border-gold/20 overflow-hidden mr-3 flex items-center justify-center text-sm font-bold text-white/30">
+                    {testimonial.name.charAt(0)}
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-white">{testimonial.name}</h4>
+                    <div className="flex mt-1">
+                      {[...Array(testimonial.rating)].map((_, i) => (
+                        <Star key={i} className="w-3 h-3 text-gold fill-gold" />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+                <p className="text-xs text-gray-400 line-clamp-2">{testimonial.text.substring(0, 60)}...</p>
+              </motion.button>
             ))}
           </div>
         </div>
       </div>
+      
+      {/* Bottom gradient */}
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B0D0E] to-transparent"></div>
     </section>
   );
 };

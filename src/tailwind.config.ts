@@ -55,11 +55,11 @@ const config: Config = {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        "casino-card": "#131517",
+        "casino-card": "rgba(19, 21, 23, 0.7)",
         "casino-darker": "#0B0D0E",
-        "casino-dark": "#16181a", // Adding a slightly lighter card color for nested elements
-        gold: "#FFD700",
-        accent1: "#64CCC9",
+        "casino-dark": "#16181a",
+        gold: "rgba(255, 215, 0, 0.8)",
+        accent1: "rgba(100, 204, 201, 0.8)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -93,6 +93,10 @@ const config: Config = {
         "scale-in": {
           "0%": { transform: "scale(0.95)", opacity: "0" },
           "100%": { transform: "scale(1)", opacity: "1" }
+        },
+        "float": {
+          "0%, 100%": { transform: "translateY(0)" },
+          "50%": { transform: "translateY(-10px)" }
         }
       },
       animation: {
@@ -103,10 +107,14 @@ const config: Config = {
         "pulse": "pulse 2s cubic-bezier(0.4,0,0.6,1) infinite",
         "fade-in": "fade-in 0.3s ease-out",
         "scale-in": "scale-in 0.2s ease-out",
+        "float": "float 3s ease-in-out infinite",
       },
       boxShadow: {
-        glow: "0 0 15px rgba(255, 215, 0, 0.5)",
+        glow: "0 0 15px rgba(255, 255, 255, 0.2)",
       },
+      backdropBlur: {
+        xs: '2px',
+      }
     },
   },
   plugins: [require("tailwindcss-animate")],

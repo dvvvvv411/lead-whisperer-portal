@@ -49,7 +49,7 @@ const UserSettings = () => {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-dark dark">
         <div className="flex flex-col items-center">
-          <div className="h-12 w-12 rounded-full border-4 border-t-gold border-casino-card animate-spin mb-4"></div>
+          <div className="h-12 w-12 rounded-full border-4 border-t-white/70 border-casino-card animate-spin mb-4"></div>
           <p className="text-white/70">Wird geladen...</p>
         </div>
       </div>
@@ -62,16 +62,16 @@ const UserSettings = () => {
       
       <div className="container mx-auto p-4 flex-1">
         <div className="flex items-center mb-6">
-          <Button variant="outline" onClick={handleGoBack} className="mr-2 border-gold/20 hover:bg-gold/10">
+          <Button variant="outline" onClick={handleGoBack} className="mr-2 border-white/20 hover:bg-white/10">
             <ArrowLeft className="mr-2 h-4 w-4" />
             Zurück
           </Button>
-          <h1 className="text-2xl font-bold text-transparent bg-gold-gradient bg-clip-text">Kontoeinstellungen</h1>
+          <h1 className="text-2xl font-bold text-white">Kontoeinstellungen</h1>
         </div>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border-gold/10">
-            <CardHeader className="bg-gold/5 border-b border-gold/10">
+          <Card className="backdrop-blur-sm bg-black/30 border-white/10 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
+            <CardHeader className="bg-black/40 border-b border-white/10">
               <CardTitle className="text-white">Profil-Informationen</CardTitle>
               <CardDescription className="text-white/70">Aktualisieren Sie Ihre persönlichen Daten</CardDescription>
             </CardHeader>
@@ -80,8 +80,8 @@ const UserSettings = () => {
             </CardContent>
           </Card>
 
-          <Card className="casino-card overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] border-gold/10">
-            <CardHeader className="bg-gold/5 border-b border-gold/10">
+          <Card className="backdrop-blur-sm bg-black/30 border-white/10 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px]">
+            <CardHeader className="bg-black/40 border-b border-white/10">
               <CardTitle className="text-white">Passwort ändern</CardTitle>
               <CardDescription className="text-white/70">Aktualisieren Sie Ihr Passwort</CardDescription>
             </CardHeader>

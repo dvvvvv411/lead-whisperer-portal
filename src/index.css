@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -74,6 +75,10 @@
   .text-balance {
     text-wrap: balance;
   }
+  
+  .glass-card {
+    @apply backdrop-blur-sm bg-black/30 border-white/10;
+  }
 }
 
 /* Custom CSS */
@@ -86,20 +91,20 @@
 }
 
 .casino-card {
-  background-color: #1e1e1e;
+  background-color: rgba(30, 30, 30, 0.6);
+  backdrop-filter: blur(8px);
 }
 
 .gold {
-  color: #FFD700;
+  color: rgba(255, 215, 0, 0.8);
 }
 
 .gold-light {
-  color: #FFD700;
-  /* Slightly lighter shade of gold if needed: #FFDA40 */
+  color: rgba(255, 218, 64, 0.8);
 }
 
 .accent1 {
-  color: #6C63FF;
+  color: rgba(108, 99, 255, 0.8);
 }
 
 @keyframes confetti {
@@ -118,7 +123,7 @@
 }
 
 .shadow-glow {
-  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.2);
 }
 
 .animate-gradient-shift {

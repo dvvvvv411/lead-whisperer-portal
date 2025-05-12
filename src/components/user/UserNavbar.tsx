@@ -88,7 +88,7 @@ const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
 
   return (
     <header className={cn("w-full border-b border-gold/20 bg-casino-darker px-4 py-3", className)}>
-      <div className="mx-auto flex items-center justify-between">
+      <div className="container mx-auto flex items-center justify-between">
         {/* Logo and title */}
         <div className="flex items-center">
           <Link to="/nutzer" className="flex items-center">

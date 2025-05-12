@@ -2,23 +2,8 @@
 import { motion } from "framer-motion";
 import { Bitcoin } from "lucide-react";
 
-interface CryptoData {
-  id: string;
-  symbol: string;
-  name: string;
-  current_price: number;
-  price_change_percentage_24h: number | null;
-  market_cap: number | null;
-  image_url?: string | null;
-}
-
-interface CryptoIconBubblesProps {
-  cryptoData: CryptoData[];
-  isLoading: boolean;
-}
-
-// Fallback-Krypto-Icons für den Fall, dass keine Daten geladen werden
-const fallbackCryptoIcons = [
+// Crypto icons configuration
+const cryptoIcons = [
   {
     name: "Bitcoin",
     icon: <Bitcoin className="h-6 w-6 text-[#F7931A]" />,
@@ -76,47 +61,11 @@ const fallbackCryptoIcons = [
   }
 ];
 
-const CryptoIconBubbles = ({ cryptoData, isLoading }: CryptoIconBubblesProps) => {
-  // Verwende echte Daten, wenn vorhanden, sonst Fallback
-  const iconsToDisplay = !isLoading && cryptoData.length > 0
-    ? cryptoData.slice(0, 5).map((crypto, index) => {
-        // Bestimme Farbe basierend auf Symbol
-        let color = "from-[#9b87f5]/30 to-[#9b87f5]/5";
-        if (crypto.symbol === "BTC") color = "from-[#F7931A]/30 to-[#F7931A]/5";
-        if (crypto.symbol === "ETH") color = "from-[#627EEA]/30 to-[#627EEA]/5";
-        if (crypto.symbol === "XRP") color = "from-[#23292F]/30 to-[#23292F]/5";
-        if (crypto.symbol === "ADA") color = "from-[#0033AD]/30 to-[#0033AD]/5";
-        if (crypto.symbol === "LTC") color = "from-[#BFBBBB]/30 to-[#BFBBBB]/5";
-        
-        // Generiere Icon basierend auf Symbol
-        let icon;
-        if (crypto.symbol === "BTC") {
-          icon = <Bitcoin className="h-6 w-6 text-[#F7931A]" />;
-        } else if (crypto.image_url) {
-          // Wenn ein Bild-URL vorhanden ist
-          icon = <img src={crypto.image_url} alt={crypto.name} className="h-6 w-6" />;
-        } else {
-          // Fallback für Symbole ohne Icon
-          icon = (
-            <div className="h-6 w-6 rounded-full bg-gray-800 flex items-center justify-center text-xs font-bold">
-              {crypto.symbol.slice(0, 2)}
-            </div>
-          );
-        }
-        
-        return {
-          name: crypto.name,
-          icon: icon,
-          color: color,
-          delay: index * 0.8
-        };
-      })
-    : fallbackCryptoIcons;
-
+const CryptoIconBubbles = () => {
   return (
     <>
       {/* Animated cryptocurrency bubbles around the chart */}
-      {iconsToDisplay.map((crypto, index) => (
+      {cryptoIcons.map((crypto, index) => (
         <motion.div
           key={crypto.name}
           className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`}

@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import Navbar from "@/components/landing/Navbar";
-import HeroSection from "@/components/landing/HeroSection";
+import HeroSection from "@/components/landing/hero/HeroSection";
 import CtaSection from "@/components/landing/CtaSection";
 import ContactSection from "@/components/landing/ContactSection";
 import TestimonialsSection from "@/components/landing/TestimonialsSection";
@@ -12,9 +12,9 @@ import Footer from "@/components/landing/Footer";
 
 const Index = () => {
   return (
-    <div className="min-h-screen bg-casino-darker text-white overflow-x-hidden">
+    <div className="min-h-screen bg-[#0B0D0E] text-white overflow-x-hidden">
       <Navbar />
-      <main>
+      <main className="relative">
         <HeroSection />
         <BenefitsSection />
         <TestimonialsSection />

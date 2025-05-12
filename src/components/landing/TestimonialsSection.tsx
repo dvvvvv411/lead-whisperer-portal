@@ -45,31 +45,20 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-20 relative overflow-hidden bg-casino-darker">
+    <section className="py-20 relative overflow-hidden bg-[#0B0D0E]">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 w-full h-24 bg-gradient-to-b from-[#12151E] to-transparent"></div>
+        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-[#12151E] to-transparent"></div>
+        
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
         {/* Animated gradients */}
-        <motion.div 
-          className="absolute top-1/3 left-[15%] w-64 h-64 bg-gold/5 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.1, 0.2, 0.1],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-1/4 right-[10%] w-72 h-72 bg-accent1/10 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.1, 0.2, 0.1],
-            scale: [1, 1.05, 1]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 2 }}
-        />
+        <div className="absolute top-1/3 left-[15%] w-64 h-64 bg-gold/5 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-1/4 right-[10%] w-72 h-72 bg-accent1/10 rounded-full filter blur-3xl"></div>
         
-        {/* Animated gold particles for consistency */}
+        {/* Animated particles */}
         <motion.div 
           className="absolute top-40 right-1/4 w-1 h-1 rounded-full bg-gold/80"
           animate={{ 
@@ -203,16 +192,8 @@ const TestimonialsSection = () => {
         </div>
       </div>
       
-      {/* Bottom transition to partners section */}
-      <div className="absolute inset-x-0 bottom-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12">
-          <path 
-            fill="#0B0D0E" 
-            fillOpacity="1" 
-            d="M0,32L48,48C96,64,192,96,288,96C384,96,480,64,576,64C672,64,768,96,864,96C960,96,1056,64,1152,48C1248,32,1344,32,1392,32L1440,32L1440,100L1392,100C1344,100,1248,100,1152,100C1056,100,960,100,864,100C768,100,672,100,576,100C480,100,384,100,288,100C192,100,96,100,48,100L0,100Z"
-          ></path>
-        </svg>
-      </div>
+      {/* Bottom gradient */}
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B0D0E] to-transparent"></div>
     </section>
   );
 };

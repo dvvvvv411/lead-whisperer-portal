@@ -1,3 +1,4 @@
+
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
 
@@ -48,13 +49,16 @@ const BenefitsSection = () => {
   }, [controls]);
 
   return (
-    <section id="benefits" className="py-20 relative overflow-hidden bg-casino-darker">
+    <section id="benefits" className="py-20 relative overflow-hidden bg-[#0B0D0E]">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
+        <div className="absolute top-0 w-full h-24 bg-gradient-to-b from-[#12151E] to-transparent"></div>
+        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-[#12151E] to-transparent"></div>
+        
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
-        {/* Animated particles - matching hero section style */}
+        {/* Animated particles */}
         <motion.div 
           className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent1/5 rounded-full filter blur-3xl"
           animate={{ 
@@ -74,20 +78,20 @@ const BenefitsSection = () => {
         
         {/* Gold particles */}
         <motion.div 
-          className="absolute top-1/3 right-1/5 w-1 h-1 rounded-full bg-gold"
+          className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-gold/80"
           animate={{ 
             opacity: [0.3, 0.8, 0.3],
             scale: [1, 1.5, 1]
           }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut" }}
+          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
         />
         <motion.div 
-          className="absolute bottom-1/3 left-1/4 w-1 h-1 rounded-full bg-gold/50"
+          className="absolute bottom-40 right-1/4 w-1 h-1 rounded-full bg-gold/60"
           animate={{ 
             opacity: [0.2, 0.7, 0.2],
             scale: [1, 1.8, 1]
           }}
-          transition={{ duration: 4.2, repeat: Infinity, ease: "easeInOut", delay: 1.8 }}
+          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
         />
       </div>
       
@@ -154,7 +158,7 @@ const BenefitsSection = () => {
         </motion.div>
       </div>
       
-      {/* Bottom transition to testimonials section */}
+      {/* Bottom pattern */}
       <div className="absolute inset-x-0 bottom-0">
         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12">
           <path fill="#0B0D0E" d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,64C672,64,768,64,864,53.3C960,43,1056,21,1152,16C1248,11,1344,21,1392,26.7L1440,32L1440,100L1392,100C1344,100,1248,100,1152,100C1056,100,960,100,864,100C768,100,672,100,576,100C480,100,384,100,288,100C192,100,96,100,48,100L0,100Z"></path>

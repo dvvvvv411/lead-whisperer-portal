@@ -11,31 +11,20 @@ const partners = [
 
 const PartnersSection = () => {
   return (
-    <section className="py-16 relative overflow-hidden bg-casino-darker">
+    <section className="py-16 relative overflow-hidden bg-[#0B0D0E]">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        {/* Grid pattern for consistency */}
+        <div className="absolute top-0 w-full h-24 bg-gradient-to-b from-[#12151E] to-transparent"></div>
+        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black/50 to-transparent"></div>
+        
+        {/* Grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         
         {/* Animated gradients */}
-        <motion.div 
-          className="absolute top-1/4 right-1/4 w-60 h-60 bg-gold/5 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.1, 0.15, 0.1],
-            scale: [1, 1.05, 1]
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.1, 0.18, 0.1],
-            scale: [1, 1.08, 1]
-          }}
-          transition={{ duration: 7, repeat: Infinity, ease: "easeInOut", delay: 1.5 }}
-        />
+        <div className="absolute top-1/4 right-1/4 w-60 h-60 bg-gold/5 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
         
-        {/* Animated gold particles for consistency */}
+        {/* Animated particles */}
         <motion.div 
           className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-gold/80"
           animate={{ 
@@ -149,16 +138,8 @@ const PartnersSection = () => {
         </div>
       </div>
       
-      {/* Bottom transition to CTA section */}
-      <div className="absolute inset-x-0 bottom-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-16">
-          <path 
-            fill="#21283B" 
-            fillOpacity="0.9" 
-            d="M0,64L48,69.3C96,75,192,85,288,80C384,75,480,53,576,48C672,43,768,53,864,69.3C960,85,1056,107,1152,104C1248,101,1344,75,1392,64L1440,53L1440,100L1392,100C1344,100,1248,100,1152,100C1056,100,960,100,864,100C768,100,672,100,576,100C480,100,384,100,288,100C192,100,96,100,48,100L0,100Z"
-          ></path>
-        </svg>
-      </div>
+      {/* Bottom gradient */}
+      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B0D0E] to-transparent"></div>
     </section>
   );
 };

@@ -1,21 +1,38 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LogIn, Star } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [activeSection, setActiveSection] = useState("hero");
 
   useEffect(() => {
     const handleScroll = () => {
       setScrolled(window.scrollY > 20);
+      
+      // Determine active section based on scroll position
+      const sections = ["hero", "cta", "contact", "testimonials", "benefits"];
+      const currentSection = sections.find(section => {
+        const element = document.getElementById(section);
+        if (!element) return false;
+        const rect = element.getBoundingClientRect();
+        return rect.top <= 100 && rect.bottom >= 100;
+      });
+      
+      if (currentSection) {
+        setActiveSection(currentSection);
+      }
     };
+    
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   const scrollToSection = (id: string) => {
+    setActiveSection(id);
     const element = document.getElementById(id);
     if (element) {
       element.scrollIntoView({ behavior: "smooth" });
@@ -30,11 +47,11 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
         scrolled
-          ? "bg-casino-darker/80 backdrop-blur-lg shadow-lg"
-          : "bg-transparent"
+          ? "bg-casino-darker/90 backdrop-blur-lg shadow-lg py-2"
+          : "bg-transparent py-6"
       }`}
     >
-      <div className="container mx-auto px-4 py-4">
+      <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
           <motion.div
             whileHover={{ scale: 1.05 }}
@@ -49,15 +66,69 @@ const Navbar = () => {
           
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <NavLink onClick={() => scrollToSection("hero")}>Home</NavLink>
-            <NavLink onClick={() => scrollToSection("cta")}>Trading Bot</NavLink>
-            <NavLink onClick={() => scrollToSection("contact")}>Kontakt</NavLink>
-            <NavLink onClick={() => scrollToSection("testimonials")}>Erfahrungen</NavLink>
-            <NavLink onClick={() => scrollToSection("benefits")}>Vorteile</NavLink>
+            <NavLink 
+              active={activeSection === "hero"} 
+              onClick={() => scrollToSection("hero")}
+              icon={<Star className="w-4 h-4 mr-1" />}
+            >
+              Home
+            </NavLink>
+            <NavLink 
+              active={activeSection === "cta"} 
+              onClick={() => scrollToSection("cta")}
+            >
+              Trading Bot
+            </NavLink>
+            <NavLink 
+              active={activeSection === "contact"} 
+              onClick={() => scrollToSection("contact")}
+            >
+              Kontakt
+            </NavLink>
+            <NavLink 
+              active={activeSection === "testimonials"} 
+              onClick={() => scrollToSection("testimonials")}
+            >
+              Erfahrungen
+            </NavLink>
+            <NavLink 
+              active={activeSection === "benefits"} 
+              onClick={() => scrollToSection("benefits")}
+            >
+              Vorteile
+            </NavLink>
+            
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+            >
+              <Button 
+                className="bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
+                onClick={() => window.location.href = '/admin'}
+              >
+                <LogIn className="mr-2 h-4 w-4" />
+                Anmelden
+              </Button>
+            </motion.div>
           </div>
           
           {/* Mobile Navigation Button */}
-          <div className="md:hidden">
+          <div className="md:hidden flex items-center space-x-4">
+            <motion.div
+              whileHover={{ scale: 1.05 }}
+              whileTap={{ scale: 0.95 }}
+              className="mr-2"
+            >
+              <Button 
+                className="bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
+                size="sm"
+                onClick={() => window.location.href = '/admin'}
+              >
+                <LogIn className="mr-1 h-4 w-4" />
+                Login
+              </Button>
+            </motion.div>
+            
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white focus:outline-none"
@@ -77,14 +148,39 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden mt-4 pb-4 glassmorphism"
+            className="md:hidden mt-4 pb-4 bg-casino-dark/90 backdrop-blur-md rounded-lg border border-gold/10 shadow-lg"
           >
             <div className="flex flex-col space-y-4 p-4">
-              <NavLink onClick={() => scrollToSection("hero")}>Home</NavLink>
-              <NavLink onClick={() => scrollToSection("cta")}>Trading Bot</NavLink>
-              <NavLink onClick={() => scrollToSection("contact")}>Kontakt</NavLink>
-              <NavLink onClick={() => scrollToSection("testimonials")}>Erfahrungen</NavLink>
-              <NavLink onClick={() => scrollToSection("benefits")}>Vorteile</NavLink>
+              <MobileNavLink 
+                active={activeSection === "hero"} 
+                onClick={() => scrollToSection("hero")}
+              >
+                Home
+              </MobileNavLink>
+              <MobileNavLink 
+                active={activeSection === "cta"} 
+                onClick={() => scrollToSection("cta")}
+              >
+                Trading Bot
+              </MobileNavLink>
+              <MobileNavLink 
+                active={activeSection === "contact"} 
+                onClick={() => scrollToSection("contact")}
+              >
+                Kontakt
+              </MobileNavLink>
+              <MobileNavLink 
+                active={activeSection === "testimonials"} 
+                onClick={() => scrollToSection("testimonials")}
+              >
+                Erfahrungen
+              </MobileNavLink>
+              <MobileNavLink 
+                active={activeSection === "benefits"} 
+                onClick={() => scrollToSection("benefits")}
+              >
+                Vorteile
+              </MobileNavLink>
             </div>
           </motion.div>
         )}
@@ -93,14 +189,60 @@ const Navbar = () => {
   );
 };
 
-const NavLink = ({ onClick, children }: { onClick: () => void, children: React.ReactNode }) => (
+const NavLink = ({ 
+  onClick, 
+  children, 
+  active = false,
+  icon = null
+}: { 
+  onClick: () => void, 
+  children: React.ReactNode,
+  active?: boolean,
+  icon?: React.ReactNode
+}) => (
   <motion.button
     onClick={onClick}
     whileHover={{ scale: 1.05 }}
-    className="text-white hover:text-gold transition-colors relative group"
+    className={`text-white hover:text-gold transition-colors relative group flex items-center ${
+      active ? 'text-gold font-medium' : ''
+    }`}
+  >
+    {icon}
+    {children}
+    <span className={`absolute -bottom-1 left-0 h-0.5 bg-gold transition-all duration-300 ${
+      active ? 'w-full' : 'w-0 group-hover:w-full'
+    }`}></span>
+    {active && (
+      <motion.span 
+        className="absolute -right-2 -top-1 flex h-5 w-5"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.2 }}
+      >
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-gold/30 opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-gold"></span>
+      </motion.span>
+    )}
+  </motion.button>
+);
+
+const MobileNavLink = ({ 
+  onClick, 
+  children,
+  active = false
+}: { 
+  onClick: () => void, 
+  children: React.ReactNode,
+  active?: boolean
+}) => (
+  <motion.button
+    onClick={onClick}
+    whileTap={{ scale: 0.95 }}
+    className={`text-white hover:text-gold transition-colors py-2 px-4 rounded-md ${
+      active ? 'bg-gold/10 text-gold font-medium border-l-2 border-gold' : ''
+    }`}
   >
     {children}
-    <span className="absolute -bottom-1 left-0 w-0 h-0.5 bg-gold transition-all duration-300 group-hover:w-full"></span>
   </motion.button>
 );
 

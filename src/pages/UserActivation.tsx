@@ -5,12 +5,16 @@ import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useUserCredit } from "@/hooks/useUserCredit";
+import { motion } from "framer-motion";
 
 // Components
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import ActivationForm from "@/components/user/activation/ActivationForm";
 import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
-import LogoutButton from "@/components/user/activation/LogoutButton";
+import LogoutButton from "@/components/user/navbar/LogoutButton";
+import ActivationHero from "@/components/user/activation/ActivationHero";
+import Testimonials from "@/components/user/activation/Testimonials";
+import ActivationProgress from "@/components/user/activation/ActivationProgress";
 
 // Credit threshold required to access the dashboard (in EUR)
 const CREDIT_ACTIVATION_THRESHOLD = 250;
@@ -23,6 +27,7 @@ const UserActivation = () => {
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [isCheckingCredit, setIsCheckingCredit] = useState(false);
   const [redirectedToUser, setRedirectedToUser] = useState(false);
+  const [activationStep, setActivationStep] = useState(0);
   
   // Use the user credit hook to check if the user has enough credit
   const { userCredit, loading: creditLoading, fetchUserCredit } = useUserCredit(user?.id);
@@ -78,7 +83,13 @@ const UserActivation = () => {
     if (userData.paymentStatus?.pending) {
       setPaymentSubmitted(true);
       setPaymentId(userData.paymentStatus.paymentId);
+      setActivationStep(2); // Aktivierung step
     }
+  };
+
+  // Handler for step changes
+  const handleStepChange = (step: number) => {
+    setActivationStep(step);
   };
 
   // Watch for payment submission from the activation form
@@ -87,6 +98,7 @@ const UserActivation = () => {
     if (paymentElement && paymentElement.value) {
       setPaymentSubmitted(true);
       setPaymentId(paymentElement.value);
+      setActivationStep(2); // Move to Aktivierung step
     }
   };
 
@@ -103,32 +115,60 @@ const UserActivation = () => {
 
   return (
     <UserAuthCheck onUserLoaded={handleUserLoaded} redirectToActivation={false}>
-      <div className="container mx-auto p-4 max-w-3xl">
-        <div className="flex justify-between items-center mb-4">
-          <h1 className="text-3xl font-bold">Konto Aktivierung</h1>
-          <LogoutButton />
-        </div>
-        
-        <div className="mb-8 text-center">
-          <p className="text-gray-600">
-            Hallo {user?.email}, aktivieren Sie Ihr Konto durch eine Einzahlung von mindestens {CREDIT_ACTIVATION_THRESHOLD}€, um Zugriff auf alle Funktionen zu erhalten.
-          </p>
-          {userCredit !== null && userCredit > 0 && (
-            <p className="mt-2 font-medium">
-              Aktuelles Guthaben: {userCredit.toFixed(2)}€ 
-              {userCredit < CREDIT_ACTIVATION_THRESHOLD && (
-                <span className="text-amber-600"> (Sie benötigen noch {(CREDIT_ACTIVATION_THRESHOLD - userCredit).toFixed(2)}€)</span>
-              )}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.5 }}
+        className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 pb-16"
+      >
+        <div className="container mx-auto p-4 max-w-7xl">
+          <div className="flex justify-between items-center mb-8 pt-4">
+            <h1 className="text-3xl font-bold gradient-text">Konto Aktivierung</h1>
+            <LogoutButton />
+          </div>
+          
+          <div className="mb-10 text-center">
+            <p className="text-lg text-gray-300">
+              Willkommen {user?.email}, nur ein Schritt trennt Sie von einer Welt der Möglichkeiten.
             </p>
+            {userCredit !== null && userCredit > 0 && (
+              <p className="mt-2 font-medium">
+                Aktuelles Guthaben: {userCredit.toFixed(2)}€ 
+                {userCredit < CREDIT_ACTIVATION_THRESHOLD && (
+                  <span className="text-amber-500"> (Sie benötigen noch {(CREDIT_ACTIVATION_THRESHOLD - userCredit).toFixed(2)}€)</span>
+                )}
+              </p>
+            )}
+          </div>
+
+          {!paymentSubmitted ? (
+            <>
+              <ActivationProgress currentStep={activationStep} />
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
+                {/* Linke Spalte mit Illustration und Animation */}
+                <div>
+                  <ActivationHero />
+                  <div className="mt-6 px-4">
+                    <Testimonials />
+                  </div>
+                </div>
+                
+                {/* Rechte Spalte mit Aktivierungsformular */}
+                <div>
+                  <ActivationForm 
+                    user={user} 
+                    creditThreshold={CREDIT_ACTIVATION_THRESHOLD}
+                    onStepChange={handleStepChange} 
+                  />
+                </div>
+              </div>
+            </>
+          ) : (
+            <PaymentStatusView paymentId={paymentId} creditThreshold={CREDIT_ACTIVATION_THRESHOLD} />
           )}
         </div>
-
-        {paymentSubmitted ? (
-          <PaymentStatusView paymentId={paymentId} creditThreshold={CREDIT_ACTIVATION_THRESHOLD} />
-        ) : (
-          <ActivationForm user={user} creditThreshold={CREDIT_ACTIVATION_THRESHOLD} />
-        )}
-      </div>
+      </motion.div>
     </UserAuthCheck>
   );
 };

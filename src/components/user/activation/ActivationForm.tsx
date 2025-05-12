@@ -3,6 +3,7 @@ import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
 
 // Components
 import PaymentInfoCard from "@/components/user/activation/PaymentInfoCard";
@@ -15,9 +16,10 @@ import { useWallets } from "@/hooks/useWallets";
 interface ActivationFormProps {
   user: any;
   creditThreshold?: number;
+  onStepChange?: (step: number) => void;
 }
 
-const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) => {
+const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: ActivationFormProps) => {
   const { toast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -29,10 +31,12 @@ const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) =>
   
   const handleSelectWallet = (currency: string) => {
     setSelectedWallet(currency);
+    onStepChange?.(0); // Update to wallet selection step
   };
 
   const handleConfirmPayment = () => {
     setShowConfirmDialog(true);
+    onStepChange?.(1); // Update to payment confirmation step
   };
 
   const handleCompletePayment = async () => {
@@ -73,6 +77,7 @@ const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) =>
       // Set payment as submitted and store payment ID
       setPaymentSubmitted(true);
       setPaymentId(data.id);
+      onStepChange?.(2); // Update to activation step
       
     } catch (error: any) {
       console.error("Fehler bei der Zahlungsmeldung:", error);
@@ -87,12 +92,17 @@ const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) =>
   };
 
   return (
-    <div className="space-y-6">
-      <Card>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <Card className="border-gold/20 bg-slate-900/60 shadow-xl">
         <CardHeader>
-          <CardTitle className="text-center">Konto aktivieren</CardTitle>
-          <CardDescription className="text-center">
-            Zahlen Sie mindestens {creditThreshold}€ ein, um Ihr Konto zu aktivieren.
+          <CardTitle className="text-center gradient-text">Konto aktivieren</CardTitle>
+          <CardDescription className="text-center text-gray-400">
+            Zahlen Sie {creditThreshold}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
           </CardDescription>
         </CardHeader>
         <PaymentInfoCard />
@@ -119,7 +129,7 @@ const ActivationForm = ({ user, creditThreshold = 250 }: ActivationFormProps) =>
           <input type="hidden" id="payment-submitted" value={paymentId} />
         )}
       </Card>
-    </div>
+    </motion.div>
   );
 };
 

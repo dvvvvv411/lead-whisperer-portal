@@ -50,17 +50,17 @@ export const LeadsTableContent = ({
   }
 
   return (
-    <div className="overflow-x-auto">
+    <div className="overflow-x-auto rounded-lg border border-gold/20 shadow-lg">
       <Table className="border-collapse">
-        <TableHeader className="bg-casino-darker">
+        <TableHeader className="bg-gradient-to-r from-casino-dark via-casino-card to-casino-dark border-b border-gold/20">
           <TableRow className="border-gold/10">
-            <TableHead className="text-gray-300">Datum</TableHead>
-            <TableHead className="text-gray-300">Name</TableHead>
-            <TableHead className="text-gray-300">Email</TableHead>
-            <TableHead className="text-gray-300">Unternehmen</TableHead>
-            <TableHead className="text-gray-300">Status</TableHead>
-            <TableHead className="text-gray-300">Kommentare</TableHead>
-            <TableHead className="text-gray-300">Aktionen</TableHead>
+            <TableHead className="text-gray-300 font-medium">Datum</TableHead>
+            <TableHead className="text-gray-300 font-medium">Name</TableHead>
+            <TableHead className="text-gray-300 font-medium">Email</TableHead>
+            <TableHead className="text-gray-300 font-medium">Unternehmen</TableHead>
+            <TableHead className="text-gray-300 font-medium">Status</TableHead>
+            <TableHead className="text-gray-300 font-medium">Kommentare</TableHead>
+            <TableHead className="text-gray-300 font-medium">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>

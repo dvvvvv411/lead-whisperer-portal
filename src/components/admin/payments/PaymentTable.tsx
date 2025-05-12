@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -30,6 +31,7 @@ import {
   AlertDialogAction 
 } from "@/components/ui/alert-dialog";
 import { Textarea } from "@/components/ui/textarea";
+import { motion } from "framer-motion";
 
 export interface Payment {
   id: string;
@@ -109,8 +111,6 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
       const result = await response.json();
       console.log("Add credit result:", result);
       
-      // No longer automatically adding user role - access is now credit-based
-      
       toast({
         title: "Zahlung bestätigt",
         description: `Die Zahlung von ${(selectedPayment.amount / 100).toFixed(2)}€ wurde erfolgreich bestätigt und dem Konto gutgeschrieben.`
@@ -176,90 +176,99 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
   const getStatusBadge = (status: string) => {
     switch (status) {
       case 'completed':
-        return <span className="px-2 py-1 rounded-full bg-green-100 text-green-800 text-xs font-medium">Bestätigt</span>;
+        return <span className="px-3 py-1 rounded-full bg-green-500/20 text-green-400 text-xs font-medium border border-green-500/30 shadow-sm shadow-green-500/20">Bestätigt</span>;
       case 'rejected':
-        return <span className="px-2 py-1 rounded-full bg-red-100 text-red-800 text-xs font-medium">Abgelehnt</span>;
+        return <span className="px-3 py-1 rounded-full bg-red-500/20 text-red-400 text-xs font-medium border border-red-500/30 shadow-sm shadow-red-500/20">Abgelehnt</span>;
       case 'pending':
-        return <span className="px-2 py-1 rounded-full bg-yellow-100 text-yellow-800 text-xs font-medium">Ausstehend</span>;
+        return <span className="px-3 py-1 rounded-full bg-yellow-500/20 text-yellow-400 text-xs font-medium border border-yellow-500/30 shadow-sm shadow-yellow-500/20">Ausstehend</span>;
       default:
-        return <span className="px-2 py-1 rounded-full bg-gray-100 text-gray-800 text-xs font-medium">{status}</span>;
+        return <span className="px-3 py-1 rounded-full bg-gray-500/20 text-gray-400 text-xs font-medium border border-gray-500/30">{status}</span>;
     }
   };
   
   return (
     <>
-      <Table className="border rounded-md">
-        <TableHeader className="bg-gray-50">
-          <TableRow>
-            <TableHead>Benutzer</TableHead>
-            <TableHead>Betrag</TableHead>
-            <TableHead>Währung</TableHead>
-            <TableHead>Status</TableHead>
-            <TableHead>Erstellt am</TableHead>
-            <TableHead>Aktionen</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {payments.length === 0 ? (
+      <div className="overflow-hidden rounded-lg border border-gold/30 backdrop-blur-sm shadow-lg">
+        <Table className="w-full">
+          <TableHeader className="bg-gradient-to-r from-casino-dark via-casino-card to-casino-dark border-b border-gold/20">
             <TableRow>
-              <TableCell colSpan={6} className="text-center py-8">
-                Keine Zahlungen gefunden
-              </TableCell>
+              <TableHead className="text-gray-300 font-medium py-4">Benutzer</TableHead>
+              <TableHead className="text-gray-300 font-medium">Betrag</TableHead>
+              <TableHead className="text-gray-300 font-medium">Währung</TableHead>
+              <TableHead className="text-gray-300 font-medium">Status</TableHead>
+              <TableHead className="text-gray-300 font-medium">Erstellt am</TableHead>
+              <TableHead className="text-gray-300 font-medium">Aktionen</TableHead>
             </TableRow>
-          ) : (
-            payments.map((payment) => (
-              <TableRow key={payment.id}>
-                <TableCell>{payment.user_email}</TableCell>
-                <TableCell>{(payment.amount / 100).toFixed(2)}€</TableCell>
-                <TableCell>{payment.wallet_currency}</TableCell>
-                <TableCell>{getStatusBadge(payment.status)}</TableCell>
-                <TableCell>{formatDate(payment.created_at)}</TableCell>
-                <TableCell>
-                  {payment.status === 'pending' && (
-                    <div className="flex space-x-2">
-                      <Button
-                        size="sm"
-                        variant="default"
-                        className="bg-green-600 hover:bg-green-700"
-                        onClick={() => {
-                          setSelectedPayment(payment);
-                          setIsVerifyDialogOpen(true);
-                        }}
-                      >
-                        <Check className="h-4 w-4 mr-1" />
-                        Bestätigen
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="destructive"
-                        onClick={() => {
-                          setSelectedPayment(payment);
-                          setIsRejectDialogOpen(true);
-                        }}
-                      >
-                        <X className="h-4 w-4 mr-1" />
-                        Ablehnen
-                      </Button>
-                    </div>
-                  )}
-                  {payment.status !== 'pending' && (
-                    <span className="text-gray-500 text-sm italic">
-                      {payment.status === 'completed' ? 'Bestätigt' : 'Abgelehnt'}
-                    </span>
-                  )}
+          </TableHeader>
+          <TableBody>
+            {payments.length === 0 ? (
+              <TableRow>
+                <TableCell colSpan={6} className="text-center py-8 text-gray-400">
+                  Keine Zahlungen gefunden
                 </TableCell>
               </TableRow>
-            ))
-          )}
-        </TableBody>
-      </Table>
+            ) : (
+              payments.map((payment, index) => (
+                <motion.tr
+                  key={payment.id}
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.3, delay: index * 0.05 }}
+                  className="border-t border-gold/10 hover:bg-casino-card/40"
+                >
+                  <TableCell className="font-medium text-gray-300">{payment.user_email}</TableCell>
+                  <TableCell className="text-gray-100 font-medium">{(payment.amount / 100).toFixed(2)}€</TableCell>
+                  <TableCell className="text-green-400 font-medium">{payment.wallet_currency}</TableCell>
+                  <TableCell>{getStatusBadge(payment.status)}</TableCell>
+                  <TableCell className="text-gray-400 text-sm">{formatDate(payment.created_at)}</TableCell>
+                  <TableCell>
+                    {payment.status === 'pending' && (
+                      <div className="flex space-x-2">
+                        <Button
+                          size="sm"
+                          variant="default"
+                          className="bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-green-700/20"
+                          onClick={() => {
+                            setSelectedPayment(payment);
+                            setIsVerifyDialogOpen(true);
+                          }}
+                        >
+                          <Check className="h-4 w-4 mr-1" />
+                          Bestätigen
+                        </Button>
+                        <Button
+                          size="sm"
+                          variant="destructive"
+                          className="shadow-sm hover:shadow-red-700/20"
+                          onClick={() => {
+                            setSelectedPayment(payment);
+                            setIsRejectDialogOpen(true);
+                          }}
+                        >
+                          <X className="h-4 w-4 mr-1" />
+                          Ablehnen
+                        </Button>
+                      </div>
+                    )}
+                    {payment.status !== 'pending' && (
+                      <span className="text-gray-400 text-sm italic">
+                        {payment.status === 'completed' ? 'Bestätigt' : 'Abgelehnt'}
+                      </span>
+                    )}
+                  </TableCell>
+                </motion.tr>
+              ))
+            )}
+          </TableBody>
+        </Table>
+      </div>
       
       {/* Verify Payment Dialog */}
       <Dialog open={isVerifyDialogOpen} onOpenChange={setIsVerifyDialogOpen}>
-        <DialogContent>
+        <DialogContent className="bg-casino-dark border-gold/20 text-gray-200 shadow-lg">
           <DialogHeader>
-            <DialogTitle>Zahlung bestätigen</DialogTitle>
-            <DialogDescription>
+            <DialogTitle className="text-gray-100 border-b border-gold/20 pb-2">Zahlung bestätigen</DialogTitle>
+            <DialogDescription className="text-gray-400 pt-2">
               Sind Sie sicher, dass Sie diese Zahlung bestätigen möchten?
             </DialogDescription>
           </DialogHeader>
@@ -268,25 +277,25 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Benutzer</p>
-                  <p>{selectedPayment.user_email}</p>
+                  <p className="text-sm font-medium text-gray-400">Benutzer</p>
+                  <p className="text-gray-200">{selectedPayment.user_email}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Betrag</p>
-                  <p>{(selectedPayment.amount / 100).toFixed(2)}€</p>
+                  <p className="text-sm font-medium text-gray-400">Betrag</p>
+                  <p className="text-gray-200">{(selectedPayment.amount / 100).toFixed(2)}€</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Wallet-Währung</p>
-                  <p>{selectedPayment.wallet_currency}</p>
+                  <p className="text-sm font-medium text-gray-400">Wallet-Währung</p>
+                  <p className="text-green-400 font-medium">{selectedPayment.wallet_currency}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Erstellt am</p>
-                  <p>{formatDate(selectedPayment.created_at)}</p>
+                  <p className="text-sm font-medium text-gray-400">Erstellt am</p>
+                  <p className="text-gray-200">{formatDate(selectedPayment.created_at)}</p>
                 </div>
               </div>
               
               <div>
-                <label htmlFor="transactionId" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="transactionId" className="block text-sm font-medium text-gray-400 mb-1">
                   Transaktions-ID (optional)
                 </label>
                 <input
@@ -294,7 +303,7 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
                   type="text"
                   value={transactionId}
                   onChange={(e) => setTransactionId(e.target.value)}
-                  className="w-full border border-gray-300 rounded-md px-3 py-2"
+                  className="w-full bg-casino-card border border-gold/20 rounded-md px-3 py-2 text-gray-200"
                   placeholder="Blockchain Transaktions-ID"
                 />
               </div>
@@ -310,13 +319,14 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
                 setTransactionId("");
               }}
               disabled={isProcessing}
+              className="border-gold/30 text-gray-300 hover:bg-casino-card"
             >
               Abbrechen
             </Button>
             <Button 
               onClick={handleVerifyPayment} 
               disabled={isProcessing}
-              className="bg-green-600 hover:bg-green-700"
+              className="bg-green-600 hover:bg-green-700 shadow-sm hover:shadow-green-600/30"
             >
               {isProcessing ? (
                 <>
@@ -336,10 +346,10 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
       
       {/* Reject Payment Dialog */}
       <AlertDialog open={isRejectDialogOpen} onOpenChange={setIsRejectDialogOpen}>
-        <AlertDialogContent>
+        <AlertDialogContent className="bg-casino-dark border-gold/20 text-gray-200 shadow-lg">
           <AlertDialogHeader>
-            <AlertDialogTitle>Zahlung ablehnen</AlertDialogTitle>
-            <AlertDialogDescription>
+            <AlertDialogTitle className="text-gray-100 border-b border-gold/20 pb-2">Zahlung ablehnen</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-400 pt-2">
               Diese Aktion kann nicht rückgängig gemacht werden. Die Zahlung wird als abgelehnt markiert.
             </AlertDialogDescription>
           </AlertDialogHeader>
@@ -348,24 +358,24 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
             <div className="space-y-4 py-4">
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Benutzer</p>
-                  <p>{selectedPayment.user_email}</p>
+                  <p className="text-sm font-medium text-gray-400">Benutzer</p>
+                  <p className="text-gray-200">{selectedPayment.user_email}</p>
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-500">Betrag</p>
-                  <p>{(selectedPayment.amount / 100).toFixed(2)}€</p>
+                  <p className="text-sm font-medium text-gray-400">Betrag</p>
+                  <p className="text-gray-200">{(selectedPayment.amount / 100).toFixed(2)}€</p>
                 </div>
               </div>
               
               <div>
-                <label htmlFor="rejectionNotes" className="block text-sm font-medium text-gray-700 mb-1">
+                <label htmlFor="rejectionNotes" className="block text-sm font-medium text-gray-400 mb-1">
                   Ablehnungsgrund (optional)
                 </label>
                 <Textarea
                   id="rejectionNotes"
                   value={rejectionNotes}
                   onChange={(e) => setRejectionNotes(e.target.value)}
-                  className="w-full"
+                  className="bg-casino-card border-gold/20 text-gray-200 placeholder:text-gray-500 w-full"
                   placeholder="Geben Sie einen Grund für die Ablehnung an"
                 />
               </div>
@@ -380,13 +390,14 @@ export const PaymentTable = ({ payments, onPaymentUpdated }: PaymentTableProps) 
                 setSelectedPayment(null);
                 setRejectionNotes("");
               }}
+              className="border-gold/30 text-gray-300 hover:bg-casino-card bg-transparent"
             >
               Abbrechen
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={handleRejectPayment}
               disabled={isProcessing}
-              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm hover:shadow-red-600/30"
             >
               {isProcessing ? (
                 <>

@@ -60,7 +60,7 @@ const WithdrawalDialogContent = ({
       
       <div>
         <p className="text-sm font-medium text-gray-400">Wallet-Adresse</p>
-        <p className="font-mono text-xs break-all bg-casino-card p-2 rounded border border-gold/10">{withdrawal.wallet_address}</p>
+        <p className="font-mono text-xs break-all bg-casino-card p-2 rounded border border-gold/10 text-gray-200">{withdrawal.wallet_address}</p>
       </div>
       
       <div className="pt-2">

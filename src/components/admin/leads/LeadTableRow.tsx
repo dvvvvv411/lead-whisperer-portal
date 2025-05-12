@@ -21,7 +21,7 @@ export const LeadTableRow = ({
   userEmail
 }: LeadTableRowProps) => {
   return (
-    <tr key={lead.id} className="border-t hover:bg-gray-50">
+    <tr key={lead.id} className="border-t border-gold/10 hover:bg-casino-card/60">
       <td className="px-4 py-3">
         <LeadDate dateString={lead.created_at} />
       </td>

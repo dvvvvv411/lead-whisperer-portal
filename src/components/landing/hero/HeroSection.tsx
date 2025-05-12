@@ -7,7 +7,7 @@ import CryptoIconBubbles from "./CryptoIconBubbles";
 
 const HeroSection = () => {
   return (
-    <section id="hero" className="py-20 px-4 relative overflow-hidden bg-[#0B0D0E]">
+    <section id="hero" className="py-20 px-4 relative overflow-hidden">
       <BackgroundEffects />
       
       {/* Hero content */}
@@ -18,9 +18,6 @@ const HeroSection = () => {
           <CryptoIconBubbles />
         </div>
       </div>
-      
-      {/* Bottom gradient for smooth transition to next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-[#12151E] to-transparent"></div>
     </section>
   );
 };

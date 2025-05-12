@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 
 const partners = [
@@ -11,12 +12,10 @@ const partners = [
 
 const PartnersSection = () => {
   return (
-    <section className="py-16 relative overflow-hidden bg-[#0B0D0E]">
+    <section className="py-16 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-24 bg-gradient-to-b from-[#12151E] to-transparent"></div>
-        <div className="absolute bottom-0 w-full h-24 bg-gradient-to-t from-black/50 to-transparent"></div>
-        
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
         {/* Grid pattern */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         

@@ -19,10 +19,11 @@ import UserWithdrawal from "./pages/UserWithdrawal";
 import UserSettings from "./pages/UserSettings";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
-import TradingBot from "./pages/TradingBot"; // New
-import Experiences from "./pages/Experiences"; // New
-import Status from "./pages/Status"; // New
-import FAQ from "./pages/FAQ"; // New
+import TradingBot from "./pages/TradingBot"; 
+import Experiences from "./pages/Experiences"; 
+import Status from "./pages/Status"; 
+import FAQ from "./pages/FAQ"; 
+import Partners from "./pages/Partners"; // New
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
 
 // Create a new QueryClient instance
@@ -39,10 +40,11 @@ function App() {
           <BrowserRouter>
             <Routes>
               <Route path="/" element={<Index />} />
-              <Route path="/trading-bot" element={<TradingBot />} /> {/* New route */}
-              <Route path="/erfahrungen" element={<Experiences />} /> {/* New route */}
-              <Route path="/status" element={<Status />} /> {/* New route */}
-              <Route path="/faq" element={<FAQ />} /> {/* New route */}
+              <Route path="/trading-bot" element={<TradingBot />} />
+              <Route path="/erfahrungen" element={<Experiences />} />
+              <Route path="/status" element={<Status />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/partner" element={<Partners />} /> {/* New route */}
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="/admin/leads" element={<AdminLeads />} />

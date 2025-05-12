@@ -36,6 +36,12 @@ const DesktopNavigation = ({ activeSection, scrollToSection }: DesktopNavigation
         Erfahrungen
       </NavLink>
       <NavLink 
+        active={currentPath === "/partner"} 
+        onClick={() => window.location.href = '/partner'}
+      >
+        Partner
+      </NavLink>
+      <NavLink 
         active={currentPath === "/status"} 
         onClick={() => window.location.href = '/status'}
       >

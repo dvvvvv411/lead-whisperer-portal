@@ -44,6 +44,12 @@ const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps)
           Erfahrungen
         </MobileNavLink>
         <MobileNavLink 
+          active={currentPath === "/partner"}
+          onClick={() => window.location.href = '/partner'}
+        >
+          Partner
+        </MobileNavLink>
+        <MobileNavLink 
           active={currentPath === "/status"} 
           onClick={() => window.location.href = '/status'}
         >

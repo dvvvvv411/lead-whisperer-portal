@@ -1,158 +1,89 @@
 
 import { motion } from "framer-motion";
-import BackgroundEffects from "./partners/BackgroundEffects";
+import ExchangeCard from "./partners/ExchangeCard";
 
-const partners = [
-  { 
-    id: 1, 
-    name: "Binance", 
-    logo: "https://i.imgur.com/DcdYgPH.png", 
-    abbreviation: "BN" 
+const exchanges = [
+  {
+    id: 1,
+    name: "Binance",
+    logo: "https://i.imgur.com/DcdYgPH.png",
+    description: "Die weltweit größte Kryptobörse nach Handelsvolumen mit einem umfassenden Angebot an Kryptowährungen und Finanzprodukten.",
+    metrics: "Über 100 Millionen registrierte Nutzer und tägliches Handelsvolumen von mehreren Milliarden USD",
+    websiteUrl: "https://binance.com"
   },
-  { 
-    id: 2, 
-    name: "Kraken", 
-    logo: "https://i.imgur.com/xuMoK1U.png", 
-    abbreviation: "KR" 
+  {
+    id: 2,
+    name: "Kraken",
+    logo: "https://i.imgur.com/xuMoK1U.png",
+    description: "Eine der ältesten und sichersten Kryptobörsen mit Sitz in den USA, bekannt für ihre fortschrittliche Handelsplattform und hohe Sicherheitsstandards.",
+    metrics: "Verfügbar in über 190 Ländern mit über 9 Millionen Nutzern weltweit",
+    websiteUrl: "https://kraken.com"
   },
-  { 
-    id: 3, 
-    name: "Coinbase", 
-    logo: "https://i.imgur.com/KjpkQA8.png", 
-    abbreviation: "CB" 
+  {
+    id: 3,
+    name: "Coinbase",
+    logo: "https://i.imgur.com/KjpkQA8.png",
+    description: "Eine der benutzerfreundlichsten und vertrauenswürdigsten Kryptobörsen für Einsteiger und institutionelle Anleger, börsennotiert an der NASDAQ.",
+    metrics: "Über 110 Millionen verifizierte Nutzer und Assets im Wert von über 90 Milliarden USD",
+    websiteUrl: "https://coinbase.com"
   },
-  { 
-    id: 4, 
-    name: "KuCoin", 
-    logo: "https://i.imgur.com/qU4hUzq.png", 
-    abbreviation: "KC" 
+  {
+    id: 4,
+    name: "KuCoin",
+    logo: "https://i.imgur.com/qU4hUzq.png",
+    description: "Eine innovative Kryptobörse mit umfangreichem Angebot an Altcoins und DeFi-Tokens, bekannt als „People's Exchange".",
+    metrics: "Über 30 Millionen registrierte Nutzer in mehr als 200 Ländern und Regionen",
+    websiteUrl: "https://kucoin.com"
   },
-  { 
-    id: 5, 
-    name: "Bitfinex", 
-    logo: "https://i.imgur.com/Oor3vTT.png", 
-    abbreviation: "BF" 
+  {
+    id: 5,
+    name: "Bitfinex",
+    logo: "https://i.imgur.com/Oor3vTT.png",
+    description: "Eine führende Börse für fortgeschrittene Krypto-Trader mit hoher Liquidität und fortschrittlichen Trading-Features.",
+    metrics: "Eine der ältesten Kryptobörsen, gegründet 2012, mit täglichem Handelsvolumen im Milliardenbereich",
+    websiteUrl: "https://bitfinex.com"
   },
-  { 
-    id: 6, 
-    name: "OKX", 
-    logo: "https://i.imgur.com/242nn00.png", 
-    abbreviation: "OX" 
-  },
+  {
+    id: 6,
+    name: "OKX",
+    logo: "https://i.imgur.com/242nn00.png",
+    description: "Eine der weltweit führenden Kryptobörsen mit umfassenden Dienstleistungen für Spot- und Derivatehandel sowie DeFi-Integration.",
+    metrics: "Über 50 Millionen Nutzer weltweit mit täglichem Handelsvolumen von mehreren Milliarden USD",
+    websiteUrl: "https://okx.com"
+  }
 ];
 
 const PartnersSection = () => {
   return (
-    <section id="partners" className="py-16 relative overflow-hidden bg-casino-darker">
-      {/* Background elements */}
-      <BackgroundEffects />
+    <div className="space-y-6">
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="bg-casino-card/50 border border-gold/10 rounded-xl p-6 mb-8"
+      >
+        <p className="text-center text-gray-300">
+          Unser KI-Trading-System nutzt die Liquidität und fortschrittlichen APIs der weltweit führenden Kryptobörsen, 
+          um Ihnen die bestmögliche Performance und Zuverlässigkeit zu bieten. Durch diese technischen Anbindungen 
+          kann unser Bot rund um die Uhr auf den globalen Kryptomärkten handeln.
+        </p>
+      </motion.div>
       
-      <div className="container mx-auto px-4 relative z-10">
-        <motion.div 
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          transition={{ duration: 0.5 }}
-          className="text-center mb-12"
-        >
-          <h2 className="text-3xl md:text-4xl font-bold mb-4">
-            <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
-              Unsere Partner
-            </span>
-          </h2>
-          <p className="text-gray-300 max-w-2xl mx-auto">
-            Wir arbeiten mit führenden Kryptobörsen zusammen, um dir die beste Trading-Erfahrung zu bieten.
-          </p>
-        </motion.div>
-        
-        <div className="flex flex-wrap justify-center gap-8 mb-16">
-          {partners.map((partner, index) => (
-            <motion.div
-              key={partner.id}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
-              whileHover={{ scale: 1.05, transition: { duration: 0.2 } }}
-              className="flex flex-col items-center"
-            >
-              <div className="w-32 h-32 bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl flex items-center justify-center shadow-lg relative group overflow-hidden">
-                {/* Hover effect */}
-                <div className="absolute inset-0 bg-gradient-to-br from-gold/20 to-accent1/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 rounded-xl"></div>
-                
-                {/* Glow effect */}
-                <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/10 to-accent1/10 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
-                
-                {/* Logo */}
-                {partner.logo ? (
-                  <img 
-                    src={partner.logo} 
-                    alt={partner.name}
-                    className="w-16 h-16 object-contain relative z-10 transition-transform duration-300 group-hover:scale-110"
-                  />
-                ) : (
-                  <span className="text-3xl font-bold relative z-10 bg-gradient-to-br from-gray-200 to-white bg-clip-text text-transparent group-hover:from-gold group-hover:to-amber-500 transition-all duration-300">
-                    {partner.abbreviation}
-                  </span>
-                )}
-              </div>
-              <p className="mt-2 text-gray-400 text-sm group-hover:text-white transition-colors duration-300">{partner.name}</p>
-            </motion.div>
-          ))}
-        </div>
-        
-        {/* Trust indicators */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
-          >
-            {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
-            <div className="relative z-10">
-              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">5000+</div>
-              <p className="text-gray-300">Aktive Nutzer</p>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.4 }}
-            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
-          >
-            {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
-            <div className="relative z-10">
-              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">€1.2M+</div>
-              <p className="text-gray-300">Trading Volumen/Monat</p>
-            </div>
-          </motion.div>
-          
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: 0.5 }}
-            className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden text-center"
-          >
-            {/* Glow effect */}
-            <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-gold/10 rounded-xl blur opacity-20"></div>
-            <div className="relative z-10">
-              <div className="text-4xl font-bold bg-gradient-to-br from-gold to-gold-light bg-clip-text text-transparent mb-2">97%</div>
-              <p className="text-gray-300">Kundenzufriedenheit</p>
-            </div>
-          </motion.div>
-        </div>
+      <div className="grid grid-cols-1 gap-6">
+        {exchanges.map((exchange, index) => (
+          <ExchangeCard
+            key={exchange.id}
+            name={exchange.name}
+            logo={exchange.logo}
+            description={exchange.description}
+            metrics={exchange.metrics}
+            websiteUrl={exchange.websiteUrl}
+            index={index}
+          />
+        ))}
       </div>
-      
-      {/* Bottom gradient */}
-      <div className="absolute inset-x-0 bottom-0 h-16 bg-gradient-to-t from-[#0B0D0E] to-transparent"></div>
-    </section>
+    </div>
   );
 };
 

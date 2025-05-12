@@ -33,6 +33,7 @@ const TradingBotDialogs = ({
   handleResultDialogClose
 }: TradingBotDialogsProps) => {
   console.log("TradingBotDialogs rendering with resultDialogOpen:", resultDialogOpen);
+  console.log("Trade result data:", tradeResult);
   
   return (
     <>
@@ -46,7 +47,7 @@ const TradingBotDialogs = ({
         />
       )}
       
-      {/* Trade Result Dialog - Adding debug logs */}
+      {/* Trade Result Dialog */}
       <TradeResultDialog
         open={resultDialogOpen}
         onClose={handleResultDialogClose}

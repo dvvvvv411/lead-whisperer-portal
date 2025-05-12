@@ -98,11 +98,13 @@ export const executeAITrade = async ({
 
     console.log(`KI-Bot: Kryptowährung für Trade ausgewählt: ${crypto.symbol} (${crypto.name})`);
 
-    // Use entire account balance for the trade (minus a small safety buffer)
-    const safetyBuffer = 0.5; // 50 cents buffer
+    // Verwende das gesamte Kontoguthaben für den Trade (mit einer kleinen Sicherheitsreserve)
+    const safetyBuffer = 0.01; // 1 Cent Sicherheitsreserve
     const actualTradeAmount = tradeAmount || Math.max(0, userCredit - safetyBuffer);
     
-    // Generate profit percentage between 5-10%
+    console.log(`KI-Bot: Verwende ${actualTradeAmount}€ für den Trade (von ${userCredit}€ Gesamtguthaben)`);
+    
+    // Generate profit percentage between 3-7.5%
     const profitPercentage = generateProfitPercentage();
     const strategy = `ai_${getRandomStrategy()}`;
     
@@ -123,7 +125,7 @@ export const executeAITrade = async ({
     const sellAmount = actualTradeAmount + profit;
     
     // Log trade information
-    console.log(`KI-Bot: Starte Trade mit ${crypto.symbol}, Betrag: ${actualTradeAmount}€, Profitziel: ${profitPercentage}%`);
+    console.log(`KI-Bot: Starte Trade mit ${crypto.symbol}, Betrag: ${actualTradeAmount}€, Profitziel: ${profitPercentage * 100}%`);
     console.log(`KI-Bot: Kaufpreis: ${buyPrice}€, Verkaufspreis: ${sellPrice}€, Gewinn: ${profit}€`);
     
     // First simulate a "buy" trade

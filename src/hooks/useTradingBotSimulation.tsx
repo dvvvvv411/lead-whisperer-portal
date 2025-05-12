@@ -134,7 +134,7 @@ export const useTradingBotSimulation = (
               // This toast will appear alongside the dialog for users who might miss the dialog
               toast({
                 title: "Trade erfolgreich",
-                description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${resultData.profitPercentage.toFixed(2)}%)`,
+                description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${(resultData.profitPercentage * 100).toFixed(2)}%)`,
                 variant: "default"
               });
             }, 300);

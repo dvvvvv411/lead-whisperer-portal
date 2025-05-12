@@ -15,7 +15,7 @@ const StatsSection = () => {
         {[
           { title: "Durchschnittlicher Gewinn", value: "bis zu 30%" },
           { title: "Erfolgsrate", value: "über 90%" },
-          { title: "Trades pro Monat", value: "mehrere Tausend" },
+          { title: "Trades pro Monat", value: "1.460.000 +" },
           { title: "Aktivierungsgebühr", value: "250€" }
         ].map((stat, index) => (
           <motion.div

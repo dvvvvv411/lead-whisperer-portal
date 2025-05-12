@@ -97,16 +97,16 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-casino-dark border-gold/20 text-gray-200">
         <DialogHeader>
-          <DialogTitle>Konto erstellen</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-100">Konto erstellen</DialogTitle>
+          <DialogDescription className="text-gray-400">
             Erstellen Sie ein Benutzerkonto für diesen Lead.
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right">
+            <Label htmlFor="email" className="text-right text-gray-300">
               Email
             </Label>
             <Input
@@ -114,11 +114,11 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="email"
               value={lead?.email || ""}
               readOnly
-              className="col-span-3"
+              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right">
+            <Label htmlFor="password" className="text-right text-gray-300">
               Passwort
             </Label>
             <Input
@@ -126,11 +126,11 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="confirmPassword" className="text-right">
+            <Label htmlFor="confirmPassword" className="text-right text-gray-300">
               Passwort bestätigen
             </Label>
             <Input
@@ -138,15 +138,25 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="confirmPassword"
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              className="col-span-3"
+              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
         </div>
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={onClose}>
+          <Button 
+            type="button" 
+            variant="outline" 
+            onClick={onClose}
+            className="border-gold/30 text-gray-300 hover:bg-casino-card hover:text-gray-100"
+          >
             Abbrechen
           </Button>
-          <Button type="submit" onClick={handleCreateAccount} disabled={isSubmitting}>
+          <Button 
+            type="submit" 
+            onClick={handleCreateAccount} 
+            disabled={isSubmitting}
+            className="bg-gold hover:bg-gold/90 text-black"
+          >
             {isSubmitting ? "Konto wird erstellt..." : "Konto erstellen"}
           </Button>
         </DialogFooter>

@@ -83,36 +83,36 @@ export const LeadCommentsDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md">
+      <DialogContent className="max-w-md bg-casino-dark border-gold/20 text-gray-200">
         <DialogHeader>
-          <DialogTitle>Kommentare zu {lead.name}</DialogTitle>
-          <DialogDescription>
+          <DialogTitle className="text-gray-100">Kommentare zu {lead.name}</DialogTitle>
+          <DialogDescription className="text-gray-400">
             Füge interne Notizen zu diesem Lead hinzu
           </DialogDescription>
         </DialogHeader>
         <div className="max-h-80 overflow-y-auto space-y-4 my-4">
           {comments.length > 0 ? (
             comments.map((comment) => (
-              <div key={comment.id} className="bg-gray-50 p-3 rounded-lg">
-                <div className="flex justify-between text-sm text-gray-500 mb-1">
+              <div key={comment.id} className="bg-casino-card p-3 rounded-lg border border-gold/10">
+                <div className="flex justify-between text-sm text-gray-400 mb-1">
                   <span>{comment.user_email}</span>
                   <span>{new Date(comment.created_at).toLocaleString('de-DE')}</span>
                 </div>
-                <p>{comment.content}</p>
+                <p className="text-gray-200">{comment.content}</p>
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-500">Noch keine Kommentare</p>
+            <p className="text-center text-gray-400">Noch keine Kommentare</p>
           )}
         </div>
         <Textarea
           placeholder="Neuen Kommentar hinzufügen..."
           value={newComment}
           onChange={(e) => setNewComment(e.target.value)}
-          className="mb-4"
+          className="mb-4 bg-casino-card border-gold/20 text-gray-200 placeholder:text-gray-500"
         />
         <DialogFooter>
-          <Button onClick={handleAddComment}>Kommentar speichern</Button>
+          <Button onClick={handleAddComment} className="bg-gold hover:bg-gold/90 text-black">Kommentar speichern</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

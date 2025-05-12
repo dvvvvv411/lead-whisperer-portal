@@ -46,12 +46,12 @@ const WithdrawalActionDialog = ({
 }: WithdrawalActionDialogProps) => {
   return (
     <Dialog open={dialogOpen} onOpenChange={onClose}>
-      <DialogContent>
+      <DialogContent className="bg-casino-dark border-gold/20 text-gray-200">
         <DialogHeader>
-          <DialogTitle>
+          <DialogTitle className="text-gray-100">
             {dialogAction === "approve" ? "Auszahlung genehmigen" : "Auszahlung ablehnen"}
           </DialogTitle>
-          <DialogDescription>
+          <DialogDescription className="text-gray-400">
             {dialogAction === "approve" 
               ? "Bitte bestätigen Sie die Genehmigung der Auszahlung."
               : "Bitte geben Sie einen Grund für die Ablehnung an."}

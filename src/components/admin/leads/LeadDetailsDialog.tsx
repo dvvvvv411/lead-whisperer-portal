@@ -11,38 +11,38 @@ interface LeadDetailsDialogProps {
 export const LeadDetailsDialog = ({ lead, open, onOpenChange }: LeadDetailsDialogProps) => {
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent>
+      <DialogContent className="bg-casino-dark border-gold/20 text-gray-200">
         <DialogHeader>
-          <DialogTitle>Lead-Details</DialogTitle>
+          <DialogTitle className="text-gray-100">Lead-Details</DialogTitle>
         </DialogHeader>
         <div className="space-y-4 py-4">
           <div>
-            <h3 className="font-medium">Name</h3>
-            <p>{lead.name}</p>
+            <h3 className="font-medium text-gray-300">Name</h3>
+            <p className="text-gray-100">{lead.name}</p>
           </div>
           <div>
-            <h3 className="font-medium">Email</h3>
-            <p>{lead.email}</p>
+            <h3 className="font-medium text-gray-300">Email</h3>
+            <p className="text-gray-100">{lead.email}</p>
           </div>
           {lead.phone && (
             <div>
-              <h3 className="font-medium">Telefon</h3>
-              <p>{lead.phone}</p>
+              <h3 className="font-medium text-gray-300">Telefon</h3>
+              <p className="text-gray-100">{lead.phone}</p>
             </div>
           )}
           {lead.company && (
             <div>
-              <h3 className="font-medium">Unternehmen</h3>
-              <p>{lead.company}</p>
+              <h3 className="font-medium text-gray-300">Unternehmen</h3>
+              <p className="text-gray-100">{lead.company}</p>
             </div>
           )}
           <div>
-            <h3 className="font-medium">Nachricht</h3>
-            <p className="whitespace-pre-line">{lead.message}</p>
+            <h3 className="font-medium text-gray-300">Nachricht</h3>
+            <p className="whitespace-pre-line text-gray-100">{lead.message}</p>
           </div>
           <div>
-            <h3 className="font-medium">Eingegangen am</h3>
-            <p>{new Date(lead.created_at).toLocaleString('de-DE')}</p>
+            <h3 className="font-medium text-gray-300">Eingegangen am</h3>
+            <p className="text-gray-100">{new Date(lead.created_at).toLocaleString('de-DE')}</p>
           </div>
         </div>
       </DialogContent>

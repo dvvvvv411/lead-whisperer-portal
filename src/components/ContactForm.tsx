@@ -42,17 +42,16 @@ const ContactForm = () => {
         return;
       }
       
-      // In Supabase speichern
+      // In Supabase speichern - fixed to match the required schema
       const { error } = await supabase
         .from('leads')
-        .insert([
-          { 
-            name: formData.name,
-            email: formData.email, 
-            phone: formData.phone,
-            status: 'neu'
-          }
-        ]);
+        .insert({
+          name: formData.name,
+          email: formData.email, 
+          phone: formData.phone,
+          status: 'neu',
+          message: '' // Adding required message field with empty string
+        });
         
       if (error) {
         throw error;

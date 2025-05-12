@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -9,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 
 const AdminLogin = () => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: "",
@@ -28,7 +30,7 @@ const AdminLogin = () => {
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email: formData.email,
         password: formData.password
       });
@@ -42,9 +44,9 @@ const AdminLogin = () => {
         description: "Du wirst zum Admin-Bereich weitergeleitet.",
       });
       
-      // Weiterleitung nach erfolgreichem Login - jetzt zum /admin
-      // Die Admin.tsx wird die weitere Umleitung basierend auf der Benutzerrolle vornehmen
-      window.location.href = "/admin";
+      console.log("Login successful, navigating to admin dashboard...");
+      // Use React Router's navigate instead of window.location for smoother transitions
+      navigate("/admin");
       
     } catch (error: any) {
       console.error("Login-Fehler:", error);

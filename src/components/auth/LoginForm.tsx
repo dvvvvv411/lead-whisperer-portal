@@ -1,5 +1,6 @@
 
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,6 +15,7 @@ interface LoginFormProps {
 
 const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   const { toast } = useToast();
+  const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -35,7 +37,8 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
         description: "Du wirst weitergeleitet...",
       });
       
-      window.location.href = "/admin";
+      // Use React Router's navigate instead of window.location for smoother transitions
+      navigate("/admin");
       
     } catch (error: any) {
       console.error("Login-Fehler:", error);

@@ -9,12 +9,12 @@ const WalletAddressDisplay = ({ currency, address, amount }: WalletAddressDispla
   if (!currency || !address) return null;
   
   return (
-    <div className="p-4 bg-gray-50 rounded-md border">
-      <h4 className="font-medium mb-2">Wallet Adresse für {currency}:</h4>
-      <div className="bg-white p-3 rounded border break-all">
-        <code>{address}</code>
+    <div className="p-4 bg-black/20 backdrop-blur-sm rounded-md border border-accent1/30">
+      <h4 className="font-medium mb-2 text-accent1-light">Wallet Adresse für {currency}:</h4>
+      <div className="bg-black/30 p-3 rounded border border-accent1/20 break-all">
+        <code className="text-white/90">{address}</code>
       </div>
-      <p className="mt-2 text-sm text-gray-600">
+      <p className="mt-2 text-sm text-white/70">
         Bitte senden Sie genau {amount}€ in {currency} an die oben angegebene Adresse.
       </p>
     </div>

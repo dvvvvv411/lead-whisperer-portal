@@ -12,22 +12,22 @@ const WalletLoadingState = ({ loading, error, onRetry }: WalletLoadingStateProps
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin mr-2" />
-        <span>Zahlungsmethoden werden geladen...</span>
+        <Loader2 className="h-6 w-6 animate-spin mr-2 text-accent1-light" />
+        <span className="text-white/80">Zahlungsmethoden werden geladen...</span>
       </div>
     );
   }
   
   if (error) {
     return (
-      <div className="bg-red-50 p-4 rounded-md flex items-start">
-        <AlertCircle className="h-5 w-5 text-red-500 mt-0.5 mr-2" />
+      <div className="bg-red-900/20 backdrop-blur-sm p-4 rounded-md border border-red-500/30 flex items-start">
+        <AlertCircle className="h-5 w-5 text-red-400 mt-0.5 mr-2" />
         <div>
-          <p className="text-red-800">{error}</p>
+          <p className="text-red-200">{error}</p>
           <Button 
             variant="outline" 
             onClick={onRetry} 
-            className="mt-2"
+            className="mt-2 border-red-500/30 text-red-200 hover:bg-red-900/30"
           >
             Erneut versuchen
           </Button>

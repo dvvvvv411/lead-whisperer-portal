@@ -79,6 +79,18 @@
   .glass-card {
     @apply backdrop-blur-sm bg-black/30 border-white/10;
   }
+
+  .neo-glass {
+    @apply backdrop-blur-xl bg-black/40 border border-accent1/20;
+  }
+
+  .purple-gradient {
+    @apply bg-gradient-to-r from-purple-600/80 to-accent1-light;
+  }
+
+  .purple-text-gradient {
+    @apply bg-gradient-to-r from-purple-400 to-accent1-light bg-clip-text text-transparent;
+  }
 }
 
 /* Custom CSS */

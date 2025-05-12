@@ -108,13 +108,13 @@ const UserDeposit = () => {
             <Button
               variant="ghost"
               onClick={handleBack}
-              className="mb-4"
+              className="mb-4 text-white/80 hover:text-white hover:bg-accent1/20"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Zurück zum Dashboard
             </Button>
             
-            <h1 className="text-2xl md:text-3xl font-bold bg-gold-gradient bg-clip-text text-transparent animate-gradient-shift">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-purple-400 to-accent1-light bg-clip-text text-transparent animate-gradient-shift">
               Guthaben einzahlen
             </h1>
             {userCredit !== null && (
@@ -126,11 +126,11 @@ const UserDeposit = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left section - Level chart */}
-            <Card className="casino-card p-6 relative overflow-hidden h-full border-gold/10">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-accent1/10 rounded-full blur-xl"></div>
+            <Card className="backdrop-blur-xl bg-black/40 p-6 relative overflow-hidden h-full border-accent1/20">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-purple-600/30 rounded-full blur-xl"></div>
               <h2 className="text-xl font-semibold mb-4 flex items-center">
-                <Trophy className="h-5 w-5 mr-2 text-gold" />
-                <span className="bg-clip-text text-transparent bg-gold-gradient">Level & Handelsvorteile</span>
+                <Trophy className="h-5 w-5 mr-2 text-accent1-light" />
+                <span className="bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-accent1-light">Level & Handelsvorteile</span>
               </h2>
               <LevelProgressChart currentBalance={userCredit || 0} />
             </Card>
@@ -138,14 +138,14 @@ const UserDeposit = () => {
             {/* Right section - Two stacked cards */}
             <div className="flex flex-col space-y-6">
               {/* Deposit Form Card */}
-              <Card className="casino-card overflow-hidden flex-1 border-gold/10">
+              <Card className="backdrop-blur-xl bg-black/40 overflow-hidden flex-1 border-accent1/20">
                 {paymentSubmitted ? (
                   <PaymentStatusView paymentId={paymentId} />
                 ) : (
                   <div className="flex flex-col h-full">
-                    <div className="bg-casino-darker p-4 border-b border-gold/10 flex items-center">
-                      <CreditCard className="h-5 w-5 mr-2 text-gold" />
-                      <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">
+                    <div className="bg-black/60 p-4 border-b border-accent1/20 flex items-center">
+                      <CreditCard className="h-5 w-5 mr-2 text-accent1-light" />
+                      <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-purple-400 to-accent1-light">
                         Einzahlung durchführen
                       </h2>
                     </div>
@@ -163,7 +163,7 @@ const UserDeposit = () => {
               </Card>
               
               {/* Deposit History Card */}
-              <Card className="casino-card p-6 border-gold/10">
+              <Card className="backdrop-blur-xl bg-black/40 p-6 border-accent1/20">
                 <DepositHistory userId={user?.id} />
               </Card>
             </div>

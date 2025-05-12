@@ -33,18 +33,18 @@ const levels: Level[] = [
     minBalance: 1000, 
     maxBalance: 5000, 
     tradesPerDay: 4,
-    color: "text-amber-600",
-    borderColor: "border-amber-600/30",
-    bgColor: "bg-amber-600/20"
+    color: "text-purple-400",
+    borderColor: "border-purple-400/30",
+    bgColor: "bg-purple-400/20"
   },
   { 
     name: "Experte", 
     minBalance: 5000, 
     maxBalance: 10000, 
     tradesPerDay: 6,
-    color: "text-gold",
-    borderColor: "border-gold/30",
-    bgColor: "bg-gold/20"
+    color: "text-accent1-light",
+    borderColor: "border-accent1/30",
+    bgColor: "bg-accent1/20"
   },
   { 
     name: "Platin", 
@@ -60,9 +60,9 @@ const levels: Level[] = [
     minBalance: 100000, 
     maxBalance: null, 
     tradesPerDay: 10,
-    color: "text-accent1-light",
-    borderColor: "border-accent1/30",
-    bgColor: "bg-accent1/20"
+    color: "text-purple-300",
+    borderColor: "border-purple-300/30",
+    bgColor: "bg-purple-300/20"
   }
 ];
 
@@ -125,11 +125,11 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
   return (
     <div className="space-y-6 relative p-2">
       {/* Animated floating elements */}
-      <div className="absolute top-10 left-4 w-16 h-16 bg-gold/20 rounded-full blur-xl animate-float"></div>
+      <div className="absolute top-10 left-4 w-16 h-16 bg-purple-600/20 rounded-full blur-xl animate-float"></div>
       <div className="absolute bottom-10 right-8 w-12 h-12 bg-accent1/20 rounded-full blur-xl animate-float" style={{animationDelay: "1s"}}></div>
       
       <div className="text-center mb-8">
-        <div className="text-sm text-muted-foreground mb-2">Ihr Trading Level</div>
+        <div className="text-sm text-white/60 mb-2">Ihr Trading Level</div>
         <div className="flex justify-center">
           <Badge 
             className={`text-lg py-1 px-4 ${activeLevel?.bgColor} ${activeLevel?.color} ${activeLevel?.borderColor}`}
@@ -148,20 +148,20 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
 
       {nextLevel && (
         <div className="mb-4">
-          <div className="flex justify-between text-sm mb-2">
+          <div className="flex justify-between text-sm mb-2 text-white/70">
             <span>Fortschritt zum nächsten Level</span>
             <span>{currentBalance.toLocaleString('de-DE')}€ / {nextLevel.minBalance.toLocaleString('de-DE')}€</span>
           </div>
           <Progress 
             value={progressToNextLevel} 
             className="h-2 bg-gray-800"
-            indicatorClassName="bg-gradient-to-r from-accent1/80 to-accent1-light"
+            indicatorClassName="bg-gradient-to-r from-purple-600/80 to-accent1-light"
           />
         </div>
       )}
       
       <div className="space-y-4 mt-8">
-        <div className="text-lg font-medium mb-2 flex items-center">
+        <div className="text-lg font-medium mb-2 flex items-center text-white/90">
           <TrendingUp className="mr-2 h-5 w-5 text-accent1-light" />
           <span>Verfügbare Trades & Level</span>
         </div>
@@ -174,30 +174,30 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
           return (
             <div 
               key={level.name} 
-              className={`rounded-lg border p-4 transition-all duration-300 ${
+              className={`rounded-lg border backdrop-blur-sm p-4 transition-all duration-300 ${
                 isActive 
-                  ? `border-gold/50 shadow-glow ${level.bgColor}`
+                  ? `border-accent1/50 shadow-[0_0_15px_rgba(139,92,246,0.15)] ${level.bgColor}`
                   : isCompleted
-                    ? 'border-gold/30 bg-gold/5'
-                    : 'border-gray-700/30'
+                    ? 'border-purple-500/30 bg-purple-500/5'
+                    : 'border-gray-700/30 bg-black/20'
               }`}
             >
               <div className="flex justify-between items-center mb-2">
                 <div className="font-medium flex items-center">
                   {isCompleted && <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />}
-                  <span className={isCompleted ? 'text-gold' : level.color}>
+                  <span className={isCompleted ? 'text-accent1-light' : level.color}>
                     {level.name}
                   </span>
                 </div>
                 <Badge variant="outline" className={`${isActive ? level.bgColor : ''} ${level.borderColor}`}>
                   <TrendingUp className="h-3 w-3 mr-1" />
-                  <span className={isActive ? level.color : ''}>
+                  <span className={isActive ? level.color : 'text-white/70'}>
                     {level.tradesPerDay} Trades/Tag
                   </span>
                 </Badge>
               </div>
               
-              <div className="flex justify-between text-xs text-muted-foreground mb-2">
+              <div className="flex justify-between text-xs text-white/50 mb-2">
                 <span>{level.minBalance.toLocaleString('de-DE')}€</span>
                 <span>{level.maxBalance ? `${level.maxBalance.toLocaleString('de-DE')}€` : 'Unbegrenzt'}</span>
               </div>
@@ -207,9 +207,9 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
                 className="h-1.5 bg-gray-800"
                 indicatorClassName={`${
                   isCompleted 
-                    ? 'bg-green-500' 
+                    ? 'bg-gradient-to-r from-green-500 to-green-400' 
                     : isActive 
-                      ? 'bg-gold' 
+                      ? 'bg-gradient-to-r from-purple-600 to-accent1-light' 
                       : 'bg-gray-600'
                 } transition-all duration-1000`}
               />

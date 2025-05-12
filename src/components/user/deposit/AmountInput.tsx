@@ -15,12 +15,13 @@ const AmountInput = ({ control }: AmountInputProps) => {
       name="amount"
       render={({ field }) => (
         <FormItem>
-          <FormLabel>Betrag (€)</FormLabel>
+          <FormLabel className="text-white/90">Betrag (€)</FormLabel>
           <FormControl>
             <Input 
               type="number" 
               placeholder="100" 
-              {...field} 
+              {...field}
+              className="bg-black/30 border-accent1/30 text-white/80 focus-visible:ring-accent1-light focus-visible:border-accent1-light" 
             />
           </FormControl>
           <FormMessage />

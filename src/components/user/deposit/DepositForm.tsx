@@ -134,7 +134,7 @@ const DepositForm = ({
             <div className="pt-4">
               <Button 
                 type="submit" 
-                className="w-full bg-gradient-to-r from-accent1 to-accent1-light hover:from-accent1-light hover:to-accent1"
+                className="w-full bg-gradient-to-r from-purple-600 to-accent1-light hover:from-purple-700 hover:to-accent1 transition-all"
               >
                 <CreditCard className="mr-2 h-4 w-4" />
                 Zahlung bestätigen

@@ -1,3 +1,4 @@
+
 import { useEffect } from "react";
 import { useAITradingBot } from "@/hooks/useAITradingBot";
 import { useTradeHistory } from "@/hooks/useTradeHistory";
@@ -172,12 +173,11 @@ const AITradingBot = ({ userId, userCredit = 0, userEmail, onTradeExecuted, clas
       <TradingBotDialogs
         simulationOpen={simulationOpen}
         resultDialogOpen={resultDialogOpen}
-        cryptos={cryptos}
+        cryptos={cryptos || []}
         tradeResult={tradeResult}
         handleDialogOpenChange={handleDialogOpenChange}
         handleSimulationComplete={handleSimulationComplete}
         handleResultDialogClose={handleResultDialogClose}
-        onTradeExecuted={onTradeExecuted}
       />
     </div>
   );

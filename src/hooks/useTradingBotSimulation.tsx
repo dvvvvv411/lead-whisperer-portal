@@ -1,4 +1,3 @@
-
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 
@@ -128,18 +127,30 @@ export const useTradingBotSimulation = (
             setTimeout(() => {
               console.log("Opening result dialog");
               setResultDialogOpen(true);
-              // Don't reset simulationInProgressRef yet - wait until dialog is closed
+              simulationInProgressRef.current = false;
               
-              // Remove toast notification - we're showing the dialog instead
-              // Previous toast code removed from here
+              // Show a small toast notification but make it less prominent
+              // This toast will appear alongside the dialog for users who might miss the dialog
+              toast({
+                title: "Trade erfolgreich",
+                description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${(resultData.profitPercentage * 100).toFixed(2)}%)`,
+                variant: "default"
+              });
             }, 300);
           } else {
             console.error("Trade completion failed:", tradeResult?.error || "Unknown error");
             simulationInProgressRef.current = false;
             
+            // Show more descriptive error message
+            let errorMessage = tradeResult?.error || "Der Trade konnte nicht abgeschlossen werden";
+            
+            if (errorMessage === "Keine geeignete Kryptowährung gefunden") {
+              errorMessage = "Keine geeignete Kryptowährung gefunden. Bitte versuchen Sie es später erneut.";
+            }
+            
             toast({
               title: "Trade fehlgeschlagen",
-              description: tradeResult?.error || "Der Trade konnte nicht abgeschlossen werden",
+              description: errorMessage,
               variant: "destructive"
             });
           }
@@ -190,14 +201,7 @@ export const useTradingBotSimulation = (
   const handleResultDialogClose = useCallback(() => {
     console.log("Closing result dialog");
     setResultDialogOpen(false);
-    
-    // Only reset simulation status after the result dialog is closed
-    simulationInProgressRef.current = false;
-    
-    // Now that the dialog has been closed and the user has seen the trade details,
-    // indicate that the account balance can be updated
-    console.log("Result dialog closed, trading simulation complete");
-  }, [simulationInProgressRef]);
+  }, []);
   
   // Debug logs to track dialog states
   useEffect(() => {

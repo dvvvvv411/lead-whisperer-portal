@@ -1,4 +1,3 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -6,13 +5,19 @@
 @layer base {
   :root {
     --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
+    --foreground: 222.2 47.4% 11.2%;
 
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+ 
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
 
     --primary: 222.2 47.4% 11.2%;
     --primary-foreground: 210 40% 98%;
@@ -20,259 +25,114 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
     --accent: 210 40% 96.1%;
     --accent-foreground: 222.2 47.4% 11.2%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
     --ring: 222.2 84% 4.9%;
 
     --radius: 0.5rem;
-
-    --sidebar-background: 0 0% 98%;
-
-    --sidebar-foreground: 240 5.3% 26.1%;
-
-    --sidebar-primary: 240 5.9% 10%;
-
-    --sidebar-primary-foreground: 0 0% 98%;
-
-    --sidebar-accent: 240 4.8% 95.9%;
-
-    --sidebar-accent-foreground: 240 5.9% 10%;
-
-    --sidebar-border: 220 13% 91%;
-
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
 
   .dark {
-    --background: 226 17% 13%;
+    --background: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
 
-    --card: 224 18% 18%;
-    --card-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
 
-    --popover: 224 18% 18%;
+    --popover: 222.2 84% 4.9%;
     --popover-foreground: 210 40% 98%;
 
-    --primary: 47 100% 50%;  /* Gold */
-    --primary-foreground: 0 0% 0%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+ 
+    --border: 216 34% 17%;
+    --input: 216 34% 17%;
 
-    --secondary: 250 84% 64%;  /* Purple/Blue */
-    --secondary-foreground: 0 0% 100%;
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 223 18% 22%;
-    --muted-foreground: 215 20.2% 75.1%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
 
-    --accent: 250 84% 64%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
 
-    --destructive: 0 62.8% 50.6%;
+    --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 223 18% 25%;
-    --input: 223 18% 25%;
-    --ring: 250 84% 64%;
-    
-    --sidebar-background: 224 22% 12%;
-    --sidebar-foreground: 210 40% 98%;
-    --sidebar-primary: 47 100% 50%;
-    --sidebar-primary-foreground: 0 0% 0%;
-    --sidebar-accent: 250 84% 64%;
-    --sidebar-accent-foreground: 0 0% 100%;
-    --sidebar-border: 223 18% 25%;
-    --sidebar-ring: 250 84% 64%;
-  }
-}
+    --ring: 217.2 32.6% 17.5%;
 
-@layer base {
-  * {
-    @apply border-border;
+    --radius: 0.5rem;
   }
-
-  body {
-    @apply bg-casino-dark text-foreground;
-  }
-  
-  /* Global scrollbar styling */
-  ::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  ::-webkit-scrollbar-track {
-    background-color: rgba(33, 40, 59, 0.7);
-    border-radius: 8px;
-  }
-  
-  ::-webkit-scrollbar-thumb {
-    background-color: rgba(139, 92, 246, 0.4);
-    border-radius: 8px;
-    transition: background-color 0.2s;
-  }
-  
-  ::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(139, 92, 246, 0.6);
-  }
-}
-
-@layer components {
-  .glass-card {
-    @apply bg-opacity-20 backdrop-blur-md border border-white/10 shadow-lg;
-  }
-  
-  .gold-glow {
-    @apply shadow-[0_0_10px_rgba(255,215,0,0.5)];
-  }
-  
-  .accent-glow {
-    @apply shadow-[0_0_10px_rgba(139,92,246,0.5)];
-  }
-  
-  .casino-card {
-    @apply bg-casino-card border border-gold/20 rounded-lg shadow-lg;
-  }
-  
-  .gradient-text {
-    @apply bg-clip-text text-transparent bg-gold-gradient animate-gradient-shift;
-  }
-
-  .futuristic-border {
-    @apply border border-blue-500/30 shadow-[0_0_15px_rgba(59,130,246,0.3)];
-  }
-  
-  .tech-bg {
-    @apply bg-gradient-to-br from-blue-900/30 to-purple-900/30 backdrop-blur-lg;
-  }
-  
-  .neo-button {
-    @apply bg-gradient-to-r from-accent1/80 to-accent1 hover:from-accent1 hover:to-accent1-light text-white font-medium py-2 px-4 rounded-md shadow-lg shadow-accent1/20 transition-all duration-300;
-  }
-  
-  .card-shine {
-    @apply after:absolute after:inset-0 after:bg-gradient-to-r after:from-transparent after:via-white/10 after:to-transparent after:translate-x-[-200%] hover:after:translate-x-[200%] after:transition-transform after:duration-1000;
-  }
-  
-  .shadow-glow {
-    @apply shadow-[0_0_15px_rgba(255,215,0,0.6)];
-  }
-  
-  /* Custom scrollbar styles for specific components */
-  .scrollbar-thin {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(139, 92, 246, 0.3) rgba(33, 40, 59, 0.7);
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 6px;
-    height: 6px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background-color: rgba(33, 40, 59, 0.7);
-    border-radius: 10px;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background-color: rgba(139, 92, 246, 0.3);
-    border-radius: 10px;
-    transition: all 0.2s ease-in-out;
-  }
-  
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background-color: rgba(139, 92, 246, 0.5);
-  }
-  
-  .scrollbar-hidden {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-  }
-  
-  .scrollbar-hidden::-webkit-scrollbar {
-    display: none;
-  }
-  
-  .glassmorphism {
-    @apply bg-white/5 backdrop-blur-sm border border-white/10 shadow-lg;
-  }
-  
-  .bg-grid-pattern {
-    background-image: 
-      linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
-      linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
-    background-size: 40px 40px;
-  }
-  
-  /* Gold gradient text animation */
-  .gold-gradient-text {
-    background-size: 200% auto;
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    color: transparent;
-  }
-}
-
-@keyframes pulse-gold {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(255, 215, 0, 0.4); }
-  50% { box-shadow: 0 0 0 10px rgba(255, 215, 0, 0); }
-}
-
-@keyframes gradient-shift {
-  0%, 100% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-}
-
-@keyframes goldGradientShift {
-  0% { background-position: 0% 50%; }
-  100% { background-position: 100% 50%; }
-}
-
-@keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-10px); }
-}
-
-@keyframes glow-pulse {
-  0%, 100% { opacity: 0.6; }
-  50% { opacity: 1; }
-}
-
-@keyframes confetti-fall {
-  0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-  100% { transform: translateY(500px) rotate(360deg); opacity: 0; }
 }
 
 @layer utilities {
-  .animate-pulse-gold {
-    animation: pulse-gold 2s infinite;
+  .text-balance {
+    text-wrap: balance;
   }
-  
-  .animate-gradient-shift {
-    animation: gradient-shift 3s ease infinite;
-    background-size: 200% 200%;
+}
+
+/* Custom CSS */
+.casino-darker {
+  background-color: #0a0a0a;
+}
+
+.casino-dark {
+  background-color: #121212;
+}
+
+.casino-card {
+  background-color: #1e1e1e;
+}
+
+.gold {
+  color: #FFD700;
+}
+
+.gold-light {
+  color: #FFD700;
+  /* Slightly lighter shade of gold if needed: #FFDA40 */
+}
+
+.accent1 {
+  color: #6C63FF;
+}
+
+@keyframes confetti {
+  0% {
+    transform: translateY(-10px) rotate(0deg);
+    opacity: 1;
   }
-  
-  .animate-gold-gradient-shift {
-    animation: goldGradientShift 3s linear infinite;
+  100% {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
   }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
+}
+
+.animate-confetti {
+  animation: confetti 3s ease-in-out forwards;
+}
+
+.shadow-glow {
+  box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);
+}
+
+.animate-gradient-shift {
+  animation: gradient-shift 2s linear infinite;
+}
+
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
   }
-  
-  .animate-glow-pulse {
-    animation: glow-pulse 2s ease-in-out infinite;
+  50% {
+    background-position: 100% 50%;
   }
-  
-  .animate-confetti {
-    animation: confetti-fall 3s forwards;
+  100% {
+    background-position: 0% 50%;
   }
 }

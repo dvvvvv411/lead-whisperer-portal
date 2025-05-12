@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -5,17 +6,25 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { CheckCircle, ShieldCheck, Lock } from "lucide-react";
+import { CheckCircle, ShieldCheck, Lock, Sparkles, Award } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter
+} from "@/components/ui/dialog";
 
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
-    company: "",
     message: ""
   });
 
@@ -49,7 +58,7 @@ const ContactForm = () => {
         email: formData.email, 
         phone: formData.phone,
         status: 'neu',
-        company: formData.company || "Leer",
+        company: "Leer",
         message: formData.message || "Leer"
       };
       
@@ -63,10 +72,8 @@ const ContactForm = () => {
         throw error;
       }
 
-      toast({
-        title: "Anfrage erhalten!",
-        description: "Vielen Dank für deine Anfrage. Wir werden uns bald bei dir melden.",
-      });
+      // Show success dialog instead of toast
+      setShowSuccessDialog(true);
       
       setIsSuccess(true);
       
@@ -75,7 +82,6 @@ const ContactForm = () => {
         name: "",
         email: "",
         phone: "",
-        company: "",
         message: ""
       });
       
@@ -90,8 +96,115 @@ const ContactForm = () => {
       setIsSubmitting(false);
     }
   };
+  
+  // Success Dialog Component
+  const SuccessDialog = () => {
+    const [showConfetti, setShowConfetti] = useState(false);
+    
+    // Show confetti effect after dialog opens
+    useState(() => {
+      const timer = setTimeout(() => setShowConfetti(true), 400);
+      return () => clearTimeout(timer);
+    });
+    
+    // Generate confetti particles
+    const renderConfetti = () => {
+      if (!showConfetti) return null;
+      
+      const particles = Array.from({ length: 80 }).map((_, i) => {
+        const size = Math.floor(Math.random() * 8) + 5;
+        const left = Math.random() * 100;
+        const animationDelay = Math.random() * 0.5;
+        const color = i % 3 === 0 ? 'bg-gold' : (i % 3 === 1 ? 'bg-accent1' : 'bg-white');
+        
+        return (
+          <div 
+            key={i} 
+            className={`absolute z-50 rounded-full ${color} animate-confetti`}
+            style={{
+              width: size + 'px',
+              height: size + 'px',
+              left: left + '%',
+              animationDelay: animationDelay + 's',
+              opacity: Math.random() * 0.8 + 0.2
+            }}
+          />
+        );
+      });
+      
+      return <div className="confetti-container absolute inset-0 overflow-hidden pointer-events-none">{particles}</div>;
+    };
+    
+    return (
+      <Dialog 
+        open={showSuccessDialog} 
+        onOpenChange={setShowSuccessDialog}
+      >
+        <DialogContent className="max-w-md bg-gradient-to-b from-casino-darker to-casino-card border border-gold/20 shadow-xl overflow-hidden">
+          {renderConfetti()}
+          
+          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-gold via-accent1 to-gold bg-[length:200%_auto] animate-gradient-shift"></div>
+          
+          <DialogHeader className="relative">
+            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20">
+              <div className="absolute inset-0 bg-gradient-to-r from-gold to-accent1 rounded-full opacity-20 animate-pulse"></div>
+            </div>
+            
+            <DialogTitle className="flex items-center justify-center text-xl text-center pt-5">
+              <div className="relative bg-gradient-to-r from-gold to-accent1 p-4 rounded-full shadow-glow mb-2">
+                <Sparkles className="h-6 w-6 text-black animate-pulse" />
+              </div>
+            </DialogTitle>
+            
+            <div className="text-center space-y-2">
+              <h2 className="text-xl font-bold text-white">Vielen Dank!</h2>
+              <div className="text-3xl font-bold transition-all duration-700 scale-125 text-gold">
+                Anfrage erfolgreich
+              </div>
+            </div>
+            
+            <DialogDescription className="space-y-5 mt-4">
+              <div className="transition-all duration-500 opacity-100 translate-y-0">
+                <div className="bg-casino-dark/50 backdrop-blur-sm p-4 rounded-md shadow-inner border border-gold/10">
+                  <div className="flex items-center justify-center mb-3">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent1/30 to-gold/30 flex items-center justify-center mr-2">
+                      <CheckCircle className="h-4 w-4 text-green-500" />
+                    </div>
+                    <span className="font-medium">Deine Anfrage wurde gesendet</span>
+                  </div>
+                  
+                  <div className="text-sm text-center">
+                    <p>Wir werden uns in Kürze bei dir melden, um den nächsten Schritt zu besprechen.</p>
+                    <p className="mt-2">Halte dein Telefon bereit für Informationen zu unserer KI-Trading Lösung!</p>
+                  </div>
+                </div>
+              </div>
+              
+              <div className="text-center transition-all duration-500 delay-300 opacity-100">
+                <div className="flex items-center justify-center gap-2">
+                  <Award className="h-5 w-5 text-gold animate-pulse" />
+                  <span className="text-sm text-gold/90">
+                    Du bist nur noch einen Schritt von finanzieller Freiheit entfernt
+                  </span>
+                </div>
+              </div>
+            </DialogDescription>
+          </DialogHeader>
+          
+          <DialogFooter className="mt-4">
+            <Button 
+              onClick={() => setShowSuccessDialog(false)}
+              className="w-full bg-gradient-to-r from-gold to-accent1 hover:from-gold hover:to-gold text-black font-medium transition-all duration-300"
+            >
+              Schließen
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+    );
+  };
 
-  if (isSuccess) {
+  if (isSuccess && !showSuccessDialog) {
     return (
       <motion.div 
         initial={{ opacity: 0, y: 10 }}
@@ -115,6 +228,9 @@ const ContactForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
+      {/* Show success dialog */}
+      {showSuccessDialog && <SuccessDialog />}
+      
       {/* Logo added above the motivational text */}
       <motion.div
         initial={{ opacity: 0, y: -10 }}
@@ -196,23 +312,6 @@ const ContactForm = () => {
             onChange={handleChange}
             placeholder="Deine Telefonnummer"
             required
-            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
-          />
-        </motion.div>
-        
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Label htmlFor="company" className="text-white">Firma</Label>
-          <Input
-            id="company"
-            name="company"
-            value={formData.company}
-            onChange={handleChange}
-            placeholder="Firmenname (optional)"
             className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>

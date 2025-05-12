@@ -1,7 +1,7 @@
 
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
-import SharedBackgroundEffects from "./common/SharedBackgroundEffects";
+import BackgroundEffects from "./benefits/BackgroundEffects";
 
 const benefits = [
   {
@@ -53,11 +53,7 @@ const BenefitsSection = () => {
     <section id="benefits" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <SharedBackgroundEffects 
-          variant="primary"
-          showTopGradient={true}
-          showBottomGradient={true}
-        />
+        <BackgroundEffects />
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -90,14 +86,21 @@ const BenefitsSection = () => {
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
               className="bg-gradient-to-br from-casino-card to-black backdrop-blur-sm border border-white/5 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden"
             >
-              {/* Glow effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-accent1/20 rounded-xl blur opacity-20"></div>
+              {/* Enhanced Glow effect */}
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/30 to-accent1/30 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
               
               <div className="relative">
                 <div className="flex items-center mb-4">
-                  <div className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mr-3 text-2xl">
+                  <motion.div 
+                    className="w-12 h-12 rounded-full bg-gold/10 flex items-center justify-center mr-3 text-2xl"
+                    whileHover={{
+                      scale: 1.1,
+                      backgroundColor: "rgba(255, 215, 0, 0.2)",
+                      transition: { duration: 0.2 }
+                    }}
+                  >
                     {benefit.icon}
-                  </div>
+                  </motion.div>
                   <h3 className="text-xl font-bold bg-gradient-to-r from-white to-gray-300 bg-clip-text text-transparent">
                     {benefit.title}
                   </h3>
@@ -117,8 +120,15 @@ const BenefitsSection = () => {
           transition={{ duration: 0.5, delay: 0.6 }}
           className="mt-12 text-center"
         >
-          <div className="inline-block px-6 py-3 rounded-full bg-gold/10 border border-gold/20 text-white">
-            <span className="text-gold font-medium">KI-Trading</span> – Die Zukunft des automatisierten Handels
+          <div className="inline-block px-6 py-3 rounded-full bg-gold/10 border border-gold/30 text-white group hover:bg-gold/20 transition-all duration-300">
+            <motion.span 
+              className="text-gold font-medium group-hover:text-gold/90"
+              whileHover={{
+                textShadow: "0 0 8px rgba(255, 215, 0, 0.8)"
+              }}
+            >
+              KI-Trading
+            </motion.span> – Die Zukunft des automatisierten Handels
           </div>
         </motion.div>
       </div>

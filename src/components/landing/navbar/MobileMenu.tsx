@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileNavLink from "./MobileNavLink";
+import { useLocation } from "react-router-dom";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -11,6 +12,9 @@ interface MobileMenuProps {
 }
 
 const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  
   if (!isOpen) return null;
   
   return (
@@ -22,31 +26,31 @@ const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps)
     >
       <div className="flex flex-col space-y-4 p-4">
         <MobileNavLink 
-          active={activeSection === "hero"} 
+          active={currentPath === "/" && activeSection === "hero"} 
           onClick={() => scrollToSection("hero")}
         >
           Home
         </MobileNavLink>
         <MobileNavLink 
-          active={false}
+          active={currentPath === "/trading-bot"}
           onClick={() => window.location.href = '/trading-bot'}
         >
           Trading Bot
         </MobileNavLink>
         <MobileNavLink 
-          active={false}
+          active={currentPath === "/erfahrungen"}
           onClick={() => window.location.href = '/erfahrungen'}
         >
           Erfahrungen
         </MobileNavLink>
         <MobileNavLink 
-          active={false} 
+          active={currentPath === "/status"} 
           onClick={() => window.location.href = '/status'}
         >
           Status
         </MobileNavLink>
         <MobileNavLink 
-          active={false} 
+          active={currentPath === "/faq"} 
           onClick={() => window.location.href = '/faq'}
         >
           FAQ

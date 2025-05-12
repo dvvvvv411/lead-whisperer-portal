@@ -3,6 +3,7 @@ import { motion } from "framer-motion";
 import { LogIn, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import NavLink from "./NavLink";
+import { useLocation } from "react-router-dom";
 
 interface DesktopNavigationProps {
   activeSection: string;
@@ -10,35 +11,38 @@ interface DesktopNavigationProps {
 }
 
 const DesktopNavigation = ({ activeSection, scrollToSection }: DesktopNavigationProps) => {
+  const location = useLocation();
+  const currentPath = location.pathname;
+  
   return (
     <div className="hidden md:flex items-center space-x-6">
       <NavLink 
-        active={activeSection === "hero"} 
+        active={currentPath === "/" && activeSection === "hero"} 
         onClick={() => scrollToSection("hero")}
         icon={<Star className="w-4 h-4 mr-1" />}
       >
         Home
       </NavLink>
       <NavLink 
-        active={activeSection === "cta"} 
+        active={currentPath === "/trading-bot"} 
         onClick={() => window.location.href = '/trading-bot'}
       >
         Trading Bot
       </NavLink>
       <NavLink 
-        active={activeSection === "testimonials"} 
+        active={currentPath === "/erfahrungen"} 
         onClick={() => window.location.href = '/erfahrungen'}
       >
         Erfahrungen
       </NavLink>
       <NavLink 
-        active={activeSection === "status"} 
+        active={currentPath === "/status"} 
         onClick={() => window.location.href = '/status'}
       >
         Status
       </NavLink>
       <NavLink 
-        active={activeSection === "faq"} 
+        active={currentPath === "/faq"} 
         onClick={() => window.location.href = '/faq'}
       >
         FAQ

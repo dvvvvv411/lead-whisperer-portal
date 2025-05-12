@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Bitcoin, Bot, Sparkles } from "lucide-react";
@@ -10,32 +9,112 @@ interface ChartDataPoint {
 
 const ChartSection = () => {
   const [chartData, setChartData] = useState<ChartDataPoint[]>([
-    {x: 0, y: 35},
-    {x: 15, y: 30},
-    {x: 30, y: 25},
-    {x: 45, y: 20},
-    {x: 60, y: 15},
-    {x: 75, y: 10},
-    {x: 100, y: 15}
+    {x: 0, y: 30},
+    {x: 10, y: 28},
+    {x: 20, y: 32},
+    {x: 30, y: 31},
+    {x: 40, y: 34},
+    {x: 50, y: 28},
+    {x: 60, y: 26},
+    {x: 70, y: 29},
+    {x: 80, y: 31},
+    {x: 90, y: 35},
+    {x: 100, y: 33}
   ]);
-
-  // Animation für die Chart zur Simulation von Trading-Aktivität
+  
+  // Price change direction for more realistic movement
+  const [priceDirection, setPriceDirection] = useState<number>(1);
+  // Volatility factor to create more dynamic changes
+  const [volatility, setVolatility] = useState<number>(0.5);
+  // Trend strength for gradual direction shifts
+  const [trendStrength, setTrendStrength] = useState<number>(0.7);
+  
   useEffect(() => {
+    // Simulate realistic market behavior with trends, volatility, and price momentum
     const interval = setInterval(() => {
-      // Erstellt subtile zufällige Variationen für jeden Punkt, um das Chart zu animieren
-      const newData = chartData.map(point => {
-        const variance = (Math.random() - 0.5) * 2; // Zufälliger Wert zwischen -1 und 1
-        return {
-          ...point,
-          y: Math.max(5, Math.min(40, point.y + variance)) // Innerhalb vernünftiger Grenzen halten
-        };
-      });
+      // Occasionally change overall trend direction (simulating market sentiment shifts)
+      if (Math.random() < 0.05) {
+        setPriceDirection(prev => prev * -1);
+      }
       
-      setChartData(newData);
-    }, 500);
+      // Occasionally change volatility (simulating market conditions)
+      if (Math.random() < 0.1) {
+        setVolatility(Math.max(0.2, Math.min(1.5, volatility + (Math.random() - 0.5) * 0.3)));
+      }
+      
+      // Occasionally change trend strength (simulating momentum shifts)
+      if (Math.random() < 0.1) {
+        setTrendStrength(Math.max(0.4, Math.min(0.9, trendStrength + (Math.random() - 0.5) * 0.1)));
+      }
+
+      // Apply a Fibonacci retracement-like pattern occasionally
+      const applyFibonacciPattern = Math.random() < 0.02;
+      
+      // Generate new data points with more realistic price action
+      setChartData(prevData => {
+        // Copy last point to build from
+        const lastPoint = prevData[prevData.length - 1];
+        const secondLastPoint = prevData[prevData.length - 2] || lastPoint;
+        
+        // Calculate momentum from previous movement
+        const previousMovement = lastPoint.y - secondLastPoint.y;
+        
+        // Base change with momentum factor
+        let baseChange = (Math.random() - 0.5) * volatility;
+        
+        // Apply trend direction
+        baseChange += priceDirection * trendStrength * 0.2;
+        
+        // Apply momentum (price tends to continue in same direction)
+        baseChange += previousMovement * 0.4;
+        
+        // Apply Fibonacci retracement if triggered
+        if (applyFibonacciPattern) {
+          // Find recent high and low
+          const recentPoints = prevData.slice(-5);
+          const recentHigh = Math.max(...recentPoints.map(p => p.y));
+          const recentLow = Math.min(...recentPoints.map(p => p.y));
+          const fibLevel = [0.236, 0.382, 0.5, 0.618, 0.786][Math.floor(Math.random() * 5)];
+          const retracement = recentLow + (recentHigh - recentLow) * fibLevel;
+          
+          // Move toward the retracement level
+          baseChange = (retracement - lastPoint.y) * 0.3;
+        }
+        
+        // Ensure we stay within reasonable range (20-40)
+        const newY = Math.max(20, Math.min(40, lastPoint.y + baseChange));
+        
+        // Shift all points left
+        const newData = prevData.map(point => ({
+          ...point,
+          x: point.x > 0 ? point.x - 1 : point.x
+        }));
+        
+        // Add new point at the right
+        if (newData[newData.length - 1].x < 100) {
+          newData.push({
+            x: newData[newData.length - 1].x + 1,
+            y: newY
+          });
+        } else {
+          // Replace last point
+          newData[newData.length - 1] = {
+            x: 100,
+            y: newY
+          };
+        }
+        
+        // Keep only the last 11 points for performance
+        if (newData.length > 11) {
+          return newData.slice(-11);
+        }
+        
+        return newData;
+      });
+    }, 300);
     
     return () => clearInterval(interval);
-  }, [chartData]);
+  }, [priceDirection, volatility, trendStrength]);
 
   return (
     <motion.div
@@ -67,13 +146,13 @@ const ChartSection = () => {
           <Sparkles className="h-4 w-4 text-gold animate-pulse" /> Live Trading Performance
         </h3>
         
-        {/* Aktualisierte Chart mit animiertem Pfad */}
+        {/* Enhanced Chart with advanced animations */}
         <div className="h-60 w-full relative">
           <svg width="100%" height="100%" viewBox="0 0 100 50" className="overflow-visible">
-            {/* Gitterlinien */}
+            {/* Enhanced grid lines with subtle animation */}
             <g className="grid-lines">
               {[0, 10, 20, 30, 40, 50].map((line) => (
-                <line 
+                <motion.line 
                   key={`h-${line}`} 
                   x1="0" 
                   y1={line} 
@@ -81,10 +160,13 @@ const ChartSection = () => {
                   y2={line} 
                   stroke="rgba(255,255,255,0.03)" 
                   strokeWidth="0.3"
+                  initial={{ opacity: 0.5 }}
+                  animate={{ opacity: [0.03, 0.05, 0.03] }}
+                  transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: line * 0.1 }}
                 />
               ))}
               {[0, 20, 40, 60, 80, 100].map((line) => (
-                <line 
+                <motion.line 
                   key={`v-${line}`} 
                   x1={line} 
                   y1="0" 
@@ -92,59 +174,182 @@ const ChartSection = () => {
                   y2="50" 
                   stroke="rgba(255,255,255,0.03)" 
                   strokeWidth="0.3"
+                  initial={{ opacity: 0.5 }}
+                  animate={{ opacity: [0.03, 0.05, 0.03] }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: line * 0.05 }}
                 />
               ))}
             </g>
             
-            {/* Animierte Diagrammlinie, die mit chartData aktualisiert wird */}
+            {/* Data points with pulse effect on recent additions */}
+            {chartData.map((point, index) => (
+              <motion.circle
+                key={`point-${index}`}
+                cx={point.x}
+                cy={point.y}
+                r={index === chartData.length - 1 ? 0.8 : 0.4}
+                fill={index === chartData.length - 1 ? "rgba(255,215,0,1)" : "rgba(155,135,245,0.6)"}
+                initial={{ opacity: 0, scale: 0 }}
+                animate={{ 
+                  opacity: index === chartData.length - 1 ? [1, 0.7, 1] : 1,
+                  scale: index === chartData.length - 1 ? [1, 1.8, 1] : 1
+                }}
+                transition={{ 
+                  duration: index === chartData.length - 1 ? 2 : 0.3,
+                  repeat: index === chartData.length - 1 ? Infinity : 0,
+                  repeatDelay: 0.5
+                }}
+              />
+            ))}
+            
+            {/* Enhanced animated chart line with dynamic path */}
             <motion.path
               d={`M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`}
               fill="none"
               stroke="url(#line-gradient)"
               strokeWidth="0.8"
               strokeLinecap="round"
-              animate={{ d: `M${chartData.map(point => `${point.x},${point.y}`).join(' L')}` }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              animate={{ 
+                d: `M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`,
+                strokeDashoffset: [0, -10, 0],
+              }}
+              transition={{ 
+                d: { duration: 0.3, ease: "easeOut" },
+                strokeDashoffset: { duration: 10, repeat: Infinity, ease: "linear" }
+              }}
+              style={{
+                filter: "drop-shadow(0 0 2px rgba(155,135,245,0.5))"
+              }}
             />
             
-            {/* Animierter Farbverlaufsbereich unter der Diagrammlinie */}
+            {/* Enhanced area gradient with subtle animation */}
             <motion.path
-              d={`M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1].x},50 L${chartData[0].x},50 Z`}
+              d={`M${chartData[0]?.x || 0},${chartData[0]?.y || 30} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1]?.x || 100},50 L${chartData[0]?.x || 0},50 Z`}
               fill="url(#area-gradient)"
               opacity="0.15"
-              animate={{ d: `M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1].x},50 L${chartData[0].x},50 Z` }}
-              transition={{ duration: 0.5, ease: "easeInOut" }}
+              animate={{ 
+                d: `M${chartData[0]?.x || 0},${chartData[0]?.y || 30} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1]?.x || 100},50 L${chartData[0]?.x || 0},50 Z`,
+                opacity: [0.15, 0.18, 0.15]
+              }}
+              transition={{ 
+                d: { duration: 0.3, ease: "easeOut" },
+                opacity: { duration: 3, repeat: Infinity, ease: "easeInOut" }
+              }}
             />
             
-            {/* Verbesserte Farbverläufe */}
+            {/* Moving ticker line to simulate real-time data */}
+            <motion.line
+              x1="100"
+              y1="0"
+              x2="100"
+              y2="50"
+              stroke="rgba(255,215,0,0.3)"
+              strokeWidth="0.4"
+              strokeDasharray="1,1"
+              initial={{ opacity: 0 }}
+              animate={{ 
+                opacity: [0, 0.7, 0],
+                x1: [100, 0, 0], 
+                x2: [100, 0, 0]
+              }}
+              transition={{ 
+                duration: 5,
+                repeat: Infinity,
+                ease: "linear",
+                times: [0, 0.9, 1]
+              }}
+            />
+            
+            {/* Advanced gradients with animated stops */}
             <defs>
-              <linearGradient id="line-gradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <motion.linearGradient 
+                id="line-gradient" 
+                x1="0%" 
+                y1="0%" 
+                x2="100%" 
+                y2="0%"
+                animate={{
+                  x1: ["0%", "20%", "0%"],
+                  x2: ["100%", "80%", "100%"],
+                }}
+                transition={{
+                  duration: 10,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
                 <stop offset="0%" stopColor="#FFD700" />
-                <stop offset="50%" stopColor="#9b87f5" />
+                <motion.stop 
+                  offset="50%" 
+                  stopColor="#9b87f5"
+                  animate={{ offset: ["50%", "40%", "60%", "50%"] }}
+                  transition={{ duration: 8, repeat: Infinity }}
+                />
                 <stop offset="100%" stopColor="#8B5CF6" />
-              </linearGradient>
-              <linearGradient id="area-gradient" x1="0%" y1="0%" x2="0%" y2="100%">
+              </motion.linearGradient>
+              
+              <motion.linearGradient 
+                id="area-gradient" 
+                x1="0%" 
+                y1="0%" 
+                x2="0%" 
+                y2="100%"
+                animate={{
+                  y1: ["0%", "10%", "0%"],
+                }}
+                transition={{
+                  duration: 8,
+                  repeat: Infinity,
+                  ease: "easeInOut",
+                }}
+              >
                 <stop offset="0%" stopColor="#9b87f5" stopOpacity="0.8" />
-                <stop offset="50%" stopColor="#9b87f5" stopOpacity="0.2" />
+                <motion.stop 
+                  offset="50%" 
+                  stopColor="#9b87f5" 
+                  stopOpacity="0.2"
+                  animate={{ 
+                    offset: ["50%", "60%", "40%", "50%"],
+                    stopOpacity: ["0.2", "0.3", "0.2"] 
+                  }}
+                  transition={{ duration: 5, repeat: Infinity }}
+                />
                 <stop offset="100%" stopColor="rgba(255, 215, 0, 0)" />
-              </linearGradient>
+              </motion.linearGradient>
             </defs>
           </svg>
           
-          {/* Verbesserter leuchtender Linieneffekt */}
+          {/* Enhanced glowing line effect with dynamic position */}
           <motion.div 
-            className="absolute top-12 left-1/2 w-20 h-0.5 bg-[#9b87f5]/30 blur-md"
+            className="absolute h-0.5 bg-gradient-to-r from-transparent via-[#9b87f5]/70 to-transparent blur-md"
+            style={{ top: '30%' }}
             animate={{ 
               opacity: [0.3, 0.8, 0.3],
-              width: ["50%", "60%", "50%"]
+              width: ["50%", "70%", "50%"],
+              left: ["0%", "30%", "0%"]
             }}
-            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-          ></motion.div>
+            transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+          />
+          
+          {/* Real-time data flash effect */}
+          <motion.div
+            className="absolute top-0 right-0 h-full w-1 bg-gold/10"
+            animate={{ 
+              opacity: [0, 0.8, 0],
+              width: [1, 4, 1]
+            }}
+            transition={{ 
+              duration: 1.5, 
+              repeat: Infinity, 
+              repeatDelay: 3,
+              ease: "easeInOut" 
+            }}
+          />
           
           <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
         </div>
         
-        {/* Statistiken unter dem Diagramm mit aktualisiertem Styling */}
+        {/* Enhanced stats with animated values */}
         <div className="grid grid-cols-3 gap-3 mt-4">
           <motion.div 
             initial={{ opacity: 0, y: 10 }}
@@ -154,7 +359,19 @@ const ChartSection = () => {
             whileHover={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(155,135,245,0.3)" }}
           >
             <p className="text-xs text-gray-400">24h Gewinn</p>
-            <p className="text-lg font-semibold text-green-400">+2.4%</p>
+            <motion.p 
+              className="text-lg font-semibold text-green-400"
+              animate={{
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                repeatDelay: 5
+              }}
+            >
+              +2.4%
+            </motion.p>
           </motion.div>
           
           <motion.div 
@@ -165,7 +382,20 @@ const ChartSection = () => {
             whileHover={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(255,215,0,0.3)" }}
           >
             <p className="text-xs text-gray-400">Erfolgsrate</p>
-            <p className="text-lg font-semibold text-gold">87%</p>
+            <motion.p 
+              className="text-lg font-semibold text-gold"
+              animate={{
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{
+                duration: 2,
+                delay: 0.5,
+                repeat: Infinity,
+                repeatDelay: 5
+              }}
+            >
+              87%
+            </motion.p>
           </motion.div>
           
           <motion.div 
@@ -176,11 +406,24 @@ const ChartSection = () => {
             whileHover={{ backgroundColor: "rgba(255,255,255,0.1)", borderColor: "rgba(155,135,245,0.3)" }}
           >
             <p className="text-xs text-gray-400">Monatlich</p>
-            <p className="text-lg font-semibold text-green-400">+15.2%</p>
+            <motion.p 
+              className="text-lg font-semibold text-green-400"
+              animate={{
+                opacity: [1, 0.7, 1]
+              }}
+              transition={{
+                duration: 2,
+                delay: 1,
+                repeat: Infinity,
+                repeatDelay: 5
+              }}
+            >
+              +15.2%
+            </motion.p>
           </motion.div>
         </div>
 
-        {/* Animierter Randeffekt */}
+        {/* Animated edge effect with enhanced gradients */}
         <div className="absolute inset-0 rounded-xl overflow-hidden">
           <div className="absolute inset-0 opacity-30">
             <motion.div
@@ -191,9 +434,10 @@ const ChartSection = () => {
                   "linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent)",
                   "linear-gradient(90deg, transparent, rgba(155,135,245,0.5), transparent)",
                 ],
+                backgroundSize: ["200% 100%", "200% 100%", "200% 100%"],
+                backgroundPosition: ["100% 0%", "0% 0%", "100% 0%"],
               }}
-              transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
-              style={{ backgroundSize: "200% 100%", backgroundPosition: "100% 0%" }}
+              transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
             />
           </div>
         </div>

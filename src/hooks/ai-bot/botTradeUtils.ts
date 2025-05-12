@@ -5,38 +5,38 @@ import { BotSettings } from "./types";
 export const rankTiers = [
   {
     rankNumber: 1,
-    minBalance: 0,
-    maxBalance: 100,
-    maxTradesPerDay: 3,
+    minBalance: 250,
+    maxBalance: 1000,
+    maxTradesPerDay: 2,
     label: "Anfänger"
   },
   {
     rankNumber: 2,
-    minBalance: 101,
-    maxBalance: 500,
-    maxTradesPerDay: 5,
-    label: "Fortgeschrittener"
+    minBalance: 1000,
+    maxBalance: 5000,
+    maxTradesPerDay: 4,
+    label: "Profi"
   },
   {
     rankNumber: 3,
-    minBalance: 501,
-    maxBalance: 1000,
-    maxTradesPerDay: 7,
+    minBalance: 5000,
+    maxBalance: 10000,
+    maxTradesPerDay: 6,
     label: "Experte"
   },
   {
     rankNumber: 4,
-    minBalance: 1001,
-    maxBalance: 5000,
-    maxTradesPerDay: 10,
-    label: "Profi"
+    minBalance: 10000,
+    maxBalance: 100000,
+    maxTradesPerDay: 8,
+    label: "Platin"
   },
   {
     rankNumber: 5,
-    minBalance: 5001,
+    minBalance: 100000,
     maxBalance: null,
-    maxTradesPerDay: 15,
-    label: "Elite"
+    maxTradesPerDay: 10,
+    label: "Diamant"
   }
 ];
 

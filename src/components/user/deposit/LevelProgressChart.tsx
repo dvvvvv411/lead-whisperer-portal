@@ -21,7 +21,7 @@ interface Level {
 const levels: Level[] = [
   { 
     name: "Anfänger", 
-    minBalance: 0, 
+    minBalance: 250, 
     maxBalance: 1000, 
     tradesPerDay: 2,
     color: "text-gray-300",

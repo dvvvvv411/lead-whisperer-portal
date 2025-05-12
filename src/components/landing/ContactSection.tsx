@@ -1,10 +1,40 @@
 
-import { motion } from "framer-motion";
-import { useState } from "react";
+import { motion, useAnimation } from "framer-motion";
+import { useState, useEffect } from "react";
 import ContactForm from "@/components/ContactForm";
+import { Bitcoin, TrendingUp, CircleCheck, ShieldCheck } from "lucide-react";
 
 const ContactSection = () => {
   const [rotation, setRotation] = useState({ x: 0, y: 0 });
+  const [tradingState, setTradingState] = useState(0);
+  const cryptoBoxControls = useAnimation();
+  
+  // Simuliere den Handelsprozess
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setTradingState((prev) => (prev + 1) % 4);
+    }, 3000);
+    return () => clearInterval(interval);
+  }, []);
+
+  // Animiere die Krypto-Box basierend auf dem Trading-Status
+  useEffect(() => {
+    const animateBox = async () => {
+      if (tradingState === 1) {
+        await cryptoBoxControls.start({
+          scale: [1, 1.05, 1],
+          transition: { duration: 0.5 }
+        });
+      } else if (tradingState === 3) {
+        await cryptoBoxControls.start({
+          y: [0, -10, 0],
+          transition: { duration: 0.7 }
+        });
+      }
+    };
+    
+    animateBox();
+  }, [tradingState, cryptoBoxControls]);
   
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget.getBoundingClientRect();
@@ -14,14 +44,25 @@ const ContactSection = () => {
     const centerX = card.width / 2;
     const centerY = card.height / 2;
     
-    const rotateX = (y - centerY) / 20;
-    const rotateY = (centerX - x) / 20;
+    const rotateX = (y - centerY) / 25;
+    const rotateY = (centerX - x) / 25;
     
     setRotation({ x: rotateX, y: rotateY });
   };
   
   const handleMouseLeave = () => {
     setRotation({ x: 0, y: 0 });
+  };
+
+  // Trading status message based on state
+  const getTradingStatusMessage = () => {
+    switch(tradingState) {
+      case 0: return "Analysiere Marktdaten...";
+      case 1: return "Gelegenheit erkannt!";
+      case 2: return "Führe Trade aus...";
+      case 3: return "Gewinn realisiert! +3.2%";
+      default: return "KI-Bot aktiv";
+    }
   };
 
   return (
@@ -31,6 +72,9 @@ const ContactSection = () => {
         <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-dark to-transparent"></div>
         <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
         <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/5 rounded-full filter blur-3xl"></div>
+        
+        {/* Grid pattern */}
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGRlZnM+PHBhdHRlcm4gaWQ9ImdyaWQiIHdpZHRoPSI0MCIgaGVpZ2h0PSI0MCIgcGF0dGVyblVuaXRzPSJ1c2VyU3BhY2VPblVzZSI+PHBhdGggZD0iTSA0MCAwIEwgMCAwIDAgNDAiIGZpbGw9Im5vbmUiIHN0cm9rZT0icmdiYSgyNTUsMjU1LDI1NSwwLjEpIiBzdHJva2Utd2lkdGg9IjEiLz48L3BhdHRlcm4+PC9kZWZzPjxyZWN0IHdpZHRoPSIxMDAlIiBoZWlnaHQ9IjEwMCUiIGZpbGw9InVybCgjZ3JpZCkiIC8+PC9zdmc+')] opacity-10"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -43,7 +87,7 @@ const ContactSection = () => {
             className="text-3xl md:text-4xl font-bold mb-4"
           >
             <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
-              Sichere dir jetzt deinen Zugang
+              Der KI-Bot handelt für dich
             </span>
           </motion.h2>
           
@@ -54,18 +98,17 @@ const ContactSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-gray-300 max-w-2xl mx-auto"
           >
-            Fülle das Formular aus und erhalte noch heute Zugang zu unserem exklusiven KI Trading Bot.
+            Unser KI-Trading Bot analysiert den Markt rund um die Uhr und führt automatisch gewinnbringende Trades für dich durch.
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
-          {/* 3D Animation Side */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+          {/* Trading Bot Animation Side */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5 }}
-            className="hidden lg:block"
           >
             <motion.div
               style={{
@@ -74,90 +117,189 @@ const ContactSection = () => {
               }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              className="bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl p-8 shadow-lg shadow-black/40 relative overflow-hidden"
+              className="bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl p-6 shadow-lg shadow-black/40 relative overflow-hidden h-full"
             >
               {/* Glow effect */}
               <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-accent1/20 rounded-xl blur opacity-20"></div>
               
               <div className="relative">
-                <h3 className="text-2xl font-bold mb-6 text-white">Deine Trading-Reise beginnt hier</h3>
+                {/* Bot Status Header */}
+                <div className="flex items-center justify-between mb-6">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 rounded-full bg-green-500 mr-2 animate-pulse"></div>
+                    <h3 className="text-xl font-bold text-white">KI-Trading Bot</h3>
+                  </div>
+                  <div className="text-xs text-gray-400 bg-black/30 px-2 py-1 rounded-md">
+                    Live Demo
+                  </div>
+                </div>
                 
-                {/* Animated Trading Graph */}
-                <div className="mb-8 relative">
-                  <div className="absolute inset-0 flex items-center justify-center">
-                    <div className="w-16 h-16 rounded-full border-2 border-gold/50 flex items-center justify-center">
-                      <div className="w-12 h-12 rounded-full border-2 border-gold/30 flex items-center justify-center">
-                        <div className="w-8 h-8 rounded-full bg-gradient-to-br from-gold to-amber-600 animate-pulse"></div>
+                {/* Bot Interface */}
+                <div className="space-y-6">
+                  {/* Trading Status Display */}
+                  <div className="bg-black/30 p-4 rounded-lg border border-white/5">
+                    <div className="flex items-center justify-between">
+                      <span className="text-gray-400 text-sm">Status:</span>
+                      <span className="text-green-400 animate-pulse font-medium">Aktiv</span>
+                    </div>
+                    <div className="mt-2 flex items-center">
+                      <div className={`w-2 h-2 rounded-full ${tradingState === 3 ? 'bg-green-500' : 'bg-blue-500'} mr-2 animate-pulse`}></div>
+                      <span className="text-white text-sm">{getTradingStatusMessage()}</span>
+                    </div>
+                    <div className="mt-3 bg-black/30 h-2 rounded-full overflow-hidden">
+                      <motion.div 
+                        className="h-full bg-gradient-to-r from-gold to-amber-500"
+                        animate={{ width: ['25%', '50%', '75%', '100%', '25%'] }}
+                        transition={{ 
+                          repeat: Infinity, 
+                          duration: 12,
+                          times: [0, 0.25, 0.5, 0.75, 1],
+                          ease: "easeInOut"
+                        }}
+                      />
+                    </div>
+                  </div>
+                  
+                  {/* Trading Simulation */}
+                  <div className="grid grid-cols-2 gap-4">
+                    {/* Crypto Card 1 */}
+                    <motion.div 
+                      className="bg-black/40 p-4 rounded-lg border border-white/5 relative overflow-hidden"
+                      animate={cryptoBoxControls}
+                    >
+                      <div className="absolute top-0 right-0 p-1 bg-black/50 text-xs text-green-400 rounded-bl">
+                        +2.4%
+                      </div>
+                      <div className="flex items-center mb-2">
+                        <div className="w-8 h-8 rounded-full bg-[#F7931A]/10 flex items-center justify-center mr-2">
+                          <Bitcoin className="h-5 w-5 text-[#F7931A]" />
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Bitcoin</p>
+                          <p className="text-xs text-gray-400">BTC</p>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-400">Wert:</span>
+                          <span className="text-sm text-white font-medium">€42.685</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-gray-400">24h:</span>
+                          <span className="text-xs text-green-400">+€986</span>
+                        </div>
+                      </div>
+                      
+                      {/* Simplified chart */}
+                      <div className="mt-2 h-10 relative">
+                        <svg width="100%" height="100%" viewBox="0 0 100 30">
+                          <path
+                            d="M0,20 C10,18 15,10 25,12 C35,14 40,5 50,7 C60,9 65,15 75,13 C85,11 90,5 100,3"
+                            fill="none"
+                            stroke="#F7931A"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
+                      </div>
+                    </motion.div>
+                    
+                    {/* Crypto Card 2 */}
+                    <div className="bg-black/40 p-4 rounded-lg border border-white/5 relative overflow-hidden">
+                      <div className="absolute top-0 right-0 p-1 bg-black/50 text-xs text-green-400 rounded-bl">
+                        +3.8%
+                      </div>
+                      <div className="flex items-center mb-2">
+                        <div className="w-8 h-8 rounded-full bg-[#627EEA]/10 flex items-center justify-center mr-2">
+                          {/* ETH Icon simplified */}
+                          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="20" height="20" fill="#627EEA">
+                            <path fillOpacity=".5" d="M16 4v8.8l7.2 3.2L16 4z" />
+                            <path fillOpacity=".5" d="M16 4L8.8 16l7.2-3.2V4z" />
+                            <path fillOpacity=".8" d="M16 21.7V28l7.2-10-7.2 3.7z" />
+                            <path fillOpacity=".8" d="M16 28v-6.3l-7.2-3.7L16 28z" />
+                          </svg>
+                        </div>
+                        <div>
+                          <p className="text-white font-medium">Ethereum</p>
+                          <p className="text-xs text-gray-400">ETH</p>
+                        </div>
+                      </div>
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-gray-400">Wert:</span>
+                          <span className="text-sm text-white font-medium">€2.345</span>
+                        </div>
+                        <div className="flex items-center justify-between mt-1">
+                          <span className="text-xs text-gray-400">24h:</span>
+                          <span className="text-xs text-green-400">+€89</span>
+                        </div>
+                      </div>
+                      
+                      {/* Simplified chart */}
+                      <div className="mt-2 h-10 relative">
+                        <svg width="100%" height="100%" viewBox="0 0 100 30">
+                          <path
+                            d="M0,15 C10,10 20,20 30,15 C40,10 50,18 60,13 C70,8 80,12 90,7 C95,4 100,3 100,3"
+                            fill="none"
+                            stroke="#627EEA"
+                            strokeWidth="1.5"
+                            strokeLinecap="round"
+                          />
+                        </svg>
                       </div>
                     </div>
                   </div>
                   
-                  <svg width="100%" height="180" viewBox="0 0 400 100">
-                    {/* Background grid */}
-                    <pattern id="grid" width="20" height="20" patternUnits="userSpaceOnUse">
-                      <path d="M 20 0 L 0 0 0 20" fill="none" stroke="rgba(255,255,255,0.1)" strokeWidth="0.5" />
-                    </pattern>
-                    <rect width="400" height="100" fill="url(#grid)" />
-                    
-                    {/* Chart line */}
-                    <path
-                      d="M0,80 C30,75 60,30 90,40 C120,50 150,20 180,25 C210,30 240,60 270,50 C300,40 330,10 360,5 C390,0 400,10 400,10"
-                      fill="none"
-                      stroke="url(#chartGradient)"
-                      strokeWidth="2"
-                    />
-                    
-                    {/* Fill area under the chart */}
-                    <path
-                      d="M0,80 C30,75 60,30 90,40 C120,50 150,20 180,25 C210,30 240,60 270,50 C300,40 330,10 360,5 C390,0 400,10 400,10 V100 H0 Z"
-                      fill="url(#areaGradient)"
-                      opacity="0.3"
-                    />
-                    
-                    {/* Gradients */}
-                    <defs>
-                      <linearGradient id="chartGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" stopColor="#FFD700" />
-                        <stop offset="100%" stopColor="#FFA500" />
-                      </linearGradient>
-                      <linearGradient id="areaGradient" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stopColor="#FFD700" />
-                        <stop offset="100%" stopColor="#FFD700" stopOpacity="0" />
-                      </linearGradient>
-                    </defs>
-                    
-                    {/* Animated dot */}
-                    <circle className="animate-pulse" cx="270" cy="50" r="4" fill="#FFD700" />
-                  </svg>
-                </div>
-                
-                {/* Stats */}
-                <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-black/30 p-3 rounded-lg">
-                    <p className="text-xs text-gray-400">Automatische Analysen</p>
-                    <p className="text-xl font-bold text-gold">24/7</p>
+                  {/* Trading Activity */}
+                  <div className="bg-black/30 p-4 rounded-lg border border-white/5">
+                    <h4 className="text-white font-medium mb-2 flex items-center">
+                      <TrendingUp className="h-4 w-4 text-gold mr-2" />
+                      Letzte Aktivitäten
+                    </h4>
+                    <div className="space-y-2">
+                      {[
+                        { action: "Kauf", crypto: "ETH", amount: "0.214", time: "vor 2 Min", profit: null },
+                        { action: "Verkauf", crypto: "BTC", amount: "0.008", time: "vor 15 Min", profit: "+3.2%" }
+                      ].map((activity, i) => (
+                        <div key={i} className="flex items-center justify-between py-1 border-b border-white/5 last:border-0">
+                          <div className="flex items-center">
+                            <span className={`text-xs ${activity.action === "Kauf" ? "text-blue-400" : "text-green-400"} mr-2`}>{activity.action}</span>
+                            <span className="text-white text-sm">{activity.crypto}</span>
+                            <span className="text-gray-400 text-xs ml-2">{activity.amount}</span>
+                          </div>
+                          <div className="flex items-center">
+                            {activity.profit && (
+                              <span className="text-green-400 text-xs mr-2">{activity.profit}</span>
+                            )}
+                            <span className="text-gray-400 text-xs">{activity.time}</span>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
-                  <div className="bg-black/30 p-3 rounded-lg">
-                    <p className="text-xs text-gray-400">KI-Technologie</p>
-                    <p className="text-xl font-bold text-gold">Neueste Gen</p>
+                  
+                  {/* Key Benefits */}
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    {[
+                      { icon: <CircleCheck className="h-4 w-4 text-green-400" />, text: "Automatische Trades" },
+                      { icon: <ShieldCheck className="h-4 w-4 text-blue-400" />, text: "Verlustschutz" },
+                      { icon: <TrendingUp className="h-4 w-4 text-gold" />, text: "Profit-Maximierung" },
+                      { icon: <Bitcoin className="h-4 w-4 text-amber-400" />, text: "Multi-Coin Support" },
+                    ].map((item, i) => (
+                      <motion.div 
+                        key={i}
+                        initial={{ opacity: 0, y: 10 }}
+                        whileInView={{ opacity: 1, y: 0 }}
+                        viewport={{ once: true }}
+                        transition={{ delay: 0.3 + (i * 0.1) }}
+                        className="flex items-center bg-black/20 px-3 py-2 rounded-md"
+                      >
+                        <span className="mr-2">{item.icon}</span>
+                        <span className="text-xs text-gray-300">{item.text}</span>
+                      </motion.div>
+                    ))}
                   </div>
                 </div>
-                
-                <ul className="space-y-2">
-                  {['Vollautomatisches Trading', 'Echtzeit-Marktanalyse', 'Risikominimierung', 'Gewinnmaximierung'].map((item, i) => (
-                    <motion.li 
-                      key={i}
-                      initial={{ opacity: 0, x: -20 }}
-                      whileInView={{ opacity: 1, x: 0 }}
-                      viewport={{ once: true }}
-                      transition={{ delay: 0.3 + (i * 0.1) }}
-                      className="flex items-center"
-                    >
-                      <span className="w-5 h-5 mr-2 rounded-full bg-gradient-to-br from-gold to-amber-600 flex items-center justify-center text-xs text-black">✓</span>
-                      {item}
-                    </motion.li>
-                  ))}
-                </ul>
               </div>
             </motion.div>
           </motion.div>
@@ -168,7 +310,7 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-gradient-to-br from-black to-casino-card backdrop-blur-md rounded-xl shadow-xl border border-white/5 p-6"
+            className="bg-gradient-to-br from-black to-casino-card backdrop-blur-md rounded-xl shadow-xl border border-white/5 p-6 h-full"
           >
             <ContactForm />
           </motion.div>

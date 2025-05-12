@@ -3,23 +3,22 @@ import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+import { CheckCircle } from "lucide-react";
 
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
-    company: "",
-    message: ""
+    phone: ""
   });
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData((prev) => ({
       ...prev,
@@ -33,7 +32,7 @@ const ContactForm = () => {
     
     try {
       // Validierung
-      if (!formData.name || !formData.email || !formData.message) {
+      if (!formData.name || !formData.email) {
         toast({
           title: "Fehlerhafte Eingabe",
           description: "Bitte fülle alle Pflichtfelder aus.",
@@ -51,8 +50,6 @@ const ContactForm = () => {
             name: formData.name,
             email: formData.email, 
             phone: formData.phone,
-            company: formData.company,
-            message: formData.message,
             status: 'neu'
           }
         ]);
@@ -66,13 +63,13 @@ const ContactForm = () => {
         description: "Vielen Dank für deine Nachricht. Wir werden uns bald bei dir melden.",
       });
       
+      setIsSuccess(true);
+      
       // Formular zurücksetzen
       setFormData({
         name: "",
         email: "",
-        phone: "",
-        company: "",
-        message: ""
+        phone: ""
       });
       
     } catch (error) {
@@ -87,9 +84,31 @@ const ContactForm = () => {
     }
   };
 
+  if (isSuccess) {
+    return (
+      <motion.div 
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex flex-col items-center justify-center h-full text-center p-6"
+      >
+        <div className="mb-6 bg-green-500/20 rounded-full p-4">
+          <CheckCircle className="w-12 h-12 text-green-500" />
+        </div>
+        <h3 className="text-xl font-bold mb-2 text-white">Anfrage erfolgreich gesendet!</h3>
+        <p className="text-gray-300 mb-6">Wir werden uns in Kürze bei dir melden.</p>
+        <Button 
+          onClick={() => setIsSuccess(false)}
+          className="bg-gradient-to-r from-gold to-gold-light text-black font-medium"
+        >
+          Zurück zum Formular
+        </Button>
+      </motion.div>
+    );
+  }
+
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">Kontaktiere uns</h2>
+      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">Starte jetzt mit KI-Trading</h2>
       <form onSubmit={handleSubmit} className="space-y-4">
         <motion.div 
           className="space-y-2"
@@ -145,42 +164,6 @@ const ContactForm = () => {
           />
         </motion.div>
         
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.4 }}
-        >
-          <Label htmlFor="company" className="text-white">Unternehmen</Label>
-          <Input
-            id="company"
-            name="company"
-            value={formData.company}
-            onChange={handleChange}
-            placeholder="Dein Unternehmen (optional)"
-            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
-          />
-        </motion.div>
-        
-        <motion.div 
-          className="space-y-2"
-          initial={{ opacity: 0, x: 20 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ delay: 0.5 }}
-        >
-          <Label htmlFor="message" className="text-white">Nachricht *</Label>
-          <Textarea
-            id="message"
-            name="message"
-            value={formData.message}
-            onChange={handleChange}
-            placeholder="Wie können wir dir helfen?"
-            rows={4}
-            required
-            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
-          />
-        </motion.div>
-        
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -196,14 +179,15 @@ const ContactForm = () => {
           </Button>
         </motion.div>
         
-        <motion.p
+        <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.7 }}
-          className="text-xs text-center text-gray-400 mt-4"
+          className="flex items-center justify-center gap-2 mt-4"
         >
-          Durch Absenden des Formulars stimmst du unserer Datenschutzerklärung zu.
-        </motion.p>
+          <div className="w-2 h-2 rounded-full bg-green-500"></div>
+          <p className="text-xs text-gray-400">Alle Daten werden sicher verarbeitet</p>
+        </motion.div>
       </form>
     </div>
   );

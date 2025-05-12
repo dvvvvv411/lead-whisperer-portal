@@ -107,7 +107,20 @@ const ContactForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      {/* Motivational text section - moved to the top, replacing the heading */}
+      {/* Logo added above the motivational text */}
+      <motion.div
+        initial={{ opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="flex justify-center mb-4"
+      >
+        <img 
+          src="/logo.png" 
+          alt="KI-Trading Logo" 
+          className="h-16 object-contain"
+        />
+      </motion.div>
+      
+      {/* Motivational text section */}
       <motion.div
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
@@ -138,7 +151,7 @@ const ContactForm = () => {
             onChange={handleChange}
             placeholder="Dein vollständiger Name"
             required
-            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
+            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>
         
@@ -157,7 +170,7 @@ const ContactForm = () => {
             onChange={handleChange}
             placeholder="deine@email.de"
             required
-            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
+            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>
         
@@ -174,7 +187,7 @@ const ContactForm = () => {
             value={formData.phone}
             onChange={handleChange}
             placeholder="Deine Telefonnummer"
-            className="bg-white/10 border-white/20 text-white placeholder:text-gray-400 focus:border-gold/70"
+            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50"
           />
         </motion.div>
         

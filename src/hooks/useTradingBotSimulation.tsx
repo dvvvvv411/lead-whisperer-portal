@@ -130,7 +130,7 @@ export const useTradingBotSimulation = (
               setResultDialogOpen(true);
               simulationInProgressRef.current = false;
               
-              // Notify user of successful trade through toast as well
+              // Still show a small toast notification but make it non-intrusive
               toast({
                 title: "Trade erfolgreich",
                 description: `Gewinn: ${resultData.profitAmount.toFixed(2)}€ (${resultData.profitPercentage.toFixed(2)}%)`,

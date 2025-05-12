@@ -4,8 +4,8 @@ import { motion } from "framer-motion";
 const BackgroundEffects = () => {
   return (
     <>
-      {/* Moderner Farbverlauf-Hintergrund mit mehr Transparenz */}
-      <div className="absolute inset-0 bg-gradient-to-b from-casino-darker/80 via-[#0A0B0C]/70 to-black/60 z-0"></div>
+      {/* Modified background to match CTA section */}
+      <div className="absolute inset-0 bg-gradient-to-b from-[#0B0D0E]/90 via-[#0B0D0E]/80 to-[#0B0D0E]/90 z-0"></div>
       
       {/* Subtiles animiertes Rastermuster */}
       <div className="absolute inset-0 z-0">

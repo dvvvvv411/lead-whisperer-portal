@@ -40,11 +40,11 @@ const CtaSection = () => {
 
   return (
     <section id="cta" className="py-16 relative bg-casino-dark overflow-hidden">
-      {/* Enhanced background elements */}
-      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/30 to-blue-900/30 opacity-40"></div>
+      {/* Unified background elements with consistent color scheme */}
+      <div className="absolute inset-0 bg-gradient-to-br from-[#0B0D0E]/70 to-[#0B0D0E]/90 opacity-80"></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
       
-      {/* Animated light beams */}
+      {/* Animated light beams with gold and purple tones */}
       <motion.div 
         className="absolute -top-40 left-1/4 w-96 h-96 bg-gold/10 rounded-full blur-3xl"
         animate={{ 
@@ -81,14 +81,14 @@ const CtaSection = () => {
           </p>
         </motion.div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        {/* Modified grid layout to ensure equal column sizes */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Left section - Enhanced with better spacing and animations */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="flex flex-col h-full"
           >
             <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg relative overflow-hidden h-full">
               {/* Enhanced glow effect */}

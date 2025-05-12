@@ -1,18 +1,49 @@
+
 import { motion } from "framer-motion";
 import BackgroundEffects from "./partners/BackgroundEffects";
 
 const partners = [
-  { id: 1, name: "CryptoX", logo: "CX" },
-  { id: 2, name: "BlockChain Capital", logo: "BC" },
-  { id: 3, name: "AlgoTrade", logo: "AT" },
-  { id: 4, name: "FinTech Solutions", logo: "FT" },
-  { id: 5, name: "Digital Assets", logo: "DA" },
-  { id: 6, name: "CoinVenture", logo: "CV" },
+  { 
+    id: 1, 
+    name: "Binance", 
+    logo: "https://i.imgur.com/DcdYgPH.png", 
+    abbreviation: "BN" 
+  },
+  { 
+    id: 2, 
+    name: "Kraken", 
+    logo: "https://i.imgur.com/xuMoK1U.png", 
+    abbreviation: "KR" 
+  },
+  { 
+    id: 3, 
+    name: "Coinbase", 
+    logo: "https://i.imgur.com/KjpkQA8.png", 
+    abbreviation: "CB" 
+  },
+  { 
+    id: 4, 
+    name: "KuCoin", 
+    logo: "https://i.imgur.com/qU4hUzq.png", 
+    abbreviation: "KC" 
+  },
+  { 
+    id: 5, 
+    name: "Bitfinex", 
+    logo: "https://i.imgur.com/Oor3vTT.png", 
+    abbreviation: "BF" 
+  },
+  { 
+    id: 6, 
+    name: "OKX", 
+    logo: "https://i.imgur.com/242nn00.png", 
+    abbreviation: "OX" 
+  },
 ];
 
 const PartnersSection = () => {
   return (
-    <section className="py-16 relative overflow-hidden bg-casino-darker">
+    <section id="partners" className="py-16 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <BackgroundEffects />
       
@@ -30,7 +61,7 @@ const PartnersSection = () => {
             </span>
           </h2>
           <p className="text-gray-300 max-w-2xl mx-auto">
-            Wir arbeiten mit führenden Unternehmen der Krypto- und Fintech-Branche zusammen, um dir die beste Trading-Erfahrung zu bieten.
+            Wir arbeiten mit führenden Kryptobörsen zusammen, um dir die beste Trading-Erfahrung zu bieten.
           </p>
         </motion.div>
         
@@ -52,10 +83,18 @@ const PartnersSection = () => {
                 {/* Glow effect */}
                 <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/10 to-accent1/10 rounded-xl blur opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
                 
-                {/* Logo placeholder */}
-                <span className="text-3xl font-bold relative z-10 bg-gradient-to-br from-gray-200 to-white bg-clip-text text-transparent group-hover:from-gold group-hover:to-amber-500 transition-all duration-300">
-                  {partner.logo}
-                </span>
+                {/* Logo */}
+                {partner.logo ? (
+                  <img 
+                    src={partner.logo} 
+                    alt={partner.name}
+                    className="w-16 h-16 object-contain relative z-10 transition-transform duration-300 group-hover:scale-110"
+                  />
+                ) : (
+                  <span className="text-3xl font-bold relative z-10 bg-gradient-to-br from-gray-200 to-white bg-clip-text text-transparent group-hover:from-gold group-hover:to-amber-500 transition-all duration-300">
+                    {partner.abbreviation}
+                  </span>
+                )}
               </div>
               <p className="mt-2 text-gray-400 text-sm group-hover:text-white transition-colors duration-300">{partner.name}</p>
             </motion.div>

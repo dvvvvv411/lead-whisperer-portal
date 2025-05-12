@@ -1,38 +1,40 @@
+
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Star } from "lucide-react";
 import BackgroundEffects from "./testimonials/BackgroundEffects";
 
+// Updated testimonials with realistic German names and image URLs
 const testimonials = [
   {
     id: 1,
-    name: "Michael K.",
+    name: "Michael Schmidt",
     position: "Neueinsteiger",
-    image: "/placeholder.svg",
+    image: "https://i.imgur.com/jQzW1xe.png",
     rating: 5,
     text: "Nach nur 2 Wochen mit dem KI-Trading-Bot habe ich bereits 680€ Gewinn gemacht. Die automatischen Trades sind ein Gamechanger für mich als Anfänger."
   },
   {
     id: 2,
-    name: "Sarah L.",
-    position: "Erfahrene Tradern",
-    image: "/placeholder.svg",
+    name: "Hannah Weber",
+    position: "Erfahrene Traderin",
+    image: "https://i.imgur.com/LVQAWtB.png",
     rating: 5,
     text: "Ich trade seit 5 Jahren und war skeptisch. Nach einem Monat mit der KI habe ich meine bisherigen Ergebnisse verdoppelt. Die KI erkennt Muster, die ich verpasst hätte."
   },
   {
     id: 3,
-    name: "Thomas W.",
+    name: "Thomas Müller",
     position: "Teilzeit-Investor",
-    image: "/placeholder.svg",
+    image: "https://i.imgur.com/XKpedxL.png",
     rating: 4,
     text: "Endlich kann ich nebenbei investieren, ohne ständig die Märkte beobachten zu müssen. Der Bot handelt für mich rund um die Uhr und erzielt konstant gute Renditen."
   },
   {
     id: 4,
-    name: "Julia M.",
+    name: "Julia Fischer",
     position: "Finanzberaterin",
-    image: "/placeholder.svg",
+    image: "https://i.imgur.com/6pAGskz.png",
     rating: 5,
     text: "Als Fachfrau bin ich begeistert von der Technologie. Die Algorithmen sind beeindruckend und die Erfolgsquote spricht für sich. Klare Empfehlung!"
   }
@@ -46,7 +48,7 @@ const TestimonialsSection = () => {
   };
 
   return (
-    <section className="py-20 relative overflow-hidden bg-casino-darker">
+    <section id="testimonials" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <BackgroundEffects />
       
@@ -85,8 +87,18 @@ const TestimonialsSection = () => {
             <div className="relative z-10">
               <div className="flex flex-col md:flex-row md:items-center md:justify-between mb-6 gap-4">
                 <div className="flex items-center">
-                  <div className="w-16 h-16 rounded-full bg-black/40 border-2 border-gold/30 overflow-hidden mr-4 flex items-center justify-center text-2xl font-bold text-white/30">
-                    {testimonials[activeIndex].name.charAt(0)}
+                  <div className="w-16 h-16 rounded-full bg-black/40 border-2 border-gold/30 overflow-hidden mr-4 flex items-center justify-center">
+                    {testimonials[activeIndex].image ? (
+                      <img 
+                        src={testimonials[activeIndex].image} 
+                        alt={testimonials[activeIndex].name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-2xl font-bold text-white/30">
+                        {testimonials[activeIndex].name.charAt(0)}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <h3 className="text-xl font-bold text-white">{testimonials[activeIndex].name}</h3>
@@ -146,8 +158,18 @@ const TestimonialsSection = () => {
                 }`}
               >
                 <div className="flex items-center mb-2">
-                  <div className="w-10 h-10 rounded-full bg-black/40 border border-gold/20 overflow-hidden mr-3 flex items-center justify-center text-sm font-bold text-white/30">
-                    {testimonial.name.charAt(0)}
+                  <div className="w-10 h-10 rounded-full bg-black/40 border border-gold/20 overflow-hidden mr-3 flex items-center justify-center">
+                    {testimonial.image ? (
+                      <img 
+                        src={testimonial.image} 
+                        alt={testimonial.name}
+                        className="w-full h-full object-cover"
+                      />
+                    ) : (
+                      <span className="text-sm font-bold text-white/30">
+                        {testimonial.name.charAt(0)}
+                      </span>
+                    )}
                   </div>
                   <div>
                     <h4 className="text-sm font-medium text-white">{testimonial.name}</h4>

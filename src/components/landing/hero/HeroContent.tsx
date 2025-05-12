@@ -2,8 +2,11 @@
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const HeroContent = () => {
+  const isMobile = useIsMobile();
+
   return (
     <motion.div
       className="md:col-span-3"
@@ -94,9 +97,9 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Enhanced CTA button with pulse and glow effect */}
+        {/* Enhanced CTA button with pulse and glow effect - fixed for mobile */}
         <motion.div
-          whileHover={{ scale: 1.05 }}
+          whileHover={{ scale: isMobile ? 1 : 1.05 }}
           whileTap={{ scale: 0.98 }}
           className="relative"
         >
@@ -114,7 +117,7 @@ const HeroContent = () => {
           />
           <Button 
             onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
+            className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
           >
             <motion.span
               animate={{
@@ -135,7 +138,7 @@ const HeroContent = () => {
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}
           variant="outline"
-          className="border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
+          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
         >
           Mehr erfahren
         </Button>

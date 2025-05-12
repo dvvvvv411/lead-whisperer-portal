@@ -1,13 +1,14 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Menu, X, LogIn, Star } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const Navbar = () => {
   const [scrolled, setScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [activeSection, setActiveSection] = useState("hero");
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const handleScroll = () => {
@@ -53,9 +54,10 @@ const Navbar = () => {
     >
       <div className="container mx-auto px-4">
         <div className="flex justify-between items-center">
+          {/* Logo centered on mobile */}
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center pl-2"
+            className={`flex items-center ${isMobile ? 'mx-auto' : 'pl-2'}`}
           >
             <img 
               src="https://i.imgur.com/lL2FhfD.png" 
@@ -112,23 +114,8 @@ const Navbar = () => {
             </motion.div>
           </div>
           
-          {/* Mobile Navigation Button */}
-          <div className="md:hidden flex items-center space-x-4">
-            <motion.div
-              whileHover={{ scale: 1.05 }}
-              whileTap={{ scale: 0.95 }}
-              className="mr-2"
-            >
-              <Button 
-                className="bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
-                size="sm"
-                onClick={() => window.location.href = '/auth'} // Changed to new auth page
-              >
-                <LogIn className="mr-1 h-4 w-4" />
-                Login
-              </Button>
-            </motion.div>
-            
+          {/* Mobile Navigation Button - Only show if not mobile menu open */}
+          <div className={`md:hidden flex items-center ${isMobile && !mobileMenuOpen ? 'absolute right-4' : ''}`}>
             <button 
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
               className="text-white focus:outline-none"
@@ -142,7 +129,7 @@ const Navbar = () => {
           </div>
         </div>
         
-        {/* Mobile Menu */}
+        {/* Mobile Menu - Now includes login button */}
         {mobileMenuOpen && (
           <motion.div
             initial={{ opacity: 0, height: 0 }}
@@ -181,6 +168,17 @@ const Navbar = () => {
               >
                 Vorteile
               </MobileNavLink>
+              
+              {/* Login button in mobile menu */}
+              <div className="pt-2 mt-2 border-t border-gold/10">
+                <Button 
+                  className="w-full bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
+                  onClick={() => window.location.href = '/auth'} 
+                >
+                  <LogIn className="mr-2 h-4 w-4" />
+                  Anmelden
+                </Button>
+              </div>
             </div>
           </motion.div>
         )}

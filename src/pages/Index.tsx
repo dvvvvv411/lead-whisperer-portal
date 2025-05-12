@@ -35,23 +35,23 @@ const Index = () => {
           <HeroSection />
         </motion.div>
         
-        <div className="relative z-10">
+        <div className="relative z-10" id="cta">
           <CtaSection />
         </div>
         
-        <div className="relative z-10">
+        <div className="relative z-10" id="contact">
           <ContactSection />
         </div>
         
-        <div className="relative z-10">
+        <div className="relative z-10" id="benefits">
           <BenefitsSection />
         </div>
         
-        <div className="relative z-10">
+        <div className="relative z-10" id="testimonials">
           <TestimonialsSection />
         </div>
         
-        <div className="relative z-10">
+        <div className="relative z-10" id="partners">
           <PartnersSection />
         </div>
       </main>

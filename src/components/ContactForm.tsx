@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { CheckCircle } from "lucide-react";
+import { CheckCircle, ShieldCheck, Lock } from "lucide-react";
 
 const ContactForm = () => {
   const { toast } = useToast();
@@ -163,6 +163,22 @@ const ContactForm = () => {
           />
         </motion.div>
         
+        {/* Added motivation text section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.4 }}
+          className="mt-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20"
+        >
+          <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
+            Jetzt mit KI-Trading starten!
+          </h3>
+          <p className="text-white text-center font-medium mb-1">Bis zu 20% Gewinn täglich</p>
+          <p className="text-gray-300 text-sm text-center">
+            Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch.
+          </p>
+        </motion.div>
+        
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
@@ -174,18 +190,34 @@ const ContactForm = () => {
             className="w-full bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-medium py-6"
             disabled={isSubmitting}
           >
-            {isSubmitting ? "Wird gesendet..." : "Jetzt starten"}
+            {isSubmitting ? "Wird gesendet..." : "Jetzt Zugang sichern"}
           </Button>
         </motion.div>
         
+        {/* Security reassurance section */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 0.7 }}
-          className="flex items-center justify-center gap-2 mt-4"
+          transition={{ delay: 0.8 }}
+          className="mt-6"
         >
-          <div className="w-2 h-2 rounded-full bg-green-500"></div>
-          <p className="text-xs text-gray-400">Alle Daten werden sicher verarbeitet</p>
+          <div className="flex flex-col items-center space-y-3 py-4 border-t border-white/10">
+            <div className="flex items-center justify-center gap-4">
+              <div className="flex items-center p-2 bg-white/5 rounded-full">
+                <ShieldCheck className="w-5 h-5 text-green-400" />
+              </div>
+              <div className="flex items-center p-2 bg-white/5 rounded-full">
+                <Lock className="w-5 h-5 text-gold" />
+              </div>
+            </div>
+            <p className="text-sm text-center text-gray-300">
+              Deine Daten werden sicher verarbeitet und nicht an Dritte weitergegeben
+            </p>
+            <div className="flex items-center justify-center gap-2 bg-green-500/10 px-4 py-2 rounded-full">
+              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+              <p className="text-xs text-green-400 font-medium">Risikofrei starten – Keine Vorabkosten</p>
+            </div>
+          </div>
         </motion.div>
       </form>
     </div>

@@ -31,7 +31,7 @@ const exchanges = [
     id: 4,
     name: "KuCoin",
     logo: "https://i.imgur.com/qU4hUzq.png",
-    description: "Eine innovative Kryptobörse mit umfangreichem Angebot an Altcoins und DeFi-Tokens, bekannt als „People's Exchange".",
+    description: "Eine innovative Kryptobörse mit umfangreichem Angebot an Altcoins und DeFi-Tokens, bekannt als \"People's Exchange\".",
     metrics: "Über 30 Millionen registrierte Nutzer in mehr als 200 Ländern und Regionen",
     websiteUrl: "https://kucoin.com"
   },

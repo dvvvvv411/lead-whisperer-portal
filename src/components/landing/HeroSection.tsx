@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Bitcoin, Bot, Star, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
+
 const cryptoIcons = [{
   name: "Bitcoin",
   icon: <Bitcoin className="h-6 w-6 text-[#F7931A]" />,
@@ -84,7 +85,7 @@ const HeroSection = () => {
     }, 500);
     return () => clearInterval(interval);
   }, [chartData]);
-  return <section id="hero" className="py-20 px-4 relative overflow-hidden">
+  return <section id="hero" className="py-36 md:py-40 px-4 relative overflow-hidden">
       {/* Moderner Farbverlauf-Hintergrund mit mehr Transparenz */}
       <div className="absolute inset-0 bg-gradient-to-b from-casino-darker/80 via-[#0A0B0C]/70 to-black/60 z-0"></div>
       
@@ -391,127 +392,3 @@ const HeroSection = () => {
                 
                 <motion.div initial={{
                 opacity: 0,
-                y: 10
-              }} animate={{
-                opacity: 1,
-                y: 0
-              }} transition={{
-                delay: 2.4
-              }} className="text-center p-2 bg-white/5 rounded-md border border-[#9b87f5]/10" whileHover={{
-                backgroundColor: "rgba(255,255,255,0.1)",
-                borderColor: "rgba(155,135,245,0.3)"
-              }}>
-                  <p className="text-xs text-gray-400">Monatlich</p>
-                  <p className="text-lg font-semibold text-green-400">+15.2%</p>
-                </motion.div>
-              </div>
-
-              {/* Animierter Randeffekt */}
-              <div className="absolute inset-0 rounded-xl overflow-hidden">
-                <div className="absolute inset-0 opacity-30">
-                  <motion.div className="absolute -inset-[1px] rounded-xl opacity-30" animate={{
-                  background: ["linear-gradient(90deg, transparent, rgba(155,135,245,0.5), transparent)", "linear-gradient(90deg, transparent, rgba(255,215,0,0.5), transparent)", "linear-gradient(90deg, transparent, rgba(155,135,245,0.5), transparent)"]
-                }} transition={{
-                  duration: 4,
-                  repeat: Infinity,
-                  ease: "linear"
-                }} style={{
-                  backgroundSize: "200% 100%",
-                  backgroundPosition: "100% 0%"
-                }} />
-                </div>
-              </div>
-            </div>
-
-            {/* Animierte Kryptowährungsblasen um das Diagramm herum */}
-            {cryptoIcons.map((crypto, index) => <motion.div key={crypto.name} className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`} initial={{
-            opacity: 0,
-            scale: 0
-          }} animate={{
-            x: [0, 10 * (index % 2 === 0 ? 1 : -1), 0],
-            y: [0, 15 * (index % 3 === 0 ? 1 : -1), 0],
-            opacity: 1,
-            scale: 1
-          }} transition={{
-            delay: 1 + crypto.delay * 0.3,
-            duration: 3 + index,
-            repeat: Infinity,
-            repeatType: 'reverse',
-            ease: "easeInOut"
-          }} style={{
-            // Position bubbles only around the chart
-            top: `${(index * 20 + 10) % 100}%`,
-            left: index % 2 === 0 ? `${index < 2 ? -10 : 105}%` : `${index < 3 ? 105 : -10}%`
-          }} whileHover={{
-            scale: 1.2,
-            boxShadow: "0 0 15px rgba(155,135,245,0.5)"
-          }}>
-                {crypto.icon}
-              </motion.div>)}
-
-            {/* Zusätzliche schwebende animierte Elemente um das Diagramm */}
-            <motion.div className="absolute -bottom-2 right-12 w-12 h-12 rounded-full" style={{
-            border: "1px solid rgba(255, 215, 0, 0.1)"
-          }} animate={{
-            y: [0, -10, 0],
-            opacity: [0.2, 0.5, 0.2],
-            scale: [1, 1.05, 1],
-            borderColor: ["rgba(255, 215, 0, 0.1)", "rgba(155, 135, 245, 0.2)", "rgba(255, 215, 0, 0.1)"]
-          }} transition={{
-            duration: 4,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }} />
-            
-            <motion.div className="absolute -bottom-4 right-4 w-4 h-4 rounded-full" style={{
-            background: "rgba(155, 135, 245, 0.1)"
-          }} animate={{
-            y: [0, -15, 0],
-            opacity: [0.1, 0.4, 0.1],
-            background: ["rgba(155, 135, 245, 0.1)", "rgba(255, 215, 0, 0.15)", "rgba(155, 135, 245, 0.1)"]
-          }} transition={{
-            duration: 5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }} />
-            
-            <motion.div className="absolute -bottom-2 left-20 w-6 h-6 rounded-full" style={{
-            border: "1px solid rgba(155, 135, 245, 0.1)"
-          }} animate={{
-            y: [0, -8, 0],
-            opacity: [0.1, 0.3, 0.1],
-            borderColor: ["rgba(155, 135, 245, 0.1)", "rgba(255, 215, 0, 0.2)", "rgba(155, 135, 245, 0.1)"]
-          }} transition={{
-            duration: 3,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 0.5
-          }} />
-            
-            <motion.div className="absolute -top-2 right-24 w-3 h-3 rounded-full" style={{
-            background: "rgba(255, 215, 0, 0.1)"
-          }} animate={{
-            y: [0, -12, 0],
-            opacity: [0.1, 0.3, 0.1]
-          }} transition={{
-            duration: 4.5,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 2
-          }} />
-            
-            <motion.div className="absolute top-10 -right-4 w-8 h-8 rounded-full border border-[#9b87f5]/10" animate={{
-            rotate: [0, 180, 360],
-            opacity: [0.2, 0.4, 0.2]
-          }} transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "linear"
-          }} />
-          </motion.div>
-        </div>
-      </div>
-    </section>;
-};
-export default HeroSection;

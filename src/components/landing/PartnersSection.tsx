@@ -43,16 +43,28 @@ const exchanges = [
 
 const PartnersSection = () => {
   return (
-    <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
-      {exchanges.map((exchange, index) => (
-        <ExchangeCard
-          key={exchange.id}
-          name={exchange.name}
-          logo={exchange.logo}
-          websiteUrl={exchange.websiteUrl}
-          index={index}
-        />
-      ))}
+    <div className="flex flex-col items-center">
+      <motion.h2 
+        initial={{ opacity: 0, y: -10 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true }}
+        transition={{ duration: 0.5 }}
+        className="text-2xl md:text-3xl font-bold mb-4 text-center"
+      >
+        Unsere Partner
+      </motion.h2>
+      
+      <div className="grid grid-cols-3 md:grid-cols-6 gap-1.5 max-w-4xl mx-auto">
+        {exchanges.map((exchange, index) => (
+          <ExchangeCard
+            key={exchange.id}
+            name={exchange.name}
+            logo={exchange.logo}
+            websiteUrl={exchange.websiteUrl}
+            index={index}
+          />
+        ))}
+      </div>
     </div>
   );
 };

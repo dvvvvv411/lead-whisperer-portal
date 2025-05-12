@@ -5,6 +5,7 @@ import { Table, TableBody, TableCaption, TableCell, TableHead, TableHeader, Tabl
 import { format } from "date-fns";
 import { Loader2, AlertCircle, History } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
+import { de } from 'date-fns/locale';
 
 interface PaymentRecord {
   id: string;
@@ -31,7 +32,10 @@ const getStatusBadge = (status: string) => {
 };
 
 const formatAmount = (amount: number) => {
-  return (amount / 100).toFixed(2);
+  return (amount / 100).toLocaleString('de-DE', {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2
+  });
 };
 
 const DepositHistory = ({ userId }: DepositHistoryProps) => {
@@ -87,8 +91,8 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
 
   return (
     <div>
-      <div className="flex items-center mb-4">
-        <History className="mr-2 h-5 w-5 text-accent1-light" />
+      <div className="flex items-center mb-6">
+        <History className="mr-2 h-5 w-5 text-gold" />
         <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">Einzahlungsverlauf</h2>
       </div>
       
@@ -99,11 +103,11 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
       ) : (
         <div className="overflow-hidden rounded-lg border border-gold/10">
           <Table>
-            <TableCaption>Liste Ihrer Einzahlungen</TableCaption>
+            <TableCaption className="mt-4">Liste Ihrer Einzahlungen</TableCaption>
             <TableHeader className="bg-casino-darker">
               <TableRow>
                 <TableHead>Datum</TableHead>
-                <TableHead>Betrag (€)</TableHead>
+                <TableHead>Betrag</TableHead>
                 <TableHead>Kryptowährung</TableHead>
                 <TableHead>Status</TableHead>
               </TableRow>
@@ -112,9 +116,11 @@ const DepositHistory = ({ userId }: DepositHistoryProps) => {
               {payments.map((payment) => (
                 <TableRow key={payment.id} className="hover:bg-gold/5">
                   <TableCell>
-                    {format(new Date(payment.created_at), "dd.MM.yyyy HH:mm")}
+                    {format(new Date(payment.created_at), "dd. MMMM yyyy, HH:mm", { locale: de })}
                   </TableCell>
-                  <TableCell className="text-accent1-light font-semibold">{formatAmount(payment.amount)}€</TableCell>
+                  <TableCell className="text-accent1-light font-semibold">
+                    {formatAmount(payment.amount)}€
+                  </TableCell>
                   <TableCell>{payment.wallet_currency}</TableCell>
                   <TableCell>{getStatusBadge(payment.status)}</TableCell>
                 </TableRow>

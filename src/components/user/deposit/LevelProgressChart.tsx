@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { Coins, BarChart3 } from "lucide-react";
+import { Trophy, TrendingUp, Diamond } from "lucide-react";
 
 interface LevelProgressChartProps {
   currentBalance: number;
@@ -20,37 +20,28 @@ interface Level {
 
 const levels: Level[] = [
   { 
-    name: "Einsteiger", 
+    name: "Anfänger", 
     minBalance: 0, 
-    maxBalance: 500, 
-    tradesPerDay: 5,
+    maxBalance: 1000, 
+    tradesPerDay: 2,
     color: "text-gray-300",
     borderColor: "border-gray-400/30",
     bgColor: "bg-gray-400/20"
   },
   { 
-    name: "Bronze", 
-    minBalance: 500, 
-    maxBalance: 2000, 
-    tradesPerDay: 10,
-    color: "text-amber-700",
-    borderColor: "border-amber-700/30",
-    bgColor: "bg-amber-700/20"
-  },
-  { 
-    name: "Silber", 
-    minBalance: 2000, 
+    name: "Profi", 
+    minBalance: 1000, 
     maxBalance: 5000, 
-    tradesPerDay: 15,
-    color: "text-gray-400",
-    borderColor: "border-gray-400/30",
-    bgColor: "bg-gray-400/20"
+    tradesPerDay: 4,
+    color: "text-amber-600",
+    borderColor: "border-amber-600/30",
+    bgColor: "bg-amber-600/20"
   },
   { 
-    name: "Gold", 
+    name: "Experte", 
     minBalance: 5000, 
     maxBalance: 10000, 
-    tradesPerDay: 20,
+    tradesPerDay: 6,
     color: "text-gold",
     borderColor: "border-gold/30",
     bgColor: "bg-gold/20"
@@ -58,17 +49,17 @@ const levels: Level[] = [
   { 
     name: "Platin", 
     minBalance: 10000, 
-    maxBalance: 25000, 
-    tradesPerDay: 30,
+    maxBalance: 100000, 
+    tradesPerDay: 8,
     color: "text-blue-300",
     borderColor: "border-blue-300/30",
     bgColor: "bg-blue-300/20"
   },
   { 
     name: "Diamant", 
-    minBalance: 25000, 
+    minBalance: 100000, 
     maxBalance: null, 
-    tradesPerDay: 50,
+    tradesPerDay: 10,
     color: "text-accent1-light",
     borderColor: "border-accent1/30",
     bgColor: "bg-accent1/20"
@@ -102,8 +93,18 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
 
     // Animate all levels loading
     const animate = () => {
-      const newValues = levels.map((_, index) => {
-        return Math.min(100, index * 20);
+      const newValues = levels.map((level, index) => {
+        // If current balance is higher than level minimum, fill to 100%
+        if (currentBalance >= level.minBalance) {
+          return 100;
+        }
+        // If it's the next level, show partial progress
+        if (level.minBalance > currentBalance && index === levels.findIndex(l => l.minBalance > currentBalance)) {
+          const prevLevel = index > 0 ? levels[index - 1] : { minBalance: 0 };
+          return ((currentBalance - prevLevel.minBalance) / (level.minBalance - prevLevel.minBalance)) * 100;
+        }
+        // Future levels start at 0
+        return 0;
       });
       setProgressValues(newValues);
       
@@ -116,18 +117,24 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
   }, [currentBalance]);
 
   return (
-    <div className="space-y-6 relative">
-      {/* Animated floating element */}
+    <div className="space-y-6 relative p-2">
+      {/* Animated floating elements */}
       <div className="absolute top-10 left-4 w-16 h-16 bg-gold/20 rounded-full blur-xl animate-float"></div>
       <div className="absolute bottom-10 right-8 w-12 h-12 bg-accent1/20 rounded-full blur-xl animate-float" style={{animationDelay: "1s"}}></div>
       
       <div className="text-center mb-8">
-        <div className="text-sm text-muted-foreground mb-2">Ihr aktuelles Level</div>
+        <div className="text-sm text-muted-foreground mb-2">Ihr Trading Level</div>
         <div className="flex justify-center">
           <Badge 
             className={`text-lg py-1 px-4 ${activeLevel?.bgColor} ${activeLevel?.color} ${activeLevel?.borderColor}`}
           >
-            <Coins className="h-4 w-4 mr-2" />
+            {activeLevel?.name === "Diamant" ? (
+              <Diamond className="h-4 w-4 mr-2" />
+            ) : activeLevel?.name === "Platin" || activeLevel?.name === "Experte" ? (
+              <Trophy className="h-4 w-4 mr-2" />
+            ) : (
+              <TrendingUp className="h-4 w-4 mr-2" />
+            )}
             {activeLevel?.name}
           </Badge>
         </div>
@@ -137,7 +144,7 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
         <div className="mb-4">
           <div className="flex justify-between text-sm mb-2">
             <span>Fortschritt zum nächsten Level</span>
-            <span>{currentBalance}€ / {nextLevel.minBalance}€</span>
+            <span>{currentBalance.toLocaleString('de-DE')}€ / {nextLevel.minBalance.toLocaleString('de-DE')}€</span>
           </div>
           <Progress 
             value={progressToNextLevel} 
@@ -148,37 +155,57 @@ const LevelProgressChart: React.FC<LevelProgressChartProps> = ({ currentBalance 
       )}
       
       <div className="space-y-4 mt-8">
-        <div className="text-lg font-medium mb-2">Level & Trading-Limits</div>
+        <div className="text-lg font-medium mb-2 flex items-center">
+          <TrendingUp className="mr-2 h-5 w-5 text-accent1-light" />
+          <span>Verfügbare Trades & Level</span>
+        </div>
         
         {levels.map((level, index) => {
           const isActive = activeLevel?.name === level.name;
-          const progressValue = animationComplete ? 100 : progressValues[index] || 0;
+          const isCompleted = currentBalance >= level.minBalance;
+          const progressValue = animationComplete ? (isCompleted ? 100 : progressValues[index]) : progressValues[index] || 0;
           
           return (
-            <div key={level.name} className={`rounded-lg border p-3 transition-all duration-300 ${
-              isActive 
-                ? `border-gold/50 shadow-glow ${level.bgColor}`
-                : 'border-gray-700/30'
-            }`}>
-              <div className="flex justify-between items-center mb-1">
+            <div 
+              key={level.name} 
+              className={`rounded-lg border p-4 transition-all duration-300 ${
+                isActive 
+                  ? `border-gold/50 shadow-glow ${level.bgColor}`
+                  : isCompleted
+                    ? 'border-gold/30 bg-gold/5'
+                    : 'border-gray-700/30'
+              }`}
+            >
+              <div className="flex justify-between items-center mb-2">
                 <div className="font-medium flex items-center">
-                  <span className={level.color}>{level.name}</span>
+                  {isCompleted && <div className="w-2 h-2 rounded-full bg-green-500 mr-2" />}
+                  <span className={isCompleted ? 'text-gold' : level.color}>
+                    {level.name}
+                  </span>
                 </div>
-                <Badge variant="outline" className={`${level.bgColor} ${level.borderColor}`}>
-                  <BarChart3 className="h-3 w-3 mr-1" />
-                  <span className={level.color}>{level.tradesPerDay} Trades/Tag</span>
+                <Badge variant="outline" className={`${isActive ? level.bgColor : ''} ${level.borderColor}`}>
+                  <TrendingUp className="h-3 w-3 mr-1" />
+                  <span className={isActive ? level.color : ''}>
+                    {level.tradesPerDay} Trades/Tag
+                  </span>
                 </Badge>
               </div>
               
-              <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                <span>Min: {level.minBalance}€</span>
-                <span>{level.maxBalance ? `Max: ${level.maxBalance}€` : 'Unbegrenzt'}</span>
+              <div className="flex justify-between text-xs text-muted-foreground mb-2">
+                <span>{level.minBalance.toLocaleString('de-DE')}€</span>
+                <span>{level.maxBalance ? `${level.maxBalance.toLocaleString('de-DE')}€` : 'Unbegrenzt'}</span>
               </div>
               
               <Progress 
                 value={progressValue} 
-                className="h-1 bg-gray-800"
-                indicatorClassName={`${isActive ? 'bg-gold' : 'bg-gray-600'} transition-all duration-1000`}
+                className="h-1.5 bg-gray-800"
+                indicatorClassName={`${
+                  isCompleted 
+                    ? 'bg-green-500' 
+                    : isActive 
+                      ? 'bg-gold' 
+                      : 'bg-gray-600'
+                } transition-all duration-1000`}
               />
             </div>
           );

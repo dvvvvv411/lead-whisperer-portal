@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
@@ -8,12 +8,13 @@ import DepositForm from "@/components/user/deposit/DepositForm";
 import DepositHistory from "@/components/user/deposit/DepositHistory";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, CircleDollarSign, CreditCard, Wallet } from "lucide-react";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import LevelProgressChart from "@/components/user/deposit/LevelProgressChart";
 import { Card } from "@/components/ui/card";
+import UserNavbar from "@/components/user/UserNavbar";
 
 const UserDeposit = () => {
   const navigate = useNavigate();
@@ -98,7 +99,10 @@ const UserDeposit = () => {
       onUserLoaded={handleUserLoaded}
       redirectToActivation={false}
     >
-      <div className="container mx-auto px-4 py-6">
+      {/* Navigation Bar */}
+      <UserNavbar userId={user?.id} userEmail={user?.email} />
+      
+      <div className="container mx-auto px-4 py-6 max-w-6xl">
         <div className="mb-6">
           <Button
             variant="ghost"
@@ -121,25 +125,58 @@ const UserDeposit = () => {
         
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Left section - Level chart */}
-          <Card className="casino-card p-6 relative overflow-hidden">
+          <Card className="casino-card p-6 relative overflow-hidden h-full">
             <div className="absolute top-0 right-0 w-24 h-24 bg-accent1/10 rounded-full blur-xl"></div>
-            <h2 className="text-xl font-semibold mb-4">Level & Handelsvorteile</h2>
+            <h2 className="text-xl font-semibold mb-4 flex items-center">
+              <Trophy className="h-5 w-5 mr-2 text-gold" />
+              <span className="bg-clip-text text-transparent bg-gold-gradient">Level & Handelsvorteile</span>
+            </h2>
             <LevelProgressChart currentBalance={userCredit || 0} />
           </Card>
           
           {/* Right section - Deposit form */}
-          <div>
-            {paymentSubmitted ? (
-              <PaymentStatusView paymentId={paymentId} />
-            ) : (
-              <Card className="casino-card overflow-hidden">
-                <DepositForm 
-                  wallets={wallets}
-                  walletsLoading={walletsLoading}
-                  walletError={walletError}
-                  onRetryWallets={fetchWallets}
-                  onSubmit={handleDepositSubmit}
-                />
+          <div className="h-full flex flex-col">
+            <Card className="casino-card overflow-hidden h-full flex-1">
+              {paymentSubmitted ? (
+                <PaymentStatusView paymentId={paymentId} />
+              ) : (
+                <div className="flex flex-col h-full">
+                  <div className="bg-casino-darker p-4 border-b border-gold/10 flex items-center">
+                    <CreditCard className="h-5 w-5 mr-2 text-gold" />
+                    <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gold-gradient">
+                      Einzahlung durchführen
+                    </h2>
+                  </div>
+                  <div className="flex-1 p-6">
+                    <DepositForm 
+                      wallets={wallets}
+                      walletsLoading={walletsLoading}
+                      walletError={walletError}
+                      onRetryWallets={fetchWallets}
+                      onSubmit={handleDepositSubmit}
+                    />
+                  </div>
+                </div>
+              )}
+            </Card>
+            
+            {/* Visual balancer card to match height with level chart */}
+            {!paymentSubmitted && (
+              <Card className="casino-card mt-4 p-4 border border-gold/20 bg-gradient-to-r from-casino-card to-casino-highlight">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <p className="text-sm text-muted-foreground">Schnellere Verifizierung mit</p>
+                    <h3 className="font-semibold">Bitcoin & Ethereum</h3>
+                  </div>
+                  <div className="flex gap-3">
+                    <div className="p-2 bg-black/30 rounded-full">
+                      <CircleDollarSign className="h-5 w-5 text-gold" />
+                    </div>
+                    <div className="p-2 bg-black/30 rounded-full">
+                      <Wallet className="h-5 w-5 text-accent1-light" />
+                    </div>
+                  </div>
+                </div>
               </Card>
             )}
           </div>

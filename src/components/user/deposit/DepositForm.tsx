@@ -3,7 +3,6 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Button } from "@/components/ui/button";
-import { CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { CreditCard } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
@@ -105,22 +104,16 @@ const DepositForm = ({
 
   return (
     <>
-      <CardHeader className="bg-casino-darker border-b border-gold/10">
-        <CardTitle className="text-lg text-accent1-light">Einzahlung durchführen</CardTitle>
-        <CardDescription>
-          Wählen Sie den Betrag und die Kryptowährung für Ihre Einzahlung
-        </CardDescription>
-      </CardHeader>
-      <CardContent className="p-6 space-y-4">
-        <WalletLoadingState 
-          loading={walletsLoading} 
-          error={walletError} 
-          onRetry={onRetryWallets} 
-        />
-        
-        {!walletsLoading && !walletError && (
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-5">
+      <WalletLoadingState 
+        loading={walletsLoading} 
+        error={walletError} 
+        onRetry={onRetryWallets} 
+      />
+      
+      {!walletsLoading && !walletError && (
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(handleFormSubmit)} className="space-y-5">
+            <div className="space-y-4">
               <AmountInput control={form.control} />
               
               <WalletSelector 
@@ -136,15 +129,20 @@ const DepositForm = ({
                   amount={form.watch("amount")}
                 />
               )}
-              
-              <Button type="submit" className="w-full bg-accent1 hover:bg-accent1-light">
+            </div>
+            
+            <div className="pt-4">
+              <Button 
+                type="submit" 
+                className="w-full bg-gradient-to-r from-accent1 to-accent1-light hover:from-accent1-light hover:to-accent1"
+              >
                 <CreditCard className="mr-2 h-4 w-4" />
                 Zahlung bestätigen
               </Button>
-            </form>
-          </Form>
-        )}
-      </CardContent>
+            </div>
+          </form>
+        </Form>
+      )}
       
       <PaymentConfirmationDialog
         showDialog={showConfirmation}

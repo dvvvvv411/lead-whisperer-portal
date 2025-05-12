@@ -24,6 +24,19 @@ const LeadsTable = () => {
   
   const { comments, fetchComments, handleCommentAdded } = useComments();
   const { user, authLoading, handleLogout } = useAdminAuth();
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Filtered leads based on search query
+  const searchFilteredLeads = filteredLeads.filter(lead => {
+    if (!searchQuery.trim()) return true;
+    
+    const query = searchQuery.toLowerCase();
+    return (
+      lead.name.toLowerCase().includes(query) ||
+      lead.email.toLowerCase().includes(query) ||
+      (lead.phone && lead.phone.toLowerCase().includes(query))
+    );
+  });
 
   // Refresh data handler
   const handleRefresh = async () => {
@@ -63,11 +76,13 @@ const LeadsTable = () => {
         <LeadFilterBar
           statusFilter={statusFilter}
           onStatusFilterChange={setStatusFilter}
+          searchQuery={searchQuery}
+          onSearchChange={setSearchQuery}
         />
         
         <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
           <LeadsTableContent
-            leads={filteredLeads}
+            leads={searchFilteredLeads}
             comments={comments}
             onStatusChange={handleStatusChange}
             onCommentAdded={handleCommentAdded}

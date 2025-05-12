@@ -27,7 +27,7 @@ export const LeadTableRow = ({
       </td>
       <td className="px-4 py-3">{lead.name}</td>
       <td className="px-4 py-3">{lead.email}</td>
-      <td className="px-4 py-3">{lead.company || "-"}</td>
+      <td className="px-4 py-3">{lead.phone || "-"}</td>
       <td className="px-4 py-3">
         <LeadStatusBadge status={lead.status} />
       </td>

@@ -5,6 +5,7 @@ import { LeadStatusButtons } from "../LeadStatusButtons";
 import { LeadDetailsDialog } from "../LeadDetailsDialog";
 import { Lead } from "@/types/leads";
 import { CreateAccountDialog } from "../CreateAccountDialog";
+import { Edit } from "lucide-react";
 
 interface LeadActionsProps {
   lead: Lead;
@@ -35,8 +36,10 @@ export const LeadActions = ({ lead, onStatusChange }: LeadActionsProps) => {
         variant="outline" 
         size="sm"
         onClick={() => setIsDetailsOpen(true)}
+        className="flex items-center gap-1"
       >
-        Details
+        <Edit size={14} />
+        Bearbeiten
       </Button>
       
       <LeadDetailsDialog

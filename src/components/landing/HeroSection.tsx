@@ -63,25 +63,33 @@ const cryptoIcons = [
 ];
 
 const HeroSection = () => {
-  const [count, setCount] = useState(0);
-  const [chartData, setChartData] = useState({
-    x: 0,
-    y: 35
-  });
+  const [chartData, setChartData] = useState([
+    {x: 0, y: 35},
+    {x: 15, y: 30},
+    {x: 30, y: 25},
+    {x: 45, y: 20},
+    {x: 60, y: 15},
+    {x: 75, y: 10},
+    {x: 100, y: 15}
+  ]);
 
-  // Animation for the chart's active dot to simulate trading activity
+  // Animation for the chart to simulate trading activity
   useEffect(() => {
     const interval = setInterval(() => {
-      setCount((prevCount) => (prevCount < 100 ? prevCount + 1 : 0));
-
-      // Simulate random trading activity with smoother transitions
-      setChartData({
-        x: count,
-        y: 35 - count/4 + Math.sin(count/10) * 3
+      // Create subtle random variations for each point to animate the chart
+      const newData = chartData.map(point => {
+        const variance = (Math.random() - 0.5) * 2; // Random value between -1 and 1
+        return {
+          ...point,
+          y: Math.max(5, Math.min(40, point.y + variance)) // Keep within reasonable bounds
+        };
       });
-    }, 100);
+      
+      setChartData(newData);
+    }, 500);
+    
     return () => clearInterval(interval);
-  }, [count]);
+  }, [chartData]);
 
   return (
     <section id="hero" className="py-20 px-4 relative overflow-hidden">
@@ -169,30 +177,29 @@ const HeroSection = () => {
                   Revolutioniere dein
                 </motion.span>
                 
-                {/* Gold animated text with enhanced shimmer effect */}
+                {/* Updated gold animated text with horizontal gradient transition */}
                 <motion.span 
-                  className="block text-gold relative"
+                  className="block relative"
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.8 }}
                 >
-                  <span className="relative inline-block bg-gradient-to-r from-gold to-yellow-300 bg-clip-text text-transparent">
+                  <span className="text-gold">Krypto-Trading</span>
+                  <motion.div 
+                    className="absolute inset-0 bg-gradient-to-r from-[#FFD700] to-[#FEC6A1] bg-clip-text text-transparent"
+                    animate={{ 
+                      opacity: [0, 1, 0],
+                      x: [-10, 200]
+                    }}
+                    transition={{ 
+                      repeat: Infinity,
+                      duration: 3,
+                      repeatDelay: 1,
+                      ease: "easeInOut"
+                    }}
+                  >
                     Krypto-Trading
-                    <motion.span 
-                      className="absolute inset-0 w-full bg-gradient-to-r from-transparent via-white/60 to-transparent"
-                      initial={{ x: -200, opacity: 0 }}
-                      animate={{ 
-                        x: 200, 
-                        opacity: [0, 1, 0],
-                      }}
-                      transition={{ 
-                        repeat: Infinity,
-                        repeatDelay: 1.5,
-                        duration: 1.2,
-                        ease: "easeInOut",
-                      }}
-                    />
-                  </span>
+                  </motion.div>
                 </motion.span>
                 
                 <motion.span 
@@ -298,10 +305,10 @@ const HeroSection = () => {
                 <Sparkles className="h-4 w-4 text-gold animate-pulse" /> Live Trading Performance
               </h3>
               
-              {/* Modern chart with thinner lines and enhanced activity */}
+              {/* Updated chart with animated path */}
               <div className="h-60 w-full relative">
                 <svg width="100%" height="100%" viewBox="0 0 100 50" className="overflow-visible">
-                  {/* Thinner grid lines */}
+                  {/* Grid lines */}
                   <g className="grid-lines">
                     {[0, 10, 20, 30, 40, 50].map((line) => (
                       <line 
@@ -327,74 +334,59 @@ const HeroSection = () => {
                     ))}
                   </g>
                   
-                  {/* Chart line - thinner and with enhanced gradient */}
+                  {/* Animated chart line that updates with chartData */}
                   <motion.path
-                    initial={{ pathLength: 0 }}
-                    animate={{ pathLength: 1 }}
-                    transition={{ duration: 2, ease: "easeInOut", delay: 0.5 }}
-                    d="M0,35 Q10,32 15,30 T30,25 T45,20 T60,15 T75,10 T100,15"
+                    d={`M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`}
                     fill="none"
                     stroke="url(#line-gradient)"
                     strokeWidth="0.8"
                     strokeLinecap="round"
+                    animate={{ d: `M${chartData.map(point => `${point.x},${point.y}`).join(' L')}` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   />
                   
-                  {/* Gradient area under line with more transparency */}
+                  {/* Animated gradient area under chart line */}
                   <motion.path
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    transition={{ duration: 1, delay: 1.5 }}
-                    d="M0,35 Q10,32 15,30 T30,25 T45,20 T60,15 T75,10 T100,15 L100,50 L0,50 Z"
+                    d={`M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1].x},50 L${chartData[0].x},50 Z`}
                     fill="url(#area-gradient)"
                     opacity="0.15"
+                    animate={{ d: `M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length-1].x},50 L${chartData[0].x},50 Z` }}
+                    transition={{ duration: 0.5, ease: "easeInOut" }}
                   />
                   
-                  {/* Animated data points */}
-                  {[
-                    {x: 0, y: 35, delay: 0.7},
-                    {x: 15, y: 30, delay: 0.9},
-                    {x: 30, y: 25, delay: 1.1},
-                    {x: 45, y: 20, delay: 1.3},
-                    {x: 60, y: 15, delay: 1.5},
-                    {x: 75, y: 10, delay: 1.7},
-                    {x: 100, y: 15, delay: 1.9}
-                  ].map((point, i) => (
+                  {/* Small glowing dots along the path */}
+                  {chartData.map((point, i) => (
                     <motion.circle 
                       key={i}
-                      initial={{ opacity: 0, r: 0 }}
-                      animate={{ opacity: 1, r: 0.7 }}
-                      transition={{ delay: point.delay, duration: 0.5 }}
                       cx={point.x} 
                       cy={point.y} 
+                      r="0.7"
                       fill="#FFD700"
-                    >
-                      <animate attributeName="r" values="0.7;1.2;0.7" dur="3s" repeatCount="indefinite" begin={`${i * 0.2}s`} />
-                    </motion.circle>
+                      animate={{ 
+                        cy: point.y,
+                        opacity: i % 2 === 0 ? [0.5, 1, 0.5] : [1, 0.5, 1]
+                      }}
+                      transition={{ 
+                        duration: 2 + (i * 0.2),
+                        repeat: Infinity,
+                        ease: "easeInOut"
+                      }}
+                    />
                   ))}
                   
-                  {/* Live animated data point with dynamic movement */}
-                  <motion.circle 
-                    cx={chartData.x} 
-                    cy={chartData.y} 
-                    r="1.2" 
-                    fill="#FFD700"
-                  >
-                    <animate attributeName="r" values="1.2;1.8;1.2" dur="1s" repeatCount="indefinite" />
-                    <animate attributeName="fill" values="#FFD700;#9b87f5;#FFD700" dur="3s" repeatCount="indefinite" />
-                  </motion.circle>
-
                   {/* Activity indicator pulse rings */}
                   <motion.circle 
-                    cx={chartData.x} 
-                    cy={chartData.y} 
+                    cx={chartData[Math.floor(chartData.length / 2)].x} 
+                    cy={chartData[Math.floor(chartData.length / 2)].y}
                     r="3" 
                     fill="none"
                     stroke="#FFD700"
                     strokeWidth="0.3"
-                    initial={{ opacity: 0 }}
                     animate={{ 
                       opacity: [0.8, 0],
-                      r: [1, 10]
+                      r: [1, 10],
+                      cx: chartData[Math.floor(chartData.length / 2)].x,
+                      cy: chartData[Math.floor(chartData.length / 2)].y
                     }}
                     transition={{
                       repeat: Infinity,
@@ -585,4 +577,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-

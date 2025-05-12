@@ -1,3 +1,4 @@
+
 import { supabase } from "@/integrations/supabase/client";
 import { BotSettings } from "./types";
 
@@ -69,8 +70,8 @@ export const getRandomStrategy = () => {
 };
 
 export const generateProfitPercentage = () => {
-  // Generate a random profit percentage between 5% and 10%
-  return Math.random() * (0.10 - 0.05) + 0.05;
+  // Generate a random profit percentage between 3% and 7.5%
+  return Math.random() * (0.075 - 0.03) + 0.03;
 };
 
 export const getTradesExecutedToday = async (userId: string): Promise<number> => {

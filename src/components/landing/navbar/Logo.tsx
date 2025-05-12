@@ -14,7 +14,7 @@ const Logo = () => {
       className={`flex flex-col items-center ${isMobile ? 'mx-auto' : ''}`}
     >
       <img 
-        src="https://i.imgur.com/hNtMxev.png" 
+        src="https://i.imgur.com/UA0DBN4.png" 
         alt="KRYPTO AI Logo" 
         className="h-12 object-contain" 
       />

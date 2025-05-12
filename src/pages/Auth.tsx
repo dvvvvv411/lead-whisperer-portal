@@ -12,7 +12,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen bg-casino-darker flex flex-col items-center justify-center p-4">
-      {/* Logo at the top */}
+      {/* Logo at the top with back button */}
       <AuthLogo />
       
       {/* Main content with two connected boxes */}

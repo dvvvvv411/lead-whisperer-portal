@@ -18,7 +18,7 @@ const TradingBotHeader = ({ onManualTrade, tradesRemaining, userName }: TradingB
           "shadow-lg shadow-gold/10"
         )}>
           <img 
-            src="https://i.imgur.com/hNtMxev.png" 
+            src="https://i.imgur.com/UA0DBN4.png" 
             alt="KRYPTO AI Logo" 
             className="h-8 w-auto object-contain" 
           />

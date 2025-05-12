@@ -127,7 +127,7 @@ const TradeSimulationDialog = React.memo(({
             <span className="text-gold/70">
               {progress < 100 ? "Trading wird analysiert..." : "Analyse abgeschlossen!"}
             </span>
-            <span>
+            <span className="text-white/80">
               {progress < 100 ? "Bitte warten..." : "Trade wird ausgeführt..."}
             </span>
           </div>

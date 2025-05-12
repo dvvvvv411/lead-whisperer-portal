@@ -104,12 +104,12 @@ const TradingBotContent = ({
 
       {/* Bot Status Overview with daily stats */}
       <div className="flex items-center justify-between mb-2">
-        <h3 className="font-medium text-white drop-shadow-sm">Bot Trading Aktivität</h3>
+        <h3 className="font-medium text-white text-lg drop-shadow-sm">Bot Trading Aktivität</h3>
       </div>
       <BotStatusOverview
         isActive={status.isActive || simulationOpen}
-        totalProfitAmount={dailyProfitAmount} // Changed to daily profit
-        totalProfitPercentage={dailyProfitPercentage} // Changed to daily percentage
+        totalProfitAmount={dailyProfitAmount} 
+        totalProfitPercentage={dailyProfitPercentage} 
         tradesExecuted={status.tradesExecuted}
         dailyTradesExecuted={status.dailyTradesExecuted}
         lastTradeTime={status.lastTradeTime}

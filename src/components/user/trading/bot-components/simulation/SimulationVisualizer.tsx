@@ -1,3 +1,4 @@
+
 import React, { useEffect, useState } from 'react';
 import { Line, LineChart, ResponsiveContainer, Tooltip, XAxis, YAxis } from "recharts";
 import { TrendingUp, Zap, Star } from "lucide-react";
@@ -73,10 +74,10 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
   
   // Get message based on progress
   const getMessage = () => {
-    if (progress < 25) return "Initializing data analysis...";
-    if (progress < 50) return "Pattern recognition in progress...";
-    if (progress < 75) return "Optimization algorithm running...";
-    return "Finalizing trade recommendation...";
+    if (progress < 25) return "Datenanalyse wird initialisiert...";
+    if (progress < 50) return "Mustererkennungsanalyse läuft...";
+    if (progress < 75) return "Optimierungsalgorithmus wird ausgeführt...";
+    return "Handelsempfehlung wird finalisiert...";
   };
   
   return (
@@ -129,7 +130,7 @@ const SimulationVisualizer: React.FC<SimulationVisualizerProps> = ({
           <div className="flex items-center justify-center h-full">
             <div className="animate-pulse flex items-center gap-2">
               <TrendingUp className="h-5 w-5 text-gold" />
-              <span className="text-muted-foreground">Analyzing market data...</span>
+              <span className="text-white/80">Marktdaten werden analysiert...</span>
             </div>
           </div>
         )}

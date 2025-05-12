@@ -34,7 +34,7 @@ const LogoutButton = ({ className }: LogoutButtonProps) => {
       variant="outline" 
       onClick={handleLogout}
       className={cn(
-        "border-gold/30 hover:bg-gold/10 text-white shadow-sm", 
+        "border-gold/40 hover:bg-gold/20 text-white shadow-sm", 
         className
       )}
     >

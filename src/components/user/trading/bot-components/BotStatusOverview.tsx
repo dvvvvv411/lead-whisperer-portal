@@ -70,7 +70,7 @@ const BotStatusOverview = ({
         </div>
       </div>
       
-      {/* Profit card */}
+      {/* Daily profit card - Updated title to clarify it's daily */}
       <div className={cn(
         "p-4 rounded-lg border relative overflow-hidden",
         totalProfitAmount > 0 

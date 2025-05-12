@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { CheckCircle, ShieldCheck, Lock, Sparkles, Award } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+
 const ContactForm = () => {
   const {
     toast
@@ -187,7 +188,7 @@ const ContactForm = () => {
       opacity: 1,
       y: 0
     }} className="flex justify-center mb-4">
-        <img alt="KI-Trading Logo" src="https://i.imgur.com/ESfBVvP.png" className="h-16 object-contain" />
+        <img alt="KI-Trading Logo" src="https://i.imgur.com/ESfBVvP.png" className="h-24 object-contain" />
       </motion.div>
       
       {/* Motivational text section */}

@@ -15,7 +15,10 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <section id="hero" className="pt-24 pb-0 px-4 relative overflow-hidden">
+    <section id="hero" className="pt-28 pb-16 px-4 relative overflow-hidden">
+      {/* Gradient background */}
+      <div className="absolute inset-0 bg-gradient-to-b from-casino-darker to-black opacity-80 z-0"></div>
+      
       {/* Animated background elements */}
       <div className="absolute inset-0 z-0">
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl animate-pulse"></div>
@@ -150,18 +153,12 @@ const HeroSection = () => {
                 </div>
               </div>
             </div>
-            
-            {/* Floating elements */}
-            <motion.div
-              className="absolute -top-6 -right-6 p-3 bg-casino-card rounded-lg shadow-lg shadow-purple-500/10 border border-white/10"
-              animate={{ y: [0, -10, 0] }}
-              transition={{ repeat: Infinity, duration: 3 }}
-            >
-              <TrendingUp className="h-6 w-6 text-green-500" />
-            </motion.div>
           </motion.div>
         </div>
       </div>
+      
+      {/* Bottom separator */}
+      <div className="absolute bottom-0 left-0 right-0 h-16 bg-gradient-to-t from-casino-darker to-transparent"></div>
     </section>
   );
 };

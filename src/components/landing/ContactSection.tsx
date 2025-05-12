@@ -25,11 +25,12 @@ const ContactSection = () => {
   };
 
   return (
-    <section id="contact" className="py-20 relative overflow-hidden">
+    <section id="contact" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-1/3 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full filter blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-purple-500/10 rounded-full filter blur-3xl animate-pulse" style={{ animationDelay: "2s" }}></div>
+        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-dark to-transparent"></div>
+        <div className="absolute top-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
+        <div className="absolute bottom-1/3 right-1/4 w-96 h-96 bg-gold/5 rounded-full filter blur-3xl"></div>
       </div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -57,7 +58,7 @@ const ContactSection = () => {
           </motion.p>
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-center">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-start">
           {/* 3D Animation Side */}
           <motion.div
             initial={{ opacity: 0, x: -30 }}
@@ -73,13 +74,13 @@ const ContactSection = () => {
               }}
               onMouseMove={handleMouseMove}
               onMouseLeave={handleMouseLeave}
-              className="bg-casino-card border border-white/10 rounded-xl p-8 shadow-lg relative overflow-hidden"
+              className="bg-gradient-to-br from-casino-card to-black border border-white/10 rounded-xl p-8 shadow-lg shadow-black/40 relative overflow-hidden"
             >
               {/* Glow effect */}
-              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-purple-500/20 rounded-xl blur opacity-30"></div>
+              <div className="absolute -inset-0.5 bg-gradient-to-r from-gold/20 to-accent1/20 rounded-xl blur opacity-20"></div>
               
               <div className="relative">
-                <h3 className="text-2xl font-bold mb-6">Deine Trading-Reise beginnt hier</h3>
+                <h3 className="text-2xl font-bold mb-6 text-white">Deine Trading-Reise beginnt hier</h3>
                 
                 {/* Animated Trading Graph */}
                 <div className="mb-8 relative">
@@ -132,11 +133,11 @@ const ContactSection = () => {
                 
                 {/* Stats */}
                 <div className="grid grid-cols-2 gap-4 mb-6">
-                  <div className="bg-white/5 p-3 rounded-lg">
+                  <div className="bg-black/30 p-3 rounded-lg">
                     <p className="text-xs text-gray-400">Automatische Analysen</p>
                     <p className="text-xl font-bold text-gold">24/7</p>
                   </div>
-                  <div className="bg-white/5 p-3 rounded-lg">
+                  <div className="bg-black/30 p-3 rounded-lg">
                     <p className="text-xs text-gray-400">KI-Technologie</p>
                     <p className="text-xl font-bold text-gold">Neueste Gen</p>
                   </div>
@@ -167,11 +168,18 @@ const ContactSection = () => {
             whileInView={{ opacity: 1, x: 0 }}
             viewport={{ once: true }}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="bg-white/5 backdrop-blur-md rounded-xl shadow-lg border border-white/10 p-6"
+            className="bg-gradient-to-br from-black to-casino-card backdrop-blur-md rounded-xl shadow-xl border border-white/5 p-6"
           >
             <ContactForm />
           </motion.div>
         </div>
+      </div>
+      
+      {/* Top pattern */}
+      <div className="absolute inset-x-0 top-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12">
+          <path fill="#21283B" d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,64C672,64,768,64,864,53.3C960,43,1056,21,1152,16C1248,11,1344,21,1392,26.7L1440,32L1440,0L1392,0C1344,0,1248,0,1152,0C1056,0,960,0,864,0C768,0,672,0,576,0C480,0,384,0,288,0C192,0,96,0,48,0L0,0Z"></path>
+        </svg>
       </div>
     </section>
   );

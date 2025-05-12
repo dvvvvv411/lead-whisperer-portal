@@ -39,9 +39,9 @@ const CtaSection = () => {
   }, [availablePlaces, controls]);
 
   return (
-    <section id="cta" className="mt-0 pt-4 relative overflow-hidden">
+    <section id="cta" className="py-16 relative bg-casino-dark overflow-hidden">
       {/* Background elements */}
-      <div className="absolute inset-0 bg-gradient-to-b from-casino-darker via-casino-card to-casino-darker opacity-40"></div>
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-900/20 to-blue-900/20 opacity-30"></div>
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
       
       <div className="container mx-auto px-4 relative z-10">
@@ -168,6 +168,17 @@ const CtaSection = () => {
             </motion.div>
           </motion.div>
         </div>
+      </div>
+      
+      {/* Bottom wave separator */}
+      <div className="absolute bottom-0 left-0 right-0">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 120" className="w-full">
+          <path 
+            fill="#0B0D0E" 
+            fillOpacity="1" 
+            d="M0,64L60,58.7C120,53,240,43,360,48C480,53,600,75,720,80C840,85,960,75,1080,58.7C1200,43,1320,21,1380,10.7L1440,0L1440,120L1380,120C1320,120,1200,120,1080,120C960,120,840,120,720,120C600,120,480,120,360,120C240,120,120,120,60,120L0,120Z"
+          ></path>
+        </svg>
       </div>
     </section>
   );

@@ -13,7 +13,7 @@ const StatsSection = () => {
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
-          { title: "Durchschnittlicher Gewinn", value: "bis zu 30%" },
+          { title: "monatliche Rendite", value: "bis zu 30%" },
           { title: "Erfolgsrate", value: "über 90%" },
           { title: "Trades pro Monat", value: "1.460.000 +" },
           { title: "Aktivierungsgebühr", value: "250€" }

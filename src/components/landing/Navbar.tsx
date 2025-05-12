@@ -38,9 +38,13 @@ const Navbar = () => {
         <div className="flex justify-between items-center">
           <motion.div
             whileHover={{ scale: 1.05 }}
-            className="flex items-center"
+            className="flex items-center pl-2"
           >
-            <span className="text-2xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">KRYPTO AI</span>
+            <img 
+              src="https://i.imgur.com/lL2FhfD.png" 
+              alt="KRYPTO AI Logo" 
+              className="h-12 object-contain"
+            />
           </motion.div>
           
           {/* Desktop Navigation */}

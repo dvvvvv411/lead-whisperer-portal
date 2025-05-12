@@ -48,7 +48,7 @@ const Navbar = () => {
       className={`fixed w-full top-0 z-50 transition-all duration-300 ${
         scrolled
           ? "bg-casino-darker/90 backdrop-blur-lg shadow-lg py-2"
-          : "bg-transparent py-6"
+          : "bg-transparent py-8" // Increased padding for better spacing from hero section
       }`}
     >
       <div className="container mx-auto px-4">
@@ -104,7 +104,7 @@ const Navbar = () => {
             >
               <Button 
                 className="bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
-                onClick={() => window.location.href = '/admin'}
+                onClick={() => window.location.href = '/auth'} // Changed to new auth page
               >
                 <LogIn className="mr-2 h-4 w-4" />
                 Anmelden
@@ -122,7 +122,7 @@ const Navbar = () => {
               <Button 
                 className="bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
                 size="sm"
-                onClick={() => window.location.href = '/admin'}
+                onClick={() => window.location.href = '/auth'} // Changed to new auth page
               >
                 <LogIn className="mr-1 h-4 w-4" />
                 Login

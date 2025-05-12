@@ -18,6 +18,7 @@ import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
 import UserSettings from "./pages/UserSettings";
 import NotFound from "./pages/NotFound";
+import Auth from "./pages/Auth"; // Import the new Auth page
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
 
 // Create a new QueryClient instance
@@ -46,6 +47,7 @@ function App() {
               <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
               <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
               <Route path="/nutzer/einstellungen" element={<UserSettings />} />
+              <Route path="/auth" element={<Auth />} /> {/* Add the new Auth route */}
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />
             </Routes>
@@ -57,4 +59,3 @@ function App() {
 }
 
 export default App;
-

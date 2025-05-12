@@ -12,7 +12,7 @@ const WalletLoadingState = ({ loading, error, onRetry }: WalletLoadingStateProps
   if (loading) {
     return (
       <div className="flex justify-center items-center p-8">
-        <Loader2 className="h-6 w-6 animate-spin mr-2 text-accent1-light" />
+        <Loader2 className="h-6 w-6 animate-spin mr-2 text-gold-light" />
         <span className="text-white/80">Zahlungsmethoden werden geladen...</span>
       </div>
     );

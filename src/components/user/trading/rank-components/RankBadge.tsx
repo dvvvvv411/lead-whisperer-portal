@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { cn } from "@/lib/utils";
-import { Trophy } from "lucide-react";
+import { Trophy, Award, Medal } from "lucide-react";
 
 interface RankBadgeProps {
   currentRank: number;
@@ -19,19 +19,24 @@ export const RankBadge = ({ currentRank }: RankBadgeProps) => {
     }
   };
 
+  // Choose the appropriate icon based on rank
+  const RankIcon = () => {
+    if (currentRank >= 4) {
+      return <Trophy className="h-7 w-7 text-yellow-400 drop-shadow-md animate-pulse" />;
+    } else if (currentRank === 3) {
+      return <Medal className="h-7 w-7 text-yellow-400 drop-shadow-md animate-pulse" />;
+    } else if (currentRank === 2) {
+      return <Medal className="h-7 w-7 text-slate-300 drop-shadow-md animate-pulse" />;
+    } else {
+      return <Award className="h-7 w-7 text-amber-600 drop-shadow-md animate-pulse" />;
+    }
+  };
+
   return (
     <div className="flex flex-col items-center mb-4">
       <span className="text-sm text-muted-foreground">Aktueller Rang</span>
       <div className="flex items-center gap-2 mt-1">
-        <Trophy 
-          className={cn(
-            "h-7 w-7",
-            currentRank >= 3 ? "text-yellow-400" : 
-            currentRank === 2 ? "text-slate-300" : 
-            "text-amber-600", 
-            "drop-shadow-md animate-pulse"
-          )}
-        />
+        <RankIcon />
         <span className={cn(
           "text-2xl font-bold",
           currentRank >= 3 

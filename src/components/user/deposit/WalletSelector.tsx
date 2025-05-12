@@ -29,13 +29,13 @@ const WalletSelector = ({ control, wallets, onWalletChange }: WalletSelectorProp
             defaultValue={field.value}
           >
             <FormControl>
-              <SelectTrigger className="bg-black/30 border-accent1/30 text-white/80">
+              <SelectTrigger className="bg-black/30 border-gold/30 text-white/80">
                 <SelectValue placeholder="Kryptowährung auswählen" />
               </SelectTrigger>
             </FormControl>
-            <SelectContent className="bg-casino-darker border-accent1/30">
+            <SelectContent className="bg-casino-darker border-gold/30">
               {wallets.map((wallet) => (
-                <SelectItem key={wallet.id} value={wallet.currency} className="text-white/80 focus:bg-accent1/20 focus:text-white">
+                <SelectItem key={wallet.id} value={wallet.currency} className="text-white/80 focus:bg-gold/20 focus:text-white">
                   {wallet.currency}
                 </SelectItem>
               ))}

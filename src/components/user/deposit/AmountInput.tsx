@@ -21,7 +21,7 @@ const AmountInput = ({ control }: AmountInputProps) => {
               type="number" 
               placeholder="100" 
               {...field}
-              className="bg-black/30 border-accent1/30 text-white/80 focus-visible:ring-accent1-light focus-visible:border-accent1-light" 
+              className="bg-black/30 border-gold/30 text-white/80 focus-visible:ring-gold-light focus-visible:border-gold-light" 
             />
           </FormControl>
           <FormMessage />

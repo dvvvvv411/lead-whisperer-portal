@@ -13,7 +13,6 @@ import ActivationForm from "@/components/user/activation/ActivationForm";
 import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import LogoutButton from "@/components/user/navbar/LogoutButton";
 import ActivationHero from "@/components/user/activation/ActivationHero";
-import Testimonials from "@/components/user/activation/Testimonials";
 import ActivationProgress from "@/components/user/activation/ActivationProgress";
 
 // Credit threshold required to access the dashboard (in EUR)
@@ -122,15 +121,36 @@ const UserActivation = () => {
         className="min-h-screen bg-gradient-to-b from-slate-950 to-slate-900 pb-16"
       >
         <div className="container mx-auto p-4 max-w-7xl">
-          <div className="flex justify-between items-center mb-8 pt-4">
-            <h1 className="text-3xl font-bold gradient-text">Konto Aktivierung</h1>
+          <div className="flex justify-end mb-8 pt-4">
             <LogoutButton />
           </div>
           
-          <div className="mb-10 text-center">
-            <p className="text-lg text-gray-300">
-              Willkommen {user?.email}, nur ein Schritt trennt Sie von einer Welt der Möglichkeiten.
-            </p>
+          <motion.div 
+            className="text-center mb-10"
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            transition={{ 
+              duration: 0.7, 
+              type: "spring",
+              bounce: 0.4
+            }}
+          >
+            <h1 className="text-4xl md:text-5xl font-bold gradient-text py-2 px-4 inline-block relative">
+              Konto Aktivierung
+              <motion.div 
+                className="absolute -z-10 inset-0 bg-gold/10 rounded-lg blur-xl"
+                animate={{ 
+                  scale: [1, 1.05, 1],
+                  opacity: [0.5, 0.7, 0.5] 
+                }}
+                transition={{
+                  duration: 3,
+                  repeat: Infinity,
+                  repeatType: "reverse"
+                }}
+              />
+            </h1>
+            
             {userCredit !== null && userCredit > 0 && (
               <p className="mt-2 font-medium">
                 Aktuelles Guthaben: {userCredit.toFixed(2)}€ 
@@ -139,7 +159,7 @@ const UserActivation = () => {
                 )}
               </p>
             )}
-          </div>
+          </motion.div>
 
           {!paymentSubmitted ? (
             <>
@@ -147,15 +167,12 @@ const UserActivation = () => {
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-12">
                 {/* Linke Spalte mit Illustration und Animation */}
-                <div>
+                <div className="w-full">
                   <ActivationHero />
-                  <div className="mt-6 px-4">
-                    <Testimonials />
-                  </div>
                 </div>
                 
                 {/* Rechte Spalte mit Aktivierungsformular */}
-                <div>
+                <div className="w-full">
                   <ActivationForm 
                     user={user} 
                     creditThreshold={CREDIT_ACTIVATION_THRESHOLD}

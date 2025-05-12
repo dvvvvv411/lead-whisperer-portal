@@ -22,7 +22,7 @@ const ActivationHero = () => {
   }, [profitCount]);
 
   return (
-    <div className="px-6 py-8 md:p-10 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-gold/20 relative overflow-hidden">
+    <div className="px-6 py-8 md:p-10 bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl border border-gold/20 relative overflow-hidden h-full">
       {/* Hintergrund-Effekt */}
       <div className="absolute -right-20 -top-20 w-64 h-64 bg-gold/5 rounded-full blur-3xl" />
       <div className="absolute -left-10 -bottom-10 w-40 h-40 bg-purple-500/5 rounded-full blur-2xl" />

@@ -1,5 +1,5 @@
-
 import { motion } from "framer-motion";
+import BackgroundEffects from "./partners/BackgroundEffects";
 
 const partners = [
   { id: 1, name: "CryptoX", logo: "CX" },
@@ -14,33 +14,7 @@ const PartnersSection = () => {
   return (
     <section className="py-16 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        
-        {/* Animated gradients */}
-        <div className="absolute top-1/4 right-1/4 w-60 h-60 bg-gold/5 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-1/3 left-1/4 w-72 h-72 bg-accent1/5 rounded-full filter blur-3xl"></div>
-        
-        {/* Animated particles */}
-        <motion.div 
-          className="absolute top-20 left-1/3 w-1 h-1 rounded-full bg-gold/80"
-          animate={{ 
-            opacity: [0.3, 0.8, 0.3],
-            scale: [1, 1.5, 1]
-          }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-40 right-1/4 w-1 h-1 rounded-full bg-gold/60"
-          animate={{ 
-            opacity: [0.2, 0.7, 0.2],
-            scale: [1, 1.8, 1]
-          }}
-          transition={{ duration: 3.5, repeat: Infinity, ease: "easeInOut", delay: 1.2 }}
-        />
-      </div>
+      <BackgroundEffects />
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 

@@ -1,7 +1,7 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Star } from "lucide-react";
+import BackgroundEffects from "./testimonials/BackgroundEffects";
 
 const testimonials = [
   {
@@ -48,33 +48,7 @@ const TestimonialsSection = () => {
   return (
     <section className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
-      <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-darker to-transparent"></div>
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        
-        {/* Animated gradients */}
-        <div className="absolute top-1/3 left-[15%] w-64 h-64 bg-gold/5 rounded-full filter blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-[10%] w-72 h-72 bg-accent1/10 rounded-full filter blur-3xl"></div>
-        
-        {/* Animated particles */}
-        <motion.div 
-          className="absolute top-40 right-1/4 w-1 h-1 rounded-full bg-gold/80"
-          animate={{ 
-            opacity: [0.3, 0.8, 0.3],
-            scale: [1, 1.5, 1]
-          }}
-          transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-32 left-1/3 w-1 h-1 rounded-full bg-gold/60"
-          animate={{ 
-            opacity: [0.2, 0.7, 0.2],
-            scale: [1, 1.8, 1]
-          }}
-          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
-        />
-      </div>
+      <BackgroundEffects />
       
       <div className="container mx-auto px-4 relative z-10">
         <motion.div 

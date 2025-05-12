@@ -1,6 +1,7 @@
 
 import { motion, useAnimation } from "framer-motion";
 import { useEffect } from "react";
+import SharedBackgroundEffects from "./common/SharedBackgroundEffects";
 
 const benefits = [
   {
@@ -52,26 +53,10 @@ const BenefitsSection = () => {
     <section id="benefits" className="py-20 relative overflow-hidden bg-casino-darker">
       {/* Background elements */}
       <div className="absolute inset-0 z-0">
-        <div className="absolute top-0 w-full h-12 bg-gradient-to-b from-casino-card to-transparent"></div>
-        {/* Grid pattern */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        
-        {/* Animated particles */}
-        <motion.div 
-          className="absolute top-1/4 left-1/4 w-64 h-64 bg-accent1/5 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.3, 0.6, 0.3],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{ duration: 6, repeat: Infinity, ease: "easeInOut" }}
-        />
-        <motion.div 
-          className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gold/5 rounded-full filter blur-3xl"
-          animate={{ 
-            opacity: [0.2, 0.5, 0.2],
-            scale: [1, 1.15, 1]
-          }}
-          transition={{ duration: 8, repeat: Infinity, ease: "easeInOut", delay: 1 }}
+        <SharedBackgroundEffects 
+          variant="primary"
+          showTopGradient={true}
+          showBottomGradient={true}
         />
       </div>
       
@@ -136,13 +121,6 @@ const BenefitsSection = () => {
             <span className="text-gold font-medium">KI-Trading</span> – Die Zukunft des automatisierten Handels
           </div>
         </motion.div>
-      </div>
-      
-      {/* Bottom pattern */}
-      <div className="absolute inset-x-0 bottom-0">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1440 100" preserveAspectRatio="none" className="w-full h-12">
-          <path fill="#0B0D0E" d="M0,32L48,37.3C96,43,192,53,288,58.7C384,64,480,64,576,64C672,64,768,64,864,53.3C960,43,1056,21,1152,16C1248,11,1344,21,1392,26.7L1440,32L1440,100L1392,100C1344,100,1248,100,1152,100C1056,100,960,100,864,100C768,100,672,100,576,100C480,100,384,100,288,100C192,100,96,100,48,100L0,100Z"></path>
-        </svg>
       </div>
     </section>
   );

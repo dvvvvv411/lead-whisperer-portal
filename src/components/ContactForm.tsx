@@ -19,7 +19,6 @@ import {
 const ContactForm = () => {
   const { toast } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [formData, setFormData] = useState({
     name: "",
@@ -72,10 +71,8 @@ const ContactForm = () => {
         throw error;
       }
 
-      // Show success dialog instead of toast
+      // Show success dialog
       setShowSuccessDialog(true);
-      
-      setIsSuccess(true);
       
       // Formular zurücksetzen
       setFormData({
@@ -203,28 +200,6 @@ const ContactForm = () => {
       </Dialog>
     );
   };
-
-  if (isSuccess && !showSuccessDialog) {
-    return (
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col items-center justify-center h-full text-center p-6"
-      >
-        <div className="mb-6 bg-green-500/20 rounded-full p-4">
-          <CheckCircle className="w-12 h-12 text-green-500" />
-        </div>
-        <h3 className="text-xl font-bold mb-2 text-white">Anfrage erfolgreich gesendet!</h3>
-        <p className="text-gray-300 mb-6">Wir werden uns in Kürze bei dir melden.</p>
-        <Button 
-          onClick={() => setIsSuccess(false)}
-          className="bg-gradient-to-r from-gold to-gold-light text-black font-medium"
-        >
-          Zurück zum Formular
-        </Button>
-      </motion.div>
-    );
-  }
 
   return (
     <div className="w-full max-w-md mx-auto">

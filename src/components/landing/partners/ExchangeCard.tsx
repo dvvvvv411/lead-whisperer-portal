@@ -14,20 +14,26 @@ const ExchangeCard = ({ name, logo, websiteUrl, index }: ExchangeCardProps) => {
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
-      transition={{ duration: 0.5, delay: index * 0.1 }}
-      className="bg-white/3 backdrop-blur-sm border border-white/5 rounded-lg overflow-hidden p-1.5"
+      transition={{ duration: 0.6, delay: index * 0.1 }}
+      className="bg-white/5 backdrop-blur-sm border border-white/10 rounded-lg overflow-hidden p-4"
       onClick={() => window.open(websiteUrl, '_blank')}
-      whileHover={{ scale: 1.05 }}
-      whileTap={{ scale: 0.95 }}
+      whileHover={{ 
+        scale: 1.05,
+        boxShadow: "0 0 15px rgba(255, 215, 0, 0.3)",
+        borderColor: "rgba(255, 215, 0, 0.3)"
+      }}
+      whileTap={{ scale: 0.97 }}
       style={{ cursor: 'pointer' }}
     >
-      <div className="flex flex-col items-center justify-center gap-1">
-        {/* Logo - Smaller size container with more transparent background */}
-        <div className="w-10 h-10 bg-white/5 rounded-md flex items-center justify-center p-1 border border-white/5">
-          <img 
+      <div className="flex flex-col items-center justify-center gap-3">
+        {/* Logo container with glow effect */}
+        <div className="w-16 h-16 bg-white/10 rounded-md flex items-center justify-center p-2 border border-white/10">
+          <motion.img 
             src={logo} 
             alt={`${name} logo`} 
             className="max-w-full max-h-full object-contain" 
+            whileHover={{ scale: 1.05 }}
+            transition={{ type: "spring", stiffness: 300 }}
             style={{ width: "auto", height: "auto", maxHeight: "100%", maxWidth: "100%" }}
             onError={(e) => {
               // Fallback if image loading fails
@@ -38,7 +44,7 @@ const ExchangeCard = ({ name, logo, websiteUrl, index }: ExchangeCardProps) => {
         </div>
         
         {/* Name */}
-        <h3 className="text-[10px] font-medium text-gold text-center">{name}</h3>
+        <h3 className="text-sm font-medium text-gold text-center">{name}</h3>
       </div>
     </motion.div>
   );

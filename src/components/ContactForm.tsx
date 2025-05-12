@@ -107,7 +107,22 @@ const ContactForm = () => {
 
   return (
     <div className="w-full max-w-md mx-auto">
-      <h2 className="text-2xl font-bold text-center mb-6 bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">Starte jetzt mit KI-Trading</h2>
+      {/* Motivational text section - moved to the top, replacing the heading */}
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.2 }}
+        className="mb-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20"
+      >
+        <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
+          Jetzt mit KI-Trading starten!
+        </h3>
+        <p className="text-white text-center font-medium mb-1">Bis zu 20% Gewinn täglich</p>
+        <p className="text-gray-300 text-sm text-center">
+          Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch.
+        </p>
+      </motion.div>
+      
       <form onSubmit={handleSubmit} className="space-y-4">
         <motion.div 
           className="space-y-2"
@@ -163,27 +178,12 @@ const ContactForm = () => {
           />
         </motion.div>
         
-        {/* Added motivation text section */}
-        <motion.div
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
-          className="mt-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20"
-        >
-          <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
-            Jetzt mit KI-Trading starten!
-          </h3>
-          <p className="text-white text-center font-medium mb-1">Bis zu 20% Gewinn täglich</p>
-          <p className="text-gray-300 text-sm text-center">
-            Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch.
-          </p>
-        </motion.div>
-        
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
           whileHover={{ scale: 1.03 }}
+          className="pt-4" 
         >
           <Button 
             type="submit" 

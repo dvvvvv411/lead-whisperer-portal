@@ -1,6 +1,6 @@
 
 import { Badge } from "@/components/ui/badge";
-import { TrendingUpIcon, ActivityIcon, Zap } from "lucide-react";
+import { TrendingUpIcon, ActivityIcon, BarChart3, Zap } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface BotStatusOverviewProps {
@@ -104,7 +104,7 @@ const BotStatusOverview = ({
         </div>
       </div>
       
-      {/* Activity card */}
+      {/* Activity card - Updated to show total trades only */}
       <div className={cn(
         "p-4 rounded-lg border border-gold/10 bg-casino-card relative overflow-hidden"
       )}>
@@ -115,18 +115,16 @@ const BotStatusOverview = ({
           <p className="text-sm text-muted-foreground mb-1">Ausgeführte Trades</p>
           <div className="flex items-center">
             <ActivityIcon className="h-5 w-5 mr-2 text-accent1-light" />
-            <div className="text-xl font-bold">
-              <span className="text-accent1-light">{dailyTradesExecuted}</span>
-              <span className="text-sm text-muted-foreground"> / </span>
-              <span className="text-muted-foreground font-normal">{tradesExecuted} Gesamt</span>
+            <div className="text-xl font-bold text-accent1-light">
+              {tradesExecuted}
             </div>
           </div>
           
-          {dailyTradesExecuted > 0 && (
+          {tradesExecuted > 0 && (
             <div className="flex items-center justify-start mt-2">
               <Badge variant="outline" className="bg-accent1/10 text-accent1-light border-accent1/30">
-                <Zap className="h-3 w-3 mr-1" />
-                Aktiv
+                <BarChart3 className="h-3 w-3 mr-1" />
+                Trading Statistik
               </Badge>
             </div>
           )}

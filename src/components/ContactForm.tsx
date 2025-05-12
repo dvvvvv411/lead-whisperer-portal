@@ -203,9 +203,9 @@ const ContactForm = () => {
         <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
           Jetzt mit KI-Trading starten!
         </h3>
-        <p className="text-white text-center font-medium mb-1">Bis zu 20% Gewinn täglich</p>
+        <p className="text-white text-center font-medium mb-1">Bis zu 30% Gewinn monatlich</p>
         <p className="text-gray-300 text-sm text-center">
-          Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch.
+          Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch. Einmalig 250€ Aktivierungsgebühr, die als Trading-Guthaben verwendet wird.
         </p>
       </motion.div>
       

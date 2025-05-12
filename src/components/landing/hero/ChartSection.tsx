@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Bitcoin, Bot, Sparkles } from "lucide-react";
@@ -395,7 +394,7 @@ const ChartSection = () => {
                 repeatDelay: 5
               }}
             >
-              87%
+              über 90%
             </motion.p>
           </motion.div>
           
@@ -419,7 +418,7 @@ const ChartSection = () => {
                 repeatDelay: 5
               }}
             >
-              +15.2%
+              bis zu +30%
             </motion.p>
           </motion.div>
         </div>

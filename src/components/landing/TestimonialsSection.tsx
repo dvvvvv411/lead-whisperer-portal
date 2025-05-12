@@ -1,10 +1,9 @@
-
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Star } from "lucide-react";
 import BackgroundEffects from "./testimonials/BackgroundEffects";
 
-// Updated testimonials with realistic German names and image URLs
+// Updated testimonials with realistic German names and updated content
 const testimonials = [
   {
     id: 1,
@@ -12,7 +11,7 @@ const testimonials = [
     position: "Neueinsteiger",
     image: "https://i.imgur.com/jQzW1xe.png",
     rating: 5,
-    text: "Nach nur 2 Wochen mit dem KI-Trading-Bot habe ich bereits 680€ Gewinn gemacht. Die automatischen Trades sind ein Gamechanger für mich als Anfänger."
+    text: "Nach nur 3 Wochen mit dem KI-Trading-Bot habe ich bereits 920€ Gewinn gemacht. Die automatischen Trades sind ein Gamechanger für mich als Anfänger. Die Aktivierungsgebühr von 250€ hat sich schnell amortisiert."
   },
   {
     id: 2,
@@ -20,7 +19,7 @@ const testimonials = [
     position: "Erfahrene Traderin",
     image: "https://i.imgur.com/LVQAWtB.png",
     rating: 5,
-    text: "Ich trade seit 5 Jahren und war skeptisch. Nach einem Monat mit der KI habe ich meine bisherigen Ergebnisse verdoppelt. Die KI erkennt Muster, die ich verpasst hätte."
+    text: "Ich trade seit 5 Jahren und war skeptisch. Nach einem Monat mit der KI habe ich meine bisherigen Ergebnisse verdreifacht. Die KI erkennt Muster, die ich verpasst hätte. Die Rendite von 28% im letzten Monat hat meine Erwartungen übertroffen."
   },
   {
     id: 3,
@@ -28,7 +27,7 @@ const testimonials = [
     position: "Teilzeit-Investor",
     image: "https://i.imgur.com/XKpedxL.png",
     rating: 4,
-    text: "Endlich kann ich nebenbei investieren, ohne ständig die Märkte beobachten zu müssen. Der Bot handelt für mich rund um die Uhr und erzielt konstant gute Renditen."
+    text: "Endlich kann ich nebenbei investieren, ohne ständig die Märkte beobachten zu müssen. Der Bot handelt für mich rund um die Uhr und erzielt durchschnittlich 3-7% Gewinn pro Trade. Die 250€ Aktivierungsgebühr ist fair und wird als Trading-Guthaben gutgeschrieben."
   },
   {
     id: 4,
@@ -36,7 +35,7 @@ const testimonials = [
     position: "Finanzberaterin",
     image: "https://i.imgur.com/6pAGskz.png",
     rating: 5,
-    text: "Als Fachfrau bin ich begeistert von der Technologie. Die Algorithmen sind beeindruckend und die Erfolgsquote spricht für sich. Klare Empfehlung!"
+    text: "Als Fachfrau bin ich begeistert von der Technologie. Die Algorithmen sind beeindruckend und die Erfolgsquote von über 90% spricht für sich. Dass die Plattform die Nutzerzahl limitiert, um die Performance hoch zu halten, ist ein kluger Schritt. Klare Empfehlung!"
   }
 ];
 

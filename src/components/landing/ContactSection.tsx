@@ -60,7 +60,7 @@ const ContactSection = () => {
       case 0: return "Analysiere Marktdaten...";
       case 1: return "Gelegenheit erkannt!";
       case 2: return "Führe Trade aus...";
-      case 3: return "Gewinn realisiert! +3.2%";
+      case 3: return "Gewinn realisiert! +5.8%";
       default: return "KI-Bot aktiv";
     }
   };
@@ -91,7 +91,7 @@ const ContactSection = () => {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="text-gray-300 max-w-2xl mx-auto"
           >
-            Unser KI-Trading Bot analysiert den Markt rund um die Uhr und führt automatisch gewinnbringende Trades für dich durch.
+            Unser KI-Trading Bot analysiert den Markt rund um die Uhr und führt automatisch gewinnbringende Trades für dich durch - mit einer Erfolgsquote von über 90%.
           </motion.p>
         </div>
         
@@ -253,7 +253,7 @@ const ContactSection = () => {
                     <div className="space-y-2">
                       {[
                         { action: "Kauf", crypto: "ETH", amount: "0.214", time: "vor 2 Min", profit: null },
-                        { action: "Verkauf", crypto: "BTC", amount: "0.008", time: "vor 15 Min", profit: "+3.2%" }
+                        { action: "Verkauf", crypto: "BTC", amount: "0.008", time: "vor 15 Min", profit: "+5.8%" }
                       ].map((activity, i) => (
                         <div key={i} className="flex items-center justify-between py-1 border-b border-white/5 last:border-0">
                           <div className="flex items-center">

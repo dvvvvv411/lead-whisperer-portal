@@ -7,16 +7,16 @@ const StatsSection = () => {
       <div className="border-l-4 border-gold pl-4">
         <h3 className="text-xl md:text-2xl font-bold mb-2">Warum wir limitieren</h3>
         <p className="text-gray-300">
-          Unser KI-Algorithmus arbeitet am besten mit einer begrenzten Anzahl von gleichzeitigen Nutzern, um optimale Renditen zu erzielen.
+          Unser KI-Algorithmus arbeitet am besten mit einer begrenzten Anzahl von gleichzeitigen Nutzern, um optimale Renditen zu erzielen und konstant hohe Performance für alle zu gewährleisten.
         </p>
       </div>
       
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         {[
-          { title: "Durchschnittlicher Gewinn", value: "15.2%" },
-          { title: "Erfolgsrate", value: "87%" },
-          { title: "Trades pro Monat", value: "~120" },
-          { title: "Minimale Einzahlung", value: "500€" }
+          { title: "Durchschnittlicher Gewinn", value: "bis zu 30%" },
+          { title: "Erfolgsrate", value: "über 90%" },
+          { title: "Trades pro Monat", value: "mehrere Tausend" },
+          { title: "Aktivierungsgebühr", value: "250€" }
         ].map((stat, index) => (
           <motion.div
             key={index}
@@ -40,7 +40,7 @@ const StatsSection = () => {
         transition={{ delay: 0.8 }}
       >
         <p className="text-green-400">
-          <span className="font-bold">💰 ROI-Garantie:</span> Sollte der Bot im ersten Monat keine Gewinne erzielen, erstatten wir deine Servicegebühr zu 100% zurück.
+          <span className="font-bold">💰 ROI-Garantie:</span> Sollte der Bot im ersten Monat keine Gewinne erzielen, erstatten wir deine Aktivierungsgebühr zu 100% zurück.
         </p>
       </motion.div>
     </div>

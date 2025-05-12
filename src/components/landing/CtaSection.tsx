@@ -6,8 +6,8 @@ import AccessCard from "./cta/AccessCard";
 import StatsSection from "./cta/StatsSection";
 
 const CtaSection = () => {
-  const [availablePlaces, setAvailablePlaces] = useState(50);
-  const [activeUsers, setActiveUsers] = useState(38);
+  const [availablePlaces, setAvailablePlaces] = useState(19);
+  const [activeUsers, setActiveUsers] = useState(20428);
   
   // Reduce available places over time
   useEffect(() => {
@@ -24,7 +24,7 @@ const CtaSection = () => {
   useEffect(() => {
     const interval = setInterval(() => {
       const change = Math.random() > 0.5 ? 1 : -1;
-      setActiveUsers(prev => Math.min(Math.max(prev + change, 35), 42));
+      setActiveUsers(prev => Math.min(Math.max(prev + change, 20425), 20432));
     }, 3000);
     
     return () => clearInterval(interval);

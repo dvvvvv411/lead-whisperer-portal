@@ -25,7 +25,7 @@ const benefits = [
   {
     id: 4,
     title: "Hohe Erfolgsquote",
-    description: "Unsere Handelsalgorithmen erzielen täglich bis zu 20% Rendite mit einer Erfolgsquote von über 95%.",
+    description: "Unsere Handelsalgorithmen erzielen bis zu 30% monatliche Rendite mit einer Erfolgsrate von über 90%.",
     icon: "📈"
   },
   {

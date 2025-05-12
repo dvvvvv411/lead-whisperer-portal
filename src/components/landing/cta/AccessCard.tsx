@@ -46,14 +46,14 @@ const AccessCard = ({ availablePlaces, activeUsers, onPlacesChange }: AccessCard
           </span>
         </h2>
         <p className="text-gray-300 mb-6">
-          Unser KI Trading Bot ist nur für eine begrenzte Anzahl von Nutzern verfügbar, um optimale Performance zu gewährleisten.
+          Unser KI Trading Bot ist nur für 200 Neuanmeldungen täglich verfügbar, um optimale Performance für alle Nutzer zu gewährleisten.
         </p>
 
         <div className="flex items-center justify-between mb-6">
           <h3 className="text-xl font-bold">Exklusiver Zugang</h3>
           <div className="flex items-center text-green-500">
             <Users className="h-5 w-5 mr-2" />
-            <span>{activeUsers} aktive Nutzer</span>
+            <span>über 20.000 aktive Nutzer</span>
           </div>
         </div>
         
@@ -65,13 +65,13 @@ const AccessCard = ({ availablePlaces, activeUsers, onPlacesChange }: AccessCard
                 animate={controls} 
                 className="font-bold text-gold"
               >
-                {availablePlaces}
+                unter 20
               </motion.span>
             </div>
             <div className="w-full bg-white/10 rounded-full h-2.5">
               <motion.div 
                 className="bg-gradient-to-r from-gold to-gold-light h-2.5 rounded-full"
-                style={{ width: `${(availablePlaces / 50) * 100}%` }}
+                style={{ width: `${(19 / 200) * 100}%` }}
                 animate={controls}
               ></motion.div>
             </div>
@@ -80,7 +80,7 @@ const AccessCard = ({ availablePlaces, activeUsers, onPlacesChange }: AccessCard
           <div className="flex items-start gap-3 bg-white/5 p-4 rounded-lg border border-white/10">
             <AlertCircle className="text-gold shrink-0 mt-1" />
             <p className="text-sm text-gray-300">
-              <span className="text-white font-medium">Wichtig:</span> Um die Qualität unserer KI-Prognosen zu gewährleisten, begrenzen wir die Anzahl der Nutzer. Sobald alle Plätze vergeben sind, schließen wir die Registrierung.
+              <span className="text-white font-medium">Wichtig:</span> Um die Qualität unserer KI-Prognosen und optimale Performance für alle Nutzer zu gewährleisten, begrenzen wir die täglichen Neuanmeldungen auf 200. Sobald alle Plätze vergeben sind, schließt die Registrierung für heute.
             </p>
           </div>
           

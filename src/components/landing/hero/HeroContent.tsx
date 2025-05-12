@@ -97,11 +97,11 @@ const HeroContent = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 1.4 }}
       >
-        {/* Enhanced CTA button with pulse and glow effect - fixed for mobile */}
+        {/* Enhanced CTA button with pulse and glow effect - fixing size for consistency */}
         <motion.div
           whileHover={{ scale: isMobile ? 1 : 1.05 }}
           whileTap={{ scale: 0.98 }}
-          className="relative"
+          className="relative w-full sm:w-auto"
         >
           <motion.div
             className="absolute inset-0 rounded-md bg-gold/30"
@@ -117,7 +117,7 @@ const HeroContent = () => {
           />
           <Button 
             onClick={() => document.getElementById("contact")?.scrollIntoView({ behavior: "smooth" })}
-            className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
+            className="w-full bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10"
           >
             <motion.span
               animate={{
@@ -138,7 +138,7 @@ const HeroContent = () => {
         <Button 
           onClick={() => document.getElementById("benefits")?.scrollIntoView({ behavior: "smooth" })}
           variant="outline"
-          className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
+          className="w-full border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300"
         >
           Mehr erfahren
         </Button>

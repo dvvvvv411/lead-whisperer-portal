@@ -2,6 +2,7 @@
 import React from 'react';
 import { TrendingUpIcon, TrendingDownIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 export interface CryptoComparisonProps {
   symbol: string;
@@ -51,13 +52,15 @@ const CryptoComparison = ({ symbol, name, price, change, logoUrl }: CryptoCompar
   return (
     <div className="flex items-center justify-between py-2.5 px-3 border-b border-gold/5 transition-all duration-200 hover:bg-casino-highlight/10 animate-fade-in">
       <div className="flex items-center gap-2">
-        <div className="w-8 h-8 rounded-md bg-gradient-to-br from-casino-card to-casino-darker border border-gold/10 flex items-center justify-center overflow-hidden">
+        <Avatar className="h-8 w-8 rounded-md overflow-hidden bg-gradient-to-br from-casino-card to-casino-darker border border-gold/10">
           {logoUrl ? (
-            <img src={logoUrl} alt={symbol} className="w-6 h-6 object-contain" />
+            <AvatarImage src={logoUrl} alt={symbol} className="object-contain" />
           ) : (
-            <span className="font-mono text-xs font-semibold">{symbol}</span>
+            <AvatarFallback className="bg-gradient-to-br from-casino-card to-casino-darker text-xs font-mono">
+              {symbol}
+            </AvatarFallback>
           )}
-        </div>
+        </Avatar>
         <div>
           <div className="text-sm font-medium">{name || symbol}</div>
           <div className="text-sm font-medium">{price.toFixed(2)} €</div>

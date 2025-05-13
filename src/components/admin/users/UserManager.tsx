@@ -5,6 +5,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
 import { motion } from "framer-motion";
+import { Search } from "lucide-react";
+import { Input } from "@/components/ui/input";
 
 interface UserData {
   id: string;
@@ -20,6 +22,8 @@ interface UserData {
 export const UserManager = () => {
   const { toast } = useToast();
   const [users, setUsers] = useState<UserData[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
+  const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
@@ -121,6 +125,7 @@ export const UserManager = () => {
         }));
         
         setUsers(usersWithExtras);
+        setFilteredUsers(usersWithExtras);
         console.log("Users data with credit and phone numbers updated successfully");
       }
     } catch (error: any) {
@@ -173,6 +178,24 @@ export const UserManager = () => {
     };
   }, [handleUserUpdated]);
 
+  // Handle search input change
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const query = e.target.value.toLowerCase();
+    setSearchQuery(query);
+    
+    if (!query.trim()) {
+      setFilteredUsers(users);
+      return;
+    }
+    
+    const filtered = users.filter(user => 
+      user.email.toLowerCase().includes(query) || 
+      (user.phone && user.phone.toLowerCase().includes(query))
+    );
+    
+    setFilteredUsers(filtered);
+  };
+
   return (
     <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
@@ -186,6 +209,25 @@ export const UserManager = () => {
         >
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Benutzerverwaltung</h1>
           <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
+        </motion.div>
+
+        {/* Suchfunktion */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3 }}
+          className="mb-6"
+        >
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+            <Input
+              type="text"
+              placeholder="Suche nach E-Mail oder Telefonnummer..."
+              value={searchQuery}
+              onChange={handleSearchChange}
+              className="pl-10 bg-casino-card border-gold/20 focus:border-gold/50 text-white"
+            />
+          </div>
         </motion.div>
 
         {isLoading ? (
@@ -204,7 +246,7 @@ export const UserManager = () => {
             transition={{ duration: 0.4, delay: 0.1 }}
           >
             <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
-              <UserTable users={users} onUserUpdated={handleUserUpdated} isLeadsOnlyUser={isLeadsOnlyUser} />
+              <UserTable users={filteredUsers} onUserUpdated={handleUserUpdated} isLeadsOnlyUser={isLeadsOnlyUser} />
             </div>
           </motion.div>
         )}

@@ -1,11 +1,29 @@
-import { useState } from "react";
+
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
 import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu } from "lucide-react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
+
 export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState(false);
+  
+  // Check if the current user is the special leads-only user
+  useEffect(() => {
+    const checkSpecialUser = async () => {
+      const { data } = await supabase.auth.getUser();
+      if (data?.user) {
+        const isSpecial = data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
+        setIsLeadsOnlyUser(isSpecial);
+      }
+    };
+    
+    checkSpecialUser();
+  }, []);
+  
   return <div className="w-full border-b border-gold/10 mb-6 bg-casino-darker/80 backdrop-blur-lg sticky top-0 z-50">
       <div className="container mx-auto">
         <Menubar className="py-3 px-4 w-full bg-transparent border-none">
@@ -17,9 +35,13 @@ export const AdminNavbar = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-1">
-              <NavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" />
+              {!isLeadsOnlyUser && (
+                <NavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" />
+              )}
               <NavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" />
-              <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
+              {!isLeadsOnlyUser && (
+                <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
+              )}
               <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
               <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
               <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
@@ -45,9 +67,13 @@ export const AdminNavbar = () => {
         opacity: 0,
         y: -10
       }} className="md:hidden bg-casino-card border border-gold/10 rounded-lg shadow-lg p-2 mb-4 mx-2">
-            <MobileNavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" onClick={() => setIsOpen(false)} />
+            {!isLeadsOnlyUser && (
+              <MobileNavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" onClick={() => setIsOpen(false)} />
+            )}
             <MobileNavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" onClick={() => setIsOpen(false)} />
-            <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
+            {!isLeadsOnlyUser && (
+              <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
+            )}
             <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />

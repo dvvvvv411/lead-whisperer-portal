@@ -17,7 +17,7 @@ const profileSchema = z.object({
   email: z.string().email({
     message: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
   }).optional(),
-  phone: z.string().min(5, {
+  phoneNumber: z.string().min(5, {
     message: "Telefonnummer muss mindestens 5 Zeichen lang sein.",
   }).optional(),
 });
@@ -33,7 +33,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
   const [currentData, setCurrentData] = useState({
     fullName: "",
     email: "",
-    phone: "",
+    phoneNumber: "",
   });
 
   // Initialize form with react-hook-form
@@ -42,7 +42,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
     defaultValues: {
       fullName: "",
       email: "",
-      phone: "",
+      phoneNumber: "",
     },
   });
 
@@ -51,19 +51,18 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
     if (user) {
       const email = user.email || "";
       const fullName = user.user_metadata?.full_name || "";
-      // Changed from phone_number to phone for consistency
-      const phone = user.user_metadata?.phone || "";
+      const phoneNumber = user.user_metadata?.phone_number || "";
       
       setCurrentData({
         fullName,
         email,
-        phone,
+        phoneNumber,
       });
       
       form.reset({
         fullName,
         email,
-        phone,
+        phoneNumber,
       });
     }
   }, [user, form]);
@@ -74,12 +73,11 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
       setLoading(true);
       
       // Only update if values have changed
-      if (values.fullName !== currentData.fullName || values.phone !== currentData.phone) {
+      if (values.fullName !== currentData.fullName || values.phoneNumber !== currentData.phoneNumber) {
         const { error } = await supabase.auth.updateUser({
           data: { 
             full_name: values.fullName,
-            // Changed from phone_number to phone for consistency
-            phone: values.phone
+            phone_number: values.phoneNumber
           }
         });
 
@@ -88,7 +86,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
         setCurrentData(prev => ({
           ...prev,
           fullName: values.fullName,
-          phone: values.phone || ""
+          phoneNumber: values.phoneNumber || ""
         }));
       }
 
@@ -133,13 +131,13 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
 
         <FormField
           control={form.control}
-          name="phone"
+          name="phoneNumber"
           render={({ field }) => (
             <FormItem>
               <FormLabel className="text-gold-light">Telefonnummer</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder={currentData.phone || "Ihre Telefonnummer"} 
+                  placeholder={currentData.phoneNumber || "Ihre Telefonnummer"} 
                   {...field} 
                   className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
                 />

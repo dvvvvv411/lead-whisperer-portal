@@ -134,11 +134,6 @@ const UserDeposit = () => {
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500">Level & Handelsvorteile</span>
               </h2>
               <LevelProgressChart currentBalance={userCredit || 0} />
-              
-              {/* Added Security Assurance Component */}
-              <div className="mt-6 border-t border-gold/10 pt-6">
-                <SecurityAssurance />
-              </div>
             </Card>
             
             {/* Right section - Two stacked cards */}
@@ -163,6 +158,9 @@ const UserDeposit = () => {
                         onRetryWallets={fetchWallets}
                         onSubmit={handleDepositSubmit}
                       />
+                      
+                      {/* Security Assurance now moved below DepositForm */}
+                      <SecurityAssurance />
                     </div>
                   </div>
                 )}

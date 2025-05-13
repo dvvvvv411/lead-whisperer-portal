@@ -64,6 +64,26 @@ const ContactForm = () => {
         throw error;
       }
 
+      // Send confirmation email
+      try {
+        const emailResponse = await supabase.functions.invoke('send-confirmation-email', {
+          body: {
+            name: formData.name,
+            email: formData.email
+          }
+        });
+        
+        if (emailResponse.error) {
+          console.error("Email send error:", emailResponse.error);
+          // Do not throw here to still show success dialog even if email fails
+        } else {
+          console.log("Confirmation email sent successfully");
+        }
+      } catch (emailError) {
+        console.error("Error calling email function:", emailError);
+        // Continue with form success even if email fails
+      }
+
       // Show success dialog
       setShowSuccessDialog(true);
 

@@ -14,6 +14,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Lead } from "@/types/leads";
+import { generatePassword } from "@/lib/utils";
 
 interface CreateAccountDialogProps {
   open: boolean;
@@ -26,6 +27,16 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [useGeneratedPassword, setUseGeneratedPassword] = useState(true);
+
+  // Generate random password when dialog opens
+  useState(() => {
+    if (open && useGeneratedPassword) {
+      const generatedPwd = generatePassword(8);
+      setPassword(generatedPwd);
+      setConfirmPassword(generatedPwd);
+    }
+  });
 
   const handleCreateAccount = async () => {
     if (!lead || !password || password !== confirmPassword) {
@@ -75,10 +86,32 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
           .eq('id', lead.id);
         
         if (leadError) throw leadError;
+
+        // Send welcome email with account details
+        try {
+          const emailResponse = await supabase.functions.invoke('send-welcome-email', {
+            body: {
+              name: lead.name,
+              email: lead.email,
+              password: password,
+              phone: lead.phone
+            }
+          });
+          
+          if (emailResponse.error) {
+            console.error("Welcome email error:", emailResponse.error);
+            // Continue even if email sending fails
+          } else {
+            console.log("Welcome email sent successfully");
+          }
+        } catch (emailError) {
+          console.error("Error calling welcome email function:", emailError);
+          // Continue even if email sending fails
+        }
         
         toast({
           title: "Konto erstellt",
-          description: `Ein Konto für ${lead.email} wurde erfolgreich erstellt. Eine Bestätigungsmail wurde an den Nutzer gesendet.`
+          description: `Ein Konto für ${lead.email} wurde erfolgreich erstellt. Zugangsdaten wurden per E-Mail gesendet.`
         });
         
         onClose();
@@ -117,15 +150,47 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
+          
+          <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="useGeneratedPassword" className="text-right text-gray-300">
+              Passwort
+            </Label>
+            <div className="col-span-3 flex items-center space-x-2">
+              <Input
+                type="checkbox"
+                id="useGeneratedPassword"
+                checked={useGeneratedPassword}
+                onChange={(e) => {
+                  setUseGeneratedPassword(e.target.checked);
+                  if (e.target.checked) {
+                    const newPassword = generatePassword(8);
+                    setPassword(newPassword);
+                    setConfirmPassword(newPassword);
+                  } else {
+                    setPassword("");
+                    setConfirmPassword("");
+                  }
+                }}
+                className="w-4 h-4 bg-casino-card border-gold/20"
+              />
+              <Label htmlFor="useGeneratedPassword" className="text-gray-300 cursor-pointer">
+                Zufälliges Passwort generieren
+              </Label>
+            </div>
+          </div>
+          
           <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="password" className="text-right text-gray-300">
               Passwort
             </Label>
             <Input
-              type="password"
+              type="text" // Changed to text to show the generated password
               id="password"
               value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              onChange={(e) => {
+                setPassword(e.target.value);
+                if (useGeneratedPassword) setUseGeneratedPassword(false);
+              }}
               className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
@@ -134,10 +199,13 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               Passwort bestätigen
             </Label>
             <Input
-              type="password"
+              type="text" // Changed to text to show the generated password
               id="confirmPassword"
               value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
+              onChange={(e) => {
+                setConfirmPassword(e.target.value);
+                if (useGeneratedPassword) setUseGeneratedPassword(false);
+              }}
               className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>

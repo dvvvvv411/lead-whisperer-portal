@@ -45,107 +45,58 @@ serve(async (req) => {
             body {
               font-family: Arial, sans-serif;
               line-height: 1.6;
-              color: #e1e1e1;
+              color: #333333;
               margin: 0;
               padding: 0;
-              background-color: #1A1F2C;
+              background-color: #f6f6f7;
             }
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background: linear-gradient(135deg, rgba(26, 31, 44, 0.9) 0%, rgba(33, 40, 59, 0.9) 100%);
-              border-radius: 12px;
+              background-color: #ffffff;
+              border-radius: 8px;
               overflow: hidden;
-              border: 1px solid rgba(151, 71, 255, 0.4);
-              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
+              border: 1px solid #e1e1e1;
+              box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background: linear-gradient(135deg, #1A1F2C 0%, #312A5A 100%);
-              position: relative;
-              border-bottom: 1px solid rgba(151, 71, 255, 0.4);
-            }
-            .header-glow {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              background: radial-gradient(circle at center, rgba(151, 71, 255, 0.2) 0%, rgba(151, 71, 255, 0) 70%);
-              z-index: 1;
+              background-color: #f9f9f9;
+              border-bottom: 1px solid #e1e1e1;
             }
             .logo {
               max-width: 180px;
-              position: relative;
-              z-index: 2;
-              filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
-            }
-            .robot-container {
-              text-align: center;
-              margin: 20px 0;
-            }
-            .robot-image {
-              max-width: 150px;
-              margin: 0 auto;
-              filter: drop-shadow(0 0 15px rgba(151, 71, 255, 0.5));
             }
             .content {
               padding: 30px;
-              background-color: rgba(33, 40, 59, 0.7);
-              position: relative;
+              background-color: rgba(255, 255, 255, 0.95);
             }
             .greeting {
               font-size: 22px;
               margin-bottom: 20px;
-              color: #ffffff;
+              color: #333333;
               font-weight: bold;
-              position: relative;
-              z-index: 2;
             }
             .message {
-              color: #e1e1e1;
+              color: #505050;
               margin-bottom: 25px;
               font-size: 16px;
-              position: relative;
-              z-index: 2;
             }
             .highlight {
-              color: #FFD700;
+              color: #6366F1;
               font-weight: bold;
-              display: inline-block;
-              position: relative;
-            }
-            .highlight-purple {
-              color: #9b87f5;
-              font-weight: bold;
-              display: inline-block;
-              position: relative;
-            }
-            .highlight:after, .highlight-purple:after {
-              content: '';
-              position: absolute;
-              bottom: -2px;
-              left: 0;
-              right: 0;
-              height: 2px;
-              background: linear-gradient(90deg, rgba(151, 71, 255, 0) 0%, rgba(151, 71, 255, 0.8) 50%, rgba(151, 71, 255, 0) 100%);
-            }
-            .highlight-glow {
-              text-shadow: 0 0 10px rgba(151, 71, 255, 0.5);
             }
             .notification-box {
-              background-color: rgba(151, 71, 255, 0.1);
-              border-left: 4px solid #9b87f5;
+              background-color: #f1f5f9;
+              border-left: 4px solid #6366F1;
               padding: 15px;
               margin: 20px 0;
-              border-radius: 6px;
-              position: relative;
-              z-index: 2;
+              border-radius: 4px;
             }
             .notification-box p {
               margin: 0;
-              color: #ffffff;
+              color: #505050;
             }
             .notification-icon {
               display: inline-block;
@@ -153,82 +104,37 @@ serve(async (req) => {
               height: 20px;
               margin-right: 10px;
               vertical-align: middle;
-              font-size: 20px;
-              color: #9b87f5;
+              font-size: 18px;
+              color: #6366F1;
             }
             .footer {
               text-align: center;
               padding: 20px;
-              background-color: #16181a;
+              background-color: #f9f9f9;
               font-size: 12px;
-              color: #777;
+              color: #888888;
+              border-top: 1px solid #e1e1e1;
             }
             .footer p {
               margin: 5px 0;
             }
-            .button {
-              display: inline-block;
-              background: linear-gradient(90deg, #7B5CFF 0%, #9b87f5 50%, #B299FF 100%);
-              color: #ffffff;
-              text-decoration: none;
-              padding: 12px 25px;
-              border-radius: 50px;
-              font-weight: bold;
-              margin: 20px 0;
-              text-align: center;
-              transition: transform 0.3s ease;
-              position: relative;
-              border: none;
-              box-shadow: 0 4px 12px rgba(151, 71, 255, 0.3);
-            }
-            .button:hover {
-              transform: translateY(-2px);
-              box-shadow: 0 6px 16px rgba(151, 71, 255, 0.4);
-            }
             .progress {
-              background-color: #1A1F2C;
+              background-color: #f1f1f1;
               height: 10px;
               border-radius: 5px;
               margin: 20px 0;
               overflow: hidden;
-              position: relative;
-              border: 1px solid rgba(151, 71, 255, 0.2);
             }
             .progress-bar {
               width: 25%;
               height: 100%;
-              background: linear-gradient(90deg, #7B5CFF 0%, #9b87f5 100%);
+              background-color: #6366F1;
               border-radius: 5px;
-              position: relative;
-              animation: pulse 2s infinite;
-            }
-            .progress-badge {
-              position: absolute;
-              top: -8px;
-              right: -8px;
-              background: linear-gradient(90deg, #9b87f5 0%, #7B5CFF 100%);
-              border-radius: 50%;
-              width: 24px;
-              height: 24px;
-              display: flex;
-              align-items: center;
-              justify-content: center;
-              font-weight: bold;
-              font-size: 14px;
-              color: #fff;
-              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
-            }
-            .progress-label {
-              display: flex;
-              justify-content: space-between;
-              margin-bottom: 5px;
-              font-size: 12px;
-              color: #aaa;
             }
             .progress-step {
               display: flex;
               justify-content: space-between;
-              margin-top: 5px;
+              margin-top: 8px;
               position: relative;
               z-index: 2;
               flex-wrap: nowrap;
@@ -244,32 +150,34 @@ serve(async (req) => {
             .step-icon {
               width: 30px;
               height: 30px;
-              background-color: #1A1F2C;
+              background-color: #f1f1f1;
               border-radius: 50%;
-              border: 1px solid rgba(151, 71, 255, 0.3);
+              border: 1px solid #e1e1e1;
               display: flex;
               align-items: center;
               justify-content: center;
               margin-bottom: 5px;
-              color: #777;
+              color: #888888;
+              font-weight: bold;
             }
             .step-current .step-icon {
-              background-color: #9b87f5;
+              background-color: #6366F1;
               color: #fff;
-              box-shadow: 0 0 15px rgba(151, 71, 255, 0.5);
+              border-color: #6366F1;
             }
             .step-label {
-              font-size: 10px;
-              color: #aaa;
+              font-size: 12px;
+              color: #888888;
               width: 100%;
             }
             .step-current .step-label {
-              color: #9b87f5;
+              color: #6366F1;
+              font-weight: bold;
             }
             .step-line {
               flex-grow: 1;
               height: 1px;
-              background-color: rgba(151, 71, 255, 0.3);
+              background-color: #e1e1e1;
               margin: 0 5px;
               position: relative;
               top: 15px;
@@ -277,11 +185,7 @@ serve(async (req) => {
             .signature {
               margin-top: 30px;
               padding-top: 20px;
-              border-top: 1px solid rgba(255, 255, 255, 0.1);
-            }
-            @keyframes pulse {
-              0%, 100% { opacity: 1; }
-              50% { opacity: 0.7; }
+              border-top: 1px solid #f1f1f1;
             }
             @media (max-width: 600px) {
               .container {
@@ -295,28 +199,23 @@ serve(async (req) => {
                 font-size: 20px;
               }
               .step-label {
-                font-size: 8px;
+                font-size: 10px;
               }
             }
           </style>
         </head>
-        <body bgcolor="#1A1F2C">
+        <body bgcolor="#f6f6f7">
           <div class="container">
             <div class="header">
-              <div class="header-glow"></div>
               <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Logo" class="logo">
             </div>
-            <div class="content">
-              <div class="robot-container">
-                <img src="https://i.imgur.com/UWzBYw1.png" alt="AI Trading Robot" class="robot-image">
-              </div>
-              
+            <div class="content">              
               <h2 class="greeting">Hallo ${name},</h2>
               <p class="message">
-                Vielen Dank für deine Anfrage bei <span class="highlight-purple highlight-glow">KI-Trading</span>!
+                Vielen Dank für deine Anfrage bei <span class="highlight">KI-Trading</span>!
               </p>
               <p class="message">
-                Wir haben deine Nachricht erhalten und werden uns <span class="highlight-purple">in Kürze</span> bei dir melden.
+                Wir haben deine Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei dir melden.
               </p>
               
               <div class="notification-box">
@@ -353,7 +252,7 @@ serve(async (req) => {
               
               <p class="signature">
                 Mit freundlichen Grüßen,<br>
-                <span class="highlight-purple">Dein KI-Trading Team</span>
+                <span class="highlight">Dein KI-Trading Team</span>
               </p>
             </div>
             <div class="footer">

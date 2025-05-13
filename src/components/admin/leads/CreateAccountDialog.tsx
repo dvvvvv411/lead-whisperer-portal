@@ -140,9 +140,10 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
             Erstellen Sie ein Benutzerkonto für diesen Lead.
           </DialogDescription>
         </DialogHeader>
+        
         <div className="grid gap-4 py-4">
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="name" className="text-right text-gray-300">
+          <div className="grid gap-2">
+            <Label htmlFor="name" className="text-gray-300">
               Name
             </Label>
             <Input
@@ -150,12 +151,12 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="name"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
+              className="bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="email" className="text-right text-gray-300">
+          <div className="grid gap-2">
+            <Label htmlFor="email" className="text-gray-300">
               Email
             </Label>
             <Input
@@ -163,12 +164,12 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
+              className="bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="phone" className="text-right text-gray-300">
+          <div className="grid gap-2">
+            <Label htmlFor="phone" className="text-gray-300">
               Telefon
             </Label>
             <Input
@@ -177,14 +178,15 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="Optional"
-              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
+              className="bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           
-          <div className="col-span-4 text-sm text-gray-400 mt-2 bg-casino-darker p-3 rounded-md">
+          <div className="text-sm text-gray-400 mt-2 bg-casino-darker p-3 rounded-md">
             <p>Ein zufälliges Passwort wird automatisch generiert und per E-Mail an den Benutzer gesendet.</p>
           </div>
         </div>
+        
         <DialogFooter>
           <Button 
             type="button" 

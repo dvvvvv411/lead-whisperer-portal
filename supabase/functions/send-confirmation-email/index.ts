@@ -36,7 +36,7 @@ serve(async (req) => {
     const emailResponse = await resend.emails.send({
       from: "KI-Trading Bot <noreply@bitloon.net>",
       to: [email],
-      subject: "Danke für deine Anfrage bei KI-Trading",
+      subject: "Danke für dein Interesse am KI-Trading Bot",
       html: `
       <!DOCTYPE html>
 <html lang="de">
@@ -82,6 +82,14 @@ serve(async (req) => {
       line-height: 1.6;
       color: #ffffff;
     }
+    .notification {
+      background-color: #28a745;
+      border-radius: 8px;
+      padding: 15px;
+      margin: 20px 0;
+      color: #ffffff;
+      font-weight: bold;
+    }
     .cta {
       display: inline-block;
       margin-top: 20px;
@@ -113,9 +121,14 @@ serve(async (req) => {
       <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
-      <h2>Hallo ${displayName}</h2>
-      <p>Vielen Dank für Ihre Anmeldung. Ihr Konto wurde erfolgreich aktiviert. Sie haben nun Zugriff auf alle Funktionen des Systems.</p>
-      <p><strong>Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren</strong>, um Ihnen bei der Einrichtung zu helfen.</p>
+      <h2>Hallo ${displayName},</h2>
+      <p>Vielen Dank für Ihr Interesse an unserem KI Krypto Bot. Wir freuen uns, dass Sie sich für unsere automatisierte Trading-Lösung interessieren.</p>
+      
+      <div class="notification">
+        <p style="margin: 0;">Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren, um Ihnen alle Details zu erläutern und Ihnen bei der Einrichtung zu helfen.</p>
+      </div>
+      
+      <p>In der Zwischenzeit können Sie bereits auf unser Dashboard zugreifen, um sich einen ersten Eindruck zu verschaffen.</p>
       <a href="#" class="cta">Zum Dashboard</a>
     </div>
     <footer>

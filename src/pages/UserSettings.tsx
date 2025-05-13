@@ -82,32 +82,34 @@ const UserSettings = () => {
           )}
         </div>
         
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Updated grid layout: 2 cards side by side, 1 banner below */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Left column - Profile settings */}
-          <div className="space-y-6">
-            <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
-              <CardHeader className="bg-black/40 border-b border-gold/10">
-                <CardTitle className="text-gold-light">Profil-Informationen</CardTitle>
-                <CardDescription className="text-white/70">Aktualisieren Sie Ihre persönlichen Daten</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <UserSettingsForm user={user} onSuccess={() => setUpdateSuccess(true)} />
-              </CardContent>
-            </Card>
+          <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
+            <CardHeader className="bg-black/40 border-b border-gold/10">
+              <CardTitle className="text-gold-light">Profil-Informationen</CardTitle>
+              <CardDescription className="text-white/70">Aktualisieren Sie Ihre persönlichen Daten</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <UserSettingsForm user={user} onSuccess={() => setUpdateSuccess(true)} />
+            </CardContent>
+          </Card>
             
-            <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
-              <CardHeader className="bg-black/40 border-b border-gold/10">
-                <CardTitle className="text-gold-light">Passwort ändern</CardTitle>
-                <CardDescription className="text-white/70">Aktualisieren Sie Ihr Passwort</CardDescription>
-              </CardHeader>
-              <CardContent className="p-6">
-                <PasswordChangeForm user={user} onSuccess={() => setUpdateSuccess(true)} />
-              </CardContent>
-            </Card>
-          </div>
+          {/* Right column - Password change */}
+          <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
+            <CardHeader className="bg-black/40 border-b border-gold/10">
+              <CardTitle className="text-gold-light">Passwort ändern</CardTitle>
+              <CardDescription className="text-white/70">Aktualisieren Sie Ihr Passwort</CardDescription>
+            </CardHeader>
+            <CardContent className="p-6">
+              <PasswordChangeForm user={user} onSuccess={() => setUpdateSuccess(true)} />
+            </CardContent>
+          </Card>
+        </div>
           
-          {/* Right column - Security notice */}
-          <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden h-full transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
+        {/* Full width banner for Security notice */}
+        <div className="col-span-full">
+          <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden transform transition-all duration-300 hover:translate-y-[-2px] shadow-lg">
             <CardHeader className="bg-black/40 border-b border-gold/10">
               <CardTitle className="text-gold-light flex items-center">
                 <Shield className="mr-2 h-5 w-5 text-gold-light" />

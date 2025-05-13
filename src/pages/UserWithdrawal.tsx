@@ -7,11 +7,12 @@ import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import WithdrawalForm from "@/components/user/withdrawal/WithdrawalForm";
 import WithdrawalHistory from "@/components/user/withdrawal/WithdrawalHistory";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CircleDollarSign, CreditCard, Wallet, TrendingUp, Award, Trophy } from "lucide-react";
+import { ArrowLeft, CreditCard, Wallet, TrendingUp, Award, Trophy } from "lucide-react";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { Card } from "@/components/ui/card";
 import UserNavbar from "@/components/user/UserNavbar";
+import RobotCoinAnimation from "@/components/user/withdrawal/RobotCoinAnimation";
 
 const UserWithdrawal = () => {
   const navigate = useNavigate();
@@ -117,19 +118,8 @@ const UserWithdrawal = () => {
                 </h2>
                 
                 <div className="space-y-6 relative p-2">
-                  {/* Animated floating elements */}
-                  <div className="absolute top-10 left-4 w-16 h-16 bg-gold/10 rounded-full blur-xl animate-float"></div>
-                  <div className="absolute bottom-10 right-8 w-12 h-12 bg-gold/10 rounded-full blur-xl animate-float" style={{animationDelay: "1s"}}></div>
-                  
-                  <div className="text-center mb-8">
-                    <div className="flex justify-center py-6">
-                      <CircleDollarSign className="h-24 w-24 text-gold/40" />
-                    </div>
-                    <h3 className="text-xl font-medium text-gold-light mb-2">Schnelle und sichere Auszahlungen</h3>
-                    <p className="text-white/70">
-                      Ihre Auszahlungsanfragen werden innerhalb von 24 Stunden bearbeitet und an Ihre Krypto-Wallet überwiesen.
-                    </p>
-                  </div>
+                  {/* Replace static elements with our new animated robot */}
+                  <RobotCoinAnimation />
                   
                   <div className="space-y-4 mt-8">
                     <div className="text-lg font-medium mb-2 flex items-center text-gold-light">

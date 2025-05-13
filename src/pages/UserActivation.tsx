@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
@@ -11,7 +10,7 @@ import { motion } from "framer-motion";
 import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
 import ActivationForm from "@/components/user/activation/ActivationForm";
 import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
-import LogoutButton from "@/components/user/navbar/LogoutButton";
+import LogoutButton from "@/components/user/activation/LogoutButton";
 import ActivationHero from "@/components/user/activation/ActivationHero";
 import ActivationProgress from "@/components/user/activation/ActivationProgress";
 

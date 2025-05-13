@@ -36,10 +36,12 @@ serve(async (req) => {
       subject: "Danke für deine Anfrage bei KI-Trading",
       html: `
       <!DOCTYPE html>
+
+<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
-  <title>Zugangsdaten</title>
+  <title>Anmeldebestätigung</title>
   <style>
     body {
       background-color: #0e0e1a;
@@ -78,16 +80,6 @@ serve(async (req) => {
       font-size: 16px;
       line-height: 1.6;
     }
-    .credentials {
-      background-color: #2e2e40;
-      padding: 15px;
-      border-radius: 8px;
-      margin: 20px 0;
-    }
-    .credentials p {
-      margin: 5px 0;
-      font-family: monospace;
-    }
     .cta {
       display: inline-block;
       margin-top: 20px;
@@ -112,21 +104,19 @@ serve(async (req) => {
       <img src="https://i.ibb.co/ds7zGCJj/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
-      <h2>Zugangsdaten für Ihr Konto</h2>
+      <h2>Willkommen zurück im Dashboard!</h2>
       <p>Hallo <strong>maxmustermann678</strong>,</p>
-      <p>Ihr Konto wurde erfolgreich erstellt. Verwenden Sie die folgenden Zugangsdaten, um sich einzuloggen:</p>
-      <div class="credentials">
-        <p><strong>Benutzername:</strong> maxmustermann678</p>
-        <p><strong>Passwort:</strong> X8v1z!3Tp@</p>
-      </div>
-      <a href="#" class="cta">Zum Login</a>
+      <p>vielen Dank für Ihre Anmeldung. Ihr Konto wurde erfolgreich aktiviert. Sie haben nun Zugriff auf alle Funktionen des Systems.</p>
+      <p><strong>Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren</strong>, um Ihnen bei der Einrichtung zu helfen.</p>
+      <a href="#" class="cta">Zum Dashboard</a>
     </div>
     <footer>
-      &copy; 2025 KI-Trading Bot – Sicherheit und Präzision
+      &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI
     </footer>
   </div>
 </body>
 </html>
+
       `,
     });
 

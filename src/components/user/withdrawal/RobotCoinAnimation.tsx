@@ -1,25 +1,36 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const RobotCoinAnimation = () => {
-  const [isHovered, setIsHovered] = useState(false);
+  // We'll use a state to track animation cycles instead of hover state
+  const [isAnimating, setIsAnimating] = useState(false);
+  
+  // Set up continuous animation cycle
+  useEffect(() => {
+    // Start animation
+    setIsAnimating(true);
+    
+    // Set up the animation loop with a timer
+    const animationLoop = setInterval(() => {
+      setIsAnimating(false);
+      // Small delay before restarting animation to create a clear cycle
+      setTimeout(() => setIsAnimating(true), 300);
+    }, 5000); // Full animation cycle takes 5 seconds
+    
+    return () => {
+      clearInterval(animationLoop);
+    };
+  }, []);
   
   return (
-    <div 
-      className="relative w-full h-64 flex items-center justify-center"
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-    >
+    <div className="relative w-full h-64 flex items-center justify-center">
       {/* Background Effects */}
       <div className="absolute w-40 h-40 bg-gold/5 rounded-full filter blur-xl top-0 right-8 animate-pulse opacity-70"></div>
       <div className="absolute w-32 h-32 bg-accent1/5 rounded-full filter blur-xl bottom-4 left-10 animate-pulse opacity-50" style={{ animationDelay: '1s' }}></div>
       
       {/* SVG Animation Container */}
-      <div className={cn(
-        "relative z-10 w-full max-w-[300px] transition-all duration-500",
-        isHovered ? "scale-105" : ""
-      )}>
+      <div className="relative z-10 w-full max-w-[300px]">
         <svg viewBox="0 0 400 200" className="w-full">
           {/* Circuit Board Background */}
           <g className="text-gold/10">
@@ -39,7 +50,7 @@ const RobotCoinAnimation = () => {
 
           {/* Robot */}
           <g className={cn("transform-gpu transition-transform duration-700", 
-             isHovered ? "translate-x-[-10px] translate-y-[-5px]" : ""
+             isAnimating ? "translate-x-[-10px] translate-y-[-5px]" : ""
           )}>
             {/* Robot Body */}
             <rect x="60" y="80" width="60" height="70" rx="10" fill="#1A1F2C" className="stroke-gold/40" strokeWidth="2" />
@@ -48,14 +59,8 @@ const RobotCoinAnimation = () => {
             <rect x="70" y="50" width="40" height="35" rx="8" fill="#21283B" className="stroke-gold/40" strokeWidth="2" />
             
             {/* Robot Eyes */}
-            <circle cx="82" cy="65" r="5" className={cn(
-              "fill-gold/60 animate-glow-pulse",
-              isHovered ? "fill-gold/90" : ""
-            )} />
-            <circle cx="98" cy="65" r="5" className={cn(
-              "fill-gold/60 animate-glow-pulse",
-              isHovered ? "fill-gold/90" : ""
-            )} style={{ animationDelay: '0.5s' }} />
+            <circle cx="82" cy="65" r="5" className="fill-gold/60 animate-glow-pulse" />
+            <circle cx="98" cy="65" r="5" className="fill-gold/60 animate-glow-pulse" style={{ animationDelay: '0.5s' }} />
             
             {/* Robot Antenna */}
             <line x1="90" y1="50" x2="90" y2="40" stroke="#8B5CF6" strokeWidth="2" />
@@ -68,14 +73,14 @@ const RobotCoinAnimation = () => {
           {/* Robot Arm (Animated) */}
           <g className={cn(
             "transform-gpu transition-all duration-1000 origin-[130px_95px]",
-            isHovered ? "rotate-[-10deg]" : ""
+            isAnimating ? "rotate-[-10deg]" : ""
           )}>
             <rect x="130" y="90" width="70" height="10" rx="5" fill="#21283B" className="stroke-gold/40" strokeWidth="1" />
             
             {/* Robot Hand */}
             <g className={cn(
               "transform-gpu transition-all duration-500",
-              isHovered ? "translate-y-[3px]" : ""
+              isAnimating ? "translate-y-[3px]" : ""
             )}>
               <rect x="190" y="85" width="15" height="20" rx="5" fill="#21283B" className="stroke-gold/40" strokeWidth="1" />
               <rect x="193" y="80" width="3" height="8" rx="1" fill="#21283B" className="stroke-gold/40" strokeWidth="1" />
@@ -83,34 +88,38 @@ const RobotCoinAnimation = () => {
             </g>
           </g>
 
-          {/* Coins Group - Moving */}
-          <g className="coins-group">
-            {/* First Coin */}
-            <g className={cn(
-              "transform-gpu transition-all duration-[1500ms]",
-              isHovered ? "translate-x-[100px] translate-y-[30px]" : ""
-            )}>
-              <circle cx="200" cy="100" r="12" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-              <text x="200" y="104" textAnchor="middle" fontSize="12" fill="#000" fontWeight="bold">€</text>
-            </g>
-            
-            {/* Second Coin - Delayed */}
-            <g className={cn(
-              "transform-gpu transition-all duration-[1800ms]",
-              isHovered ? "translate-x-[90px] translate-y-[25px]" : ""
-            )} style={{ transitionDelay: '300ms' }}>
-              <circle cx="185" cy="110" r="10" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-              <text x="185" y="114" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">€</text>
-            </g>
-            
-            {/* Third Coin - More Delayed */}
-            <g className={cn(
-              "transform-gpu transition-all duration-[2000ms]",
-              isHovered ? "translate-x-[110px] translate-y-[35px]" : ""
-            )} style={{ transitionDelay: '600ms' }}>
-              <circle cx="210" cy="110" r="8" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-              <text x="210" y="113" textAnchor="middle" fontSize="8" fill="#000" fontWeight="bold">€</text>
-            </g>
+          {/* Coins Group - Now with continuous animation */}
+          {/* First Coin: Initial Position */}
+          <g className={cn(
+            "transform-gpu",
+            isAnimating 
+              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
+              : "opacity-0"
+          )} style={{ animationDelay: '0ms' }}>
+            <circle cx="200" cy="100" r="12" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+            <text x="200" y="104" textAnchor="middle" fontSize="12" fill="#000" fontWeight="bold">€</text>
+          </g>
+          
+          {/* Second Coin - Delayed */}
+          <g className={cn(
+            "transform-gpu",
+            isAnimating 
+              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
+              : "opacity-0"
+          )} style={{ animationDelay: '300ms' }}>
+            <circle cx="185" cy="110" r="10" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+            <text x="185" y="114" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">€</text>
+          </g>
+          
+          {/* Third Coin - More Delayed */}
+          <g className={cn(
+            "transform-gpu",
+            isAnimating 
+              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
+              : "opacity-0"
+          )} style={{ animationDelay: '600ms' }}>
+            <circle cx="210" cy="110" r="8" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+            <text x="210" y="113" textAnchor="middle" fontSize="8" fill="#000" fontWeight="bold">€</text>
           </g>
 
           {/* Digital Wallet */}
@@ -124,7 +133,7 @@ const RobotCoinAnimation = () => {
             {/* Wallet Screen Content */}
             <g className={cn(
               "transition-opacity duration-1000",
-              isHovered ? "opacity-100" : "opacity-50"
+              isAnimating ? "opacity-100" : "opacity-50"
             )}>
               <rect x="300" y="125" width="40" height="3" rx="1" fill="#8B5CF6" className="animate-pulse" />
               <rect x="300" y="131" width="30" height="3" rx="1" fill="#6366F1" />
@@ -133,20 +142,28 @@ const RobotCoinAnimation = () => {
               {/* Balance Counter - Glows when coins arrive */}
               <rect x="325" y="131" width="15" height="9" rx="2" className={cn(
                 "fill-black/40 stroke-gold/30", 
-                isHovered ? "animate-pulse" : ""
+                isAnimating ? "animate-pulse" : ""
               )} strokeWidth="1" />
               
               <text x="332" y="138" textAnchor="middle" fontSize="7" className={cn(
                 "fill-gold/70", 
-                isHovered ? "fill-gold" : ""
+                isAnimating ? "fill-gold" : ""
               )}>+</text>
             </g>
             
             {/* Wallet Light Indicator */}
             <circle cx="320" cy="115" r="2" className={cn(
               "fill-gold/50",
-              isHovered ? "animate-pulse fill-gold" : ""
+              isAnimating ? "animate-pulse fill-gold" : ""
             )} />
+
+            {/* Coin Absorption Effect (visible only when coins arrive) */}
+            <g className={cn(
+              "transition-opacity duration-300",
+              isAnimating ? "animate-[wallet-receive_500ms_ease-in-out]" : "opacity-0"
+            )} style={{ animationDelay: '1800ms' }}>
+              <circle cx="320" cy="133" r="8" className="fill-gold/30 animate-ping" />
+            </g>
           </g>
 
           {/* Gradients and Filters */}
@@ -156,6 +173,21 @@ const RobotCoinAnimation = () => {
               <stop offset="50%" stopColor="#FFDF33" />
               <stop offset="100%" stopColor="#E6C200" />
             </linearGradient>
+            
+            {/* Define custom keyframe animations */}
+            <style type="text/css">{`
+              @keyframes coin-transfer {
+                0% { transform: translateX(0) translateY(0); opacity: 1; }
+                80% { transform: translateX(100px) translateY(30px); opacity: 1; }
+                100% { transform: translateX(110px) translateY(35px); opacity: 0; }
+              }
+              
+              @keyframes wallet-receive {
+                0% { opacity: 0; transform: scale(0.2); }
+                50% { opacity: 0.8; transform: scale(1.2); }
+                100% { opacity: 0; transform: scale(1.5); }
+              }
+            `}</style>
           </defs>
         </svg>
       </div>

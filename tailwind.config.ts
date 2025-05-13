@@ -111,6 +111,16 @@ export default {
 				'glow-pulse': {
 					'0%, 100%': { opacity: '0.6' },
 					'50%': { opacity: '1' }
+				},
+				'coin-transfer': {
+					'0%': { transform: 'translateX(0) translateY(0)', opacity: '1' },
+					'80%': { transform: 'translateX(100px) translateY(30px)', opacity: '1' },
+					'100%': { transform: 'translateX(110px) translateY(35px)', opacity: '0' }
+				},
+				'wallet-receive': {
+					'0%': { opacity: '0', transform: 'scale(0.2)' },
+					'50%': { opacity: '0.8', transform: 'scale(1.2)' },
+					'100%': { opacity: '0', transform: 'scale(1.5)' }
 				}
 			},
 			animation: {
@@ -119,7 +129,9 @@ export default {
 				'pulse-gold': 'pulse-gold 2s infinite',
 				'gradient-shift': 'gradient-shift 3s ease infinite',
 				'float': 'float 3s ease-in-out infinite',
-				'glow-pulse': 'glow-pulse 2s ease-in-out infinite'
+				'glow-pulse': 'glow-pulse 2s ease-in-out infinite',
+				'coin-transfer': 'coin-transfer 2s ease-in-out forwards',
+				'wallet-receive': 'wallet-receive 0.5s ease-in-out forwards'
 			},
 			backgroundImage: {
 				'casino-gradient': 'linear-gradient(to right, #1A1F2C, #21283B, #1A1F2C)',

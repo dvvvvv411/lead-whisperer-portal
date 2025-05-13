@@ -35,9 +35,9 @@ serve(async (req) => {
     const loginUrl = `${origin}/nutzer`;
 
     const emailResponse = await resend.emails.send({
-      from: "KI-Trading Bot <noreply@bitloon.net>",
+      from: "bitloon <noreply@bitloon.net>",
       to: [email],
-      subject: "Ihre Zugangsdaten für den KI-Trading Bot",
+      subject: "Ihre Zugangsdaten für bitloon",
       html: `
         <!DOCTYPE html>
         <html lang="de">
@@ -65,11 +65,6 @@ serve(async (req) => {
               padding-bottom: 20px;
               border-bottom: 1px solid #333;
             }
-            header h1 {
-              color: #FFD700;
-              font-size: 28px;
-              margin: 0;
-            }
             .content {
               padding: 20px 0;
             }
@@ -81,16 +76,20 @@ serve(async (req) => {
             .content p {
               font-size: 16px;
               line-height: 1.6;
+              color: #ffffff;
             }
             .credentials {
-              background-color: #2e2e40;
-              padding: 15px;
+              background-color: rgba(40, 167, 69, 0.2);
+              border: 1px solid #28a745;
               border-radius: 8px;
+              padding: 15px;
               margin: 20px 0;
+              color: #ffffff;
             }
             .credentials p {
               margin: 5px 0;
               font-family: monospace;
+              font-weight: normal;
             }
             .cta {
               display: inline-block;
@@ -108,12 +107,19 @@ serve(async (req) => {
               color: #aaa;
               margin-top: 30px;
             }
+            footer a {
+              color: #FFD700;
+              text-decoration: none;
+            }
+            footer a:hover {
+              text-decoration: underline;
+            }
           </style>
         </head>
         <body>
           <div class="container">
             <header>
-              <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
+              <img src="https://i.imgur.com/Q191f5z.png" alt="Bitloon Logo" style="height: 60px; margin-bottom: 10px;">
             </header>
             <div class="content">
               <h2>Zugangsdaten für Ihr Konto</h2>
@@ -127,7 +133,10 @@ serve(async (req) => {
               <a href="${loginUrl}" class="cta">Zum Login</a>
             </div>
             <footer>
-              &copy; ${new Date().getFullYear()} KI-Trading Bot – Sicherheit und Präzision
+              &copy; ${new Date().getFullYear()} Bitloon - GMS Management und Service GmbH | 
+              <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
+              <a href="https://bitloon.net" target="_blank">Webseite</a> | 
+              <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>
             </footer>
           </div>
         </body>

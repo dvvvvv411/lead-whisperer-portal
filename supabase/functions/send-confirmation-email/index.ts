@@ -34,9 +34,9 @@ serve(async (req) => {
     const displayName = name.split(' ')[0].trim();
 
     const emailResponse = await resend.emails.send({
-      from: "KI-Trading Bot <noreply@bitloon.net>",
+      from: "bitloon <noreply@bitloon.net>",
       to: [email],
-      subject: "Danke für dein Interesse am KI-Trading Bot",
+      subject: "Danke für dein Interesse an bitloon",
       html: `
       <!DOCTYPE html>
 <html lang="de">
@@ -108,7 +108,7 @@ serve(async (req) => {
 <body>
   <div class="container">
     <header>
-      <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
+      <img src="https://i.imgur.com/Q191f5z.png" alt="Bitloon Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
       <h2>Hallo ${displayName},</h2>

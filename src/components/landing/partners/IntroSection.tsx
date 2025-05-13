@@ -68,38 +68,62 @@ const IntroSection = () => {
         Kryptowährungen zu erwerben.
       </motion.p>
       
-      <div className={`grid ${isMobile ? 'grid-cols-1 gap-8' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6'} max-w-6xl mx-auto`}>
+      <div className="max-w-2xl mx-auto relative">
+        {/* Vertical connecting line */}
+        <div className="absolute left-[31px] top-14 bottom-14 w-1 bg-gradient-to-b from-gold/30 via-gold to-gold/30 z-0 hidden md:block"></div>
+        
+        {/* Steps displayed vertically */}
         {steps.map((step, index) => (
-          <motion.div
-            key={step.id}
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.5, delay: index * 0.1 }}
-            className="bg-casino-card border border-white/10 rounded-lg p-6 shadow-lg hover:border-gold/30 transition-all"
-            whileHover={{
-              y: -5,
-              boxShadow: "0 10px 25px -5px rgba(0, 0, 0, 0.2), 0 10px 10px -5px rgba(0, 0, 0, 0.1)",
-              borderColor: "rgba(255, 215, 0, 0.4)"
-            }}
-          >
-            <div className="flex items-center mb-4">
-              <div className="h-10 w-10 rounded-full bg-gold/20 flex items-center justify-center mr-4 shadow-glow">
-                <step.icon className="h-5 w-5 text-gold" />
+          <div key={step.id} className="mb-8 relative">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, delay: index * 0.1 }}
+              className="flex flex-col md:flex-row items-start gap-5"
+            >
+              {/* Step indicator with icon */}
+              <div className="flex flex-col items-center z-10">
+                <div className="h-16 w-16 rounded-full bg-gold/20 flex items-center justify-center shadow-glow">
+                  <step.icon className="h-8 w-8 text-gold" />
+                </div>
+                {index < steps.length - 1 && (
+                  <div className="h-6 w-1 bg-gold/30 my-1 md:hidden"></div>
+                )}
               </div>
-              <h3 className="text-xl font-semibold text-gold">
-                {step.id}. {step.title}
-              </h3>
-            </div>
+              
+              {/* Card content */}
+              <div 
+                className="bg-casino-card border border-white/10 rounded-lg p-6 shadow-lg hover:border-gold/30 transition-all w-full"
+                style={{ maxWidth: isMobile ? "100%" : "calc(100% - 80px)" }}
+              >
+                <h3 className="text-xl font-semibold text-gold mb-3">
+                  Schritt {step.id}: {step.title}
+                </h3>
+                <p className="text-gray-300 mb-4">{step.description}</p>
+                <div className="bg-black/30 border border-gold/10 rounded-md p-3 mt-auto">
+                  <p className="text-sm text-gray-300">
+                    <span className="text-gold font-medium">Tipp:</span> {step.tip}
+                  </p>
+                </div>
+              </div>
+            </motion.div>
             
-            <p className="text-gray-300 mb-4">{step.description}</p>
-            
-            <div className="bg-black/30 border border-gold/10 rounded-md p-3 mt-auto">
-              <p className="text-sm text-gray-300">
-                <span className="text-gold font-medium">Tipp:</span> {step.tip}
-              </p>
-            </div>
-          </motion.div>
+            {/* Arrow connector between steps (visible only on mobile) */}
+            {index < steps.length - 1 && (
+              <motion.div 
+                initial={{ opacity: 0 }}
+                whileInView={{ opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ duration: 0.5, delay: (index + 0.5) * 0.1 }}
+                className="flex justify-center my-2 md:hidden"
+              >
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M12 5L12 19M12 19L5 12M12 19L19 12" stroke="#FFD700" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                </svg>
+              </motion.div>
+            )}
+          </div>
         ))}
       </div>
     </div>

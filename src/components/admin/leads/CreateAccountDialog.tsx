@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import {
@@ -24,51 +24,49 @@ interface CreateAccountDialogProps {
 
 export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialogProps) => {
   const { toast } = useToast();
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [useGeneratedPassword, setUseGeneratedPassword] = useState(true);
 
-  // Generate random password when dialog opens
-  useState(() => {
-    if (open && useGeneratedPassword) {
-      const generatedPwd = generatePassword(8);
-      setPassword(generatedPwd);
-      setConfirmPassword(generatedPwd);
+  // Initialize form fields with lead data when the dialog opens
+  useEffect(() => {
+    if (lead && open) {
+      setName(lead.name || "");
+      setEmail(lead.email || "");
+      setPhone(lead.phone || "");
     }
-  });
+  }, [lead, open]);
 
   const handleCreateAccount = async () => {
-    if (!lead || !password || password !== confirmPassword) {
-      if (!lead) {
-        toast({
-          title: "Fehler",
-          description: "Kein Lead ausgewählt.",
-          variant: "destructive"
-        });
-      } else if (!password) {
-        toast({
-          title: "Fehler",
-          description: "Bitte geben Sie ein Passwort ein.",
-          variant: "destructive"
-        });
-      } else if (password !== confirmPassword) {
-        toast({
-          title: "Fehler",
-          description: "Die Passwörter stimmen nicht überein.",
-          variant: "destructive"
-        });
-      }
+    if (!lead) {
+      toast({
+        title: "Fehler",
+        description: "Kein Lead ausgewählt.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    if (!name || !email) {
+      toast({
+        title: "Fehler",
+        description: "Bitte füllen Sie alle Pflichtfelder aus.",
+        variant: "destructive"
+      });
       return;
     }
     
     setIsSubmitting(true);
     
     try {
+      // Generate a random password automatically
+      const generatedPassword = generatePassword(10);
+      
       // Standardmethode für Registrierung statt Admin API verwenden
       const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: lead.email,
-        password: password,
+        email: email,
+        password: generatedPassword,
         options: {
           emailRedirectTo: `${window.location.origin}/nutzer`
         }
@@ -79,22 +77,27 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       console.log("User created:", authData);
       
       if (authData?.user) {
-        // Update the lead status to "akzeptiert"
-        const { error: leadError } = await supabase
+        // Update the lead with any modified data
+        const { error: leadUpdateError } = await supabase
           .from('leads')
-          .update({ status: 'akzeptiert' })
+          .update({ 
+            name: name,
+            email: email,
+            phone: phone,
+            status: 'akzeptiert' 
+          })
           .eq('id', lead.id);
         
-        if (leadError) throw leadError;
+        if (leadUpdateError) throw leadUpdateError;
 
         // Send welcome email with account details
         try {
           const emailResponse = await supabase.functions.invoke('send-welcome-email', {
             body: {
-              name: lead.name,
-              email: lead.email,
-              password: password,
-              phone: lead.phone
+              name: name,
+              email: email,
+              password: generatedPassword,
+              phone: phone
             }
           });
           
@@ -111,7 +114,7 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
         
         toast({
           title: "Konto erstellt",
-          description: `Ein Konto für ${lead.email} wurde erfolgreich erstellt. Zugangsdaten wurden per E-Mail gesendet.`
+          description: `Ein Konto für ${email} wurde erfolgreich erstellt. Zugangsdaten wurden per E-Mail gesendet.`
         });
         
         onClose();
@@ -139,75 +142,47 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="grid grid-cols-4 items-center gap-4">
+            <Label htmlFor="name" className="text-right text-gray-300">
+              Name
+            </Label>
+            <Input
+              type="text"
+              id="name"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
+            />
+          </div>
+          
+          <div className="grid grid-cols-4 items-center gap-4">
             <Label htmlFor="email" className="text-right text-gray-300">
               Email
             </Label>
             <Input
               type="email"
               id="email"
-              value={lead?.email || ""}
-              readOnly
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
             />
           </div>
           
           <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="useGeneratedPassword" className="text-right text-gray-300">
-              Passwort
+            <Label htmlFor="phone" className="text-right text-gray-300">
+              Telefon
             </Label>
-            <div className="col-span-3 flex items-center space-x-2">
-              <Input
-                type="checkbox"
-                id="useGeneratedPassword"
-                checked={useGeneratedPassword}
-                onChange={(e) => {
-                  setUseGeneratedPassword(e.target.checked);
-                  if (e.target.checked) {
-                    const newPassword = generatePassword(8);
-                    setPassword(newPassword);
-                    setConfirmPassword(newPassword);
-                  } else {
-                    setPassword("");
-                    setConfirmPassword("");
-                  }
-                }}
-                className="w-4 h-4 bg-casino-card border-gold/20"
-              />
-              <Label htmlFor="useGeneratedPassword" className="text-gray-300 cursor-pointer">
-                Zufälliges Passwort generieren
-              </Label>
-            </div>
+            <Input
+              type="tel"
+              id="phone"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              placeholder="Optional"
+              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
+            />
           </div>
           
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="password" className="text-right text-gray-300">
-              Passwort
-            </Label>
-            <Input
-              type="text" // Changed to text to show the generated password
-              id="password"
-              value={password}
-              onChange={(e) => {
-                setPassword(e.target.value);
-                if (useGeneratedPassword) setUseGeneratedPassword(false);
-              }}
-              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
-            />
-          </div>
-          <div className="grid grid-cols-4 items-center gap-4">
-            <Label htmlFor="confirmPassword" className="text-right text-gray-300">
-              Passwort bestätigen
-            </Label>
-            <Input
-              type="text" // Changed to text to show the generated password
-              id="confirmPassword"
-              value={confirmPassword}
-              onChange={(e) => {
-                setConfirmPassword(e.target.value);
-                if (useGeneratedPassword) setUseGeneratedPassword(false);
-              }}
-              className="col-span-3 bg-casino-card border-gold/20 text-gray-200"
-            />
+          <div className="col-span-4 text-sm text-gray-400 mt-2 bg-casino-darker p-3 rounded-md">
+            <p>Ein zufälliges Passwort wird automatisch generiert und per E-Mail an den Benutzer gesendet.</p>
           </div>
         </div>
         <DialogFooter>

@@ -72,11 +72,15 @@ serve(async (req) => {
 
     console.log("Creating user account for:", email);
     
-    // Create the user
+    // Create the user with metadata including name and phone
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
       email: email,
       password: password,
-      email_confirm: true
+      email_confirm: true,
+      user_metadata: {
+        full_name: name,
+        phone: phone || null
+      }
     });
 
     if (userError) {

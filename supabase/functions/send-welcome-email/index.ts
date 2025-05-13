@@ -53,7 +53,7 @@ serve(async (req) => {
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background-color: #1A1F2C;
+              background-color: rgba(26, 31, 44, 0.85);
               border-radius: 12px;
               overflow: hidden;
               border: 1px solid rgba(255, 215, 0, 0.3);
@@ -95,17 +95,8 @@ serve(async (req) => {
             }
             .content {
               padding: 30px;
-              background-color: #21283B;
+              background-color: rgba(33, 40, 59, 0.7);
               position: relative;
-            }
-            .content-bg-pattern {
-              position: absolute;
-              top: 0;
-              left: 0;
-              right: 0;
-              bottom: 0;
-              opacity: 0.05;
-              background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNNTcuNTQ5IDI5LjYzN2wtNC43Mi00LjcyYy0xLjA5OS0xLjA5OS0yLjg4OC0xLjA5OS0zLjk4NyAwbC00LjcyIDQuNzJjLTEuMDk5IDEuMDk5LTEuMDk5IDIuODg4IDAgMy45ODdsNC43MiA0LjcyYzEuMDk5IDEuMDk5IDIuODg4IDEuMDk5IDMuOTg3IDBsNC43Mi00LjcyYzEuMDk5LTEuMDk5IDEuMDk5LTIuODg4IDAtMy45ODd6IiBmaWxsPSIjRkZGIi8+PC9zdmc+');
             }
             .vip-badge {
               position: absolute;
@@ -114,6 +105,7 @@ serve(async (req) => {
               width: 100px;
               height: 100px;
               overflow: hidden;
+              z-index: 3;
             }
             .vip-badge-inner {
               width: 100%;
@@ -411,14 +403,13 @@ serve(async (req) => {
             }
           </style>
         </head>
-        <body>
+        <body bgcolor="#12151E">
           <div class="container">
             <div class="header">
               <div class="header-glow"></div>
               <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Logo" class="logo">
             </div>
             <div class="content">
-              <div class="content-bg-pattern"></div>
               <div class="vip-badge">
                 <div class="vip-badge-inner">
                   <span class="vip-text">VIP</span>

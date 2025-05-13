@@ -17,6 +17,7 @@ import UserActivation from "./pages/UserActivation";
 import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
 import UserSettings from "./pages/UserSettings";
+import UserTradeArchive from "./pages/UserTradeArchive";
 import NotFound from "./pages/NotFound";
 import Auth from "./pages/Auth";
 import TradingBot from "./pages/TradingBot"; 
@@ -68,6 +69,7 @@ function App() {
               <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
               <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
               <Route path="/nutzer/einstellungen" element={<UserSettings />} />
+              <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
               <Route path="/auth" element={<Auth />} />
               {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
               <Route path="*" element={<NotFound />} />

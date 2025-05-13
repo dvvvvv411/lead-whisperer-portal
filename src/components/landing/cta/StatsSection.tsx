@@ -40,7 +40,7 @@ const StatsSection = () => {
         transition={{ delay: 0.8 }}
       >
         <p className="text-green-400">
-          <span className="font-bold">💰 ROI-Garantie:</span> Sollte der Bot im ersten Monat keine Gewinne erzielen, erstatten wir deine Aktivierungsgebühr zu 100% zurück.
+          <span className="font-bold">🔒 Transparente Strategie:</span> Unser Bot nutzt bewährte Handelsalgorithmen mit regelmäßigen Performance-Berichten, damit Sie Ihre Investitionen stets nachvollziehen können.
         </p>
       </motion.div>
     </div>

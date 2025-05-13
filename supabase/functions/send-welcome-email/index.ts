@@ -16,7 +16,7 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, password, phone, redirectUrl } = await req.json();
+    const { name, email, password, redirectUrl } = await req.json();
 
     if (!name || !email || !password) {
       return new Response(
@@ -96,7 +96,7 @@ serve(async (req) => {
               margin-top: 20px;
               padding: 12px 24px;
               background-color: #FFD700;
-              color: #000;
+              color: #fff;
               text-decoration: none;
               border-radius: 8px;
               font-weight: bold;
@@ -128,7 +128,6 @@ serve(async (req) => {
               <div class="credentials">
                 <p><strong>Benutzername:</strong> ${email}</p>
                 <p><strong>Passwort:</strong> ${password}</p>
-                ${phone ? `<p><strong>Telefon:</strong> ${phone}</p>` : ''}
               </div>
               <a href="${loginUrl}" class="cta">Zum Login</a>
             </div>

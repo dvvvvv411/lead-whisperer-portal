@@ -56,14 +56,15 @@ serve(async (req) => {
               background-color: #1A1F2C;
               border-radius: 12px;
               overflow: hidden;
-              border: 1px solid rgba(255, 215, 0, 0.2);
+              border: 1px solid rgba(255, 215, 0, 0.3);
               box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background: linear-gradient(135deg, #cba135 0%, #FFD700 50%, #e8c564 100%);
+              background: linear-gradient(135deg, #000 0%, #1A1F2C 100%);
               position: relative;
+              border-bottom: 1px solid rgba(255, 215, 0, 0.3);
             }
             .header-glow {
               position: absolute;
@@ -71,7 +72,7 @@ serve(async (req) => {
               left: 0;
               right: 0;
               bottom: 0;
-              background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 70%);
+              background: radial-gradient(circle at center, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
               z-index: 1;
             }
             .logo {
@@ -79,6 +80,15 @@ serve(async (req) => {
               position: relative;
               z-index: 2;
               filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
+            }
+            .robot-container {
+              text-align: center;
+              margin: 20px 0;
+            }
+            .robot-image {
+              max-width: 150px;
+              margin: 0 auto;
+              filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
             }
             .content {
               padding: 30px;
@@ -290,6 +300,11 @@ serve(async (req) => {
             </div>
             <div class="content">
               <div class="content-bg-pattern"></div>
+              
+              <div class="robot-container">
+                <img src="https://i.imgur.com/UWzBYw1.png" alt="AI Trading Robot" class="robot-image">
+              </div>
+              
               <h2 class="greeting">Hallo ${name},</h2>
               <p class="message">
                 Vielen Dank für deine Anfrage bei <span class="highlight highlight-glow">KI-Trading</span>!

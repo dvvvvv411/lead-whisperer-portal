@@ -13,6 +13,7 @@ import { usePaymentFlow } from "@/hooks/usePaymentFlow";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import LevelProgressChart from "@/components/user/deposit/LevelProgressChart";
+import SecurityAssurance from "@/components/user/deposit/SecurityAssurance";
 import { Card } from "@/components/ui/card";
 import UserNavbar from "@/components/user/UserNavbar";
 
@@ -133,6 +134,11 @@ const UserDeposit = () => {
                 <span className="bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500">Level & Handelsvorteile</span>
               </h2>
               <LevelProgressChart currentBalance={userCredit || 0} />
+              
+              {/* Added Security Assurance Component */}
+              <div className="mt-6 border-t border-gold/10 pt-6">
+                <SecurityAssurance />
+              </div>
             </Card>
             
             {/* Right section - Two stacked cards */}

@@ -33,7 +33,7 @@ const BotInfoCard = () => {
             <div className="flex items-center bg-accent1/10 p-2 rounded-md border border-accent1/20">
               <Award className="h-4 w-4 text-gold mr-2" />
               <div className="text-xs">
-                <div className="font-semibold text-gold">5-10% Gewinn</div>
+                <div className="font-semibold text-gold">3-8% Gewinn</div>
                 <div className="text-muted-foreground">pro erfolgreicher Trade</div>
               </div>
             </div>

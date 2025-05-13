@@ -21,3 +21,7 @@ verify_jwt = false
 
 [edge_functions.send-welcome-email]
 verify_jwt = false
+
+[edge_functions.create-user]
+verify_jwt = false
+

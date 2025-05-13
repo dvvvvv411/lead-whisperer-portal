@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
-import { useToast } from "@/hooks/use-toast";
-import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
+import { useToast } from "@/components/ui/use-toast";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -63,69 +63,41 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       // Generate a random password automatically
       const generatedPassword = generatePassword(10);
       
-      console.log("Creating user with service role key...");
+      console.log("Creating user account via edge function...");
       
-      // Use supabaseAdmin client with the service role key
-      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
-        email: email,
-        password: generatedPassword,
-        email_confirm: true
+      // Get the user's session for authentication
+      const { data: sessionData } = await supabase.auth.getSession();
+      if (!sessionData.session) {
+        throw new Error("No active session. Please log in again.");
+      }
+
+      // Call the create-user edge function
+      const response = await supabase.functions.invoke('create-user', {
+        body: {
+          email: email,
+          password: generatedPassword,
+          name: name,
+          phone: phone,
+          leadId: lead.id
+        },
+        headers: {
+          Authorization: `Bearer ${sessionData.session.access_token}`
+        }
       });
       
-      if (authError) {
-        console.error("Error creating user:", authError);
-        throw authError;
+      if (response.error) {
+        console.error("Error from create-user function:", response.error);
+        throw new Error(response.error.message || "Failed to create user account");
       }
       
-      console.log("User created:", authData);
+      console.log("User created successfully:", response.data);
       
-      if (authData?.user) {
-        // Update the lead with any modified data
-        const { error: leadUpdateError } = await supabase
-          .from('leads')
-          .update({ 
-            name: name,
-            email: email,
-            phone: phone,
-            status: 'akzeptiert' 
-          })
-          .eq('id', lead.id);
-        
-        if (leadUpdateError) {
-          console.error("Error updating lead:", leadUpdateError);
-          throw leadUpdateError;
-        }
-
-        // Send welcome email with account details
-        try {
-          const emailResponse = await supabase.functions.invoke('send-welcome-email', {
-            body: {
-              name: name,
-              email: email,
-              password: generatedPassword,
-              phone: phone,
-              redirectUrl: window.location.origin
-            }
-          });
-          
-          if (emailResponse.error) {
-            console.error("Welcome email error:", emailResponse.error);
-            // Continue even if email sending fails
-          } else {
-            console.log("Welcome email sent successfully");
-          }
-        } catch (emailError) {
-          console.error("Error calling welcome email function:", emailError);
-          // Continue even if email sending fails
-        }
-        
-        toast({
-          title: "Konto erstellt",
-          description: `Ein Konto für ${email} wurde erfolgreich erstellt. Zugangsdaten wurden per E-Mail gesendet.`
-        });
-        
-        onClose();
-      }
+      toast({
+        title: "Konto erstellt",
+        description: `Ein Konto für ${email} wurde erfolgreich erstellt. Zugangsdaten wurden per E-Mail gesendet.`
+      });
+      
+      onClose();
     } catch (error: any) {
       console.error("Error creating user account:", error);
       toast({

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -87,9 +86,9 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
     try {
       setProcessing(userId);
       
-      // Use supabase RPC call to delete user (this will use our custom function with SECURITY DEFINER)
-      const { error } = await supabase.rpc('delete_user_as_admin', {
-        user_id_to_delete: userId
+      // Instead of using RPC, we'll directly invoke the function using POST with the correct headers
+      const { data, error } = await supabase.functions.invoke('delete-user', {
+        body: { userId: userId }
       });
       
       if (error) throw error;

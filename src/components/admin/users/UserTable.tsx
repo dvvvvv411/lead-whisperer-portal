@@ -87,8 +87,10 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
     try {
       setProcessing(userId);
       
-      // Use the admin client for the delete operation
-      const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
+      // Use supabase RPC call to delete user (this will use our custom function with SECURITY DEFINER)
+      const { error } = await supabase.rpc('delete_user_as_admin', {
+        user_id_to_delete: userId
+      });
       
       if (error) throw error;
       

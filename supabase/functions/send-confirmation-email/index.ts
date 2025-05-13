@@ -138,14 +138,13 @@ serve(async (req) => {
               margin-top: 10px;
               position: relative;
               z-index: 2;
-              flex-wrap: nowrap;
-              gap: 0;
+              width: 100%;
             }
             .step {
               display: flex;
               flex-direction: column;
               align-items: center;
-              flex: 1;
+              width: 25%;
               text-align: center;
             }
             .step-icon {
@@ -176,12 +175,22 @@ serve(async (req) => {
               font-weight: bold;
             }
             .step-line {
-              flex-grow: 1;
+              position: absolute;
+              top: 15px;
               height: 1px;
               background-color: #E0E0E0;
-              margin: 0 5px;
-              position: relative;
+              width: 100%;
+              z-index: -1;
+              left: 0;
+            }
+            .step-line-completed {
+              position: absolute;
               top: 15px;
+              height: 1px;
+              background-color: #D4AF37;
+              width: 12.5%;
+              z-index: -1;
+              left: 0;
             }
             .signature {
               margin-top: 30px;
@@ -241,21 +250,24 @@ serve(async (req) => {
               </div>
               
               <div class="progress-step">
+                <div class="step-line"></div>
+                <div class="step-line-completed"></div>
+                
                 <div class="step step-current">
                   <div class="step-icon">✓</div>
                   <div class="step-label">Anfrage</div>
                 </div>
-                <div class="step-line"></div>
+                
                 <div class="step">
                   <div class="step-icon">2</div>
                   <div class="step-label">Beratung</div>
                 </div>
-                <div class="step-line"></div>
+                
                 <div class="step">
                   <div class="step-icon">3</div>
                   <div class="step-label">Aktivierung</div>
                 </div>
-                <div class="step-line"></div>
+                
                 <div class="step">
                   <div class="step-icon">4</div>
                   <div class="step-label">Trading</div>

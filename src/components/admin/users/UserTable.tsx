@@ -11,11 +11,21 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Check, X, Wallet } from "lucide-react";
+import { Calendar, Check, Trash2, X, Wallet } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
 import { motion } from "framer-motion";
+import { 
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 
 export interface User {
   id: string;
@@ -36,6 +46,7 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
   const [editingCredit, setEditingCredit] = useState<User | null>(null);
+  const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const toggleUserRole = async (userId: string, currentRole: string) => {
     try {
@@ -65,6 +76,34 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
       toast({
         title: "Fehler",
         description: "Die Benutzerrolle konnte nicht aktualisiert werden: " + error.message,
+        variant: "destructive"
+      });
+    } finally {
+      setProcessing(null);
+    }
+  };
+
+  const deleteUser = async (userId: string) => {
+    try {
+      setProcessing(userId);
+      
+      // Delete the user using the admin API
+      const { error } = await supabase.auth.admin.deleteUser(userId);
+      
+      if (error) throw error;
+      
+      toast({
+        title: "Benutzer gelöscht",
+        description: "Das Benutzerkonto wurde erfolgreich gelöscht.",
+      });
+      
+      onUserUpdated();
+      setUserToDelete(null);
+    } catch (error: any) {
+      console.error("Fehler beim Löschen des Benutzerkontos:", error);
+      toast({
+        title: "Fehler",
+        description: "Das Benutzerkonto konnte nicht gelöscht werden: " + error.message,
         variant: "destructive"
       });
     } finally {
@@ -160,6 +199,15 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                     >
                       {user.role === "admin" ? "Zum Benutzer" : "Zum Admin"}
                     </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled={processing === user.id || user.role === "admin"}
+                      className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
+                      onClick={() => setUserToDelete(user)}
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
                   </div>
                 </TableCell>
               </motion.tr>
@@ -178,6 +226,30 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
           onCreditUpdated={onUserUpdated}
         />
       )}
+
+      <AlertDialog open={!!userToDelete} onOpenChange={(open) => !open && setUserToDelete(null)}>
+        <AlertDialogContent className="bg-casino-card border border-gold/20">
+          <AlertDialogHeader>
+            <AlertDialogTitle className="text-gold">Benutzer löschen</AlertDialogTitle>
+            <AlertDialogDescription className="text-gray-300">
+              Möchten Sie den Benutzer <span className="font-semibold text-white">{userToDelete?.email}</span> wirklich löschen? 
+              <br />
+              Diese Aktion kann nicht rückgängig gemacht werden. Alle Daten des Benutzers werden unwiderruflich gelöscht.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel className="bg-transparent border border-gray-600 text-gray-300 hover:bg-gray-800">
+              Abbrechen
+            </AlertDialogCancel>
+            <AlertDialogAction 
+              onClick={() => userToDelete && deleteUser(userToDelete.id)}
+              className="bg-red-900/50 border border-red-500/30 text-red-300 hover:bg-red-800/50 hover:text-red-200"
+            >
+              Löschen
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };

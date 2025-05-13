@@ -12,7 +12,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Calendar, Check, Trash2, X, Wallet } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
 import { motion } from "framer-motion";
@@ -87,8 +87,8 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
     try {
       setProcessing(userId);
       
-      // Delete the user using the admin API
-      const { error } = await supabase.auth.admin.deleteUser(userId);
+      // Use the admin client for the delete operation
+      const { error } = await supabaseAdmin.auth.admin.deleteUser(userId);
       
       if (error) throw error;
       

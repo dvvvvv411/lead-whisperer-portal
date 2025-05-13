@@ -19,9 +19,9 @@ const UserTradeArchive = () => {
   }, [user?.id, fetchUserCredit]);
 
   return (
-    <UserAuthWrapper>
+    <UserAuthWrapper redirectTo="/auth">
       <div className="min-h-screen bg-casino-background text-white">
-        <UserNavbar userCredit={userCredit} />
+        <UserNavbar userId={user?.id} userEmail={user?.email} />
         
         <div className="container mx-auto px-4 py-8">
           <Card className="border-casino-card bg-casino-card text-white shadow-md">

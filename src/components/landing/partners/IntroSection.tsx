@@ -69,7 +69,7 @@ const IntroSection = () => {
       </motion.p>
       
       <div className="max-w-2xl mx-auto relative">
-        {/* Vertical connecting line */}
+        {/* Vertical connecting line - moved below icons in z-order */}
         <div className="absolute left-[31px] top-14 bottom-14 w-1 bg-gradient-to-b from-gold/30 via-gold to-gold/30 z-0 hidden md:block"></div>
         
         {/* Steps displayed vertically */}
@@ -82,9 +82,9 @@ const IntroSection = () => {
               transition={{ duration: 0.5, delay: index * 0.1 }}
               className="flex flex-col md:flex-row items-start gap-5"
             >
-              {/* Step indicator with icon */}
-              <div className="flex flex-col items-center z-10">
-                <div className="h-16 w-16 rounded-full bg-gold/20 flex items-center justify-center shadow-glow">
+              {/* Step indicator with icon - increased z-index to appear above the line */}
+              <div className="flex flex-col items-center z-10 relative">
+                <div className="h-16 w-16 rounded-full bg-gold/20 flex items-center justify-center shadow-glow relative z-20">
                   <step.icon className="h-8 w-8 text-gold" />
                 </div>
                 {index < steps.length - 1 && (

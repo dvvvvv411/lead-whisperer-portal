@@ -30,6 +30,9 @@ serve(async (req) => {
       );
     }
 
+    // Extract first name only (to avoid showing email address if name contains it)
+    const displayName = name.split(' ')[0].trim();
+
     const emailResponse = await resend.emails.send({
       from: "KI-Trading Bot <noreply@bitloon.net>",
       to: [email],
@@ -110,7 +113,7 @@ serve(async (req) => {
       <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
-      <h2>Hallo ${name}</h2>
+      <h2>Hallo ${displayName}</h2>
       <p>Vielen Dank für Ihre Anmeldung. Ihr Konto wurde erfolgreich aktiviert. Sie haben nun Zugriff auf alle Funktionen des Systems.</p>
       <p><strong>Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren</strong>, um Ihnen bei der Einrichtung zu helfen.</p>
       <a href="#" class="cta">Zum Dashboard</a>

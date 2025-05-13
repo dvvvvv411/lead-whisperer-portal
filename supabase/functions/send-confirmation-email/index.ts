@@ -36,8 +36,6 @@ serve(async (req) => {
       subject: "Danke für deine Anfrage bei KI-Trading",
       html: `
       <!DOCTYPE html>
-
-<!DOCTYPE html>
 <html lang="de">
 <head>
   <meta charset="UTF-8">
@@ -79,6 +77,7 @@ serve(async (req) => {
     .content p {
       font-size: 16px;
       line-height: 1.6;
+      color: #ffffff;
     }
     .cta {
       display: inline-block;
@@ -96,27 +95,35 @@ serve(async (req) => {
       color: #aaa;
       margin-top: 30px;
     }
+    footer a {
+      color: #FFD700;
+      text-decoration: none;
+    }
+    footer a:hover {
+      text-decoration: underline;
+    }
   </style>
 </head>
 <body>
   <div class="container">
     <header>
-      <img src="https://i.ibb.co/ds7zGCJj/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
+      <img src="https://i.ibb.co/ds7zGCJ/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
-      <h2>Willkommen zurück im Dashboard!</h2>
-      <p>Hallo <strong>maxmustermann678</strong>,</p>
-      <p>vielen Dank für Ihre Anmeldung. Ihr Konto wurde erfolgreich aktiviert. Sie haben nun Zugriff auf alle Funktionen des Systems.</p>
+      <h2>Hallo ${name}</h2>
+      <p>Vielen Dank für Ihre Anmeldung. Ihr Konto wurde erfolgreich aktiviert. Sie haben nun Zugriff auf alle Funktionen des Systems.</p>
       <p><strong>Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren</strong>, um Ihnen bei der Einrichtung zu helfen.</p>
       <a href="#" class="cta">Zum Dashboard</a>
     </div>
     <footer>
-      &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI
+      &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI | 
+      <a href="https://ki-trading.net/impressum" target="_blank">Impressum</a> | 
+      <a href="https://ki-trading.net" target="_blank">Webseite</a> | 
+      <a href="https://ki-trading.net/datenschutz" target="_blank">Datenschutz</a>
     </footer>
   </div>
 </body>
 </html>
-
       `,
     });
 

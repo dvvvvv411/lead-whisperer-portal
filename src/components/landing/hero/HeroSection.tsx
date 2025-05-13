@@ -14,8 +14,10 @@ const HeroSection = () => {
       <div className="container mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
           <HeroContent />
-          <ChartSection />
-          <CryptoIconBubbles />
+          <div className="md:col-span-2 relative">
+            <ChartSection />
+            <CryptoIconBubbles />
+          </div>
         </div>
       </div>
     </section>

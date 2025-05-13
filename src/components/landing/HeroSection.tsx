@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Bitcoin, Bot, Star, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
+// Import the crypto icons data to use for the bubbles
 const cryptoIcons = [{
   name: "Bitcoin",
   icon: <Bitcoin className="h-6 w-6 text-[#F7931A]" />,
@@ -410,6 +411,44 @@ const HeroSection = () => {
                 </motion.div>
               </div>
             </div>
+            
+            {/* Add the crypto icon bubbles here - this is the key addition */}
+            {cryptoIcons.map((crypto, index) => (
+              <motion.div
+                key={crypto.name}
+                className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`}
+                initial={{ 
+                  opacity: 0,
+                  scale: 0 
+                }}
+                animate={{ 
+                  x: [0, 10 * (index % 2 === 0 ? 1 : -1), 0],
+                  y: [0, 15 * (index % 3 === 0 ? 1 : -1), 0],
+                  opacity: 1,
+                  scale: 1
+                }}
+                transition={{
+                  delay: 1 + crypto.delay * 0.3,
+                  duration: 3 + index,
+                  repeat: Infinity,
+                  repeatType: 'reverse',
+                  ease: "easeInOut"
+                }}
+                style={{
+                  // Position bubbles around the chart
+                  top: `${(index * 20 + 10) % 100}%`,
+                  left: index % 2 === 0 
+                    ? `${index < 2 ? -10 : 105}%` 
+                    : `${index < 3 ? 105 : -10}%`,
+                }}
+                whileHover={{
+                  scale: 1.2,
+                  boxShadow: "0 0 15px rgba(155,135,245,0.5)"
+                }}
+              >
+                {crypto.icon}
+              </motion.div>
+            ))}
           </motion.div>
         </div>
       </div>

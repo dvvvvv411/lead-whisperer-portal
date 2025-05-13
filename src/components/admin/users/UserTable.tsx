@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -11,7 +10,7 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Check, Trash2, X, Wallet } from "lucide-react";
+import { Calendar, Check, Trash2, X, Wallet, ArrowUp, ArrowDown } from "lucide-react";
 import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
@@ -48,6 +47,8 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
   const [processing, setProcessing] = useState<string | null>(null);
   const [editingCredit, setEditingCredit] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [sortField, setSortField] = useState<string | null>(null);
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   const toggleUserRole = async (userId: string, currentRole: string) => {
     // Remove the restriction check for leads-only user
@@ -116,6 +117,33 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
     }
   };
 
+  // Handle sorting when user clicks on the credit column header
+  const toggleSort = (field: string) => {
+    if (sortField === field) {
+      // If already sorting by this field, toggle direction
+      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
+    } else {
+      // Set new sort field and default to descending (highest first)
+      setSortField(field);
+      setSortDirection("desc");
+    }
+  };
+
+  // Sort users based on current sort field and direction
+  const sortedUsers = [...users].sort((a, b) => {
+    if (sortField === "credit") {
+      const creditA = a.credit ?? 0;
+      const creditB = b.credit ?? 0;
+      
+      return sortDirection === "asc" 
+        ? creditA - creditB 
+        : creditB - creditA;
+    }
+    
+    // Default sort - keep original order
+    return 0;
+  });
+
   return (
     <div className="rounded-md">
       <Table className="border-collapse">
@@ -124,21 +152,33 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
             <TableHead className="text-gray-300">E-Mail</TableHead>
             <TableHead className="text-gray-300">Rolle</TableHead>
             <TableHead className="text-gray-300">Aktiviert</TableHead>
-            <TableHead className="text-gray-300">Guthaben</TableHead>
+            <TableHead 
+              className="text-gray-300 cursor-pointer hover:text-gold transition-colors"
+              onClick={() => toggleSort("credit")}
+            >
+              <div className="flex items-center">
+                Guthaben
+                {sortField === "credit" && (
+                  sortDirection === "asc" 
+                    ? <ArrowUp className="ml-1 h-4 w-4" /> 
+                    : <ArrowDown className="ml-1 h-4 w-4" />
+                )}
+              </div>
+            </TableHead>
             <TableHead className="text-gray-300">Registriert am</TableHead>
             <TableHead className="text-gray-300">Letzter Login</TableHead>
             <TableHead className="text-right text-gray-300">Aktionen</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
-          {users.length === 0 ? (
+          {sortedUsers.length === 0 ? (
             <TableRow className="border-t border-gold/10">
               <TableCell colSpan={7} className="text-center py-6 text-gray-400">
                 Keine Benutzer gefunden
               </TableCell>
             </TableRow>
           ) : (
-            users.map((user, index) => (
+            sortedUsers.map((user, index) => (
               <motion.tr 
                 key={user.id}
                 initial={{ opacity: 0, y: 10 }}

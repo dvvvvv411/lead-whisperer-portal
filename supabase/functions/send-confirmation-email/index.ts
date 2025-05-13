@@ -83,22 +83,34 @@ serve(async (req) => {
       color: #ffffff;
     }
     .notification {
-      background-color: #28a745;
+      background-color: rgba(40, 167, 69, 0.2);
+      border: 1px solid #28a745;
       border-radius: 8px;
       padding: 15px;
       margin: 20px 0;
       color: #ffffff;
-      font-weight: bold;
     }
-    .cta {
-      display: inline-block;
-      margin-top: 20px;
-      padding: 12px 24px;
-      background-color: #FFD700;
-      color: #000;
-      text-decoration: none;
-      border-radius: 8px;
-      font-weight: bold;
+    .progress-container {
+      margin: 30px 0 15px 0;
+    }
+    .progress-label {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 8px;
+      font-size: 14px;
+      color: #ccc;
+    }
+    .progress-bar {
+      height: 10px;
+      background-color: rgba(255, 255, 255, 0.1);
+      border-radius: 5px;
+      overflow: hidden;
+    }
+    .progress-fill {
+      height: 100%;
+      width: 33%;
+      background: linear-gradient(90deg, #28a745, #5cd666);
+      border-radius: 5px;
     }
     footer {
       text-align: center;
@@ -125,11 +137,18 @@ serve(async (req) => {
       <p>Vielen Dank für Ihr Interesse an unserem KI Krypto Bot. Wir freuen uns, dass Sie sich für unsere automatisierte Trading-Lösung interessieren.</p>
       
       <div class="notification">
-        <p style="margin: 0;">Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren, um Ihnen alle Details zu erläutern und Ihnen bei der Einrichtung zu helfen.</p>
+        <p style="margin: 0; font-weight: normal;">Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren, um Ihnen alle Details zu erläutern und Ihnen bei der Einrichtung zu helfen.</p>
       </div>
       
-      <p>In der Zwischenzeit können Sie bereits auf unser Dashboard zugreifen, um sich einen ersten Eindruck zu verschaffen.</p>
-      <a href="#" class="cta">Zum Dashboard</a>
+      <div class="progress-container">
+        <div class="progress-label">
+          <span>Fortschritt zur finanziellen Freiheit</span>
+          <span>33%</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill"></div>
+        </div>
+      </div>
     </div>
     <footer>
       &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI | 

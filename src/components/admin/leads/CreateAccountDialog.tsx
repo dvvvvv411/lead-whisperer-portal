@@ -63,7 +63,9 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       // Generate a random password automatically
       const generatedPassword = generatePassword(10);
       
-      // Use supabaseAdmin client instead of regular supabase client for admin operations
+      console.log("Creating user with service role key...");
+      
+      // Use supabaseAdmin client with the service role key
       const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: email,
         password: generatedPassword,

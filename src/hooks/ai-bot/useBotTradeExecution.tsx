@@ -44,6 +44,7 @@ export const useBotTradeExecution = (
     }
     
     // Check only daily trade limit, removing the cooldown check
+    // Use actual daily trades executed (which is already calculated as pairs)
     const canExecute = checkCanExecuteTrade(
       status.dailyTradesExecuted,
       status.maxTradesPerDay,
@@ -113,7 +114,7 @@ export const useBotTradeExecution = (
     }
     
     try {
-      console.log("Executing AI trade with:", { userId, userCredit, riskLevel: settings.riskLevel, maxTradeAmount: settings.maxTradeAmount });
+      console.log("AITradingBot: Executing trade with:", { userId, userCredit, riskLevel: settings.riskLevel, maxTradeAmount: settings.maxTradeAmount });
       
       // Make sure we have fresh crypto data before executing the trade
       if (cryptos && cryptos.length > 0) {

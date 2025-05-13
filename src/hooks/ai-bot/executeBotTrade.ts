@@ -40,9 +40,13 @@ export const executeAITrade = async ({
     const maxTradesPerDay = userRank.maxTradesPerDay;
     
     // Check if user has reached daily trade limit
-    const tradesExecutedToday = await getTradesExecutedToday(userId);
-    if (tradesExecutedToday >= maxTradesPerDay) {
-      console.log(`KI-Bot: Tägliches Handelslimit von ${maxTradesPerDay} Trades erreicht`);
+    const rawTradesCount = await getTradesExecutedToday(userId);
+    
+    // Calculate actual trade count by considering buy/sell pairs as one trade
+    const actualTradeCount = Math.ceil(rawTradesCount / 2);
+    
+    if (actualTradeCount >= maxTradesPerDay) {
+      console.log(`KI-Bot: Tägliches Handelslimit von ${maxTradesPerDay} Trades erreicht (${actualTradeCount}/${maxTradesPerDay})`);
       return { 
         success: false,
         error: `Sie haben bereits Ihr tägliches Limit von ${maxTradesPerDay} Trades erreicht. Erhöhen Sie Ihr Guthaben für mehr Trades.`

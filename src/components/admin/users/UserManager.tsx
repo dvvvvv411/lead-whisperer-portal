@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,6 +14,7 @@ interface UserData {
   role: string;
   activated: boolean;
   credit?: number | null;
+  phone?: string | null;
 }
 
 export const UserManager = () => {
@@ -72,38 +74,54 @@ export const UserManager = () => {
       if (data) {
         const usersData = data as UserData[];
         
-        console.log(`Fetched ${usersData.length} users, now fetching credit for each...`);
+        console.log(`Fetched ${usersData.length} users, now fetching credit and phone numbers for each...`);
         
-        // Für jeden Benutzer das Guthaben abrufen
-        const usersWithCredit = await Promise.all(usersData.map(async (user) => {
+        // Für jeden Benutzer das Guthaben und die Telefonnummer abrufen
+        const usersWithExtras = await Promise.all(usersData.map(async (user) => {
           try {
+            // Guthaben abrufen
             const { data: creditData, error: creditError } = await supabase
               .from('user_credits')
               .select('amount')
               .eq('user_id', user.id)
               .maybeSingle();
             
-            if (!creditError && creditData) {
-              // Konvertiere von Cent zu Euro
-              const creditInEuros = creditData.amount / 100;
-              console.log(`User ${user.email} has ${creditInEuros}€ credit (${creditData.amount} cents)`);
-              return { ...user, credit: creditInEuros };
-            } else {
-              if (creditError && creditError.code !== 'PGRST116') {
-                console.error(`Error fetching credit for user ${user.email}:`, creditError);
-              } else {
-                console.log(`No credit found for user ${user.email}, defaulting to 0`);
-              }
-              return { ...user, credit: 0 };
+            // Telefonnummer aus der leads-Tabelle abrufen
+            const { data: leadData, error: leadError } = await supabase
+              .from('leads')
+              .select('phone')
+              .eq('email', user.email)
+              .maybeSingle();
+            
+            // Konvertiere von Cent zu Euro für Guthaben
+            const creditInEuros = (!creditError && creditData) 
+              ? creditData.amount / 100 
+              : 0;
+            
+            // Telefonnummer hinzufügen, falls vorhanden
+            const phone = (!leadError && leadData && leadData.phone) 
+              ? leadData.phone 
+              : null;
+            
+            if (creditError && creditError.code !== 'PGRST116') {
+              console.error(`Error fetching credit for user ${user.email}:`, creditError);
             }
-          } catch (creditFetchError) {
-            console.error(`Fehler beim Abrufen des Guthabens für ${user.email}:`, creditFetchError);
-            return { ...user, credit: 0 };
+            
+            if (leadError && leadError.code !== 'PGRST116') {
+              console.error(`Error fetching phone for user ${user.email}:`, leadError);
+            }
+            
+            console.log(`User ${user.email}: Credit=${creditInEuros}€, Phone=${phone || 'not found'}`);
+            
+            return { ...user, credit: creditInEuros, phone };
+          } catch (fetchError) {
+            console.error(`Fehler beim Abrufen der Daten für ${user.email}:`, fetchError);
+            return { ...user, credit: 0, phone: null };
           }
         }));
         
-        setUsers(usersWithCredit);
-        console.log("Users data with credit updated successfully");
+        setUsers(usersWithExtras);
+        console.log("Users data with credit and phone numbers updated successfully");
       }
     } catch (error: any) {
       console.error("Fehler beim Abrufen der Benutzer:", error);

@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Check, Trash2, X, Wallet, ArrowUp, ArrowDown } from "lucide-react";
-import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
+import { Calendar, Trash2, Wallet, ArrowUp, ArrowDown, Phone } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
 import { motion } from "framer-motion";
@@ -34,6 +34,7 @@ export interface User {
   role: string;
   activated: boolean;
   credit?: number | null;
+  phone?: string | null;
 }
 
 interface UserTableProps {
@@ -151,7 +152,7 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
           <TableRow className="border-gold/10">
             <TableHead className="text-gray-300">E-Mail</TableHead>
             <TableHead className="text-gray-300">Rolle</TableHead>
-            <TableHead className="text-gray-300">Aktiviert</TableHead>
+            <TableHead className="text-gray-300">Telefon</TableHead>
             <TableHead 
               className="text-gray-300 cursor-pointer hover:text-gold transition-colors"
               onClick={() => toggleSort("credit")}
@@ -198,10 +199,13 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
                   </Badge>
                 </TableCell>
                 <TableCell>
-                  {user.activated ? (
-                    <Check className="h-5 w-5 text-green-500" />
+                  {user.phone ? (
+                    <div className="flex items-center">
+                      <Phone className="mr-2 h-4 w-4 text-blue-400" />
+                      <span className="text-gray-300">{user.phone}</span>
+                    </div>
                   ) : (
-                    <X className="h-5 w-5 text-red-500" />
+                    <span className="text-gray-500 text-sm">Nicht verfügbar</span>
                   )}
                 </TableCell>
                 <TableCell>
@@ -232,17 +236,6 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
                       onClick={() => setEditingCredit(user)}
                     >
                       Guthaben
-                    </Button>
-                    <Button
-                      variant="outline"
-                      size="sm"
-                      disabled={processing === user.id}
-                      className={user.role === "admin" 
-                        ? "bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400" 
-                        : "bg-purple-900/20 border-purple-500/30 hover:bg-purple-800/30 text-purple-400"}
-                      onClick={() => toggleUserRole(user.id, user.role)}
-                    >
-                      {user.role === "admin" ? "Zum Benutzer" : "Zum Admin"}
                     </Button>
                     <Button
                       variant="outline"

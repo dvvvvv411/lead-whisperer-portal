@@ -23,7 +23,11 @@ import TradingBot from "./pages/TradingBot";
 import Experiences from "./pages/Experiences"; 
 import Status from "./pages/Status"; 
 import FAQ from "./pages/FAQ"; 
-import Partners from "./pages/Partners"; // New
+import Partners from "./pages/Partners";
+import Impressum from "./pages/Impressum";
+import Datenschutz from "./pages/Datenschutz";
+import AGB from "./pages/AGB";
+import Haftungsausschluss from "./pages/Haftungsausschluss";
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
 
 // Create a new QueryClient instance
@@ -44,7 +48,14 @@ function App() {
               <Route path="/erfahrungen" element={<Experiences />} />
               <Route path="/status" element={<Status />} />
               <Route path="/faq" element={<FAQ />} />
-              <Route path="/partner" element={<Partners />} /> {/* New route */}
+              <Route path="/partner" element={<Partners />} />
+              
+              {/* Legal pages */}
+              <Route path="/impressum" element={<Impressum />} />
+              <Route path="/datenschutz" element={<Datenschutz />} />
+              <Route path="/agb" element={<AGB />} />
+              <Route path="/haftungsausschluss" element={<Haftungsausschluss />} />
+              
               <Route path="/admin" element={<Admin />} />
               <Route path="/admin/register" element={<AdminRegister />} />
               <Route path="/admin/leads" element={<AdminLeads />} />

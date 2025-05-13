@@ -39,60 +39,305 @@ serve(async (req) => {
         <html>
         <head>
           <meta charset="utf-8">
+          <meta name="viewport" content="width=device-width, initial-scale=1.0">
           <title>Danke für deine Anfrage</title>
           <style>
             body {
               font-family: Arial, sans-serif;
               line-height: 1.6;
-              color: #333;
-              max-width: 600px;
-              margin: 0 auto;
+              color: #e1e1e1;
+              margin: 0;
+              padding: 0;
+              background-color: #12151E;
             }
             .container {
-              padding: 20px;
-              background-color: #f9f9f9;
-              border-radius: 5px;
+              max-width: 600px;
+              margin: 0 auto;
+              background-color: #1A1F2C;
+              border-radius: 12px;
+              overflow: hidden;
+              border: 1px solid rgba(255, 215, 0, 0.2);
+              box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             }
             .header {
               text-align: center;
-              padding: 20px 0;
-              background: linear-gradient(to right, #cba135, #e8c564);
-              border-radius: 5px 5px 0 0;
+              padding: 30px 0;
+              background: linear-gradient(135deg, #cba135 0%, #FFD700 50%, #e8c564 100%);
+              position: relative;
+            }
+            .header-glow {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              background: radial-gradient(circle at center, rgba(255, 215, 0, 0.4) 0%, rgba(255, 215, 0, 0) 70%);
+              z-index: 1;
             }
             .logo {
-              max-width: 150px;
+              max-width: 180px;
+              position: relative;
+              z-index: 2;
+              filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.2));
             }
             .content {
-              padding: 20px;
-              background-color: #fff;
+              padding: 30px;
+              background-color: #21283B;
+              position: relative;
+            }
+            .content-bg-pattern {
+              position: absolute;
+              top: 0;
+              left: 0;
+              right: 0;
+              bottom: 0;
+              opacity: 0.05;
+              background-image: url('data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2MCIgaGVpZ2h0PSI2MCIgdmlld0JveD0iMCAwIDYwIDYwIj48cGF0aCBkPSJNNTcuNTQ5IDI5LjYzN2wtNC43Mi00LjcyYy0xLjA5OS0xLjA5OS0yLjg4OC0xLjA5OS0zLjk4NyAwbC00LjcyIDQuNzJjLTEuMDk5IDEuMDk5LTEuMDk5IDIuODg4IDAgMy45ODdsNC43MiA0LjcyYzEuMDk5IDEuMDk5IDIuODg4IDEuMDk5IDMuOTg3IDBsNC43Mi00LjcyYzEuMDk5LTEuMDk5IDEuMDk5LTIuODg4IDAtMy45ODd6IiBmaWxsPSIjRkZGIi8+PC9zdmc+');
+            }
+            .greeting {
+              font-size: 22px;
+              margin-bottom: 20px;
+              color: #ffffff;
+              font-weight: bold;
+              position: relative;
+              z-index: 2;
+            }
+            .message {
+              color: #e1e1e1;
+              margin-bottom: 25px;
+              font-size: 16px;
+              position: relative;
+              z-index: 2;
+            }
+            .highlight {
+              color: #FFD700;
+              font-weight: bold;
+              display: inline-block;
+              position: relative;
+            }
+            .highlight:after {
+              content: '';
+              position: absolute;
+              bottom: -2px;
+              left: 0;
+              right: 0;
+              height: 2px;
+              background: linear-gradient(90deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.8) 50%, rgba(255, 215, 0, 0) 100%);
+            }
+            .highlight-glow {
+              text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+            }
+            .notification-box {
+              background-color: rgba(255, 215, 0, 0.1);
+              border-left: 4px solid #FFD700;
+              padding: 15px;
+              margin: 20px 0;
+              border-radius: 6px;
+              position: relative;
+              z-index: 2;
+            }
+            .notification-box p {
+              margin: 0;
+              color: #ffffff;
+            }
+            .notification-icon {
+              display: inline-block;
+              width: 20px;
+              height: 20px;
+              margin-right: 10px;
+              vertical-align: middle;
+              font-size: 20px;
+              color: #FFD700;
             }
             .footer {
               text-align: center;
               padding: 20px;
+              background-color: #16181a;
               font-size: 12px;
-              color: #888;
+              color: #777;
             }
-            .highlight {
-              color: #cba135;
+            .footer p {
+              margin: 5px 0;
+            }
+            .button {
+              display: inline-block;
+              background: linear-gradient(90deg, #cba135 0%, #FFD700 50%, #e8c564 100%);
+              color: #000000;
+              text-decoration: none;
+              padding: 12px 25px;
+              border-radius: 50px;
               font-weight: bold;
+              margin: 20px 0;
+              text-align: center;
+              transition: transform 0.3s ease;
+              position: relative;
+              border: none;
+              box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+            }
+            .button:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+            }
+            .progress {
+              background-color: #1A1F2C;
+              height: 10px;
+              border-radius: 5px;
+              margin: 20px 0;
+              overflow: hidden;
+              position: relative;
+              border: 1px solid rgba(255, 215, 0, 0.2);
+            }
+            .progress-bar {
+              width: 25%;
+              height: 100%;
+              background: linear-gradient(90deg, #cba135 0%, #FFD700 100%);
+              border-radius: 5px;
+              position: relative;
+              animation: pulse 2s infinite;
+            }
+            .progress-badge {
+              position: absolute;
+              top: -8px;
+              right: -8px;
+              background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+              border-radius: 50%;
+              width: 24px;
+              height: 24px;
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              font-weight: bold;
+              font-size: 14px;
+              color: #000;
+              box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+            }
+            .progress-label {
+              display: flex;
+              justify-content: space-between;
+              margin-bottom: 5px;
+              font-size: 12px;
+              color: #aaa;
+            }
+            .progress-step {
+              display: flex;
+              justify-content: space-between;
+              margin-top: 5px;
+              align-items: center;
+            }
+            .step {
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+            }
+            .step-icon {
+              width: 30px;
+              height: 30px;
+              background-color: #1A1F2C;
+              border-radius: 50%;
+              border: 1px solid rgba(255, 215, 0, 0.3);
+              display: flex;
+              align-items: center;
+              justify-content: center;
+              margin-bottom: 5px;
+              color: #777;
+            }
+            .step-current .step-icon {
+              background-color: #FFD700;
+              color: #000;
+              box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+            }
+            .step-label {
+              font-size: 11px;
+              color: #aaa;
+            }
+            .step-current .step-label {
+              color: #FFD700;
+            }
+            .step-line {
+              flex-grow: 1;
+              height: 1px;
+              background-color: rgba(255, 215, 0, 0.3);
+              margin: 0 5px;
+            }
+            .signature {
+              margin-top: 30px;
+              padding-top: 20px;
+              border-top: 1px solid rgba(255, 255, 255, 0.1);
+            }
+            @keyframes pulse {
+              0%, 100% { opacity: 1; }
+              50% { opacity: 0.7; }
+            }
+            @media (max-width: 600px) {
+              .container {
+                width: 100%;
+                border-radius: 0;
+              }
+              .content {
+                padding: 20px;
+              }
+              .greeting {
+                font-size: 20px;
+              }
             }
           </style>
         </head>
         <body>
           <div class="container">
             <div class="header">
+              <div class="header-glow"></div>
               <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Logo" class="logo">
             </div>
             <div class="content">
-              <h2>Hallo ${name},</h2>
-              <p>Vielen Dank für deine Anfrage bei KI-Trading!</p>
-              <p>Wir haben deine Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei dir melden.</p>
-              <p>Bitte halte dein Telefon bereit, da wir dich anrufen werden, um dir weitere Informationen über unsere KI-Trading-Lösung zu geben.</p>
-              <p>Du bist nur noch einen Schritt von der finanziellen Freiheit entfernt!</p>
-              <p>Mit freundlichen Grüßen,<br>Dein KI-Trading Team</p>
+              <div class="content-bg-pattern"></div>
+              <h2 class="greeting">Hallo ${name},</h2>
+              <p class="message">
+                Vielen Dank für deine Anfrage bei <span class="highlight highlight-glow">KI-Trading</span>!
+              </p>
+              <p class="message">
+                Wir haben deine Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei dir melden.
+              </p>
+              
+              <div class="notification-box">
+                <p><span class="notification-icon">🔔</span> Bitte halte dein Telefon bereit, da wir dich anrufen werden, um dir weitere Informationen über unsere KI-Trading-Lösung zu geben.</p>
+              </div>
+              
+              <p class="message">Du bist nur noch einen Schritt von der finanziellen Freiheit entfernt!</p>
+              
+              <div class="progress">
+                <div class="progress-bar"></div>
+              </div>
+              
+              <div class="progress-step">
+                <div class="step step-current">
+                  <div class="step-icon">✓</div>
+                  <div class="step-label">Anfrage</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                  <div class="step-icon">2</div>
+                  <div class="step-label">Beratung</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                  <div class="step-icon">3</div>
+                  <div class="step-label">Aktivierung</div>
+                </div>
+                <div class="step-line"></div>
+                <div class="step">
+                  <div class="step-icon">4</div>
+                  <div class="step-label">Trading</div>
+                </div>
+              </div>
+              
+              <p class="signature">
+                Mit freundlichen Grüßen,<br>
+                <span class="highlight">Dein KI-Trading Team</span>
+              </p>
             </div>
             <div class="footer">
               <p>© 2024 KI-Trading Bot. Alle Rechte vorbehalten.</p>
+              <p>Diese E-Mail wurde automatisch generiert, bitte antworte nicht darauf.</p>
             </div>
           </div>
         </body>

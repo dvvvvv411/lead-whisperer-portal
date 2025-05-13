@@ -21,13 +21,13 @@ const UserTradeArchive = () => {
   return (
     <UserAuthWrapper redirectTo="/auth">
       {(authUser) => (
-        <div className="min-h-screen bg-gradient-to-b from-casino-darker to-black text-white">
+        <div className="min-h-screen bg-gradient-to-b from-casino-dark to-casino-darker text-white">
           <UserNavbar userId={authUser?.id} userEmail={authUser?.email} />
           
           <div className="container mx-auto px-4 py-8">
-            <Card className="neo-glass border-gold/20 shadow-md backdrop-blur-lg bg-black/30">
+            <Card className="backdrop-blur-xl bg-black/40 border-gold/20 shadow-md">
               <CardHeader className="border-b border-gold/10 pb-4">
-                <CardTitle className="text-2xl font-bold text-gold">Trading-Archiv</CardTitle>
+                <CardTitle className="text-2xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500">Trading-Archiv</CardTitle>
                 <CardDescription className="text-gray-300">
                   Vollständige Übersicht aller KI-Bot Trading-Aktivitäten
                 </CardDescription>

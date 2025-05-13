@@ -60,8 +60,6 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
           ? a.total_amount - b.total_amount
           : b.total_amount - a.total_amount;
       case 'profit':
-        // For profit we need to find sell trades and their matching buy trades
-        // This is a simple approach that just sorts by total amount difference
         return sortConfig.direction === 'asc'
           ? a.total_amount - b.total_amount
           : b.total_amount - a.total_amount;
@@ -110,10 +108,6 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
   // Find profit for sell trades
   const findTradeProfit = (trade: any) => {
     if (trade.type !== 'sell') return null;
-    
-    // Since the profit is calculated internally and not exposed directly,
-    // we can't show an exact profit figure in many cases
-    // This is a simplified calculation
     return trade.profit || 0;
   };
   
@@ -128,7 +122,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
   
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-gold/10 backdrop-blur-lg bg-black/30">
+      <div className="rounded-md border border-gold/10 backdrop-blur-lg bg-black/20">
         <div className="relative overflow-x-auto">
           <Table>
             <TableHeader>
@@ -142,8 +136,8 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('date')}
                   </div>
                 </TableHead>
-                <TableHead className="text-gray-400">Bot-Name</TableHead>
-                <TableHead className="text-gray-400">Exchange</TableHead>
+                <TableHead className="text-gray-300">Bot-Name</TableHead>
+                <TableHead className="text-gray-300">Exchange</TableHead>
                 <TableHead 
                   className="cursor-pointer hover:text-gold transition-colors"
                   onClick={() => handleSort('asset')}
@@ -153,7 +147,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('asset')}
                   </div>
                 </TableHead>
-                <TableHead className="text-gray-400">Aktion</TableHead>
+                <TableHead className="text-gray-300">Aktion</TableHead>
                 <TableHead 
                   className="cursor-pointer hover:text-gold transition-colors text-right"
                   onClick={() => handleSort('quantity')}
@@ -181,7 +175,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('total')}
                   </div>
                 </TableHead>
-                <TableHead className="text-right text-gray-400">Gewinn/Verlust</TableHead>
+                <TableHead className="text-right text-gray-300">Gewinn/Verlust</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>

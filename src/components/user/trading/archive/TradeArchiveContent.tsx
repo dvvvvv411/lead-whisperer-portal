@@ -25,7 +25,7 @@ const TradeArchiveContent = ({ userId }: TradeArchiveContentProps) => {
     },
     asset: "",
     botStrategy: "",
-    action: "all" as "all" | "buy" | "sell" // Changed from "" to "all"
+    action: "all" as "all" | "buy" | "sell" 
   });
   
   // Apply filters to trades
@@ -92,8 +92,8 @@ const TradeArchiveContent = ({ userId }: TradeArchiveContentProps) => {
   if (loading) {
     return (
       <div className="space-y-4">
-        <Skeleton className="h-12 w-full bg-gray-800/50" />
-        <Skeleton className="h-64 w-full bg-gray-800/50" />
+        <Skeleton className="h-12 w-full bg-gray-800/30" />
+        <Skeleton className="h-64 w-full bg-gray-800/30" />
       </div>
     );
   }
@@ -111,7 +111,7 @@ const TradeArchiveContent = ({ userId }: TradeArchiveContentProps) => {
         <Button 
           variant="outline" 
           size="sm" 
-          className="flex items-center gap-2"
+          className="flex items-center gap-2 border-gold/20 bg-black/20 hover:bg-gold/10 hover:text-gold"
           onClick={handleRefresh}
         >
           <RefreshCw className="h-4 w-4" />

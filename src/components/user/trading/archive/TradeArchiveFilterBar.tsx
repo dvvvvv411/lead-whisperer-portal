@@ -55,7 +55,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
   };
   
   return (
-    <div className="bg-black/40 backdrop-blur-md rounded-md border border-gold/10 p-4 space-y-4">
+    <div className="bg-black/30 backdrop-blur-md rounded-md border border-gold/10 p-4 space-y-4">
       <div className="flex flex-col md:flex-row gap-3 items-start md:items-center justify-between">
         <h3 className="font-medium text-gold">Filter</h3>
         
@@ -65,7 +65,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className={`h-10 bg-black/30 border-gold/20 hover:border-gold/40 hover:bg-black/50 ${filters.dateRange.from ? 'text-white' : 'text-muted-foreground'}`}
+                className={`h-10 bg-black/20 border-gold/20 hover:border-gold/40 hover:bg-black/40 ${filters.dateRange.from ? 'text-white' : 'text-muted-foreground'}`}
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-gold/70" />
                 {filters.dateRange.from ? (
@@ -75,14 +75,14 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-black/80 border-gold/20" align="start">
+            <PopoverContent className="w-auto p-0 bg-black/70 border-gold/20" align="start">
               <Calendar
                 mode="single"
                 selected={filters.dateRange.from}
                 onSelect={(date) => handleDateChange('from', date)}
                 initialFocus
                 locale={de}
-                className="bg-black/80 text-white"
+                className="bg-black/70 text-white"
               />
             </PopoverContent>
           </Popover>
@@ -92,7 +92,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             <PopoverTrigger asChild>
               <Button
                 variant="outline"
-                className={`h-10 bg-black/30 border-gold/20 hover:border-gold/40 hover:bg-black/50 ${filters.dateRange.to ? 'text-white' : 'text-muted-foreground'}`}
+                className={`h-10 bg-black/20 border-gold/20 hover:border-gold/40 hover:bg-black/40 ${filters.dateRange.to ? 'text-white' : 'text-muted-foreground'}`}
               >
                 <CalendarIcon className="mr-2 h-4 w-4 text-gold/70" />
                 {filters.dateRange.to ? (
@@ -102,14 +102,14 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
                 )}
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0 bg-black/80 border-gold/20" align="start">
+            <PopoverContent className="w-auto p-0 bg-black/70 border-gold/20" align="start">
               <Calendar
                 mode="single"
                 selected={filters.dateRange.to}
                 onSelect={(date) => handleDateChange('to', date)}
                 initialFocus
                 locale={de}
-                className="bg-black/80 text-white"
+                className="bg-black/70 text-white"
               />
             </PopoverContent>
           </Popover>
@@ -119,7 +119,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gold/60" />
             <Input
               placeholder="Asset"
-              className="h-10 pl-9 pr-4 bg-black/30 border-gold/20 focus:border-gold/40 focus:ring-gold/10"
+              className="h-10 pl-9 pr-4 bg-black/20 border-gold/20 focus:border-gold/40 focus:ring-gold/10"
               value={filters.asset}
               onChange={(e) => handleInputChange('asset', e.target.value)}
             />
@@ -130,7 +130,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gold/60" />
             <Input
               placeholder="Bot Strategie"
-              className="h-10 pl-9 pr-4 bg-black/30 border-gold/20 focus:border-gold/40 focus:ring-gold/10"
+              className="h-10 pl-9 pr-4 bg-black/20 border-gold/20 focus:border-gold/40 focus:ring-gold/10"
               value={filters.botStrategy}
               onChange={(e) => handleInputChange('botStrategy', e.target.value)}
             />
@@ -141,10 +141,10 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             value={filters.action}
             onValueChange={(value) => handleInputChange('action', value as "all" | "buy" | "sell")}
           >
-            <SelectTrigger className="h-10 w-[110px] bg-black/30 border-gold/20 hover:border-gold/40">
+            <SelectTrigger className="h-10 w-[110px] bg-black/20 border-gold/20 hover:border-gold/40">
               <SelectValue placeholder="Aktion" />
             </SelectTrigger>
-            <SelectContent className="bg-black/90 border-gold/20">
+            <SelectContent className="bg-black/80 border-gold/20">
               <SelectItem value="all" className="focus:bg-gold/20 focus:text-white">Alle</SelectItem>
               <SelectItem value="buy" className="focus:bg-gold/20 focus:text-white">Kauf</SelectItem>
               <SelectItem value="sell" className="focus:bg-gold/20 focus:text-white">Verkauf</SelectItem>
@@ -168,7 +168,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
       {(filters.dateRange.from || filters.dateRange.to || filters.asset || filters.botStrategy || filters.action !== "all") && (
         <div className="flex flex-wrap gap-2 mt-3">
           {filters.dateRange.from && (
-            <div className="bg-black/30 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
+            <div className="bg-black/20 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
               Von: {format(filters.dateRange.from, "dd.MM.yyyy", { locale: de })}
               <button 
                 className="ml-2 hover:text-white" 
@@ -181,7 +181,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
           )}
           
           {filters.dateRange.to && (
-            <div className="bg-black/30 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
+            <div className="bg-black/20 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
               Bis: {format(filters.dateRange.to, "dd.MM.yyyy", { locale: de })}
               <button 
                 className="ml-2 hover:text-white" 
@@ -194,7 +194,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
           )}
           
           {filters.asset && (
-            <div className="bg-black/30 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
+            <div className="bg-black/20 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
               Asset: {filters.asset}
               <button 
                 className="ml-2 hover:text-white" 
@@ -207,7 +207,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
           )}
           
           {filters.botStrategy && (
-            <div className="bg-black/30 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
+            <div className="bg-black/20 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
               Bot: {filters.botStrategy}
               <button 
                 className="ml-2 hover:text-white" 
@@ -220,7 +220,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
           )}
           
           {filters.action !== "all" && (
-            <div className="bg-black/30 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
+            <div className="bg-black/20 text-gold border border-gold/20 rounded-full px-3 py-1 text-xs flex items-center">
               Aktion: {filters.action === 'buy' ? 'Kauf' : 'Verkauf'}
               <button 
                 className="ml-2 hover:text-white" 

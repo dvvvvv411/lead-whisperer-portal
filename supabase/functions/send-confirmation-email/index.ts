@@ -90,28 +90,6 @@ serve(async (req) => {
       margin: 20px 0;
       color: #ffffff;
     }
-    .progress-container {
-      margin: 30px 0 15px 0;
-    }
-    .progress-label {
-      display: flex;
-      justify-content: space-between;
-      margin-bottom: 8px;
-      font-size: 14px;
-      color: #ccc;
-    }
-    .progress-bar {
-      height: 10px;
-      background-color: rgba(255, 255, 255, 0.1);
-      border-radius: 5px;
-      overflow: hidden;
-    }
-    .progress-fill {
-      height: 100%;
-      width: 33%;
-      background: linear-gradient(90deg, #28a745, #5cd666);
-      border-radius: 5px;
-    }
     footer {
       text-align: center;
       font-size: 13px;
@@ -139,22 +117,12 @@ serve(async (req) => {
       <div class="notification">
         <p style="margin: 0; font-weight: normal;">Ein Teammitglied wird Sie in Kürze telefonisch kontaktieren, um Ihnen alle Details zu erläutern und Ihnen bei der Einrichtung zu helfen.</p>
       </div>
-      
-      <div class="progress-container">
-        <div class="progress-label">
-          <span>Fortschritt zur finanziellen Freiheit</span>
-          <span>33%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill"></div>
-        </div>
-      </div>
     </div>
     <footer>
       &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI | 
-      <a href="https://ki-trading.net/impressum" target="_blank">Impressum</a> | 
-      <a href="https://ki-trading.net" target="_blank">Webseite</a> | 
-      <a href="https://ki-trading.net/datenschutz" target="_blank">Datenschutz</a>
+      <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
+      <a href="https://bitloon.net" target="_blank">Webseite</a> | 
+      <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>
     </footer>
   </div>
 </body>

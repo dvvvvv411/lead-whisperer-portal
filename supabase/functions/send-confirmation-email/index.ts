@@ -48,23 +48,23 @@ serve(async (req) => {
               color: #e1e1e1;
               margin: 0;
               padding: 0;
-              background-color: #12151E;
+              background-color: #1A1F2C;
             }
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background-color: rgba(26, 31, 44, 0.85);
+              background: linear-gradient(135deg, rgba(26, 31, 44, 0.9) 0%, rgba(33, 40, 59, 0.9) 100%);
               border-radius: 12px;
               overflow: hidden;
-              border: 1px solid rgba(255, 215, 0, 0.3);
+              border: 1px solid rgba(151, 71, 255, 0.4);
               box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background: linear-gradient(135deg, #000 0%, #1A1F2C 100%);
+              background: linear-gradient(135deg, #1A1F2C 0%, #312A5A 100%);
               position: relative;
-              border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+              border-bottom: 1px solid rgba(151, 71, 255, 0.4);
             }
             .header-glow {
               position: absolute;
@@ -72,7 +72,7 @@ serve(async (req) => {
               left: 0;
               right: 0;
               bottom: 0;
-              background: radial-gradient(circle at center, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
+              background: radial-gradient(circle at center, rgba(151, 71, 255, 0.2) 0%, rgba(151, 71, 255, 0) 70%);
               z-index: 1;
             }
             .logo {
@@ -88,7 +88,7 @@ serve(async (req) => {
             .robot-image {
               max-width: 150px;
               margin: 0 auto;
-              filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+              filter: drop-shadow(0 0 15px rgba(151, 71, 255, 0.5));
             }
             .content {
               padding: 30px;
@@ -116,21 +116,27 @@ serve(async (req) => {
               display: inline-block;
               position: relative;
             }
-            .highlight:after {
+            .highlight-purple {
+              color: #9b87f5;
+              font-weight: bold;
+              display: inline-block;
+              position: relative;
+            }
+            .highlight:after, .highlight-purple:after {
               content: '';
               position: absolute;
               bottom: -2px;
               left: 0;
               right: 0;
               height: 2px;
-              background: linear-gradient(90deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.8) 50%, rgba(255, 215, 0, 0) 100%);
+              background: linear-gradient(90deg, rgba(151, 71, 255, 0) 0%, rgba(151, 71, 255, 0.8) 50%, rgba(151, 71, 255, 0) 100%);
             }
             .highlight-glow {
-              text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+              text-shadow: 0 0 10px rgba(151, 71, 255, 0.5);
             }
             .notification-box {
-              background-color: rgba(255, 215, 0, 0.1);
-              border-left: 4px solid #FFD700;
+              background-color: rgba(151, 71, 255, 0.1);
+              border-left: 4px solid #9b87f5;
               padding: 15px;
               margin: 20px 0;
               border-radius: 6px;
@@ -148,7 +154,7 @@ serve(async (req) => {
               margin-right: 10px;
               vertical-align: middle;
               font-size: 20px;
-              color: #FFD700;
+              color: #9b87f5;
             }
             .footer {
               text-align: center;
@@ -162,8 +168,8 @@ serve(async (req) => {
             }
             .button {
               display: inline-block;
-              background: linear-gradient(90deg, #cba135 0%, #FFD700 50%, #e8c564 100%);
-              color: #000000;
+              background: linear-gradient(90deg, #7B5CFF 0%, #9b87f5 50%, #B299FF 100%);
+              color: #ffffff;
               text-decoration: none;
               padding: 12px 25px;
               border-radius: 50px;
@@ -173,11 +179,11 @@ serve(async (req) => {
               transition: transform 0.3s ease;
               position: relative;
               border: none;
-              box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+              box-shadow: 0 4px 12px rgba(151, 71, 255, 0.3);
             }
             .button:hover {
               transform: translateY(-2px);
-              box-shadow: 0 6px 16px rgba(255, 215, 0, 0.4);
+              box-shadow: 0 6px 16px rgba(151, 71, 255, 0.4);
             }
             .progress {
               background-color: #1A1F2C;
@@ -186,12 +192,12 @@ serve(async (req) => {
               margin: 20px 0;
               overflow: hidden;
               position: relative;
-              border: 1px solid rgba(255, 215, 0, 0.2);
+              border: 1px solid rgba(151, 71, 255, 0.2);
             }
             .progress-bar {
               width: 25%;
               height: 100%;
-              background: linear-gradient(90deg, #cba135 0%, #FFD700 100%);
+              background: linear-gradient(90deg, #7B5CFF 0%, #9b87f5 100%);
               border-radius: 5px;
               position: relative;
               animation: pulse 2s infinite;
@@ -200,7 +206,7 @@ serve(async (req) => {
               position: absolute;
               top: -8px;
               right: -8px;
-              background: linear-gradient(90deg, #FFD700 0%, #FFA500 100%);
+              background: linear-gradient(90deg, #9b87f5 0%, #7B5CFF 100%);
               border-radius: 50%;
               width: 24px;
               height: 24px;
@@ -209,7 +215,7 @@ serve(async (req) => {
               justify-content: center;
               font-weight: bold;
               font-size: 14px;
-              color: #000;
+              color: #fff;
               box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
             }
             .progress-label {
@@ -225,6 +231,8 @@ serve(async (req) => {
               margin-top: 5px;
               position: relative;
               z-index: 2;
+              flex-wrap: nowrap;
+              gap: 0;
             }
             .step {
               display: flex;
@@ -238,7 +246,7 @@ serve(async (req) => {
               height: 30px;
               background-color: #1A1F2C;
               border-radius: 50%;
-              border: 1px solid rgba(255, 215, 0, 0.3);
+              border: 1px solid rgba(151, 71, 255, 0.3);
               display: flex;
               align-items: center;
               justify-content: center;
@@ -246,22 +254,22 @@ serve(async (req) => {
               color: #777;
             }
             .step-current .step-icon {
-              background-color: #FFD700;
-              color: #000;
-              box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+              background-color: #9b87f5;
+              color: #fff;
+              box-shadow: 0 0 15px rgba(151, 71, 255, 0.5);
             }
             .step-label {
-              font-size: 11px;
+              font-size: 10px;
               color: #aaa;
               width: 100%;
             }
             .step-current .step-label {
-              color: #FFD700;
+              color: #9b87f5;
             }
             .step-line {
               flex-grow: 1;
               height: 1px;
-              background-color: rgba(255, 215, 0, 0.3);
+              background-color: rgba(151, 71, 255, 0.3);
               margin: 0 5px;
               position: relative;
               top: 15px;
@@ -286,10 +294,13 @@ serve(async (req) => {
               .greeting {
                 font-size: 20px;
               }
+              .step-label {
+                font-size: 8px;
+              }
             }
           </style>
         </head>
-        <body bgcolor="#12151E">
+        <body bgcolor="#1A1F2C">
           <div class="container">
             <div class="header">
               <div class="header-glow"></div>
@@ -302,10 +313,10 @@ serve(async (req) => {
               
               <h2 class="greeting">Hallo ${name},</h2>
               <p class="message">
-                Vielen Dank für deine Anfrage bei <span class="highlight highlight-glow">KI-Trading</span>!
+                Vielen Dank für deine Anfrage bei <span class="highlight-purple highlight-glow">KI-Trading</span>!
               </p>
               <p class="message">
-                Wir haben deine Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei dir melden.
+                Wir haben deine Nachricht erhalten und werden uns <span class="highlight-purple">in Kürze</span> bei dir melden.
               </p>
               
               <div class="notification-box">
@@ -342,7 +353,7 @@ serve(async (req) => {
               
               <p class="signature">
                 Mit freundlichen Grüßen,<br>
-                <span class="highlight">Dein KI-Trading Team</span>
+                <span class="highlight-purple">Dein KI-Trading Team</span>
               </p>
             </div>
             <div class="footer">

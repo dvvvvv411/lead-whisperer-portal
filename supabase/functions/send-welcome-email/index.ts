@@ -48,24 +48,24 @@ serve(async (req) => {
               color: #e1e1e1;
               margin: 0;
               padding: 0;
-              background-color: #12151E;
+              background-color: #1A1F2C;
             }
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background-color: rgba(26, 31, 44, 0.85);
+              background: linear-gradient(135deg, rgba(26, 31, 44, 0.9) 0%, rgba(33, 40, 59, 0.9) 100%);
               border-radius: 12px;
               overflow: hidden;
-              border: 1px solid rgba(255, 215, 0, 0.3);
+              border: 1px solid rgba(151, 71, 255, 0.4);
               box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background: linear-gradient(135deg, #000 0%, #1A1F2C 100%);
+              background: linear-gradient(135deg, #1A1F2C 0%, #312A5A 100%);
               position: relative;
               overflow: hidden;
-              border-bottom: 1px solid rgba(255, 215, 0, 0.3);
+              border-bottom: 1px solid rgba(151, 71, 255, 0.4);
             }
             .header-glow {
               position: absolute;
@@ -73,7 +73,7 @@ serve(async (req) => {
               left: 0;
               right: 0;
               bottom: 0;
-              background: radial-gradient(circle at center, rgba(255, 215, 0, 0.2) 0%, rgba(255, 215, 0, 0) 70%);
+              background: radial-gradient(circle at center, rgba(151, 71, 255, 0.2) 0%, rgba(151, 71, 255, 0) 70%);
               z-index: 1;
             }
             .logo {
@@ -91,7 +91,7 @@ serve(async (req) => {
             .robot-image {
               max-width: 180px;
               margin: 0 auto;
-              filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.5));
+              filter: drop-shadow(0 0 15px rgba(151, 71, 255, 0.5));
             }
             .content {
               padding: 30px;
@@ -113,7 +113,7 @@ serve(async (req) => {
               position: absolute;
               top: 0;
               right: 0;
-              background: linear-gradient(135deg, transparent 50%, #FFD700 50%);
+              background: linear-gradient(135deg, transparent 50%, #9b87f5 50%);
               transform: rotate(45deg) translate(35%, -15%);
               box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2);
             }
@@ -122,7 +122,7 @@ serve(async (req) => {
               top: 32px;
               right: 5px;
               transform: rotate(45deg);
-              color: #000;
+              color: #fff;
               font-weight: bold;
               font-size: 12px;
               text-transform: uppercase;
@@ -148,30 +148,36 @@ serve(async (req) => {
               display: inline-block;
               position: relative;
             }
-            .highlight:after {
+            .highlight-purple {
+              color: #9b87f5;
+              font-weight: bold;
+              display: inline-block;
+              position: relative;
+            }
+            .highlight:after, .highlight-purple:after {
               content: '';
               position: absolute;
               bottom: -2px;
               left: 0;
               right: 0;
               height: 2px;
-              background: linear-gradient(90deg, rgba(255, 215, 0, 0) 0%, rgba(255, 215, 0, 0.8) 50%, rgba(255, 215, 0, 0) 100%);
+              background: linear-gradient(90deg, rgba(151, 71, 255, 0) 0%, rgba(151, 71, 255, 0.8) 50%, rgba(151, 71, 255, 0) 100%);
             }
             .highlight-glow {
-              text-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+              text-shadow: 0 0 10px rgba(151, 71, 255, 0.5);
             }
             .credentials {
               background-color: rgba(13, 15, 20, 0.5);
               border-radius: 8px;
               padding: 20px;
               margin: 25px 0;
-              border: 1px solid rgba(255, 215, 0, 0.3);
+              border: 1px solid rgba(151, 71, 255, 0.3);
               position: relative;
               z-index: 2;
               box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
             }
             .credentials h3 {
-              color: #FFD700;
+              color: #9b87f5;
               margin-top: 0;
               display: flex;
               align-items: center;
@@ -197,13 +203,13 @@ serve(async (req) => {
               color: #fff;
             }
             .credentials .value {
-              color: #FFD700;
+              color: #9b87f5;
               background: rgba(0, 0, 0, 0.2);
               padding: 4px 10px;
               border-radius: 4px;
               font-family: 'Courier New', monospace;
               letter-spacing: 1px;
-              border: 1px solid rgba(255, 215, 0, 0.2);
+              border: 1px solid rgba(151, 71, 255, 0.2);
             }
             .security-note {
               background-color: rgba(139, 92, 246, 0.1);
@@ -217,8 +223,8 @@ serve(async (req) => {
             }
             .button {
               display: block;
-              background: linear-gradient(90deg, #cba135 0%, #FFD700 50%, #e8c564 100%);
-              color: #000000;
+              background: linear-gradient(90deg, #7B5CFF 0%, #9b87f5 50%, #B299FF 100%);
+              color: #ffffff;
               text-decoration: none;
               padding: 15px 25px;
               border-radius: 50px;
@@ -228,12 +234,12 @@ serve(async (req) => {
               transition: all 0.3s ease;
               position: relative;
               max-width: 250px;
-              box-shadow: 0 6px 20px rgba(203, 161, 53, 0.4);
+              box-shadow: 0 6px 20px rgba(123, 92, 255, 0.4);
               z-index: 2;
             }
             .button:hover {
               transform: translateY(-2px);
-              box-shadow: 0 8px 25px rgba(255, 215, 0, 0.5);
+              box-shadow: 0 8px 25px rgba(151, 71, 255, 0.5);
             }
             .button:after {
               content: '';
@@ -243,7 +249,7 @@ serve(async (req) => {
               right: -6px;
               bottom: -6px;
               border-radius: 50px;
-              background: linear-gradient(90deg, rgba(203, 161, 53, 0.3) 0%, rgba(255, 215, 0, 0.3) 50%, rgba(232, 197, 100, 0.3) 100%);
+              background: linear-gradient(90deg, rgba(123, 92, 255, 0.3) 0%, rgba(151, 71, 255, 0.3) 50%, rgba(178, 153, 255, 0.3) 100%);
               z-index: -1;
               animation: pulse 2s infinite;
             }
@@ -273,8 +279,8 @@ serve(async (req) => {
               align-items: flex-start;
             }
             .step-number {
-              background-color: #FFD700;
-              color: #000;
+              background-color: #9b87f5;
+              color: #fff;
               width: 24px;
               height: 24px;
               border-radius: 50%;
@@ -284,13 +290,13 @@ serve(async (req) => {
               font-weight: bold;
               margin-right: 15px;
               flex-shrink: 0;
-              box-shadow: 0 2px 8px rgba(255, 215, 0, 0.5);
+              box-shadow: 0 2px 8px rgba(151, 71, 255, 0.5);
             }
             .step-content {
               flex-grow: 1;
             }
             .step-title {
-              color: #FFD700;
+              color: #9b87f5;
               font-weight: bold;
               margin-bottom: 5px;
             }
@@ -304,11 +310,11 @@ serve(async (req) => {
               margin: 30px -30px -30px;
               padding: 30px;
               position: relative;
-              border-top: 1px solid rgba(255, 215, 0, 0.2);
+              border-top: 1px solid rgba(151, 71, 255, 0.2);
             }
             .rewards-title {
               text-align: center;
-              color: #FFD700;
+              color: #9b87f5;
               margin-top: 0;
               font-size: 20px;
               display: flex;
@@ -327,19 +333,19 @@ serve(async (req) => {
               background-color: rgba(0, 0, 0, 0.2);
               padding: 12px;
               border-radius: 8px;
-              border: 1px solid rgba(255, 215, 0, 0.1);
+              border: 1px solid rgba(151, 71, 255, 0.1);
             }
             .reward-icon {
               width: 40px;
               height: 40px;
               border-radius: 50%;
-              background: linear-gradient(135deg, #cba135 0%, #FFD700 100%);
+              background: linear-gradient(135deg, #7B5CFF 0%, #9b87f5 100%);
               display: flex;
               align-items: center;
               justify-content: center;
               margin-right: 15px;
               font-size: 20px;
-              color: #000;
+              color: #fff;
             }
             .reward-text {
               flex-grow: 1;
@@ -365,7 +371,7 @@ serve(async (req) => {
               margin: 5px 0;
             }
             .footer a {
-              color: #FFD700;
+              color: #9b87f5;
               text-decoration: none;
             }
             @keyframes pulse {
@@ -403,7 +409,7 @@ serve(async (req) => {
             }
           </style>
         </head>
-        <body bgcolor="#12151E">
+        <body bgcolor="#1A1F2C">
           <div class="container">
             <div class="header">
               <div class="header-glow"></div>
@@ -422,7 +428,7 @@ serve(async (req) => {
               
               <h2 class="greeting">Willkommen, ${name}!</h2>
               <p class="message">
-                Dein Account für <span class="highlight highlight-glow">KI-Trading</span> wurde erfolgreich erstellt.
+                Dein Account für <span class="highlight-purple highlight-glow">KI-Trading</span> wurde erfolgreich erstellt.
               </p>
               <p class="message">
                 Mit unserer KI-Trading-Lösung bist du bereit, den Markt mit Hilfe unseres fortschrittlichen Algorithmus zu erobern und deine finanzielle Zukunft selbst zu gestalten.

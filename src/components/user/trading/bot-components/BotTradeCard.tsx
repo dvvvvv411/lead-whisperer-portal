@@ -63,7 +63,7 @@ const BotTradeCard: React.FC<BotTradeCardProps> = ({ buyTrade, sellTrade, format
               />
             </div>
           )}
-          <div className="font-bold text-sm">{buyTrade.crypto_asset?.symbol?.toUpperCase()}</div>
+          <div className="font-bold text-sm text-white">{buyTrade.crypto_asset?.symbol?.toUpperCase()}</div>
         </div>
         
         {profitData && (
@@ -87,9 +87,9 @@ const BotTradeCard: React.FC<BotTradeCardProps> = ({ buyTrade, sellTrade, format
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-1">
             <TrendingUp className="h-3 w-3 text-green-400" />
-            <span>{formatCurrency(buyTrade.total_amount)}</span>
+            <span className="text-white/90">{formatCurrency(buyTrade.total_amount)}</span>
           </div>
-          <span className="text-xs text-muted-foreground">{formatDate(buyTrade.created_at)}</span>
+          <span className="text-xs text-gray-400">{formatDate(buyTrade.created_at)}</span>
         </div>
 
         {/* Separator with arrow */}
@@ -110,13 +110,13 @@ const BotTradeCard: React.FC<BotTradeCardProps> = ({ buyTrade, sellTrade, format
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-1">
               <TrendingDown className="h-3 w-3 text-red-400" />
-              <span>{formatCurrency(sellTrade.total_amount)}</span>
+              <span className="text-white/90">{formatCurrency(sellTrade.total_amount)}</span>
             </div>
-            <span className="text-xs text-muted-foreground">{formatDate(sellTrade.created_at)}</span>
+            <span className="text-xs text-gray-400">{formatDate(sellTrade.created_at)}</span>
           </div>
         ) : (
           <div className="flex items-center justify-center">
-            <span className="text-xs text-muted-foreground italic">Ausstehend</span>
+            <span className="text-xs text-gray-400 italic">Ausstehend</span>
           </div>
         )}
         

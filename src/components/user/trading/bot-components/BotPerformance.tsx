@@ -85,7 +85,7 @@ const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformancePr
   return (
     <div className="space-y-3">
       <div className="flex items-center justify-between">
-        <h3 className="font-medium flex items-center">
+        <h3 className="font-medium flex items-center text-white">
           <Bot className="h-4 w-4 mr-2 text-accent1-light" />
           Bot-Trading Aktivität
         </h3>
@@ -119,7 +119,7 @@ const BotPerformance = ({ botTrades, loading, formatCurrency }: BotPerformancePr
       ) : (
         <div className="text-center py-4 px-4 border border-dashed border-casino-highlight rounded-lg bg-casino-darker">
           <Bot className="h-6 w-6 text-muted-foreground mx-auto mb-2 opacity-50" />
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-white/60">
             Noch keine Bot-Trades vorhanden.
           </p>
         </div>

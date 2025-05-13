@@ -54,7 +54,7 @@ const TradeHistoryList = ({ trades, botTrades = [], compact = false }: TradeHist
                 "rounded-lg border transition-all",
                 isBotTrade(trade) 
                   ? "border-accent1/30 bg-accent1/5 hover:bg-accent1/10" 
-                  : "border-casino-highlight bg-casino-card hover:bg-casino-highlight",
+                  : "border-casino-highlight bg-casino-card hover:bg-casino-highlight/50",
                 compact ? "p-2" : "p-3"
               )}
             >
@@ -67,7 +67,7 @@ const TradeHistoryList = ({ trades, botTrades = [], compact = false }: TradeHist
                       className={`${compact ? "h-4 w-4" : "h-6 w-6"} mr-2 rounded-full`} 
                     />
                   )}
-                  <span className={`${compact ? "text-xs" : "text-sm"} font-medium`}>
+                  <span className={`${compact ? "text-xs" : "text-sm"} font-medium text-white`}>
                     {trade.crypto_asset?.symbol?.toUpperCase() || "UNKNOWN"}
                   </span>
                 </div>
@@ -106,7 +106,7 @@ const TradeHistoryList = ({ trades, botTrades = [], compact = false }: TradeHist
               </div>
 
               <div className="flex justify-between mt-2">
-                <div className={`${compact ? "text-xs" : "text-sm"} text-muted-foreground`}>
+                <div className={`${compact ? "text-xs" : "text-sm"} text-gray-300`}>
                   {formatDate(trade.created_at)}
                 </div>
                 <div className={`${compact ? "text-xs" : "text-sm"} font-medium text-gold`}>
@@ -116,10 +116,10 @@ const TradeHistoryList = ({ trades, botTrades = [], compact = false }: TradeHist
 
               {!compact && (
                 <div className="flex justify-between mt-1">
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-400">
                     Strategie: {trade.strategy}
                   </div>
-                  <div className="text-xs text-muted-foreground">
+                  <div className="text-xs text-gray-400">
                     {trade.quantity.toFixed(6)} @ {formatCurrency(trade.price)}
                   </div>
                 </div>

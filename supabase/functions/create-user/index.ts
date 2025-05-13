@@ -7,6 +7,20 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
+// Helper function to validate phone numbers
+function validateAndNormalizePhone(phone: string): string {
+  if (!phone) return "";
+  
+  // Remove anything that's not a digit, +, -, space, or parentheses
+  const normalizedPhone = phone.trim().replace(/[^\d+\-\s()]/g, '');
+  
+  // Check if it has any digits
+  const hasDigits = /\d/.test(normalizedPhone);
+  if (!hasDigits) return "";
+  
+  return normalizedPhone;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === "OPTIONS") {
@@ -70,7 +84,11 @@ serve(async (req) => {
       );
     }
 
+    // Validate and normalize phone number
+    const validatedPhone = validateAndNormalizePhone(phone || "");
+    
     console.log("Creating user account for:", email);
+    console.log("Phone number being used:", validatedPhone);
     
     // Create the user with metadata including name and phone
     const { data: userData, error: userError } = await supabaseAdmin.auth.admin.createUser({
@@ -79,7 +97,7 @@ serve(async (req) => {
       email_confirm: true,
       user_metadata: {
         full_name: name,
-        phone: phone || null
+        phone: validatedPhone
       }
     });
 
@@ -98,7 +116,7 @@ serve(async (req) => {
         .update({ 
           name: name,
           email: email,
-          phone: phone,
+          phone: validatedPhone,
           status: 'akzeptiert' 
         })
         .eq('id', leadId);
@@ -121,7 +139,7 @@ serve(async (req) => {
             name: name,
             email: email,
             password: password,
-            phone: phone || "",
+            phone: validatedPhone || "",
             redirectUrl: origin
           })
         });

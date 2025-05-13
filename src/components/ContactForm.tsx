@@ -20,19 +20,62 @@ const ContactForm = () => {
     phone: "",
     message: ""
   });
+  const [errors, setErrors] = useState({
+    phone: ""
+  });
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       name,
       value
     } = e.target;
+    
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
+    
+    // Clear any existing error for the field
+    if (name === 'phone' && errors.phone) {
+      setErrors(prev => ({ ...prev, phone: "" }));
+    }
   };
+  
+  const validatePhoneNumber = (phone: string): boolean => {
+    // Check if phone is empty
+    if (!phone.trim()) {
+      setErrors(prev => ({ ...prev, phone: "Telefonnummer wird benötigt" }));
+      return false;
+    }
+    
+    // Basic validation: phone should be at least 6 characters and contain numbers
+    const hasNumbers = /\d/.test(phone);
+    if (phone.length < 6 || !hasNumbers) {
+      setErrors(prev => ({ ...prev, phone: "Ungültige Telefonnummer" }));
+      return false;
+    }
+    
+    // Check if it looks like an email instead of a phone number
+    if (phone.includes('@')) {
+      setErrors(prev => ({ ...prev, phone: "Bitte geben Sie eine Telefonnummer ein" }));
+      return false;
+    }
+    
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
+    
+    // Validate phone number
+    const isPhoneValid = validatePhoneNumber(formData.phone);
+    
+    if (!isPhoneValid) {
+      setIsSubmitting(false);
+      return;
+    }
+    
     try {
       // Validierung
       if (!formData.name || !formData.email || !formData.phone) {
@@ -45,11 +88,14 @@ const ContactForm = () => {
         return;
       }
 
+      // Normalize phone number (remove unnecessary spaces, keep only digits, +, -)
+      const normalizedPhone = formData.phone.trim().replace(/[^\d+\-\s()]/g, '');
+
       // Defaultwerte für leere Felder setzen
       const finalData = {
         name: formData.name,
         email: formData.email,
-        phone: formData.phone,
+        phone: normalizedPhone,
         status: 'neu',
         company: "Leer",
         message: formData.message || "Leer"
@@ -267,7 +313,18 @@ const ContactForm = () => {
         delay: 0.3
       }}>
           <Label htmlFor="phone" className="text-white">Telefon *</Label>
-          <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Deine Telefonnummer" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
+          <Input 
+            id="phone" 
+            name="phone" 
+            value={formData.phone} 
+            onChange={handleChange} 
+            placeholder="Deine Telefonnummer" 
+            required 
+            className={`bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50 ${errors.phone ? 'border-red-500' : ''}`} 
+          />
+          {errors.phone && (
+            <p className="text-red-500 text-xs mt-1">{errors.phone}</p>
+          )}
         </motion.div>
         
         <motion.div initial={{

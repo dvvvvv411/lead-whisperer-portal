@@ -1,8 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { Resend } from "npm:resend@2.0.0";
-
-const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+import { Resend } from "https://esm.sh/resend@2.0.0";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -16,146 +14,103 @@ serve(async (req) => {
   }
 
   try {
-    const { name, email, password, redirectUrl } = await req.json();
+    const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
+    const { name, email, password, phone, redirectUrl } = await req.json();
 
-    if (!name || !email || !password) {
-      return new Response(
-        JSON.stringify({
-          error: "Name, email and password are required"
-        }),
-        {
-          status: 400,
-          headers: { ...corsHeaders, "Content-Type": "application/json" }
-        }
-      );
-    }
+    console.log(`Sending welcome email to ${email}`);
+    
+    // Format phone number for display if present
+    const phoneDisplay = phone ? phone : "Nicht angegeben";
 
-    // Extract origin from the request URL or use a fallback
-    const origin = redirectUrl || "https://bitloon.net";
-    const loginUrl = `${origin}/nutzer`;
-
-    const emailResponse = await resend.emails.send({
-      from: "bitloon <noreply@bitloon.net>",
-      to: [email],
-      subject: "Ihre Zugangsdaten für bitloon",
+    const { data, error } = await resend.emails.send({
+      from: "KI-Trading-Bot <noreply@bitloon.net>",
+      to: email,
+      subject: "Willkommen bei KI-Trading-Bot! Ihre Kontoinformationen",
       html: `
         <!DOCTYPE html>
-        <html lang="de">
+        <html>
         <head>
-          <meta charset="UTF-8">
-          <title>Zugangsdaten</title>
           <style>
-            body {
-              background-color: #0e0e1a;
-              color: #ffffff;
-              font-family: Arial, sans-serif;
-              margin: 0;
-              padding: 0;
-            }
-            .container {
-              max-width: 700px;
-              margin: 30px auto;
-              padding: 30px;
-              background: linear-gradient(145deg, #1f1f2e, #29293e);
-              border-radius: 15px;
-              box-shadow: 0 0 15px rgba(255, 215, 0, 0.3);
-            }
-            header {
-              text-align: center;
-              padding-bottom: 20px;
-              border-bottom: 1px solid #333;
-            }
-            .content {
-              padding: 20px 0;
-            }
-            .content h2 {
-              color: #FFD700;
-              font-size: 22px;
-              margin-bottom: 10px;
-            }
-            .content p {
-              font-size: 16px;
-              line-height: 1.6;
-              color: #ffffff;
-            }
-            .credentials {
-              background-color: rgba(40, 167, 69, 0.2);
-              border: 1px solid #28a745;
-              border-radius: 8px;
-              padding: 15px;
-              margin: 20px 0;
-              color: #ffffff;
-            }
-            .credentials p {
-              margin: 5px 0;
-              font-family: monospace;
-              font-weight: normal;
-            }
-            .cta {
-              display: inline-block;
-              margin-top: 20px;
-              padding: 12px 24px;
-              background-color: #FFD700;
-              color: #fff;
-              text-decoration: none;
-              border-radius: 8px;
-              font-weight: bold;
-            }
-            footer {
-              text-align: center;
-              font-size: 13px;
-              color: #aaa;
-              margin-top: 30px;
-            }
-            footer a {
-              color: #FFD700;
-              text-decoration: none;
-            }
-            footer a:hover {
-              text-decoration: underline;
-            }
+            body { font-family: Arial, sans-serif; line-height: 1.6; color: #333; }
+            .container { max-width: 600px; margin: 0 auto; padding: 20px; }
+            .header { text-align: center; padding: 20px 0; }
+            .logo { max-width: 150px; }
+            .content { background-color: #f9f9f9; padding: 20px; border-radius: 5px; }
+            .credentials { background-color: #fff; padding: 15px; margin: 15px 0; border-left: 4px solid #ffd700; }
+            .button { display: inline-block; background-color: #ffd700; color: #000; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; margin: 15px 0; }
+            .footer { text-align: center; font-size: 12px; color: #999; margin-top: 30px; }
           </style>
         </head>
         <body>
           <div class="container">
-            <header>
-              <img src="https://i.imgur.com/Q191f5z.png" alt="Bitloon Logo" style="height: 60px; margin-bottom: 10px;">
-            </header>
-            <div class="content">
-              <h2>Zugangsdaten für Ihr Konto</h2>
-              <p>Hallo <strong>${name}</strong>,</p>
-              <p>Ihr Konto wurde erfolgreich erstellt. Verwenden Sie die folgenden Zugangsdaten, um sich einzuloggen:</p>
-              <div class="credentials">
-                <p><strong>Benutzername:</strong> ${email}</p>
-                <p><strong>Passwort:</strong> ${password}</p>
-              </div>
-              <a href="${loginUrl}" class="cta">Zum Login</a>
+            <div class="header">
+              <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading-Bot Logo" class="logo">
+              <h1>Willkommen bei KI-Trading-Bot!</h1>
             </div>
-            <footer>
-              &copy; ${new Date().getFullYear()} Bitloon - GMS Management und Service GmbH | 
-              <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
-              <a href="https://bitloon.net" target="_blank">Webseite</a> | 
-              <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>
-            </footer>
+            
+            <div class="content">
+              <p>Hallo ${name},</p>
+              
+              <p>Wir freuen uns, dass Sie sich für KI-Trading-Bot entschieden haben! Ihr Konto wurde erfolgreich eingerichtet, und Sie können sich jetzt mit den folgenden Zugangsdaten anmelden:</p>
+              
+              <div class="credentials">
+                <p><strong>E-Mail:</strong> ${email}</p>
+                <p><strong>Passwort:</strong> ${password}</p>
+                <p><strong>Telefon:</strong> ${phoneDisplay}</p>
+              </div>
+              
+              <p>Um mit dem Handeln zu beginnen, klicken Sie auf den Button unten:</p>
+              
+              <a href="${redirectUrl}/auth" class="button">Jetzt einloggen</a>
+              
+              <p>Nach dem ersten Login empfehlen wir Ihnen, Ihr Passwort zu ändern und Ihr Profil zu vervollständigen.</p>
+              
+              <p>Bei Fragen stehen wir Ihnen jederzeit zur Verfügung.</p>
+              
+              <p>Viel Erfolg mit KI-Trading-Bot!</p>
+            </div>
+            
+            <div class="footer">
+              <p>KI-Trading-Bot, © 2025 Alle Rechte vorbehalten.</p>
+              <p>Diese E-Mail wurde automatisch generiert, bitte antworten Sie nicht darauf.</p>
+            </div>
           </div>
         </body>
         </html>
       `,
     });
 
-    console.log("Welcome email sent successfully:", emailResponse);
+    if (error) {
+      console.error("Error sending email:", error);
+      throw error;
+    }
 
-    return new Response(JSON.stringify(emailResponse), {
-      status: 200,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.log("Welcome email sent successfully:", { data, error });
+
+    return new Response(
+      JSON.stringify({ success: true }),
+      { 
+        status: 200,
+        headers: { 
+          "Content-Type": "application/json",
+          ...corsHeaders
+        }
+      }
+    );
   } catch (error) {
     console.error("Error in send-welcome-email function:", error);
+    
     return new Response(
-      JSON.stringify({ error: error.message }),
-      {
+      JSON.stringify({ 
+        error: "Failed to send welcome email", 
+        details: error.message 
+      }),
+      { 
         status: 500,
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        headers: { 
+          "Content-Type": "application/json",
+          ...corsHeaders
+        }
       }
     );
   }

@@ -1,7 +1,7 @@
 
 import { useEffect } from "react";
-import { UserAuthWrapper } from "@/components/user/auth/UserAuthWrapper";
-import { UserNavbar } from "@/components/user/UserNavbar";
+import UserAuthWrapper from "@/components/user/auth/UserAuthWrapper";
+import UserNavbar from "@/components/user/UserNavbar";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useUserAuth } from "@/hooks/useUserAuth";
 import { useUserCredit } from "@/hooks/useUserCredit";

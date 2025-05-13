@@ -25,7 +25,7 @@ const TradeArchiveContent = ({ userId }: TradeArchiveContentProps) => {
     },
     asset: "",
     botStrategy: "",
-    action: "" as "" | "buy" | "sell"
+    action: "all" as "all" | "buy" | "sell" // Changed from "" to "all"
   });
   
   // Apply filters to trades
@@ -70,7 +70,7 @@ const TradeArchiveContent = ({ userId }: TradeArchiveContentProps) => {
     }
     
     // Filter by action (buy/sell)
-    if (filters.action) {
+    if (filters.action !== "all") {
       result = result.filter(trade => trade.type === filters.action);
     }
     

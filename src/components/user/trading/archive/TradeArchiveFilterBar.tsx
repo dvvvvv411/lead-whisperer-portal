@@ -16,7 +16,7 @@ interface TradeArchiveFilterBarProps {
     };
     asset: string;
     botStrategy: string;
-    action: "" | "buy" | "sell";
+    action: "all" | "buy" | "sell"; // Changed from "" to "all"
   };
   onFiltersChange: (filters: any) => void;
 }
@@ -50,7 +50,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
       },
       asset: "",
       botStrategy: "",
-      action: ""
+      action: "all" // Changed from "" to "all"
     });
   };
   
@@ -137,13 +137,13 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
           {/* Action Type Select */}
           <Select
             value={filters.action}
-            onValueChange={(value) => handleInputChange('action', value as "" | "buy" | "sell")}
+            onValueChange={(value) => handleInputChange('action', value as "all" | "buy" | "sell")}
           >
             <SelectTrigger className="h-10 w-[110px] bg-background/50">
               <SelectValue placeholder="Aktion" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="">Alle</SelectItem>
+              <SelectItem value="all">Alle</SelectItem>
               <SelectItem value="buy">Kauf</SelectItem>
               <SelectItem value="sell">Verkauf</SelectItem>
             </SelectContent>
@@ -163,7 +163,7 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
       </div>
       
       {/* Applied Filters Summary (visible when filters are applied) */}
-      {(filters.dateRange.from || filters.dateRange.to || filters.asset || filters.botStrategy || filters.action) && (
+      {(filters.dateRange.from || filters.dateRange.to || filters.asset || filters.botStrategy || filters.action !== "all") && (
         <div className="flex flex-wrap gap-2">
           {filters.dateRange.from && (
             <div className="bg-accent1/20 text-accent1-light rounded-full px-3 py-1 text-xs flex items-center">
@@ -217,12 +217,12 @@ const TradeArchiveFilterBar = ({ filters, onFiltersChange }: TradeArchiveFilterB
             </div>
           )}
           
-          {filters.action && (
+          {filters.action !== "all" && (
             <div className="bg-accent1/20 text-accent1-light rounded-full px-3 py-1 text-xs flex items-center">
               Aktion: {filters.action === 'buy' ? 'Kauf' : 'Verkauf'}
               <button 
                 className="ml-2" 
-                onClick={() => handleInputChange('action', '')}
+                onClick={() => handleInputChange('action', 'all')}
                 aria-label="Aktions Filter entfernen"
               >
                 <X className="h-3 w-3" />

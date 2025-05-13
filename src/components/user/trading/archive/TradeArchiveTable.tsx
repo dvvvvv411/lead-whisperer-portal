@@ -128,13 +128,13 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
   
   return (
     <div className="space-y-4">
-      <div className="rounded-md border border-casino-highlight bg-casino-card">
+      <div className="rounded-md border border-gold/10 backdrop-blur-lg bg-black/30">
         <div className="relative overflow-x-auto">
           <Table>
             <TableHeader>
-              <TableRow>
+              <TableRow className="border-b border-gold/10 hover:bg-transparent">
                 <TableHead 
-                  className="cursor-pointer hover:text-accent1-light transition-colors"
+                  className="cursor-pointer hover:text-gold transition-colors"
                   onClick={() => handleSort('date')}
                 >
                   <div className="flex items-center">
@@ -142,10 +142,10 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('date')}
                   </div>
                 </TableHead>
-                <TableHead>Bot-Name</TableHead>
-                <TableHead>Exchange</TableHead>
+                <TableHead className="text-gray-400">Bot-Name</TableHead>
+                <TableHead className="text-gray-400">Exchange</TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:text-accent1-light transition-colors"
+                  className="cursor-pointer hover:text-gold transition-colors"
                   onClick={() => handleSort('asset')}
                 >
                   <div className="flex items-center">
@@ -153,9 +153,9 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('asset')}
                   </div>
                 </TableHead>
-                <TableHead>Aktion</TableHead>
+                <TableHead className="text-gray-400">Aktion</TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:text-accent1-light transition-colors text-right"
+                  className="cursor-pointer hover:text-gold transition-colors text-right"
                   onClick={() => handleSort('quantity')}
                 >
                   <div className="flex items-center justify-end">
@@ -164,7 +164,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:text-accent1-light transition-colors text-right"
+                  className="cursor-pointer hover:text-gold transition-colors text-right"
                   onClick={() => handleSort('price')}
                 >
                   <div className="flex items-center justify-end">
@@ -173,7 +173,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                   </div>
                 </TableHead>
                 <TableHead 
-                  className="cursor-pointer hover:text-accent1-light transition-colors text-right"
+                  className="cursor-pointer hover:text-gold transition-colors text-right"
                   onClick={() => handleSort('total')}
                 >
                   <div className="flex items-center justify-end">
@@ -181,7 +181,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     {getSortIndicator('total')}
                   </div>
                 </TableHead>
-                <TableHead className="text-right">Gewinn/Verlust</TableHead>
+                <TableHead className="text-right text-gray-400">Gewinn/Verlust</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -199,13 +199,13 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                   const profit = trade.type === 'sell' ? findTradeProfit(trade) : null;
                   
                   return (
-                    <TableRow key={trade.id} className="hover:bg-casino-highlight/10">
+                    <TableRow key={trade.id} className="hover:bg-gold/5 border-b border-gold/10">
                       <TableCell className="font-mono text-xs">
                         {formatDate(trade.created_at)}
                       </TableCell>
                       <TableCell>
                         <div className="flex items-center gap-1.5">
-                          <Bot className="h-4 w-4 text-accent1" />
+                          <Bot className="h-4 w-4 text-gold" />
                           <span className="text-sm">{getBotName(trade.strategy)}</span>
                         </div>
                       </TableCell>
@@ -228,8 +228,8 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                           className={cn(
                             "text-xs",
                             trade.type === 'buy' 
-                              ? "bg-green-600/30 text-green-300 hover:bg-green-600/40 border-green-600/50" 
-                              : "bg-red-600/30 text-red-300 hover:bg-red-600/40 border-red-600/50"
+                              ? "bg-green-800/30 text-green-400 hover:bg-green-800/40 border-green-700/50" 
+                              : "bg-red-800/30 text-red-400 hover:bg-red-800/40 border-red-700/50"
                           )}
                         >
                           {trade.type === 'buy' ? (
@@ -275,6 +275,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
             <Button
               variant="outline"
               size="sm"
+              className="border-gold/20 hover:bg-gold/10 hover:text-gold"
               onClick={() => goToPage(currentPage - 1)}
               disabled={currentPage === 1}
             >
@@ -304,6 +305,9 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
                     key={page}
                     variant={page === currentPage ? "default" : "outline"}
                     size="sm"
+                    className={page === currentPage 
+                      ? "bg-gold/20 text-gold border-gold/40 hover:bg-gold/30" 
+                      : "border-gold/20 hover:bg-gold/10 hover:text-gold"}
                     onClick={() => goToPage(page)}
                   >
                     {page}
@@ -317,6 +321,7 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
             <Button
               variant="outline"
               size="sm"
+              className="border-gold/20 hover:bg-gold/10 hover:text-gold"
               onClick={() => goToPage(currentPage + 1)}
               disabled={currentPage === totalPages}
             >

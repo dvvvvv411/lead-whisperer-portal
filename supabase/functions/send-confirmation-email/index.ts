@@ -119,7 +119,7 @@ serve(async (req) => {
       </div>
     </div>
     <footer>
-      &copy; 2025 KI-Trading Bot – Automatisierter Handel mit KI | 
+      &copy; 2025 Bitloon - GMS Management und Service GmbH | 
       <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
       <a href="https://bitloon.net" target="_blank">Webseite</a> | 
       <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>

@@ -107,7 +107,7 @@ serve(async (req) => {
 <body>
   <div class="container">
     <header>
-      <img src="https://i.ibb.co/ds7zGCJ/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
+      <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Bot Logo" style="height: 60px; margin-bottom: 10px;">
     </header>
     <div class="content">
       <h2>Hallo ${name}</h2>

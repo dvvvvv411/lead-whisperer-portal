@@ -7,6 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { CheckCircle, ShieldCheck, Lock, Sparkles, Award } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+
 const ContactForm = () => {
   const {
     toast
@@ -233,7 +234,7 @@ const ContactForm = () => {
         delay: 0.2
       }}>
           <Label htmlFor="email" className="text-white">E-Mail *</Label>
-          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="deine@email.de" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
+          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Deine E-Mail Adresse" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
         </motion.div>
         
         <motion.div className="space-y-2" initial={{
@@ -294,4 +295,5 @@ const ContactForm = () => {
       </form>
     </div>;
 };
+
 export default ContactForm;

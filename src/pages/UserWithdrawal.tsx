@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -90,17 +91,17 @@ const UserWithdrawal = () => {
             <Button
               variant="ghost"
               onClick={handleBack}
-              className="mb-4 text-white/70 hover:text-gold-light hover:bg-gold/10"
+              className="mb-4 text-white/80 hover:text-white hover:bg-gold/20"
             >
               <ArrowLeft className="mr-2 h-4 w-4" />
               Zurück zum Dashboard
             </Button>
             
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gold-light to-amber-500 bg-clip-text text-transparent animate-gradient-shift">
               Guthaben auszahlen
             </h1>
             {userCredit !== null && (
-              <p className="text-lg text-gold/80 mt-2">
+              <p className="text-lg text-gold-light mt-2">
                 Aktuelles Guthaben: {userCredit.toFixed(2)}€
               </p>
             )}
@@ -108,12 +109,12 @@ const UserWithdrawal = () => {
           
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Left section - Withdrawal Illustration */}
-            <Card className="backdrop-blur-xl bg-black/30 border-gold/20 overflow-hidden h-full relative">
-              <div className="absolute top-0 right-0 w-24 h-24 bg-gold/5 rounded-full blur-xl"></div>
+            <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden h-full relative">
+              <div className="absolute top-0 right-0 w-24 h-24 bg-gold/30 rounded-full blur-xl"></div>
               <div className="p-6">
-                <h2 className="text-xl font-semibold mb-4 flex items-center text-gold-light">
-                  <Wallet className="h-5 w-5 mr-2 text-gold/70" />
-                  <span>Auszahlungsoptionen</span>
+                <h2 className="text-xl font-semibold mb-4 flex items-center">
+                  <Trophy className="h-5 w-5 mr-2 text-gold-light" />
+                  <span className="bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500">Auszahlungsoptionen</span>
                 </h2>
                 
                 <div className="space-y-6 relative p-2">
@@ -159,7 +160,7 @@ const UserWithdrawal = () => {
                       </p>
                     </div>
                     
-                    {/* New advantage box */}
+                    {/* Guaranteed withdrawal box */}
                     <div className="rounded-lg border border-gold/20 p-4 bg-black/30 hover:bg-black/40 transition-colors">
                       <div className="flex items-center mb-2">
                         <Shield className="w-5 h-5 text-gold mr-2" />
@@ -177,11 +178,11 @@ const UserWithdrawal = () => {
             {/* Right section - Two stacked cards */}
             <div className="flex flex-col space-y-6">
               {/* Withdrawal Form Card */}
-              <Card className="backdrop-blur-xl bg-black/30 border-gold/20 overflow-hidden flex-1">
+              <Card className="backdrop-blur-xl bg-black/40 border-gold/20 overflow-hidden flex-1">
                 <div className="flex flex-col h-full">
                   <div className="bg-gradient-to-r from-black/70 to-black/40 p-4 border-b border-gold/20 flex items-center">
                     <CreditCard className="h-5 w-5 mr-2 text-gold/70" />
-                    <h2 className="text-xl font-semibold text-gold-light">
+                    <h2 className="text-xl font-semibold bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500">
                       Auszahlung durchführen
                     </h2>
                   </div>
@@ -199,7 +200,7 @@ const UserWithdrawal = () => {
               </Card>
               
               {/* Withdrawal History Card */}
-              <Card className="backdrop-blur-xl bg-black/30 border-gold/20 p-6">
+              <Card className="backdrop-blur-xl bg-black/40 border-gold/20 p-6">
                 <WithdrawalHistory userId={user?.id} />
               </Card>
             </div>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -7,7 +6,7 @@ import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import WithdrawalForm from "@/components/user/withdrawal/WithdrawalForm";
 import WithdrawalHistory from "@/components/user/withdrawal/WithdrawalHistory";
 import { Button } from "@/components/ui/button";
-import { ArrowLeft, CreditCard, Wallet, TrendingUp, Award, Trophy } from "lucide-react";
+import { ArrowLeft, CreditCard, Wallet, TrendingUp, Award, Trophy, Shield } from "lucide-react";
 import { useWallets } from "@/hooks/useWallets";
 import { useUserCredit } from "@/hooks/useUserCredit";
 import { Card } from "@/components/ui/card";
@@ -157,6 +156,17 @@ const UserWithdrawal = () => {
                       </div>
                       <p className="text-sm text-white/70 ml-7">
                         Unser Auszahlungssystem nutzt modernste Sicherheitstechnologien.
+                      </p>
+                    </div>
+                    
+                    {/* New advantage box */}
+                    <div className="rounded-lg border border-gold/20 p-4 bg-black/30 hover:bg-black/40 transition-colors">
+                      <div className="flex items-center mb-2">
+                        <Shield className="w-5 h-5 text-gold mr-2" />
+                        <span className="text-gold-light font-medium">Garantierte Auszahlung</span>
+                      </div>
+                      <p className="text-sm text-white/70 ml-7">
+                        Alle Auszahlungen werden zu 100% garantiert und sind vollständig versichert.
                       </p>
                     </div>
                   </div>

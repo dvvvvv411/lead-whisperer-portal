@@ -15,6 +15,13 @@ const MobileNavigation = () => {
         <Home className="h-5 w-5" />
         <span className="text-xs mt-1 drop-shadow-sm">Home</span>
       </Link>
+      <Link to="/nutzer/trading-archiv" className={cn(
+        "flex flex-col items-center p-2 rounded",
+        location.pathname === "/nutzer/trading-archiv" ? "text-gold font-medium" : "text-white hover:text-gold/90"
+      )}>
+        <Bot className="h-5 w-5" />
+        <span className="text-xs mt-1 drop-shadow-sm">Archiv</span>
+      </Link>
       <Link to="/nutzer/einzahlen" className={cn(
         "flex flex-col items-center p-2 rounded",
         location.pathname === "/nutzer/einzahlen" ? "text-gold font-medium" : "text-white hover:text-gold/90"
@@ -28,13 +35,6 @@ const MobileNavigation = () => {
       )}>
         <TrendingUp className="h-5 w-5" />
         <span className="text-xs mt-1 drop-shadow-sm">Auszahlen</span>
-      </Link>
-      <Link to="/nutzer/trading-archiv" className={cn(
-        "flex flex-col items-center p-2 rounded",
-        location.pathname === "/nutzer/trading-archiv" ? "text-gold font-medium" : "text-white hover:text-gold/90"
-      )}>
-        <Bot className="h-5 w-5" />
-        <span className="text-xs mt-1 drop-shadow-sm">Archiv</span>
       </Link>
       <Link to="/nutzer/einstellungen" className={cn(
         "flex flex-col items-center p-2 rounded",

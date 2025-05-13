@@ -24,6 +24,18 @@ const DesktopNavigation = () => {
           </Link>
         </NavigationMenuItem>
         <NavigationMenuItem>
+          <Link to="/nutzer/trading-archiv">
+            <NavigationMenuLink className={cn(
+              navigationMenuTriggerStyle(),
+              "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
+              location.pathname === "/nutzer/trading-archiv" && "text-gold font-medium"
+            )}>
+              <Bot className="mr-1 h-4 w-4" />
+              Trading-Archiv
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
           <Link to="/nutzer/einzahlen">
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
@@ -44,18 +56,6 @@ const DesktopNavigation = () => {
             )}>
               <TrendingUp className="mr-1 h-4 w-4" />
               Auszahlen
-            </NavigationMenuLink>
-          </Link>
-        </NavigationMenuItem>
-        <NavigationMenuItem>
-          <Link to="/nutzer/trading-archiv">
-            <NavigationMenuLink className={cn(
-              navigationMenuTriggerStyle(),
-              "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
-              location.pathname === "/nutzer/trading-archiv" && "text-gold font-medium"
-            )}>
-              <Bot className="mr-1 h-4 w-4" />
-              Trading-Archiv
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

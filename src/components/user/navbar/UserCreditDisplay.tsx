@@ -43,7 +43,6 @@ const UserCreditDisplay = ({ userCredit, loading }: UserCreditDisplayProps) => {
       className={cn(
         "px-4 py-2 rounded-md transition-all duration-500 shadow-md",
         creditIncreased === true ? "bg-gold/20 text-gold animate-pulse-gold" : 
-        creditIncreased === false ? "bg-red-500/20 text-gold" : 
         "bg-casino-card"
       )}
     >

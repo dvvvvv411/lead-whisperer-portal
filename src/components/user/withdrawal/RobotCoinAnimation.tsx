@@ -3,23 +3,33 @@ import React, { useState, useEffect } from 'react';
 import { cn } from '@/lib/utils';
 
 const RobotCoinAnimation = () => {
-  // We'll use a state to track animation cycles instead of hover state
+  // State for animation and wallet level
   const [isAnimating, setIsAnimating] = useState(false);
+  const [walletLevel, setWalletLevel] = useState(1);
+  const [coinGroups, setCoinGroups] = useState([0, 1, 2]); // Initial coin groups
   
   // Set up continuous animation cycle
   useEffect(() => {
-    // Start animation
+    // Start animation immediately
     setIsAnimating(true);
     
-    // Set up the animation loop with a timer
-    const animationLoop = setInterval(() => {
-      setIsAnimating(false);
-      // Small delay before restarting animation to create a clear cycle
-      setTimeout(() => setIsAnimating(true), 300);
-    }, 5000); // Full animation cycle takes 5 seconds
+    // Set up the continuous animation with coin recycling
+    const coinRecycleInterval = setInterval(() => {
+      // Rotate coin groups to create continuous flow
+      setCoinGroups(prev => [...prev.slice(1), prev[0]]);
+      
+      // Increase wallet level periodically
+      if (Math.random() > 0.7) {
+        setWalletLevel(prevLevel => {
+          const newLevel = prevLevel + 1;
+          // Reset level after reaching max to create a cycling effect
+          return newLevel > 5 ? 1 : newLevel;
+        });
+      }
+    }, 2000); // Recycle coins every 2 seconds
     
     return () => {
-      clearInterval(animationLoop);
+      clearInterval(coinRecycleInterval);
     };
   }, []);
   
@@ -50,7 +60,7 @@ const RobotCoinAnimation = () => {
 
           {/* Robot */}
           <g className={cn("transform-gpu transition-transform duration-700", 
-             isAnimating ? "translate-x-[-10px] translate-y-[-5px]" : ""
+             isAnimating ? "translate-x-[-5px] translate-y-[-2px]" : ""
           )}>
             {/* Robot Body */}
             <rect x="60" y="80" width="60" height="70" rx="10" fill="#1A1F2C" className="stroke-gold/40" strokeWidth="2" />
@@ -88,80 +98,130 @@ const RobotCoinAnimation = () => {
             </g>
           </g>
 
-          {/* Coins Group - Now with continuous animation */}
-          {/* First Coin: Initial Position */}
-          <g className={cn(
-            "transform-gpu",
-            isAnimating 
-              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
-              : "opacity-0"
-          )} style={{ animationDelay: '0ms' }}>
-            <circle cx="200" cy="100" r="12" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-            <text x="200" y="104" textAnchor="middle" fontSize="12" fill="#000" fontWeight="bold">€</text>
-          </g>
-          
-          {/* Second Coin - Delayed */}
-          <g className={cn(
-            "transform-gpu",
-            isAnimating 
-              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
-              : "opacity-0"
-          )} style={{ animationDelay: '300ms' }}>
-            <circle cx="185" cy="110" r="10" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-            <text x="185" y="114" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">€</text>
-          </g>
-          
-          {/* Third Coin - More Delayed */}
-          <g className={cn(
-            "transform-gpu",
-            isAnimating 
-              ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
-              : "opacity-0"
-          )} style={{ animationDelay: '600ms' }}>
-            <circle cx="210" cy="110" r="8" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
-            <text x="210" y="113" textAnchor="middle" fontSize="8" fill="#000" fontWeight="bold">€</text>
-          </g>
+          {/* CONTINUOUS STREAM OF COINS - Group 1 */}
+          {coinGroups.map((groupIndex, index) => (
+            <g key={groupIndex} className={cn(
+              "transform-gpu",
+              index === 0 
+                ? "animate-[coin-transfer_2000ms_ease-in-out_forwards]" 
+                : "opacity-0"
+            )}>
+              {/* First Coin */}
+              <circle cx="200" cy="100" r="12" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+              <text x="200" y="104" textAnchor="middle" fontSize="12" fill="#000" fontWeight="bold">€</text>
+              
+              {/* Second Coin - Slightly offset */}
+              <circle cx="185" cy="110" r="10" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+              <text x="185" y="114" textAnchor="middle" fontSize="10" fill="#000" fontWeight="bold">€</text>
+              
+              {/* Third Coin - More offset */}
+              <circle cx="210" cy="110" r="8" fill="url(#goldGradient)" className="stroke-gold" strokeWidth="1" />
+              <text x="210" y="113" textAnchor="middle" fontSize="8" fill="#000" fontWeight="bold">€</text>
+            </g>
+          ))}
 
-          {/* Digital Wallet */}
-          <g className="wallet">
-            {/* Wallet Base */}
-            <rect x="290" y="110" width="60" height="45" rx="8" fill="#21283B" className="stroke-gold/40" strokeWidth="2" />
+          {/* Digital Wallet - Now with level-up effect */}
+          <g className={cn(
+            "wallet transform-gpu transition-all duration-300",
+            `scale-${100 + walletLevel * 3}`,
+          )} style={{ transformOrigin: '320px 133px' }}>
+            {/* Wallet Base with level-based sizing and glow */}
+            <rect 
+              x="290" y="110" 
+              width="60" height="45" 
+              rx="8" 
+              fill="#21283B" 
+              className={cn(
+                "stroke-gold/40 transition-all duration-500",
+                walletLevel > 1 ? "animate-pulse" : ""
+              )} 
+              strokeWidth={1 + walletLevel * 0.2}
+              filter={walletLevel > 2 ? "url(#glow)" : ""}
+            />
             
             {/* Wallet Screen */}
-            <rect x="295" y="120" width="50" height="25" rx="4" fill="#0d1117" className="stroke-gold/20" strokeWidth="1" />
+            <rect 
+              x="295" y="120" 
+              width="50" height="25" 
+              rx="4" 
+              fill="#0d1117" 
+              className="stroke-gold/20" 
+              strokeWidth="1"
+            />
             
             {/* Wallet Screen Content */}
-            <g className={cn(
-              "transition-opacity duration-1000",
-              isAnimating ? "opacity-100" : "opacity-50"
-            )}>
+            <g className="transition-opacity duration-1000 opacity-100">
               <rect x="300" y="125" width="40" height="3" rx="1" fill="#8B5CF6" className="animate-pulse" />
               <rect x="300" y="131" width="30" height="3" rx="1" fill="#6366F1" />
               <rect x="300" y="137" width="20" height="3" rx="1" fill="#8B5CF6" />
               
-              {/* Balance Counter - Glows when coins arrive */}
-              <rect x="325" y="131" width="15" height="9" rx="2" className={cn(
-                "fill-black/40 stroke-gold/30", 
-                isAnimating ? "animate-pulse" : ""
-              )} strokeWidth="1" />
+              {/* Balance Counter - Shows current level */}
+              <rect 
+                x="325" y="131" 
+                width="15" height="9" 
+                rx="2" 
+                className={cn(
+                  "fill-black/40 stroke-gold/30 transition-all duration-300",
+                  walletLevel > 1 ? "animate-pulse" : ""
+                )} 
+                strokeWidth="1" 
+              />
               
-              <text x="332" y="138" textAnchor="middle" fontSize="7" className={cn(
-                "fill-gold/70", 
-                isAnimating ? "fill-gold" : ""
-              )}>+</text>
+              <text 
+                x="332" y="138" 
+                textAnchor="middle" 
+                fontSize="7" 
+                className={cn(
+                  "fill-gold transition-all duration-300",
+                  walletLevel > 1 ? "animate-pulse" : ""
+                )}
+              >
+                {walletLevel}
+              </text>
             </g>
             
-            {/* Wallet Light Indicator */}
-            <circle cx="320" cy="115" r="2" className={cn(
-              "fill-gold/50",
-              isAnimating ? "animate-pulse fill-gold" : ""
-            )} />
+            {/* Wallet Light Indicator - Brighter with higher levels */}
+            <circle 
+              cx="320" cy="115" r="2" 
+              className={cn(
+                "transition-all duration-300",
+                walletLevel === 1 ? "fill-gold/50" : 
+                walletLevel === 2 ? "fill-gold/70" : 
+                walletLevel === 3 ? "fill-gold/90" : 
+                "fill-gold animate-pulse"
+              )} 
+            />
 
-            {/* Coin Absorption Effect (visible only when coins arrive) */}
-            <g className={cn(
-              "transition-opacity duration-300",
-              isAnimating ? "animate-[wallet-receive_500ms_ease-in-out]" : "opacity-0"
-            )} style={{ animationDelay: '1800ms' }}>
+            {/* Level indicator rings that appear at higher levels */}
+            {walletLevel >= 3 && (
+              <circle 
+                cx="320" cy="115" r="4" 
+                fill="none"
+                className="stroke-gold/30 animate-pulse" 
+                strokeWidth="1"
+              />
+            )}
+            {walletLevel >= 4 && (
+              <circle 
+                cx="320" cy="115" r="6" 
+                fill="none"
+                className="stroke-gold/20 animate-pulse" 
+                strokeWidth="1"
+                style={{ animationDelay: '0.2s' }}
+              />
+            )}
+            {walletLevel >= 5 && (
+              <circle 
+                cx="320" cy="115" r="8" 
+                fill="none"
+                className="stroke-gold/10 animate-pulse" 
+                strokeWidth="1"
+                style={{ animationDelay: '0.4s' }}
+              />
+            )}
+
+            {/* Coin Absorption Effect - Shows when coins arrive */}
+            <g className="animate-[wallet-receive_500ms_ease-in-out_infinite]">
               <circle cx="320" cy="133" r="8" className="fill-gold/30 animate-ping" />
             </g>
           </g>
@@ -174,17 +234,25 @@ const RobotCoinAnimation = () => {
               <stop offset="100%" stopColor="#E6C200" />
             </linearGradient>
             
+            {/* Glow effect for wallet level-up */}
+            <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+              <feGaussianBlur stdDeviation="2" result="blur" />
+              <feFlood floodColor="#FFD700" floodOpacity="0.3" result="coloredBlur" />
+              <feComposite in="coloredBlur" in2="blur" operator="in" result="coloredBlurIn" />
+              <feComposite in="SourceGraphic" in2="coloredBlurIn" operator="over" />
+            </filter>
+            
             {/* Define custom keyframe animations */}
             <style type="text/css">{`
               @keyframes coin-transfer {
                 0% { transform: translateX(0) translateY(0); opacity: 1; }
                 80% { transform: translateX(100px) translateY(30px); opacity: 1; }
-                100% { transform: translateX(110px) translateY(35px); opacity: 0; }
+                100% { transform: translateX(100px) translateY(30px); opacity: 0; }
               }
               
               @keyframes wallet-receive {
                 0% { opacity: 0; transform: scale(0.2); }
-                50% { opacity: 0.8; transform: scale(1.2); }
+                50% { opacity: 0.5; transform: scale(1.2); }
                 100% { opacity: 0; transform: scale(1.5); }
               }
             `}</style>

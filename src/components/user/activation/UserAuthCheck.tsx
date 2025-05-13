@@ -39,7 +39,7 @@ const UserAuthCheck = ({
   
   return (
     <UserAuthWrapper 
-      redirectTo="/admin"
+      redirectTo="/"
       minCredit={0}
     >
       {(user) => {

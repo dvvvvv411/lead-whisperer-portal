@@ -18,6 +18,14 @@ const AdminUsers = () => {
         return;
       }
       
+      // Spezielle Behandlung für den Benutzer mit der Leads-Only-ID
+      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+        console.log("Leads-only user detected, allowing access to users page");
+        setIsAdmin(true);
+        setLoading(false);
+        return;
+      }
+      
       const adminCheck = await checkUserRole('admin');
       setIsAdmin(adminCheck);
       setLoading(false);

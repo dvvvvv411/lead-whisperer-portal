@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { 
@@ -39,15 +40,26 @@ export interface User {
 interface UserTableProps {
   users: User[];
   onUserUpdated: () => void;
+  isLeadsOnlyUser?: boolean;
 }
 
-export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
+export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: UserTableProps) => {
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
   const [editingCredit, setEditingCredit] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const toggleUserRole = async (userId: string, currentRole: string) => {
+    // Führe diese Aktion nur aus, wenn es kein Leads-Only-Benutzer ist
+    if (isLeadsOnlyUser) {
+      toast({
+        title: "Eingeschränkter Zugriff",
+        description: "Sie haben keine Berechtigung, Benutzerrollen zu ändern.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       setProcessing(userId);
       const newRole = currentRole === "admin" ? "user" : "admin";
@@ -83,6 +95,16 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
   };
 
   const deleteUser = async (userId: string) => {
+    // Führe diese Aktion nur aus, wenn es kein Leads-Only-Benutzer ist
+    if (isLeadsOnlyUser) {
+      toast({
+        title: "Eingeschränkter Zugriff",
+        description: "Sie haben keine Berechtigung, Benutzer zu löschen.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     try {
       setProcessing(userId);
       
@@ -186,13 +208,14 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                       size="sm"
                       className="bg-gold/10 border-gold/30 hover:bg-gold/20 text-gold"
                       onClick={() => setEditingCredit(user)}
+                      disabled={isLeadsOnlyUser}
                     >
                       Guthaben
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={processing === user.id}
+                      disabled={processing === user.id || isLeadsOnlyUser}
                       className={user.role === "admin" 
                         ? "bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400" 
                         : "bg-purple-900/20 border-purple-500/30 hover:bg-purple-800/30 text-purple-400"}
@@ -203,7 +226,7 @@ export const UserTable = ({ users, onUserUpdated }: UserTableProps) => {
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={processing === user.id || user.role === "admin"}
+                      disabled={processing === user.id || user.role === "admin" || isLeadsOnlyUser}
                       className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
                       onClick={() => setUserToDelete(user)}
                     >

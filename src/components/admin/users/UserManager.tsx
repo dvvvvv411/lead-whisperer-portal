@@ -22,6 +22,7 @@ export const UserManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
+  const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState<boolean>(false);
 
   // Benutzer-Session abrufen
   useEffect(() => {
@@ -34,6 +35,8 @@ export const UserManager = () => {
         
         if (data?.user) {
           setCurrentUser(data.user);
+          // Prüfen, ob es sich um den speziellen Leads-Only-Benutzer handelt
+          setIsLeadsOnlyUser(data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f");
         } else {
           // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
           window.location.href = "/admin";
@@ -166,6 +169,9 @@ export const UserManager = () => {
         >
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Benutzerverwaltung</h1>
           <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
+          {isLeadsOnlyUser && (
+            <p className="text-yellow-400 mt-2">Sie haben eingeschränkten Zugriff auf diese Seite. Einige Funktionen sind möglicherweise nicht verfügbar.</p>
+          )}
         </motion.div>
 
         {isLoading ? (
@@ -184,7 +190,7 @@ export const UserManager = () => {
             transition={{ duration: 0.4, delay: 0.1 }}
           >
             <div className="bg-casino-card p-6 rounded-lg border border-gold/10 shadow-lg">
-              <UserTable users={users} onUserUpdated={handleUserUpdated} />
+              <UserTable users={users} onUserUpdated={handleUserUpdated} isLeadsOnlyUser={isLeadsOnlyUser} />
             </div>
           </motion.div>
         )}

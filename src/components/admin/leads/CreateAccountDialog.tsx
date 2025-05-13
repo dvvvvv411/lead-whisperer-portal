@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
 import {
   Dialog,
   DialogContent,
@@ -63,15 +63,17 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       // Generate a random password automatically
       const generatedPassword = generatePassword(10);
       
-      // Use admin API to create user without affecting current session
-      // Instead of using signUp which would log the current admin out
-      const { data: authData, error: authError } = await supabase.auth.admin.createUser({
+      // Use supabaseAdmin client instead of regular supabase client for admin operations
+      const { data: authData, error: authError } = await supabaseAdmin.auth.admin.createUser({
         email: email,
         password: generatedPassword,
         email_confirm: true
       });
       
-      if (authError) throw authError;
+      if (authError) {
+        console.error("Error creating user:", authError);
+        throw authError;
+      }
       
       console.log("User created:", authData);
       
@@ -87,7 +89,10 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
           })
           .eq('id', lead.id);
         
-        if (leadUpdateError) throw leadUpdateError;
+        if (leadUpdateError) {
+          console.error("Error updating lead:", leadUpdateError);
+          throw leadUpdateError;
+        }
 
         // Send welcome email with account details
         try {

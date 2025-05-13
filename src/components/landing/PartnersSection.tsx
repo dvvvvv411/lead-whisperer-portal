@@ -1,6 +1,7 @@
 
 import { motion } from "framer-motion";
 import ExchangeCard from "./partners/ExchangeCard";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 const exchanges = [
   {
@@ -42,6 +43,8 @@ const exchanges = [
 ];
 
 const PartnersSection = () => {
+  const isMobile = useIsMobile();
+  
   return (
     <div className="flex flex-col items-center py-10">
       <motion.h2 
@@ -55,7 +58,7 @@ const PartnersSection = () => {
       </motion.h2>
       
       <motion.div 
-        className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6 max-w-5xl mx-auto"
+        className={`grid ${isMobile ? 'grid-cols-3 grid-rows-2' : 'grid-cols-2 md:grid-cols-3 lg:grid-cols-6'} gap-6 max-w-5xl mx-auto`}
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
         viewport={{ once: true }}

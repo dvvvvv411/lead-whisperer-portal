@@ -1,6 +1,8 @@
 
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
 
@@ -12,6 +14,55 @@ interface PageLayoutProps {
 }
 
 const PageLayout = ({ children, title, description, className = "" }: PageLayoutProps) => {
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
+
+  // Check for authenticated user and redirect if needed
+  useEffect(() => {
+    const checkAuth = async () => {
+      try {
+        const { data } = await supabase.auth.getUser();
+        
+        if (data?.user) {
+          console.log("User authenticated on landing page, redirecting to appropriate dashboard");
+          
+          // Check if the user is an admin
+          const { data: adminRoleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', data.user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          // Redirect to the appropriate dashboard based on user role
+          if (adminRoleData) {
+            navigate('/admin');
+          } else {
+            navigate('/nutzer');
+          }
+        }
+      } catch (error) {
+        console.error("Error checking authentication:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+    
+    checkAuth();
+  }, [navigate]);
+
+  // Show a loading state while checking authentication
+  if (loading) {
+    return (
+      <div className="flex justify-center items-center min-h-screen bg-casino-darker text-white">
+        <div className="animate-pulse flex flex-col items-center">
+          <div className="h-12 w-12 rounded-full border-4 border-t-gold border-casino-card animate-spin mb-4"></div>
+          <p className="text-muted-foreground">Wird geladen...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-casino-darker text-white overflow-hidden">
       <Navbar />

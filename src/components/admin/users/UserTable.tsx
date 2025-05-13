@@ -50,16 +50,7 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
 
   const toggleUserRole = async (userId: string, currentRole: string) => {
-    // Führe diese Aktion nur aus, wenn es kein Leads-Only-Benutzer ist
-    if (isLeadsOnlyUser) {
-      toast({
-        title: "Eingeschränkter Zugriff",
-        description: "Sie haben keine Berechtigung, Benutzerrollen zu ändern.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // Remove the restriction check for leads-only user
     try {
       setProcessing(userId);
       const newRole = currentRole === "admin" ? "user" : "admin";
@@ -95,16 +86,7 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
   };
 
   const deleteUser = async (userId: string) => {
-    // Führe diese Aktion nur aus, wenn es kein Leads-Only-Benutzer ist
-    if (isLeadsOnlyUser) {
-      toast({
-        title: "Eingeschränkter Zugriff",
-        description: "Sie haben keine Berechtigung, Benutzer zu löschen.",
-        variant: "destructive"
-      });
-      return;
-    }
-    
+    // Remove the restriction check for leads-only user
     try {
       setProcessing(userId);
       
@@ -208,14 +190,13 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
                       size="sm"
                       className="bg-gold/10 border-gold/30 hover:bg-gold/20 text-gold"
                       onClick={() => setEditingCredit(user)}
-                      disabled={isLeadsOnlyUser}
                     >
                       Guthaben
                     </Button>
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={processing === user.id || isLeadsOnlyUser}
+                      disabled={processing === user.id}
                       className={user.role === "admin" 
                         ? "bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400" 
                         : "bg-purple-900/20 border-purple-500/30 hover:bg-purple-800/30 text-purple-400"}
@@ -226,7 +207,7 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
                     <Button
                       variant="outline"
                       size="sm"
-                      disabled={processing === user.id || user.role === "admin" || isLeadsOnlyUser}
+                      disabled={processing === user.id || user.role === "admin"}
                       className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
                       onClick={() => setUserToDelete(user)}
                     >

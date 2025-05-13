@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -169,9 +168,6 @@ export const UserManager = () => {
         >
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Benutzerverwaltung</h1>
           <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
-          {isLeadsOnlyUser && (
-            <p className="text-yellow-400 mt-2">Sie haben eingeschränkten Zugriff auf diese Seite. Einige Funktionen sind möglicherweise nicht verfügbar.</p>
-          )}
         </motion.div>
 
         {isLoading ? (

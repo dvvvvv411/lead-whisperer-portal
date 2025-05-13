@@ -31,7 +31,7 @@ serve(async (req) => {
     }
 
     const emailResponse = await resend.emails.send({
-      from: "KI-Trading Bot <noreply@ki-trading-bot.de>",
+      from: "KI-Trading Bot <noreply@bitloon.net>",
       to: [email],
       subject: "Danke für deine Anfrage bei KI-Trading",
       html: `

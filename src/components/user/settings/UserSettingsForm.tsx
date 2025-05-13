@@ -119,7 +119,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
               <FormLabel className="text-gold-light">Name</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Ihr vollständiger Name" 
+                  placeholder={currentData.fullName || "Ihr vollständiger Name"} 
                   {...field} 
                   className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
                 />
@@ -137,7 +137,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
               <FormLabel className="text-gold-light">Telefonnummer</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Ihre Telefonnummer" 
+                  placeholder={currentData.phoneNumber || "Ihre Telefonnummer"} 
                   {...field} 
                   className="border-gold/30 focus:border-gold focus:ring-1 focus:ring-gold/30 bg-black/30"
                 />
@@ -155,7 +155,7 @@ const UserSettingsForm = ({ user, onSuccess }: UserSettingsFormProps) => {
               <FormLabel className="text-gold-light">E-Mail</FormLabel>
               <FormControl>
                 <Input 
-                  placeholder="Ihre E-Mail Adresse" 
+                  placeholder={currentData.email || "Ihre E-Mail Adresse"} 
                   disabled 
                   {...field} 
                   className="border-gold/30 bg-black/20 text-white/60"

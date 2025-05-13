@@ -33,7 +33,7 @@ serve(async (req) => {
     const emailResponse = await resend.emails.send({
       from: "KI-Trading Bot <noreply@bitloon.net>",
       to: [email],
-      subject: "Willkommen bei KI-Trading - Deine Zugangsdaten",
+      subject: "Willkommen bei KI-Trading - Ihre Zugangsdaten",
       html: `
         <!DOCTYPE html>
         <html>
@@ -43,38 +43,39 @@ serve(async (req) => {
           <title>Willkommen bei KI-Trading</title>
           <style>
             body {
-              font-family: Arial, sans-serif;
+              font-family: 'Arial', 'Helvetica', sans-serif;
               line-height: 1.6;
               color: #333333;
               margin: 0;
               padding: 0;
-              background-color: #f6f6f7;
+              background-color: #FFFFFF;
             }
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background-color: #ffffff;
+              background-color: #FFFFFF;
               border-radius: 8px;
               overflow: hidden;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E8E8E8;
               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background-color: #f9f9f9;
-              border-bottom: 1px solid #e1e1e1;
+              background-color: #FFFFFF;
+              border-bottom: 1px solid #F0F0F0;
             }
             .logo {
               max-width: 180px;
+              height: auto;
             }
             .content {
               padding: 30px;
-              background-color: rgba(255, 255, 255, 0.95);
+              background-color: #FFFFFF;
             }
             .greeting {
               font-size: 24px;
-              margin-bottom: 20px;
+              margin-bottom: 25px;
               color: #333333;
               font-weight: bold;
             }
@@ -84,15 +85,15 @@ serve(async (req) => {
               font-size: 16px;
             }
             .highlight {
-              color: #6366F1;
+              color: #D4AF37;
               font-weight: bold;
             }
             .credentials {
-              background-color: #f8fafc;
+              background-color: #F9F9F9;
               border-radius: 6px;
               padding: 20px;
               margin: 25px 0;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E8E8E8;
               box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
             }
             .credentials h3 {
@@ -101,6 +102,9 @@ serve(async (req) => {
               display: flex;
               align-items: center;
               gap: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #E8E8E8;
+              margin-bottom: 15px;
             }
             .credentials h3:before {
               content: '🔐';
@@ -110,29 +114,28 @@ serve(async (req) => {
               margin: 12px 0;
               display: flex;
               justify-content: space-between;
-              border-bottom: 1px solid #f1f1f1;
               padding-bottom: 10px;
+              align-items: center;
             }
-            .credentials p:last-child {
-              border-bottom: none;
-              margin-bottom: 0;
-              padding-bottom: 0;
+            .credentials p:not(:last-child) {
+              border-bottom: 1px solid #F0F0F0;
             }
             .credentials strong {
               color: #333333;
             }
             .credentials .value {
-              color: #6366F1;
-              background: #f1f5f9;
-              padding: 4px 10px;
+              color: #D4AF37;
+              background: #FAFAFA;
+              padding: 8px 12px;
               border-radius: 4px;
-              font-family: 'Courier New', monospace;
-              letter-spacing: 1px;
-              border: 1px solid #e1e1e1;
+              font-family: 'Arial', sans-serif;
+              letter-spacing: 0.5px;
+              border: 1px solid #F0F0F0;
+              font-weight: 500;
             }
             .security-note {
-              background-color: #f8fafc;
-              border-left: 4px solid #6366F1;
+              background-color: #F9F9F9;
+              border-left: 4px solid #D4AF37;
               padding: 15px;
               margin: 20px 0;
               font-size: 14px;
@@ -140,8 +143,8 @@ serve(async (req) => {
             }
             .button {
               display: block;
-              background-color: #6366F1;
-              color: #ffffff;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
+              color: #FFFFFF;
               text-decoration: none;
               padding: 12px 24px;
               border-radius: 6px;
@@ -149,13 +152,17 @@ serve(async (req) => {
               margin: 25px auto;
               text-align: center;
               max-width: 200px;
+              transition: all 0.2s ease;
+            }
+            .button:hover {
+              background: #D4AF37;
             }
             .steps {
               margin: 30px 0;
-              background-color: #f8fafc;
+              background-color: #F9F9F9;
               border-radius: 6px;
               padding: 20px;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E8E8E8;
             }
             .steps h4 {
               margin-top: 0;
@@ -163,6 +170,9 @@ serve(async (req) => {
               display: flex;
               align-items: center;
               gap: 10px;
+              padding-bottom: 10px;
+              border-bottom: 1px solid #E8E8E8;
+              margin-bottom: 15px;
             }
             .steps h4:before {
               content: '🚀';
@@ -174,10 +184,10 @@ serve(async (req) => {
               align-items: flex-start;
             }
             .step-number {
-              background-color: #6366F1;
-              color: #fff;
-              width: 24px;
-              height: 24px;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
+              color: #FFFFFF;
+              width: 25px;
+              height: 25px;
               border-radius: 50%;
               display: flex;
               align-items: center;
@@ -199,56 +209,62 @@ serve(async (req) => {
               font-size: 14px;
               margin: 0;
             }
-            .rewards-section {
-              background-color: #f9f9f9;
+            .benefits-section {
+              background-color: #F9F9F9;
               margin: 30px -30px -30px;
               padding: 30px;
-              border-top: 1px solid #e1e1e1;
+              border-top: 1px solid #E8E8E8;
             }
-            .rewards-title {
+            .benefits-title {
               text-align: center;
               color: #333333;
               margin-top: 0;
+              margin-bottom: 20px;
               font-size: 20px;
               display: flex;
               align-items: center;
               justify-content: center;
               gap: 10px;
             }
-            .rewards-title:before {
+            .benefits-title:before {
               content: '🏆';
               font-size: 24px;
             }
-            .reward-item {
+            .benefit-item {
               display: flex;
               align-items: center;
               margin: 15px 0;
-              background-color: #ffffff;
-              padding: 12px;
+              background-color: #FFFFFF;
+              padding: 15px;
               border-radius: 6px;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E8E8E8;
+              transition: all 0.2s ease;
             }
-            .reward-icon {
+            .benefit-item:hover {
+              transform: translateY(-2px);
+              box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+            }
+            .benefit-icon {
               width: 40px;
               height: 40px;
               border-radius: 50%;
-              background-color: #6366F1;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
               display: flex;
               align-items: center;
               justify-content: center;
               margin-right: 15px;
               font-size: 20px;
-              color: #fff;
+              color: #FFFFFF;
             }
-            .reward-text {
+            .benefit-text {
               flex-grow: 1;
             }
-            .reward-title {
+            .benefit-title {
               color: #333333;
               margin: 0 0 5px 0;
               font-size: 16px;
             }
-            .reward-description {
+            .benefit-description {
               color: #505050;
               margin: 0;
               font-size: 14px;
@@ -256,16 +272,16 @@ serve(async (req) => {
             .footer {
               text-align: center;
               padding: 20px;
-              background-color: #f9f9f9;
+              background-color: #F9F9F9;
               font-size: 12px;
               color: #888888;
-              border-top: 1px solid #e1e1e1;
+              border-top: 1px solid #E8E8E8;
             }
             .footer p {
               margin: 5px 0;
             }
             .footer a {
-              color: #6366F1;
+              color: #D4AF37;
               text-decoration: none;
             }
             @media (max-width: 600px) {
@@ -279,7 +295,7 @@ serve(async (req) => {
               .greeting {
                 font-size: 20px;
               }
-              .rewards-section {
+              .benefits-section {
                 margin: 20px -20px -20px;
                 padding: 20px;
               }
@@ -289,7 +305,7 @@ serve(async (req) => {
             }
           </style>
         </head>
-        <body bgcolor="#f6f6f7">
+        <body bgcolor="#FFFFFF">
           <div class="container">
             <div class="header">
               <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Logo" class="logo">
@@ -297,14 +313,14 @@ serve(async (req) => {
             <div class="content">              
               <h2 class="greeting">Willkommen, ${name}!</h2>
               <p class="message">
-                Dein Account für <span class="highlight">KI-Trading</span> wurde erfolgreich erstellt.
+                Ihr Account für <span class="highlight">KI-Trading</span> wurde erfolgreich erstellt.
               </p>
               <p class="message">
-                Mit unserer KI-Trading-Lösung bist du bereit, den Markt mit Hilfe unseres fortschrittlichen Algorithmus zu erobern und deine finanzielle Zukunft selbst zu gestalten.
+                Mit unserer KI-Trading-Lösung sind Sie bereit, den Markt mit Hilfe unseres fortschrittlichen Algorithmus zu erobern und Ihre finanzielle Zukunft selbst zu gestalten.
               </p>
               
               <div class="credentials">
-                <h3>Deine Zugangsdaten</h3>
+                <h3>Ihre Zugangsdaten</h3>
                 <p>
                   <strong>E-Mail:</strong>
                   <span class="value">${email}</span>
@@ -322,10 +338,10 @@ serve(async (req) => {
               </div>
               
               <div class="security-note">
-                <p><strong>🔒 Sicherheitshinweis:</strong> Bitte bewahre deine Zugangsdaten sicher auf und teile sie mit niemandem.</p>
+                <p><strong>🔒 Sicherheitshinweis:</strong> Bitte bewahren Sie Ihre Zugangsdaten sicher auf und teilen Sie diese mit niemandem.</p>
               </div>
               
-              <p class="message">Mit diesen Zugangsdaten kannst du dich sofort einloggen und mit dem Trading beginnen:</p>
+              <p class="message">Mit diesen Zugangsdaten können Sie sich sofort einloggen und mit dem Trading beginnen:</p>
               
               <a href="https://ki-trading-bot.de/auth" class="button">Jetzt einloggen</a>
               
@@ -336,7 +352,7 @@ serve(async (req) => {
                   <div class="step-number">1</div>
                   <div class="step-content">
                     <div class="step-title">Account aktivieren</div>
-                    <p class="step-description">Führe deine erste Einzahlung durch, um deinen Account zu aktivieren und Zugriff auf alle Trading-Features zu erhalten.</p>
+                    <p class="step-description">Führen Sie Ihre erste Einzahlung durch, um Ihren Account zu aktivieren und Zugriff auf alle Trading-Features zu erhalten.</p>
                   </div>
                 </div>
                 
@@ -344,7 +360,7 @@ serve(async (req) => {
                   <div class="step-number">2</div>
                   <div class="step-content">
                     <div class="step-title">KI-Trading Bot einrichten</div>
-                    <p class="step-description">Konfiguriere den KI-Trading Bot nach deinen Präferenzen und Handelsstrategien.</p>
+                    <p class="step-description">Konfigurieren Sie den KI-Trading Bot nach Ihren Präferenzen und Handelsstrategien.</p>
                   </div>
                 </div>
                 
@@ -352,43 +368,43 @@ serve(async (req) => {
                   <div class="step-number">3</div>
                   <div class="step-content">
                     <div class="step-title">Erste Trades ausführen</div>
-                    <p class="step-description">Starte mit deinen ersten Trades und beobachte, wie der KI-Algorithmus für dich arbeitet.</p>
+                    <p class="step-description">Starten Sie mit Ihren ersten Trades und beobachten Sie, wie der KI-Algorithmus für Sie arbeitet.</p>
                   </div>
                 </div>
               </div>
               
-              <div class="rewards-section">
-                <h3 class="rewards-title">Deine Vorteile</h3>
+              <div class="benefits-section">
+                <h3 class="benefits-title">Ihre Vorteile</h3>
                 
-                <div class="reward-item">
-                  <div class="reward-icon">💰</div>
-                  <div class="reward-text">
-                    <h5 class="reward-title">Passive Einkommensquelle</h5>
-                    <p class="reward-description">Verdiene täglich durch automatisierte KI-gesteuerte Trades.</p>
+                <div class="benefit-item">
+                  <div class="benefit-icon">💰</div>
+                  <div class="benefit-text">
+                    <h5 class="benefit-title">Passive Einkommensquelle</h5>
+                    <p class="benefit-description">Verdienen Sie täglich durch automatisierte KI-gesteuerte Trades.</p>
                   </div>
                 </div>
                 
-                <div class="reward-item">
-                  <div class="reward-icon">🤖</div>
-                  <div class="reward-text">
-                    <h5 class="reward-title">KI-Technologie</h5>
-                    <p class="reward-description">Nutze fortschrittliche Algorithmen für optimale Trading-Entscheidungen.</p>
+                <div class="benefit-item">
+                  <div class="benefit-icon">🤖</div>
+                  <div class="benefit-text">
+                    <h5 class="benefit-title">KI-Technologie</h5>
+                    <p class="benefit-description">Nutzen Sie fortschrittliche Algorithmen für optimale Trading-Entscheidungen.</p>
                   </div>
                 </div>
                 
-                <div class="reward-item">
-                  <div class="reward-icon">🔒</div>
-                  <div class="reward-text">
-                    <h5 class="reward-title">Sicherheit & Support</h5>
-                    <p class="reward-description">Profitiere von höchsten Sicherheitsstandards und unserem 24/7 Support.</p>
+                <div class="benefit-item">
+                  <div class="benefit-icon">🔒</div>
+                  <div class="benefit-text">
+                    <h5 class="benefit-title">Sicherheit & Support</h5>
+                    <p class="benefit-description">Profitieren Sie von höchsten Sicherheitsstandards und unserem 24/7 Support.</p>
                   </div>
                 </div>
               </div>
             </div>
             <div class="footer">
               <p>© 2024 KI-Trading Bot. Alle Rechte vorbehalten.</p>
-              <p>Bei Fragen oder Problemen stehen wir dir jederzeit zur Verfügung. Kontaktiere uns einfach per <a href="mailto:support@ki-trading-bot.de">E-Mail</a> oder Telefon.</p>
-              <p>Bitte bewahre deine Zugangsdaten sicher auf und teile sie mit niemandem.</p>
+              <p>Bei Fragen oder Problemen stehen wir Ihnen jederzeit zur Verfügung. Kontaktieren Sie uns einfach per <a href="mailto:support@ki-trading-bot.de">E-Mail</a> oder Telefon.</p>
+              <p>Bitte bewahren Sie Ihre Zugangsdaten sicher auf und teilen Sie diese mit niemandem.</p>
             </div>
           </div>
         </body>

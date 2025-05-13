@@ -43,38 +43,39 @@ serve(async (req) => {
           <title>Danke für deine Anfrage</title>
           <style>
             body {
-              font-family: Arial, sans-serif;
+              font-family: 'Arial', 'Helvetica', sans-serif;
               line-height: 1.6;
               color: #333333;
               margin: 0;
               padding: 0;
-              background-color: #f6f6f7;
+              background-color: #FFFFFF;
             }
             .container {
               max-width: 600px;
               margin: 0 auto;
-              background-color: #ffffff;
+              background-color: #FFFFFF;
               border-radius: 8px;
               overflow: hidden;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E8E8E8;
               box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
             }
             .header {
               text-align: center;
               padding: 30px 0;
-              background-color: #f9f9f9;
-              border-bottom: 1px solid #e1e1e1;
+              background-color: #FFFFFF;
+              border-bottom: 1px solid #F0F0F0;
             }
             .logo {
               max-width: 180px;
+              height: auto;
             }
             .content {
               padding: 30px;
-              background-color: rgba(255, 255, 255, 0.95);
+              background-color: #FFFFFF;
             }
             .greeting {
               font-size: 22px;
-              margin-bottom: 20px;
+              margin-bottom: 25px;
               color: #333333;
               font-weight: bold;
             }
@@ -84,14 +85,14 @@ serve(async (req) => {
               font-size: 16px;
             }
             .highlight {
-              color: #6366F1;
+              color: #D4AF37;
               font-weight: bold;
             }
             .notification-box {
-              background-color: #f1f5f9;
-              border-left: 4px solid #6366F1;
+              background-color: #F9F9F9;
+              border-left: 4px solid #D4AF37;
               padding: 15px;
-              margin: 20px 0;
+              margin: 25px 0;
               border-radius: 4px;
             }
             .notification-box p {
@@ -105,36 +106,36 @@ serve(async (req) => {
               margin-right: 10px;
               vertical-align: middle;
               font-size: 18px;
-              color: #6366F1;
+              color: #D4AF37;
             }
             .footer {
               text-align: center;
               padding: 20px;
-              background-color: #f9f9f9;
+              background-color: #F9F9F9;
               font-size: 12px;
               color: #888888;
-              border-top: 1px solid #e1e1e1;
+              border-top: 1px solid #E8E8E8;
             }
             .footer p {
               margin: 5px 0;
             }
             .progress {
-              background-color: #f1f1f1;
+              background-color: #F0F0F0;
               height: 10px;
               border-radius: 5px;
-              margin: 20px 0;
+              margin: 25px 0;
               overflow: hidden;
             }
             .progress-bar {
               width: 25%;
               height: 100%;
-              background-color: #6366F1;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
               border-radius: 5px;
             }
             .progress-step {
               display: flex;
               justify-content: space-between;
-              margin-top: 8px;
+              margin-top: 10px;
               position: relative;
               z-index: 2;
               flex-wrap: nowrap;
@@ -150,9 +151,9 @@ serve(async (req) => {
             .step-icon {
               width: 30px;
               height: 30px;
-              background-color: #f1f1f1;
+              background-color: #F0F0F0;
               border-radius: 50%;
-              border: 1px solid #e1e1e1;
+              border: 1px solid #E0E0E0;
               display: flex;
               align-items: center;
               justify-content: center;
@@ -161,9 +162,9 @@ serve(async (req) => {
               font-weight: bold;
             }
             .step-current .step-icon {
-              background-color: #6366F1;
-              color: #fff;
-              border-color: #6366F1;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
+              color: #FFFFFF;
+              border-color: #D4AF37;
             }
             .step-label {
               font-size: 12px;
@@ -171,13 +172,13 @@ serve(async (req) => {
               width: 100%;
             }
             .step-current .step-label {
-              color: #6366F1;
+              color: #D4AF37;
               font-weight: bold;
             }
             .step-line {
               flex-grow: 1;
               height: 1px;
-              background-color: #e1e1e1;
+              background-color: #E0E0E0;
               margin: 0 5px;
               position: relative;
               top: 15px;
@@ -185,7 +186,18 @@ serve(async (req) => {
             .signature {
               margin-top: 30px;
               padding-top: 20px;
-              border-top: 1px solid #f1f1f1;
+              border-top: 1px solid #F0F0F0;
+            }
+            .button {
+              display: inline-block;
+              background: linear-gradient(90deg, #D4AF37 0%, #E6C868 100%);
+              color: #FFFFFF;
+              text-decoration: none;
+              padding: 12px 24px;
+              border-radius: 4px;
+              font-weight: bold;
+              margin: 20px auto;
+              text-align: center;
             }
             @media (max-width: 600px) {
               .container {
@@ -204,7 +216,7 @@ serve(async (req) => {
             }
           </style>
         </head>
-        <body bgcolor="#f6f6f7">
+        <body bgcolor="#FFFFFF">
           <div class="container">
             <div class="header">
               <img src="https://i.imgur.com/Q191f5z.png" alt="KI-Trading Logo" class="logo">
@@ -212,17 +224,17 @@ serve(async (req) => {
             <div class="content">              
               <h2 class="greeting">Hallo ${name},</h2>
               <p class="message">
-                Vielen Dank für deine Anfrage bei <span class="highlight">KI-Trading</span>!
+                Vielen Dank für Ihre Anfrage bei <span class="highlight">KI-Trading</span>!
               </p>
               <p class="message">
-                Wir haben deine Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei dir melden.
+                Wir haben Ihre Nachricht erhalten und werden uns <span class="highlight">in Kürze</span> bei Ihnen melden. Ihr Interesse an unserer KI-basierten Krypto-Handelsplattform freut uns sehr.
               </p>
               
               <div class="notification-box">
-                <p><span class="notification-icon">🔔</span> Bitte halte dein Telefon bereit, da wir dich anrufen werden, um dir weitere Informationen über unsere KI-Trading-Lösung zu geben.</p>
+                <p><span class="notification-icon">🔔</span> Bitte halten Sie Ihr Telefon bereit, da wir Sie anrufen werden, um Ihnen weitere Informationen über unsere KI-Trading-Lösung zu geben.</p>
               </div>
               
-              <p class="message">Du bist nur noch einen Schritt von der finanziellen Freiheit entfernt!</p>
+              <p class="message">Sie sind nur noch einen Schritt von der finanziellen Freiheit entfernt!</p>
               
               <div class="progress">
                 <div class="progress-bar"></div>
@@ -252,12 +264,12 @@ serve(async (req) => {
               
               <p class="signature">
                 Mit freundlichen Grüßen,<br>
-                <span class="highlight">Dein KI-Trading Team</span>
+                <span class="highlight">Ihr KI-Trading Team</span>
               </p>
             </div>
             <div class="footer">
               <p>© 2024 KI-Trading Bot. Alle Rechte vorbehalten.</p>
-              <p>Diese E-Mail wurde automatisch generiert, bitte antworte nicht darauf.</p>
+              <p>Diese E-Mail wurde automatisch generiert, bitte antworten Sie nicht darauf.</p>
             </div>
           </div>
         </body>

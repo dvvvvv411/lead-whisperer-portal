@@ -18,6 +18,13 @@ const AdminCryptoWallets = () => {
         return;
       }
       
+      // Prüfen, ob der Benutzer die spezielle Leads-Only-ID hat
+      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+        console.log("Leads-only user detected, redirecting to leads page");
+        window.location.href = "/admin/leads";
+        return;
+      }
+      
       const adminCheck = await checkUserRole('admin');
       setIsAdmin(adminCheck);
       setLoading(false);

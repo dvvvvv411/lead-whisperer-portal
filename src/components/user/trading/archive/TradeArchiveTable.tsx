@@ -15,6 +15,14 @@ import {
 } from "@/components/ui/table";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+import { 
+  Pagination, 
+  PaginationContent, 
+  PaginationItem, 
+  PaginationLink, 
+  PaginationNext, 
+  PaginationPrevious 
+} from "@/components/ui/pagination";
 
 type SortField = 'date' | 'asset' | 'price' | 'quantity' | 'total' | 'profit';
 type SortDirection = 'asc' | 'desc';
@@ -118,6 +126,41 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
     return sortConfig.direction === 'asc' 
       ? <ArrowUp className="h-4 w-4" /> 
       : <ArrowDown className="h-4 w-4" />;
+  };
+  
+  // Generate pagination items based on current page and total pages
+  const generatePaginationItems = () => {
+    const items = [];
+    const buffer = 2; // Number of pages to show on either side
+    
+    let startPage = Math.max(1, currentPage - buffer);
+    let endPage = Math.min(totalPages, currentPage + buffer);
+    
+    // Adjust range if we're near the beginning or end
+    if (currentPage <= buffer) {
+      endPage = Math.min(totalPages, 2 * buffer + 1);
+    } else if (currentPage >= totalPages - buffer) {
+      startPage = Math.max(1, totalPages - 2 * buffer);
+    }
+    
+    // Generate numbered page buttons
+    for (let i = startPage; i <= endPage; i++) {
+      items.push(
+        <PaginationItem key={i}>
+          <PaginationLink 
+            isActive={i === currentPage}
+            onClick={() => goToPage(i)}
+            className={i === currentPage 
+              ? "bg-gold/20 text-gold border-gold/40 hover:bg-gold/30" 
+              : "border-gold/20 hover:bg-gold/10 hover:text-gold"}
+          >
+            {i}
+          </PaginationLink>
+        </PaginationItem>
+      );
+    }
+    
+    return items;
   };
   
   return (
@@ -265,63 +308,30 @@ const TradeArchiveTable = ({ trades, loading }: TradeArchiveTableProps) => {
           <div className="text-sm text-gray-400">
             Zeige {startIndex + 1}-{Math.min(startIndex + PAGE_SIZE, sortedTrades.length)} von {sortedTrades.length} Einträgen
           </div>
-          <div className="flex gap-2">
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-gold/20 hover:bg-gold/10 hover:text-gold"
-              onClick={() => goToPage(currentPage - 1)}
-              disabled={currentPage === 1}
-            >
-              Zurück
-            </Button>
-            
-            {[...Array(Math.min(5, totalPages))].map((_, i) => {
-              // Show pages around current page
-              const pageNumbers = [];
-              const buffer = 2; // Number of pages to show on either side
+          
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious
+                  onClick={() => goToPage(currentPage - 1)}
+                  className="border-gold/20 hover:bg-gold/10 hover:text-gold"
+                  aria-disabled={currentPage === 1}
+                  tabIndex={currentPage === 1 ? -1 : undefined}
+                />
+              </PaginationItem>
               
-              // Calculate range of pages to show
-              let startPage = Math.max(1, currentPage - buffer);
-              let endPage = Math.min(totalPages, currentPage + buffer);
+              {generatePaginationItems()}
               
-              // Adjust if we're near the beginning or end
-              if (currentPage <= buffer) {
-                endPage = Math.min(totalPages, 2 * buffer + 1);
-              } else if (currentPage >= totalPages - buffer) {
-                startPage = Math.max(1, totalPages - 2 * buffer);
-              }
-              
-              // Generate page buttons
-              for (let page = startPage; page <= endPage; page++) {
-                pageNumbers.push(
-                  <Button
-                    key={page}
-                    variant={page === currentPage ? "default" : "outline"}
-                    size="sm"
-                    className={page === currentPage 
-                      ? "bg-gold/20 text-gold border-gold/40 hover:bg-gold/30" 
-                      : "border-gold/20 hover:bg-gold/10 hover:text-gold"}
-                    onClick={() => goToPage(page)}
-                  >
-                    {page}
-                  </Button>
-                );
-              }
-              
-              return pageNumbers;
-            })}
-            
-            <Button
-              variant="outline"
-              size="sm"
-              className="border-gold/20 hover:bg-gold/10 hover:text-gold"
-              onClick={() => goToPage(currentPage + 1)}
-              disabled={currentPage === totalPages}
-            >
-              Weiter
-            </Button>
-          </div>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => goToPage(currentPage + 1)}
+                  className="border-gold/20 hover:bg-gold/10 hover:text-gold"
+                  aria-disabled={currentPage === totalPages}
+                  tabIndex={currentPage === totalPages ? -1 : undefined}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
         </div>
       )}
     </div>

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 
 const AdminLeads = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const [isLeadsOnly, setIsLeadsOnly] = useState<boolean>(false);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,12 +19,23 @@ const AdminLeads = () => {
         return;
       }
       
+      // Check for admin role
       const adminCheck = await checkUserRole('admin');
       setIsAdmin(adminCheck);
+      
+      // Check if user has leads_only restriction
+      const { data: leadsOnlyData, error } = await supabase.rpc('is_leads_only_user', {
+        user_id_param: data.session.user.id
+      });
+      
+      if (!error && leadsOnlyData) {
+        setIsLeadsOnly(leadsOnlyData);
+      }
+      
       setLoading(false);
       
-      // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
-      if (!adminCheck) {
+      // If not admin or leads_only, redirect to user dashboard
+      if (!adminCheck && !leadsOnlyData) {
         window.location.href = "/nutzer";
       }
     };
@@ -48,7 +60,7 @@ const AdminLeads = () => {
     );
   }
 
-  return isAdmin ? <LeadTable /> : null;
+  return (isAdmin || isLeadsOnly) ? <LeadTable /> : null;
 };
 
 export default AdminLeads;

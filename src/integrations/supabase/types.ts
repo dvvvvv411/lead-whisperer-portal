@@ -422,6 +422,10 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: undefined
       }
+      is_leads_only_user: {
+        Args: { user_id_param: string }
+        Returns: boolean
+      }
       process_withdrawal_status: {
         Args: {
           withdrawal_id: string
@@ -444,7 +448,7 @@ export type Database = {
       }
     }
     Enums: {
-      app_role: "admin" | "user"
+      app_role: "admin" | "user" | "leads_only"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -560,7 +564,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      app_role: ["admin", "user"],
+      app_role: ["admin", "user", "leads_only"],
     },
   },
 } as const

@@ -6,6 +6,7 @@ import AdminLogin from "@/components/admin/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import { checkUserRole } from "@/services/roleService";
 import { motion } from "framer-motion";
+import { toast } from "@/components/ui/use-toast";
 
 const Admin = () => {
   const navigate = useNavigate();
@@ -13,6 +14,7 @@ const Admin = () => {
   const [loading, setLoading] = useState(true);
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
   const [isUser, setIsUser] = useState<boolean | null>(null);
+  const [isLeadsOnly, setIsLeadsOnly] = useState<boolean>(false);
 
   useEffect(() => {
     console.log("Admin page mounting, checking session...");
@@ -38,6 +40,16 @@ const Admin = () => {
           console.log("Role check results - Admin:", adminCheck, "User:", userCheck);
           setIsAdmin(adminCheck);
           setIsUser(userCheck);
+          
+          // Check if user has leads_only restriction
+          const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
+            user_id_param: data.session.user.id
+          });
+          
+          if (!leadsOnlyError && leadsOnlyData) {
+            setIsLeadsOnly(leadsOnlyData);
+            console.log("User has leads_only restriction");
+          }
         }
         
         setLoading(false);
@@ -61,9 +73,17 @@ const Admin = () => {
         console.log("Updated role check - Admin:", adminCheck, "User:", userCheck);
         setIsAdmin(adminCheck);
         setIsUser(userCheck);
+        
+        // Check if user has leads_only restriction
+        const { data: leadsOnlyData } = await supabase.rpc('is_leads_only_user', {
+          user_id_param: newSession.user.id
+        });
+        
+        setIsLeadsOnly(!!leadsOnlyData);
       } else {
         setIsAdmin(null);
         setIsUser(null);
+        setIsLeadsOnly(false);
       }
     });
     
@@ -92,10 +112,16 @@ const Admin = () => {
 
   // Wenn der Benutzer angemeldet ist
   if (session) {
-    console.log("Session exists, admin:", isAdmin, "user:", isUser);
+    console.log("Session exists, admin:", isAdmin, "user:", isUser, "leadsOnly:", isLeadsOnly);
     
+    // If the user has leads_only role, redirect directly to leads page
+    if (isLeadsOnly) {
+      console.log("Leads-only user detected, redirecting to leads page");
+      navigate("/admin/leads");
+      return null;
+    }
     // Wenn der Benutzer Admin ist, zeige das Admin-Dashboard
-    if (isAdmin) {
+    else if (isAdmin) {
       console.log("Displaying admin dashboard");
       return <AdminDashboard />;
     }

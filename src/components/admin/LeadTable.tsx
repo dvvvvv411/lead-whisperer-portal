@@ -124,14 +124,15 @@ const LeadTable = () => {
           }
         }
       )
-      .subscribe();
-      
-    // Debug verification of channel subscription
-    channel.onSubscribe(() => {
-      console.log('Successfully subscribed to leads changes');
-    });
+      .subscribe((status) => {
+        console.log('Subscription status:', status);
+        if (status === 'SUBSCRIBED') {
+          console.log('Successfully subscribed to leads changes');
+        }
+      });
     
-    channel.onError((err) => {
+    // Event handling for channel errors
+    channel.on('error', (err: Error) => {
       console.error('Error with realtime subscription:', err);
     });
       

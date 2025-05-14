@@ -16,7 +16,10 @@ const LeadTable = () => {
         .eq('id', leadId)
         .single();
         
-      if (error) throw error;
+      if (error) {
+        console.error('Error fetching lead for notification:', error);
+        throw error;
+      }
       
       // Prepare payload for Telegram notification
       const payload = {
@@ -28,8 +31,10 @@ const LeadTable = () => {
         created_at: lead.created_at
       };
       
+      console.log('Sending Telegram notification with payload:', payload);
+      
       // Call the edge function to send notification
-      const { error: fnError } = await supabase.functions.invoke('send-telegram-notification', {
+      const { data, error: fnError } = await supabase.functions.invoke('send-telegram-notification', {
         body: payload
       });
       
@@ -39,14 +44,69 @@ const LeadTable = () => {
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
         });
+        return;
+      }
+      
+      console.log('Telegram notification response:', data);
+      
+      if (data?.success) {
+        console.log('Telegram notification sent successfully');
+      } else {
+        console.error('Telegram notification failed:', data?.error || 'Unknown error');
+        toast({
+          description: `Telegram Benachrichtigung fehlgeschlagen: ${data?.error || 'Unbekannter Fehler'}`,
+          variant: "destructive"
+        });
       }
     } catch (err) {
       console.error('Error preparing telegram notification:', err);
+      toast({
+        description: "Fehler bei der Vorbereitung der Telegram-Benachrichtigung",
+        variant: "destructive"
+      });
+    }
+  };
+  
+  // Manual test function for debugging
+  const testTelegramNotification = async () => {
+    try {
+      console.log('Testing Telegram notification...');
+      const { data, error } = await supabase.functions.invoke('send-telegram-notification/test');
+      
+      if (error) {
+        console.error('Error during Telegram test:', error);
+        toast({
+          description: "Telegram Test fehlgeschlagen. Details im Browser-Protokoll",
+          variant: "destructive"
+        });
+        return;
+      }
+      
+      console.log('Telegram test response:', data);
+      
+      if (data?.success) {
+        toast({
+          description: "Telegram Test erfolgreich gesendet",
+        });
+      } else {
+        toast({
+          description: `Telegram Test fehlgeschlagen: ${data?.error || 'Unbekannter Fehler'}`,
+          variant: "destructive"
+        });
+      }
+    } catch (err) {
+      console.error('Error testing Telegram notification:', err);
+      toast({
+        description: "Fehler beim Testen der Telegram-Benachrichtigung",
+        variant: "destructive"
+      });
     }
   };
 
   // Set up realtime subscription for new leads
   useEffect(() => {
+    console.log('Setting up realtime subscription for leads...');
+    
     // Subscribe to lead inserts
     const channel = supabase
       .channel('table-db-changes')
@@ -66,7 +126,17 @@ const LeadTable = () => {
       )
       .subscribe();
       
+    // Debug verification of channel subscription
+    channel.onSubscribe(() => {
+      console.log('Successfully subscribed to leads changes');
+    });
+    
+    channel.onError((err) => {
+      console.error('Error with realtime subscription:', err);
+    });
+      
     return () => {
+      console.log('Cleaning up realtime subscription');
       supabase.removeChannel(channel);
     };
   }, []);

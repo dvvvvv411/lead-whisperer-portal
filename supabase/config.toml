@@ -47,6 +47,6 @@ verify_jwt = false
 [edge_functions.create-user]
 verify_jwt = false
 
-[edge_functions.send-telegram-notification]
+[functions.send-telegram-notification]
 memory_size = 128
 timeout = 30

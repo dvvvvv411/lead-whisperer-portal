@@ -28,6 +28,21 @@ function formatAmount(amount: number): string {
   });
 }
 
+// Validate that the payload has the required data for a notification
+function validatePayload(payload: any, type: string): boolean {
+  console.log(`Validating ${type} payload:`, JSON.stringify(payload));
+  
+  if (!payload) return false;
+  
+  if (type === 'lead') {
+    return !!(payload.id && payload.name && payload.email && payload.created_at);
+  } else if (type === 'payment') {
+    return !!(payload.id && payload.user_email && payload.amount && payload.created_at);
+  }
+  
+  return false;
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -42,6 +57,10 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!botToken || !chatId) {
+      console.error('Missing environment variables:', {
+        hasBotToken: !!botToken,
+        hasChatId: !!chatId
+      });
       throw new Error('Missing required environment variables: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID');
     }
 
@@ -56,6 +75,45 @@ serve(async (req) => {
     let entry_type = '';
     let entry_id = '';
     
+    // Test endpoint for direct verification
+    const url = new URL(req.url);
+    if (url.pathname.endsWith('/test')) {
+      console.log('Test endpoint called');
+      
+      // Simple test message
+      message = `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}`;
+      
+      // Send test message to Telegram
+      const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const telegramPayload = {
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown',
+      };
+
+      console.log('Sending test message to Telegram');
+      const telegramResponse = await fetch(telegramApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(telegramPayload),
+      });
+
+      const telegramResult = await telegramResponse.json();
+      console.log('Telegram API response:', telegramResult);
+      
+      return new Response(
+        JSON.stringify({ 
+          success: telegramResponse.ok, 
+          message: 'Test message sent to Telegram',
+          telegram_response: telegramResult
+        }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: telegramResponse.ok ? 200 : 500
+        }
+      );
+    }
+    
     // Check if this is a direct API call with payload
     if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
       const payload = await req.json();
@@ -63,6 +121,11 @@ serve(async (req) => {
       
       // Handle direct notification with full payload
       if (payload.type === 'lead') {
+        // Validate payload has required fields
+        if (!validatePayload(payload, 'lead')) {
+          throw new Error(`Invalid lead payload: ${JSON.stringify(payload)}`);
+        }
+        
         entry_type = 'lead';
         entry_id = payload.id;
         message = `🔔 *Neuer Lead erhalten!*\n\n` +
@@ -72,6 +135,11 @@ serve(async (req) => {
           `*Datum:* ${formatDate(payload.created_at)}`;
       } 
       else if (payload.type === 'payment') {
+        // Validate payload has required fields
+        if (!validatePayload(payload, 'payment')) {
+          throw new Error(`Invalid payment payload: ${JSON.stringify(payload)}`);
+        }
+        
         entry_type = 'payment';
         entry_id = payload.id;
         message = `💰 *Neue Zahlung erhalten!*\n\n` +

@@ -30,6 +30,26 @@ const ContactForm = () => {
       [name]: value
     }));
   };
+  
+  // Function to send Telegram notification
+  const sendTelegramNotification = async () => {
+    try {
+      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
+        body: { type: 'lead' }
+      });
+      
+      if (error) {
+        console.error("Error sending Telegram notification:", error);
+        return;
+      }
+      
+      console.log("Telegram notification sent:", data);
+    } catch (err) {
+      console.error("Failed to send Telegram notification:", err);
+      // Non-blocking - we don't want to affect the user experience if this fails
+    }
+  };
+  
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsSubmitting(true);
@@ -63,6 +83,9 @@ const ContactForm = () => {
         console.error("Formular-Fehler:", error);
         throw error;
       }
+
+      // Send Telegram notification after successful form submission
+      await sendTelegramNotification();
 
       // Send confirmation email
       try {

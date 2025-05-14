@@ -36,8 +36,7 @@ const LeadTable = () => {
       if (fnError) {
         console.error('Error sending telegram notification:', fnError);
         toast({
-          title: "Telegram Benachrichtigung fehlgeschlagen",
-          description: "Details im Browser-Protokoll",
+          description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
         });
       }

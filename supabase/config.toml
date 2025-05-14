@@ -38,6 +38,15 @@ serve_port = 54328
 [functions.send-telegram-notification]
 verify_jwt = true
 
+[edge_functions.send-confirmation-email]
+verify_jwt = false
+
+[edge_functions.send-welcome-email]
+verify_jwt = false
+
+[edge_functions.create-user]
+verify_jwt = false
+
 [edge_functions.send-telegram-notification]
 memory_size = 128
 timeout = 30

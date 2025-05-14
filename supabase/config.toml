@@ -1,6 +1,4 @@
 
-# This file is used to configure the Supabase project
-
 project_id = "evtlahgiyytcvfeiqwaz"
 
 [api]
@@ -38,6 +36,9 @@ serve_port = 54328
 [functions.send-telegram-notification]
 verify_jwt = false
 
+[functions.simple-telegram-alert]
+verify_jwt = false
+
 [edge_functions.send-confirmation-email]
 verify_jwt = false
 
@@ -48,5 +49,9 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.send-telegram-notification]
+memory_size = 128
+timeout = 30
+
+[functions.simple-telegram-alert]
 memory_size = 128
 timeout = 30

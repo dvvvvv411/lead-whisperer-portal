@@ -5,39 +5,22 @@ import { toast } from "@/components/ui/use-toast";
 
 export const PaymentNotifier: React.FC = () => {
   // Function to send payment notifications
-  const notifyTelegram = async (paymentId: string) => {
+  const notifyTelegram = async () => {
     try {
-      const { data: payment, error } = await supabase
-        .from('payments')
-        .select('*')
-        .eq('id', paymentId)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching payment for notification:', error);
-        throw error;
-      }
-      
-      // Prepare payload for Telegram notification
+      // Prepare simple payload for Telegram notification - no data fetching
       const payload = {
-        type: 'payment',
-        id: payment.id,
-        user_email: payment.user_email,
-        amount: payment.amount,
-        currency: payment.currency,
-        status: payment.status,
-        created_at: payment.created_at
+        type: 'payment'
       };
       
       console.log('Sending payment notification with payload:', payload);
       
-      // Call the edge function to send notification
-      const { data, error: fnError } = await supabase.functions.invoke('send-telegram-notification', {
+      // Call the new simplified edge function
+      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: payload
       });
       
-      if (fnError) {
-        console.error('Error sending telegram notification:', fnError);
+      if (error) {
+        console.error('Error sending telegram notification:', error);
         toast({
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
@@ -49,6 +32,9 @@ export const PaymentNotifier: React.FC = () => {
       
       if (data?.success) {
         console.log('Payment notification sent successfully');
+        toast({
+          description: "Zahlungs-Benachrichtigung gesendet",
+        });
       } else {
         console.error('Payment notification failed:', data?.error || 'Unknown error');
         toast({
@@ -80,9 +66,8 @@ export const PaymentNotifier: React.FC = () => {
         },
         (payload) => {
           console.log('New payment detected:', payload);
-          if (payload.new?.id) {
-            notifyTelegram(payload.new.id);
-          }
+          // Simply call notify without passing any data
+          notifyTelegram();
         }
       )
       .subscribe((status) => {

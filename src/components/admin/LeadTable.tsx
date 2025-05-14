@@ -8,38 +8,22 @@ import { supabase } from "@/integrations/supabase/client";
 // The special leads-only user (ID: 7eccf781-5911-4d90-a683-1df251069a2f) has full access
 const LeadTable = () => {
   // Add notification helper
-  const notifyTelegram = async (leadId: string) => {
+  const notifyTelegram = async () => {
     try {
-      const { data: lead, error } = await supabase
-        .from('leads')
-        .select('*')
-        .eq('id', leadId)
-        .single();
-        
-      if (error) {
-        console.error('Error fetching lead for notification:', error);
-        throw error;
-      }
-      
-      // Prepare payload for Telegram notification
+      // Prepare simple payload for Telegram notification - no data fetching
       const payload = {
-        type: 'lead',
-        id: lead.id,
-        name: lead.name,
-        email: lead.email,
-        phone: lead.phone || 'Nicht angegeben',
-        created_at: lead.created_at
+        type: 'lead'
       };
       
       console.log('Sending Telegram notification with payload:', payload);
       
-      // Call the edge function to send notification
-      const { data, error: fnError } = await supabase.functions.invoke('send-telegram-notification', {
+      // Call the new simplified edge function
+      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: payload
       });
       
-      if (fnError) {
-        console.error('Error sending telegram notification:', fnError);
+      if (error) {
+        console.error('Error sending telegram notification:', error);
         toast({
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
@@ -51,6 +35,9 @@ const LeadTable = () => {
       
       if (data?.success) {
         console.log('Telegram notification sent successfully');
+        toast({
+          description: "Telegram Benachrichtigung gesendet",
+        });
       } else {
         console.error('Telegram notification failed:', data?.error || 'Unknown error');
         toast({
@@ -83,9 +70,8 @@ const LeadTable = () => {
         },
         (payload) => {
           console.log('New lead detected:', payload);
-          if (payload.new?.id) {
-            notifyTelegram(payload.new.id);
-          }
+          // Simply call notify without passing any data
+          notifyTelegram();
         }
       )
       .subscribe((status) => {

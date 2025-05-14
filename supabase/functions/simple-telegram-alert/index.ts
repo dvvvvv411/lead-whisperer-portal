@@ -29,16 +29,31 @@ serve(async (req) => {
     
     let messageText = "";
     let eventType = "";
+    let userData = null;
     
     // Parse request body if it's a POST request with JSON content
     if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
       const payload = await req.json();
       console.log("Received payload:", JSON.stringify(payload));
       
+      // Extract user data if provided
+      userData = {
+        name: payload.name || "",
+        email: payload.email || "",
+        phone: payload.phone || "",
+        message: payload.message || ""
+      };
+      
       // Just check the type - no database lookup needed
       if (payload.type === 'lead') {
         eventType = 'lead';
-        messageText = "🔔 *Neuer Lead erhalten!*";
+        
+        // Format detailed message with user's form data
+        messageText = `🔔 *Neuer Lead erhalten!*\n\n` +
+          `👤 *Name:* ${userData.name}\n` +
+          `📧 *Email:* ${userData.email}\n` + 
+          `📱 *Telefon:* ${userData.phone}\n` +
+          (userData.message ? `💬 *Nachricht:* ${userData.message}` : "");
       } 
       else if (payload.type === 'payment') {
         eventType = 'payment';

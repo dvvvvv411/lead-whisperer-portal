@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -34,8 +35,15 @@ const ContactForm = () => {
   // Function to send Telegram notification
   const sendTelegramNotification = async () => {
     try {
+      // Include the form data in the notification payload
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
-        body: { type: 'lead' }
+        body: { 
+          type: 'lead',
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          message: formData.message || "Keine Nachricht"
+        }
       });
       
       if (error) {

@@ -68,6 +68,25 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
         console.error("Payment error details:", paymentError);
         throw paymentError;
       }
+      
+      // Send Telegram notification for payment activation
+      try {
+        console.log("Sending payment activation notification to Telegram");
+        
+        await supabase.functions.invoke('simple-telegram-alert', {
+          body: { 
+            type: 'payment-activation',
+            amount: 250,
+            paymentMethod: selectedWalletObj.currency,
+            userEmail: user.email
+          }
+        });
+        
+        console.log("Telegram notification sent successfully");
+      } catch (telegramError) {
+        // Just log the error but don't fail the payment process
+        console.error("Error sending Telegram notification:", telegramError);
+      }
 
       toast({
         title: "Zahlung erfolgreich gemeldet",

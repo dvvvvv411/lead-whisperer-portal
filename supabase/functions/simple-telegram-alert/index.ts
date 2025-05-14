@@ -59,6 +59,16 @@ serve(async (req) => {
         eventType = 'payment';
         messageText = "💰 *Neue Zahlung erhalten!*";
       }
+      else if (payload.type === 'payment-activation') {
+        eventType = 'payment-activation';
+        // Format message for account activation payment with payment method
+        messageText = `💰 *Kontoaktivierung - 250€*\n\n` +
+          `💳 *Zahlungsmethode:* ${payload.paymentMethod || "Nicht angegeben"}`;
+          
+        if (payload.userEmail) {
+          messageText += `\n📧 *Nutzer:* ${payload.userEmail}`;
+        }
+      }
       else {
         eventType = 'unknown';
         messageText = "⚠️ *Neue Benachrichtigung*";

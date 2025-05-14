@@ -3,6 +3,7 @@ import LeadsTable from "./leads/LeadsTable";
 import { toast } from "@/components/ui/use-toast";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { Button } from "@/components/ui/button";
 
 // This component serves as a wrapper to maintain backward compatibility
 // The special leads-only user (ID: 7eccf781-5911-4d90-a683-1df251069a2f) has full access
@@ -71,7 +72,9 @@ const LeadTable = () => {
   const testTelegramNotification = async () => {
     try {
       console.log('Testing Telegram notification...');
-      const { data, error } = await supabase.functions.invoke('send-telegram-notification/test');
+      const { data, error } = await supabase.functions.invoke('send-telegram-notification/test', {
+        body: { chatId: "7111152096" }  // Add the specific chat ID for testing
+      });
       
       if (error) {
         console.error('Error during Telegram test:', error);
@@ -86,7 +89,7 @@ const LeadTable = () => {
       
       if (data?.success) {
         toast({
-          description: "Telegram Test erfolgreich gesendet",
+          description: "Telegram Test erfolgreich gesendet an Benutzer-ID: 7111152096",
         });
       } else {
         toast({
@@ -140,7 +143,17 @@ const LeadTable = () => {
     };
   }, []);
 
-  return <LeadsTable />;
+  return (
+    <div>
+      <Button 
+        onClick={testTelegramNotification}
+        className="mb-4 bg-blue-600 hover:bg-blue-700 text-white"
+      >
+        Telegram Test an ID 7111152096 senden
+      </Button>
+      <LeadsTable />
+    </div>
+  );
 };
 
 export default LeadTable;

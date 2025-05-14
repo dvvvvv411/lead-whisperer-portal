@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.1";
 
@@ -52,36 +51,53 @@ serve(async (req) => {
   try {
     // Get environment variables
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
-    const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
+    const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    if (!botToken || !chatId) {
-      console.error('Missing environment variables:', {
-        hasBotToken: !!botToken,
-        hasChatId: !!chatId
-      });
-      throw new Error('Missing required environment variables: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID');
+    if (!botToken) {
+      console.error('Missing environment variable: TELEGRAM_BOT_TOKEN');
+      throw new Error('Missing required environment variable: TELEGRAM_BOT_TOKEN');
     }
 
-    // Initialize Supabase client with admin privileges
-    if (!supabaseUrl || !supabaseServiceKey) {
-      throw new Error('Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    // Initialize Supabase client with admin privileges if needed for database operations
+    if (supabaseUrl && supabaseServiceKey) {
+      const supabase = createClient(supabaseUrl, supabaseServiceKey);
     }
-    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
     // Initialize variables
     let message = '';
     let entry_type = '';
     let entry_id = '';
+    let payload; 
+    let customChatId = null;
+    
+    // Check if this is a request with a body
+    if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
+      payload = await req.json();
+      
+      // Check if a specific chat ID was provided
+      if (payload.chatId) {
+        customChatId = payload.chatId;
+        console.log(`Using custom chat ID: ${customChatId}`);
+      }
+    }
+    
+    // Use the final chat ID (custom or default)
+    const chatId = customChatId || defaultChatId;
+    
+    if (!chatId) {
+      console.error('No chat ID available (neither custom nor default)');
+      throw new Error('No chat ID available. Please provide either a custom chatId in the request or set the TELEGRAM_CHAT_ID environment variable.');
+    }
     
     // Test endpoint for direct verification
     const url = new URL(req.url);
     if (url.pathname.endsWith('/test')) {
-      console.log('Test endpoint called');
+      console.log('Test endpoint called with chat ID:', chatId);
       
       // Simple test message
-      message = `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}`;
+      message = `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}\n\nGesendet an Chat-ID: ${chatId}`;
       
       // Send test message to Telegram
       const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
@@ -91,7 +107,7 @@ serve(async (req) => {
         parse_mode: 'Markdown',
       };
 
-      console.log('Sending test message to Telegram');
+      console.log('Sending test message to Telegram with payload:', telegramPayload);
       const telegramResponse = await fetch(telegramApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -105,7 +121,8 @@ serve(async (req) => {
         JSON.stringify({ 
           success: telegramResponse.ok, 
           message: 'Test message sent to Telegram',
-          telegram_response: telegramResult
+          telegram_response: telegramResult,
+          chat_id: chatId
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },

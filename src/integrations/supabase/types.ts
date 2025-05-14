@@ -134,6 +134,33 @@ export type Database = {
         }
         Relationships: []
       }
+      notification_log: {
+        Row: {
+          entry_id: string
+          entry_type: string
+          error_message: string | null
+          id: string
+          notified_at: string
+          success: boolean
+        }
+        Insert: {
+          entry_id: string
+          entry_type: string
+          error_message?: string | null
+          id?: string
+          notified_at?: string
+          success?: boolean
+        }
+        Update: {
+          entry_id?: string
+          entry_type?: string
+          error_message?: string | null
+          id?: string
+          notified_at?: string
+          success?: boolean
+        }
+        Relationships: []
+      }
       payments: {
         Row: {
           amount: number
@@ -409,6 +436,21 @@ export type Database = {
           notes: string
           created_at: string
           updated_at: string
+        }[]
+      }
+      get_recent_entries: {
+        Args: { minutes_ago: number }
+        Returns: {
+          entry_type: string
+          entry_id: string
+          created_at: string
+          name: string
+          email: string
+          phone: string
+          user_id: string
+          amount: number
+          currency: string
+          status: string
         }[]
       }
       has_role: {

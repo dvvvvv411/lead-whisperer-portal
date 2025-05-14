@@ -1,5 +1,6 @@
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.1";
 
 // CORS headers for browser requests
 const corsHeaders = {
@@ -37,60 +38,166 @@ serve(async (req) => {
     // Get environment variables
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
     const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
     if (!botToken || !chatId) {
       throw new Error('Missing required environment variables: TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID');
     }
 
-    // Parse the request body
-    const payload = await req.json();
-    console.log('Received payload:', JSON.stringify(payload));
+    // Initialize Supabase client with admin privileges
+    if (!supabaseUrl || !supabaseServiceKey) {
+      throw new Error('Missing required environment variables: SUPABASE_URL or SUPABASE_SERVICE_ROLE_KEY');
+    }
+    const supabase = createClient(supabaseUrl, supabaseServiceKey);
 
-    // Format the message based on the notification type
+    // Initialize variables
     let message = '';
+    let entry_type = '';
+    let entry_id = '';
     
-    if (payload.type === 'lead') {
-      message = `🔔 *Neuer Lead erhalten!*\n\n` +
-        `*Name:* ${payload.name}\n` +
-        `*Email:* ${payload.email}\n` +
-        `*Telefon:* ${payload.phone}\n` +
-        `*Datum:* ${formatDate(payload.created_at)}`;
+    // Check if this is a direct API call with payload
+    if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
+      const payload = await req.json();
+      console.log('Received direct payload:', JSON.stringify(payload));
+      
+      // Handle direct notification with full payload
+      if (payload.type === 'lead') {
+        entry_type = 'lead';
+        entry_id = payload.id;
+        message = `🔔 *Neuer Lead erhalten!*\n\n` +
+          `*Name:* ${payload.name}\n` +
+          `*Email:* ${payload.email}\n` +
+          `*Telefon:* ${payload.phone || 'Nicht angegeben'}\n` +
+          `*Datum:* ${formatDate(payload.created_at)}`;
+      } 
+      else if (payload.type === 'payment') {
+        entry_type = 'payment';
+        entry_id = payload.id;
+        message = `💰 *Neue Zahlung erhalten!*\n\n` +
+          `*Benutzer:* ${payload.user_email}\n` +
+          `*Betrag:* ${formatAmount(payload.amount)}\n` +
+          `*Währung:* ${payload.currency}\n` +
+          `*Status:* ${payload.status}\n` +
+          `*Datum:* ${formatDate(payload.created_at)}`;
+      }
+      else {
+        throw new Error(`Unknown notification type: ${payload.type}`);
+      }
     } 
-    else if (payload.type === 'payment') {
-      message = `💰 *Neue Zahlung erhalten!*\n\n` +
-        `*Benutzer:* ${payload.user_email}\n` +
-        `*Betrag:* ${formatAmount(payload.amount)}\n` +
-        `*Währung:* ${payload.currency}\n` +
-        `*Status:* ${payload.status}\n` +
-        `*Datum:* ${formatDate(payload.created_at)}`;
-    }
+    // If no direct payload, check for recent entries in the database
     else {
-      throw new Error(`Unknown notification type: ${payload.type}`);
+      // Query for recent entries (in the last 5 minutes)
+      const { data: recentEntries, error: entriesError } = await supabase
+        .rpc('get_recent_entries', { minutes_ago: 5 });
+      
+      if (entriesError) {
+        throw new Error(`Error querying recent entries: ${entriesError.message}`);
+      }
+      
+      console.log(`Found ${recentEntries?.length || 0} recent entries`);
+      
+      // Process each entry
+      for (const entry of recentEntries || []) {
+        entry_type = entry.entry_type;
+        entry_id = entry.entry_id;
+        
+        // Check if this entry has already been notified
+        const { data: logEntry, error: logError } = await supabase
+          .from('notification_log')
+          .select('id')
+          .eq('entry_type', entry_type)
+          .eq('entry_id', entry_id)
+          .single();
+          
+        if (logError && !logError.message.includes('No rows found')) {
+          console.error(`Error checking notification log: ${logError.message}`);
+          continue;
+        }
+        
+        // Skip if already notified
+        if (logEntry) {
+          console.log(`Entry ${entry_type}:${entry_id} already notified, skipping`);
+          continue;
+        }
+        
+        // Format message based on entry type
+        if (entry_type === 'lead') {
+          message = `🔔 *Neuer Lead erhalten!*\n\n` +
+            `*Name:* ${entry.name}\n` +
+            `*Email:* ${entry.email}\n` +
+            `*Telefon:* ${entry.phone || 'Nicht angegeben'}\n` +
+            `*Datum:* ${formatDate(entry.created_at)}`;
+        } 
+        else if (entry_type === 'payment') {
+          message = `💰 *Neue Zahlung erhalten!*\n\n` +
+            `*Benutzer:* ${entry.email}\n` +
+            `*Betrag:* ${formatAmount(entry.amount)}\n` +
+            `*Währung:* ${entry.currency}\n` +
+            `*Status:* ${entry.status}\n` +
+            `*Datum:* ${formatDate(entry.created_at)}`;
+        }
+        
+        // Send the message to Telegram
+        if (message) {
+          console.log(`Sending notification for ${entry_type}:${entry_id}`);
+          
+          // Send the message to Telegram
+          const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+          const telegramPayload = {
+            chat_id: chatId,
+            text: message,
+            parse_mode: 'Markdown',
+          };
+
+          const telegramResponse = await fetch(telegramApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(telegramPayload),
+          });
+
+          const telegramResult = await telegramResponse.json();
+          
+          // Create a log entry regardless of success (to avoid duplicate notifications)
+          const success = telegramResponse.ok;
+          const errorMessage = success ? null : JSON.stringify(telegramResult);
+          
+          await supabase.from('notification_log').insert({
+            entry_type,
+            entry_id,
+            success,
+            error_message: errorMessage
+          });
+          
+          if (!telegramResponse.ok) {
+            throw new Error(`Telegram API error: ${JSON.stringify(telegramResult)}`);
+          }
+          
+          // Only process one notification at a time
+          break;
+        }
+      }
     }
 
-    // Send the message to Telegram
-    const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-    const telegramPayload = {
-      chat_id: chatId,
-      text: message,
-      parse_mode: 'Markdown',
-    };
-
-    const telegramResponse = await fetch(telegramApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(telegramPayload),
-    });
-
-    const telegramResult = await telegramResponse.json();
-    
-    if (!telegramResponse.ok) {
-      throw new Error(`Telegram API error: ${JSON.stringify(telegramResult)}`);
+    // If no message was sent (e.g., no new entries), return a different response
+    if (!message) {
+      return new Response(
+        JSON.stringify({ success: true, message: 'No new entries to notify' }),
+        { 
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+          status: 200
+        }
+      );
     }
 
     // Return success response
     return new Response(
-      JSON.stringify({ success: true, message: 'Notification sent to Telegram' }),
+      JSON.stringify({ 
+        success: true, 
+        message: 'Notification sent to Telegram',
+        entry_type,
+        entry_id 
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
         status: 200

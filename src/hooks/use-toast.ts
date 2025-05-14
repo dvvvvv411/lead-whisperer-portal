@@ -1,21 +1,29 @@
 
-// Import toast from Sonner
-import { toast as sonnerToast } from "sonner";
+// Create a local hook to avoid circular dependencies
+import { toast as sonnerToast, type ToastT } from "sonner";
 
-type ToastProps = {
+interface ToastProps {
   title?: string;
   description?: string;
-  variant?: "default" | "destructive";
-};
-
-export function toast({ title, description, variant = "default" }: ToastProps) {
-  sonnerToast[variant === "destructive" ? "error" : "success"](title, {
-    description,
-  });
+  action?: React.ReactNode;
+  variant?: "default" | "destructive" | "success";
 }
 
-export const useToast = () => {
-  return {
-    toast,
+export function useToast() {
+  const toast = ({ title, description, action, variant }: ToastProps) => {
+    const options: any = {
+      description,
+      action,
+      className: variant === "destructive" ? "bg-destructive text-destructive-foreground" : 
+                 variant === "success" ? "bg-green-500 text-white" : undefined
+    };
+    
+    return sonnerToast(title, options);
   };
-};
+
+  return {
+    toast
+  };
+}
+
+export { sonnerToast as toast };

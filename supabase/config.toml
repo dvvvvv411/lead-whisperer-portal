@@ -36,7 +36,7 @@ refresh_token_reuse_interval = 10
 serve_port = 54328
 
 [functions.send-telegram-notification]
-verify_jwt = true
+verify_jwt = false
 
 [edge_functions.send-confirmation-email]
 verify_jwt = false

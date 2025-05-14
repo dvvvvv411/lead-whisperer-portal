@@ -132,7 +132,8 @@ const LeadTable = () => {
       });
     
     // Event handling for channel errors
-    channel.on('error', (err: Error) => {
+    // The on method needs 3 arguments: event name, filter options (can be empty object), and callback
+    channel.on('error', {}, (err: Error) => {
       console.error('Error with realtime subscription:', err);
     });
       

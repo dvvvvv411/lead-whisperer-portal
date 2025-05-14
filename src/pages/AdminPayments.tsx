@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { checkUserRole } from "@/services/roleService";
 import { PaymentManager } from "@/components/admin/payments/PaymentManager";
 import { motion } from "framer-motion";
+import { PaymentNotifier } from "@/components/admin/payments/PaymentNotifier";
 
 const AdminPayments = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -40,7 +41,12 @@ const AdminPayments = () => {
     );
   }
 
-  return isAdmin ? <PaymentManager /> : null;
+  return isAdmin ? (
+    <>
+      <PaymentNotifier />
+      <PaymentManager />
+    </>
+  ) : null;
 };
 
 export default AdminPayments;

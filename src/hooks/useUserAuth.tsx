@@ -107,8 +107,8 @@ export const useUserAuth = ({
           setUser(userData);
           if (onUserLoaded) onUserLoaded(userData);
         } else {
-          console.log("No user found, redirecting to login");
-          navigate("/admin");
+          console.log("No user found, redirecting to landing page");
+          navigate("/"); // Redirect to landing page instead of admin
         }
       } catch (error: any) {
         console.error("Error getting user in UserAuthCheck:", error.message);
@@ -117,7 +117,7 @@ export const useUserAuth = ({
           description: "Es gab ein Problem beim Laden Ihrer Benutzerdaten.",
           variant: "destructive"
         });
-        navigate("/admin");
+        navigate("/"); // Redirect to landing page on error
       } finally {
         setLoading(false);
       }

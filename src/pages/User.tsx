@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate } from "react-router-dom";
@@ -50,14 +51,15 @@ const User = () => {
           console.log("User found on /nutzer page:", data.user.id);
           setUser(data.user);
         } else {
-          // If no user is logged in, redirect to login page
-          console.log("No user found, redirecting to login");
-          navigate("/admin");
+          // If no user is logged in, redirect to landing page instead of admin
+          console.log("No user found, redirecting to landing page");
+          navigate("/");
           return;
         }
       } catch (error) {
         console.error("Error checking user on /nutzer page:", error);
-        navigate("/admin");
+        // Redirect to landing page on error
+        navigate("/");
         return;
       } finally {
         setLoading(false);

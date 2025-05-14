@@ -25,7 +25,7 @@ const UserAuthWrapper = ({ children, redirectTo, minCredit = 0 }: UserAuthWrappe
         if (data?.user) {
           setUser(data.user);
         } else {
-          // If not authenticated, redirect to the specified route
+          // If not authenticated, redirect to the specified route (now pointing to landing page)
           navigate(redirectTo);
         }
       } catch (error) {

@@ -129,13 +129,10 @@ const LeadTable = () => {
         if (status === 'SUBSCRIBED') {
           console.log('Successfully subscribed to leads changes');
         }
+        if (status === 'CHANNEL_ERROR') {
+          console.error('Error with realtime subscription');
+        }
       });
-    
-    // Event handling for channel errors
-    // The on method needs 3 arguments: event name, filter options (can be empty object), and callback
-    channel.on('error', {}, (err: Error) => {
-      console.error('Error with realtime subscription:', err);
-    });
       
     return () => {
       console.log('Cleaning up realtime subscription');

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -11,11 +10,23 @@ import TestimonialsSection from "@/components/landing/TestimonialsSection";
 import BenefitsSection from "@/components/landing/BenefitsSection";
 import PartnersSection from "@/components/landing/PartnersSection";
 import Footer from "@/components/landing/Footer";
+import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 const Index = () => {
   const navigate = useNavigate();
   const [scrollY, setScrollY] = useState(0);
   const [loading, setLoading] = useState(true);
+  const [user, setUser] = useState(null);
+  
+  // Effect for scroll handling - keep this outside of conditionals
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrollY(window.scrollY);
+    };
+    
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
   
   // Check for authenticated user and redirect if needed
   useEffect(() => {
@@ -24,6 +35,7 @@ const Index = () => {
         const { data } = await supabase.auth.getUser();
         
         if (data?.user) {
+          setUser(data.user);
           console.log("User authenticated on landing page, redirecting to appropriate dashboard");
           
           // Check if the user is an admin
@@ -51,14 +63,29 @@ const Index = () => {
     checkAuth();
   }, [navigate]);
   
+  // Initiate a call to sync public trades - this is now always outside conditionals
   useEffect(() => {
-    const handleScroll = () => {
-      setScrollY(window.scrollY);
+    const syncPublicTrades = async () => {
+      try {
+        // Call the edge function to sync public trades
+        await supabase.functions.invoke('update-public-trades');
+      } catch (error) {
+        console.error("Error syncing public trades:", error);
+      }
     };
     
-    window.addEventListener("scroll", handleScroll, { passive: true });
-    return () => window.removeEventListener("scroll", handleScroll);
-  }, []);
+    // Only sync if not loading (user authentication check completed)
+    if (!loading) {
+      // Sync when the page loads
+      syncPublicTrades();
+      
+      // Also set up a periodic sync every 5 minutes
+      const interval = setInterval(syncPublicTrades, 5 * 60 * 1000);
+      return () => clearInterval(interval);
+    }
+    
+    return undefined;
+  }, [loading]); // Only re-run when loading state changes
 
   // Show a loading state while checking authentication
   if (loading) {
@@ -72,61 +99,75 @@ const Index = () => {
     );
   }
 
-  // Initiate a call to sync public trades to ensure we have fresh data
-  useEffect(() => {
-    const syncPublicTrades = async () => {
-      try {
-        // Call the edge function to sync public trades
-        await supabase.functions.invoke('update-public-trades');
-      } catch (error) {
-        console.error("Error syncing public trades:", error);
-      }
-    };
-    
-    // Sync when the page loads
-    syncPublicTrades();
-    
-    // Also set up a periodic sync every 5 minutes
-    const interval = setInterval(syncPublicTrades, 5 * 60 * 1000);
-    
-    return () => clearInterval(interval);
-  }, []);
-
   return (
     <div className="min-h-screen bg-casino-darker text-white overflow-hidden">
-      <Navbar />
+      <ErrorBoundary fallback={<NavbarFallback />}>
+        <Navbar />
+      </ErrorBoundary>
       <main>
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.8 }}
-        >
-          <HeroSection />
-        </motion.div>
+        <ErrorBoundary fallback={<SectionFallback title="Hero Section" />}>
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+          >
+            <HeroSection />
+          </motion.div>
+        </ErrorBoundary>
         
         <div className="relative z-10" id="cta">
-          <CtaSection />
+          <ErrorBoundary fallback={<SectionFallback title="CTA Section" />}>
+            <CtaSection />
+          </ErrorBoundary>
         </div>
         
         <div className="relative z-10" id="contact">
-          <ContactSection />
+          <ErrorBoundary fallback={<SectionFallback title="Contact Section" />}>
+            <ContactSection />
+          </ErrorBoundary>
         </div>
         
         <div className="relative z-10" id="benefits">
-          <BenefitsSection />
+          <ErrorBoundary fallback={<SectionFallback title="Benefits Section" />}>
+            <BenefitsSection />
+          </ErrorBoundary>
         </div>
         
         <div className="relative z-10" id="testimonials">
-          <TestimonialsSection />
+          <ErrorBoundary fallback={<SectionFallback title="Testimonials Section" />}>
+            <TestimonialsSection />
+          </ErrorBoundary>
         </div>
         
         <div className="relative z-10" id="partners">
-          <PartnersSection />
+          <ErrorBoundary fallback={<SectionFallback title="Partners Section" />}>
+            <PartnersSection />
+          </ErrorBoundary>
         </div>
       </main>
-      <Footer />
+      <ErrorBoundary fallback={<div className="py-8 text-center">© KRYPTO AI</div>}>
+        <Footer />
+      </ErrorBoundary>
     </div>
   );
 };
+
+// Simple fallback components
+const NavbarFallback = () => (
+  <div className="fixed w-full top-0 z-50 bg-casino-darker py-4">
+    <div className="container mx-auto px-4">
+      <div className="flex justify-between items-center">
+        <div>KRYPTO AI</div>
+        <div>Menu</div>
+      </div>
+    </div>
+  </div>
+);
+
+const SectionFallback = ({ title }: { title: string }) => (
+  <div className="py-16 text-center">
+    <p>Failed to load {title}</p>
+  </div>
+);
 
 export default Index;

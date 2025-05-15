@@ -403,7 +403,7 @@ const HeroSection = () => {
                 borderColor: "rgba(155,135,245,0.3)"
               }}>
                   <p className="text-xs text-gray-400">Monatlich</p>
-                  <p className="text-lg font-semibold text-green-400">+15.2%</p>
+                  <p className="text-lg font-semibold text-green-400">+30.2%</p>
                 </motion.div>
               </div>
             </div>

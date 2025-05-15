@@ -57,7 +57,16 @@ serve(async (req) => {
       } 
       else if (payload.type === 'payment') {
         eventType = 'payment';
-        messageText = "💰 *Neue Zahlung erhalten!*";
+        
+        // Enhanced payment notification with amount, method, and user email
+        const amount = payload.amount !== undefined ? `${payload.amount}€` : "Nicht angegeben";
+        const paymentMethod = payload.paymentMethod || "Nicht angegeben";
+        const userEmail = payload.userEmail || "Nicht angegeben";
+        
+        messageText = `💰 *Neue Zahlung erhalten!*\n\n` +
+          `💵 *Betrag:* ${amount}\n` +
+          `💳 *Zahlungsmethode:* ${paymentMethod}\n` +
+          `👤 *Nutzer:* ${userEmail}`;
       }
       else if (payload.type === 'payment-activation') {
         eventType = 'payment-activation';

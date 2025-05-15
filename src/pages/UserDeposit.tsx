@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,14 +57,17 @@ const UserDeposit = () => {
       // Create payload with all the information available at submission time
       const payload = {
         type: 'payment',
-        amount: amount.toFixed(2), // Format as string with 2 decimal places
-        paymentMethod: walletCurrency,
-        userEmail: user?.email || "Nicht angegeben"
+        id: 'pending', // Will be updated after DB insertion
+        user_email: user?.email || "Nicht angegeben",
+        amount: Math.round(amount * 100), // Convert to cents for consistent format
+        currency: 'EUR',
+        status: 'pending',
+        created_at: new Date().toISOString()
       };
       
       console.log('Sending direct payment notification with details:', payload);
       
-      // Call the edge function with the enhanced payload
+      // Call the simple-telegram-alert function with the enhanced payload
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: payload
       });

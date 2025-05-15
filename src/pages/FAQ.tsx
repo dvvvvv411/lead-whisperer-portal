@@ -42,7 +42,7 @@ const faqCategories = [
       {
         id: "cost",
         question: "Was kostet bitloon?",
-        answer: "Die einmalige Aktivierungsgebühr beträgt 250 €. Diese wird dir vollständig als Tradingguthaben gutgeschrieben und kann bei Bedarf auch wieder ausgezahlt werden. Du bezahlst also nichts „on top" – dein Kapital arbeitet sofort für dich."
+        answer: "Die einmalige Aktivierungsgebühr beträgt 250 €. Diese wird dir vollständig als Tradingguthaben gutgeschrieben und kann bei Bedarf auch wieder ausgezahlt werden. Du bezahlst also nichts \"on top\" – dein Kapital arbeitet sofort für dich."
       },
       {
         id: "returns",

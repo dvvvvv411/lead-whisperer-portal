@@ -1,33 +1,29 @@
 
-import { Toast, toast as sonnerToast } from "sonner";
+import { toast as sonnerToast, type ToastT } from "sonner";
 
-type ToastProps = React.ComponentProps<typeof Toast>;
-
-type ToastOptions = {
-  title?: React.ReactNode;
-  description?: React.ReactNode;
+// We will modify the type to make id optional
+export type ToastProps = Partial<ToastT> & {
+  title?: string;
+  description?: string;
   variant?: "default" | "destructive";
-  action?: {
-    label: string;
-    onClick: () => void;
-  }
 };
 
-export function toast({ title, description, variant, action }: ToastOptions) {
-  sonnerToast(title, {
+export function toast(props: ToastProps) {
+  const { title, description, variant, ...rest } = props;
+
+  return sonnerToast(title || "", {
     description,
-    action: action
-      ? {
-          label: action.label,
-          onClick: action.onClick,
-        }
-      : undefined,
-    className: variant === "destructive" ? "bg-destructive text-destructive-foreground" : undefined,
+    classNames: {
+      toast: variant === "destructive" ? "bg-rose-800 border-rose-600" : "",
+      title: variant === "destructive" ? "text-white" : "",
+      description: variant === "destructive" ? "text-white" : "",
+    },
+    ...rest,
   });
 }
 
-export function useToast() {
+export const useToast = () => {
   return {
     toast,
   };
-}
+};

@@ -75,12 +75,6 @@ serve(async (req) => {
           `💰 *Betrag:* ${payload.amount || "0.00"}€\n` +
           `🪙 *Währung:* ${payload.walletCurrency || "BTC"}`;
       }
-      else if (payload.type === 'deposit') {
-        eventType = 'deposit';
-        messageText = `💰 *Neue Einzahlung*\n\n` +
-          `💰 *Betrag:* ${payload.amount || "0.00"}€\n` +
-          `🪙 *Währung:* ${payload.walletCurrency || "BTC"}`;
-      }
       else {
         eventType = 'unknown';
         messageText = "⚠️ *Neue Benachrichtigung*";

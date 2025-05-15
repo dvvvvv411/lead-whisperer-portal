@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -145,6 +144,7 @@ const UserDeposit = () => {
                   <PaymentStatusView 
                     paymentId={paymentId} 
                     creditThreshold={0} // No activation threshold for regular deposits
+                    isRegularDeposit={true} // Add this prop to indicate it's a regular deposit
                   />
                 ) : (
                   <div className="flex flex-col h-full">

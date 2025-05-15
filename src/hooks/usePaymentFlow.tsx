@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -159,12 +158,6 @@ export const usePaymentFlow = ({
       }, redirectDelay);
       
       return () => clearTimeout(redirectTimer);
-    } else if (paymentCompleted && userId && noAutoRedirect) {
-      // When we don't want auto redirect, just show a toast
-      toast({
-        title: "Zahlung eingereicht",
-        description: "Ihre Einzahlung wird überprüft und nach Bestätigung Ihrem Konto gutgeschrieben."
-      });
     }
     
     if (paymentRejected) {

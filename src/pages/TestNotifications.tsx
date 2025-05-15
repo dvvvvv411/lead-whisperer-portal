@@ -18,18 +18,21 @@ const TestNotifications = () => {
       if (error) throw error;
       
       if (data?.success) {
-        toast("Test erfolgreich", {
+        toast({
+          title: "Test erfolgreich",
           description: "Lead-Benachrichtigung wurde gesendet"
         });
       } else {
-        toast("Fehler", {
+        toast({
+          title: "Fehler",
           description: data?.error || "Unbekannter Fehler",
           variant: "destructive"
         });
       }
     } catch (error: any) {
       console.error("Error sending lead test notification:", error);
-      toast("Fehler", {
+      toast({
+        title: "Fehler",
         description: error.message || "Unbekannter Fehler",
         variant: "destructive"
       });
@@ -48,18 +51,21 @@ const TestNotifications = () => {
       if (error) throw error;
       
       if (data?.success) {
-        toast("Test erfolgreich", {
+        toast({
+          title: "Test erfolgreich",
           description: "Zahlungs-Benachrichtigung wurde gesendet"
         });
       } else {
-        toast("Fehler", {
+        toast({
+          title: "Fehler",
           description: data?.error || "Unbekannter Fehler",
           variant: "destructive"
         });
       }
     } catch (error: any) {
       console.error("Error sending payment test notification:", error);
-      toast("Fehler", {
+      toast({
+        title: "Fehler",
         description: error.message || "Unbekannter Fehler",
         variant: "destructive"
       });

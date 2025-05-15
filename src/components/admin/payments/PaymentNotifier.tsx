@@ -21,7 +21,8 @@ export const PaymentNotifier: React.FC = () => {
       
       if (error) {
         console.error('Error sending telegram notification:', error);
-        toast("Fehler", {
+        toast({
+          title: "Fehler",
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
         });
@@ -32,19 +33,22 @@ export const PaymentNotifier: React.FC = () => {
       
       if (data?.success) {
         console.log('Payment notification sent successfully');
-        toast("Erfolg", {
+        toast({
+          title: "Erfolg",
           description: "Zahlungs-Benachrichtigung gesendet"
         });
       } else {
         console.error('Payment notification failed:', data?.error || 'Unknown error');
-        toast("Fehler", {
+        toast({
+          title: "Fehler",
           description: `Telegram Benachrichtigung fehlgeschlagen: ${data?.error || 'Unbekannter Fehler'}`,
           variant: "destructive"
         });
       }
     } catch (err) {
       console.error('Error preparing payment telegram notification:', err);
-      toast("Fehler", {
+      toast({
+        title: "Fehler",
         description: "Fehler bei der Vorbereitung der Zahlungs-Benachrichtigung",
         variant: "destructive"
       });

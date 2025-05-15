@@ -8,7 +8,18 @@ import {
   AccordionTrigger 
 } from "@/components/ui/accordion";
 import PageLayout from "@/components/landing/PageLayout";
-import { Info, Lock, Key, Settings, Wallet, HelpCircle, Headphones, BarChart3, LineChart, Shield } from "lucide-react";
+import { 
+  Info, 
+  Lock, 
+  Key, 
+  Settings, 
+  Wallet, 
+  HelpCircle, 
+  Headphones, 
+  BarChart3, 
+  LineChart, 
+  Shield 
+} from "lucide-react";
 import CtaBanner from "@/components/landing/CtaBanner";
 
 // Helper function to highlight specific terms in gold

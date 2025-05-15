@@ -8,24 +8,14 @@ import {
 } from "lucide-react";
 import { useCryptos } from "@/hooks/useCryptos";
 import { toast } from "@/hooks/use-toast";
-
-interface Trade {
-  id: string;
-  crypto: string;
-  symbol: string;
-  amount: string;
-  change: string;
-  isProfit: boolean;
-  timestamp: string;
-  imageUrl: string | null;
-}
+import { usePublicTrades } from "@/hooks/usePublicTrades";
 
 const Status = () => {
-  const { cryptos, loading, usingMockData, updateCryptoPrices } = useCryptos();
+  const { cryptos, loading: cryptosLoading, usingMockData, updateCryptoPrices } = useCryptos();
+  const { trades: publicTrades, loading: tradesLoading } = usePublicTrades();
   const [serverLatency, setServerLatency] = useState(23);
   const [dbLatency, setDbLatency] = useState(12);
   const [activeTraders, setActiveTraders] = useState(1980);
-  const [lastTrades, setLastTrades] = useState<Trade[]>([]);
   const [serverLoad, setServerLoad] = useState(35);
 
   // Show a toast when using mock data
@@ -56,64 +46,6 @@ const Status = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Generate realistic trades based on actual crypto data
-  useEffect(() => {
-    if (!cryptos || cryptos.length === 0) return;
-
-    const generateTrade = () => {
-      // Pick a random crypto from available data
-      const crypto = cryptos[Math.floor(Math.random() * cryptos.length)];
-      
-      // Generate realistic trade data based on actual crypto price
-      const isProfit = Math.random() > 0.2; // 80% chance of profit to match good success rate
-      const baseAmount = crypto.current_price * (1 + Math.random() * 3); // Between 1-4x of current price
-      const amount = (baseAmount * (10 + Math.random() * 90)).toFixed(2); // €10-100 in crypto value
-      
-      // Calculate percent change - now modified to only show >3% profits or losses
-      let percentChange: number;
-      
-      if (isProfit) {
-        // For profit trades, ensure they are at least 3%
-        // Use a base of 3% plus additional random amount
-        percentChange = 3 + Math.random() * 7; // 3% to 10%
-      } else {
-        // For loss trades, can be any negative percentage
-        percentChange = -(0.5 + Math.random() * 8); // -0.5% to -8.5%
-      }
-      
-      // Format the percentage with 2 decimal places
-      const formattedChange = Math.abs(percentChange).toFixed(2);
-      
-      return {
-        id: Date.now() + Math.random().toString(),
-        crypto: crypto.name,
-        symbol: crypto.symbol,
-        amount: `€${amount}`,
-        change: isProfit ? `+${formattedChange}%` : `-${formattedChange}%`,
-        isProfit,
-        timestamp: new Date().toISOString(),
-        imageUrl: crypto.image_url
-      };
-    };
-    
-    // Initial trades when cryptos are loaded
-    if (lastTrades.length === 0) {
-      const initialTrades = Array(5).fill(null).map(() => generateTrade());
-      setLastTrades(initialTrades);
-    }
-    
-    // Add a new trade every few seconds
-    const addTradeInterval = setInterval(() => {
-      setLastTrades(prev => {
-        const newTrade = generateTrade();
-        const updated = [newTrade, ...prev];
-        return updated.slice(0, 10); // Keep only last 10 trades
-      });
-    }, 3000);
-    
-    return () => clearInterval(addTradeInterval);
-  }, [cryptos]);
-
   // Trigger initial load and periodic refresh of crypto data
   useEffect(() => {
     if (cryptos.length === 0) {
@@ -123,6 +55,14 @@ const Status = () => {
 
   // Calculate the current trades (between 4000-4500) based on active traders
   const currentTrades = Math.floor(activeTraders * 2.2);
+
+  // Format currency
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('de-DE', {
+      style: 'currency',
+      currency: 'EUR'
+    }).format(amount);
+  };
 
   return (
     <PageLayout 
@@ -289,7 +229,7 @@ const Status = () => {
             </div>
           </div>
           
-          {/* Recent trades - Now using real crypto data */}
+          {/* Recent trades - Using public trades data */}
           <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-white">Letzte Trades</h3>
@@ -300,51 +240,51 @@ const Status = () => {
             </div>
             
             <div className="space-y-3">
-              {loading ? (
+              {tradesLoading ? (
                 <div className="py-10 text-center text-gray-400">
                   <div className="w-6 h-6 border-2 border-t-2 border-gold rounded-full animate-spin mx-auto mb-2"></div>
                   Daten werden geladen...
                 </div>
-              ) : lastTrades.length === 0 ? (
+              ) : publicTrades.length === 0 ? (
                 <div className="py-10 text-center text-gray-400">
                   Keine Handelsdaten verfügbar
                 </div>
               ) : (
-                lastTrades.map((trade) => (
+                publicTrades.map((trade) => (
                   <div key={trade.id} className="flex items-center justify-between py-2 border-b border-white/10 last:border-none">
                     <div className="flex items-center">
-                      {trade.imageUrl ? (
+                      {trade.crypto_asset?.image_url ? (
                         <img 
-                          src={trade.imageUrl} 
-                          alt={trade.symbol} 
+                          src={trade.crypto_asset?.image_url} 
+                          alt={trade.crypto_asset?.symbol} 
                           className="w-8 h-8 rounded-full mr-3 object-contain bg-gray-800"
                           onError={(e) => {
                             // Fallback to text if image fails to load
                             const target = e.target as HTMLImageElement;
                             target.style.display = 'none';
-                            target.parentElement!.innerHTML = `<div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3">${trade.symbol.substring(0, 1).toUpperCase()}</div>`;
+                            target.parentElement!.innerHTML = `<div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3">${trade.crypto_asset?.symbol.substring(0, 1).toUpperCase()}</div>`;
                           }}
                         />
                       ) : (
                         <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3">
-                          {trade.symbol.substring(0, 1).toUpperCase()}
+                          {trade.crypto_asset?.symbol.substring(0, 1).toUpperCase()}
                         </div>
                       )}
                       <div>
-                        <span className="text-white font-medium">{trade.symbol.toUpperCase()}/EUR</span>
+                        <span className="text-white font-medium">{trade.crypto_asset?.symbol.toUpperCase()}/EUR</span>
                         <p className="text-gray-400 text-sm">
-                          {new Date(trade.timestamp).toLocaleTimeString()}
+                          {new Date(trade.created_at).toLocaleTimeString()}
                         </p>
                       </div>
                     </div>
                     <div className="flex items-center">
                       <div className="text-right mr-3">
-                        <span className="text-white font-medium">{trade.amount}</span>
-                        <p className={`text-sm ${trade.isProfit ? "text-green-400" : "text-red-400"}`}>
-                          {trade.change}
+                        <span className="text-white font-medium">{formatCurrency(trade.total_amount)}</span>
+                        <p className={`text-sm ${trade.is_profit ? "text-green-400" : "text-red-400"}`}>
+                          {trade.change_percentage ? (trade.is_profit ? '+' : '-') + Math.abs(trade.change_percentage).toFixed(2) + '%' : '0%'}
                         </p>
                       </div>
-                      {trade.isProfit ? (
+                      {trade.is_profit ? (
                         <TrendingUp className="w-5 h-5 text-green-400" />
                       ) : (
                         <TrendingDown className="w-5 h-5 text-red-400" />

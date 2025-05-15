@@ -72,6 +72,26 @@ const Index = () => {
     );
   }
 
+  // Initiate a call to sync public trades to ensure we have fresh data
+  useEffect(() => {
+    const syncPublicTrades = async () => {
+      try {
+        // Call the edge function to sync public trades
+        await supabase.functions.invoke('update-public-trades');
+      } catch (error) {
+        console.error("Error syncing public trades:", error);
+      }
+    };
+    
+    // Sync when the page loads
+    syncPublicTrades();
+    
+    // Also set up a periodic sync every 5 minutes
+    const interval = setInterval(syncPublicTrades, 5 * 60 * 1000);
+    
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="min-h-screen bg-casino-darker text-white overflow-hidden">
       <Navbar />

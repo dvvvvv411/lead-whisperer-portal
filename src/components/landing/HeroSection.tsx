@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { ArrowRight, TrendingUp, Bitcoin, Bot, Star, Sparkles } from "lucide-react";
@@ -48,7 +47,6 @@ const cryptoIcons = [{
   color: "from-[#BFBBBB]/30 to-[#BFBBBB]/5",
   delay: 4
 }];
-
 const HeroSection = () => {
   const [chartData, setChartData] = useState([{
     x: 0,
@@ -88,9 +86,7 @@ const HeroSection = () => {
     }, 500);
     return () => clearInterval(interval);
   }, [chartData]);
-  
-  return (
-    <section id="hero" className="py-36 md:py-40 px-4 relative overflow-hidden">
+  return <section id="hero" className="py-36 md:py-40 px-4 relative overflow-hidden">
       {/* Moderner Farbverlauf-Hintergrund mit mehr Transparenz */}
       <div className="absolute inset-0 bg-gradient-to-b from-casino-darker/80 via-[#0A0B0C]/70 to-black/60 z-0"></div>
       
@@ -100,206 +96,206 @@ const HeroSection = () => {
         
         {/* Animierte Gold-Partikel mit mehr Animation */}
         <motion.div className="absolute top-20 left-1/4 w-1 h-1 rounded-full bg-gold" animate={{
-          opacity: [0.3, 0.8, 0.3],
-          scale: [1, 1.5, 1]
-        }} transition={{
-          duration: 3,
-          repeat: Infinity,
-          ease: "easeInOut"
-        }} />
+        opacity: [0.3, 0.8, 0.3],
+        scale: [1, 1.5, 1]
+      }} transition={{
+        duration: 3,
+        repeat: Infinity,
+        ease: "easeInOut"
+      }} />
         <motion.div className="absolute top-40 left-1/3 w-1 h-1 rounded-full bg-gold/50" animate={{
-          opacity: [0.2, 0.7, 0.2],
-          scale: [1, 1.8, 1]
-        }} transition={{
-          duration: 4,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.5
-        }} />
+        opacity: [0.2, 0.7, 0.2],
+        scale: [1, 1.8, 1]
+      }} transition={{
+        duration: 4,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 1.5
+      }} />
         <motion.div className="absolute bottom-40 right-1/3 w-1 h-1 rounded-full bg-gold/30" animate={{
-          opacity: [0.1, 0.6, 0.1],
-          scale: [1, 1.6, 1]
-        }} transition={{
-          duration: 3.5,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 0.8
-        }} />
+        opacity: [0.1, 0.6, 0.1],
+        scale: [1, 1.6, 1]
+      }} transition={{
+        duration: 3.5,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 0.8
+      }} />
         <motion.div className="absolute top-60 right-1/4 w-1 h-1 rounded-full bg-gold/40" animate={{
-          opacity: [0.2, 0.7, 0.2],
-          scale: [1, 1.7, 1]
-        }} transition={{
-          duration: 3.2,
-          repeat: Infinity,
-          ease: "easeInOut",
-          delay: 1.2
-        }} />
+        opacity: [0.2, 0.7, 0.2],
+        scale: [1, 1.7, 1]
+      }} transition={{
+        duration: 3.2,
+        repeat: Infinity,
+        ease: "easeInOut",
+        delay: 1.2
+      }} />
         
         {/* Lila leuchtende Kugeln */}
         <div className="absolute top-1/4 left-1/5 w-60 h-60 bg-[#9b87f5]/5 rounded-full filter blur-3xl animate-pulse"></div>
         <div className="absolute bottom-1/4 right-1/5 w-60 h-60 bg-[#8B5CF6]/10 rounded-full filter blur-3xl animate-pulse" style={{
-          animationDelay: "1s"
-        }}></div>
+        animationDelay: "1s"
+      }}></div>
         <div className="absolute top-2/3 left-1/3 w-40 h-40 bg-[#7E69AB]/5 rounded-full filter blur-2xl animate-pulse" style={{
-          animationDelay: "2s"
-        }}></div>
+        animationDelay: "2s"
+      }}></div>
       </div>
       
       {/* Hero-Inhalt */}
       <div className="container mx-auto relative z-10">
         <div className="grid grid-cols-1 md:grid-cols-5 gap-8 items-center">
           <motion.div className="md:col-span-3" initial={{
-            opacity: 0,
-            y: 20
-          }} animate={{
-            opacity: 1,
-            y: 0
-          }} transition={{
-            duration: 0.7
-          }}>
+          opacity: 0,
+          y: 20
+        }} animate={{
+          opacity: 1,
+          y: 0
+        }} transition={{
+          duration: 0.7
+        }}>
             
             <div className="mb-6">
               <motion.h1 className="text-4xl md:text-5xl lg:text-6xl font-bold tracking-tight" initial={{
-                opacity: 0
-              }} animate={{
-                opacity: 1
-              }} transition={{
-                delay: 0.5
-              }}>
+              opacity: 0
+            }} animate={{
+              opacity: 1
+            }} transition={{
+              delay: 0.5
+            }}>
                 <motion.span className="block" initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 0.6
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 0.6
+              }}>
                   Revolutioniere dein
                 </motion.span>
                 
                 {/* Verbesserte goldene Textanimation mit Glanz-Effekt */}
                 <motion.span className="block text-gold relative overflow-hidden" initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 0.8
-                }} style={{
-                  position: 'relative'
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 0.8
+              }} style={{
+                position: 'relative'
+              }}>
                   Krypto-Trading
                   
                   {/* Glanz-Effekt-Overlay */}
                   <motion.span className="absolute inset-0 bg-gradient-to-r from-transparent via-white/70 to-transparent" initial={{
-                    x: '-100%'
-                  }} animate={{
-                    x: '100%'
-                  }} transition={{
-                    repeat: Infinity,
-                    repeatDelay: 4,
-                    duration: 1.5,
-                    ease: "easeInOut"
-                  }} style={{
-                    mixBlendMode: 'overlay',
-                    WebkitBackgroundClip: 'text',
-                    backgroundClip: 'text'
-                  }} />
+                  x: '-100%'
+                }} animate={{
+                  x: '100%'
+                }} transition={{
+                  repeat: Infinity,
+                  repeatDelay: 4,
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }} style={{
+                  mixBlendMode: 'overlay',
+                  WebkitBackgroundClip: 'text',
+                  backgroundClip: 'text'
+                }} />
                 </motion.span>
                 
                 <motion.span className="block" initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 1.0
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 1.0
+              }}>
                   mit KI-Technologie
                 </motion.span>
               </motion.h1>
             </div>
             
             <motion.p className="text-lg text-gray-300 mb-8 max-w-xl" initial={{
-              opacity: 0
-            }} animate={{
-              opacity: 1
-            }} transition={{
-              delay: 1.2
-            }}>
+            opacity: 0
+          }} animate={{
+            opacity: 1
+          }} transition={{
+            delay: 1.2
+          }}>
               Unser fortschrittlicher KI-Algorithmus analysiert Markttrends in Echtzeit und führt automatisch profitable Trades durch. Erziele bis zu 15% monatliche Rendite - vollständig automatisiert.
             </motion.p>
             
             <motion.div className="flex flex-col sm:flex-row gap-4" initial={{
-              opacity: 0,
-              y: 20
-            }} animate={{
-              opacity: 1,
-              y: 0
-            }} transition={{
-              delay: 1.4
-            }}>
+            opacity: 0,
+            y: 20
+          }} animate={{
+            opacity: 1,
+            y: 0
+          }} transition={{
+            delay: 1.4
+          }}>
               {/* Verbesserte CTA-Schaltfläche mit stärkerem Puls- und Leuchteffekt */}
               <motion.div whileHover={{
-                scale: 1.05
-              }} whileTap={{
-                scale: 0.98
-              }} className="relative">
+              scale: 1.05
+            }} whileTap={{
+              scale: 0.98
+            }} className="relative">
                 
                 <Button onClick={() => document.getElementById("contact")?.scrollIntoView({
-                  behavior: "smooth"
-                })} className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10">
+                behavior: "smooth"
+              })} className="w-full sm:w-auto bg-gold hover:bg-gold/90 text-black font-medium text-base px-6 py-5 rounded-md shadow-lg border border-transparent transition-all duration-300 relative z-10">
                   <motion.span animate={{
-                    x: [0, 4, 0]
-                  }} transition={{
-                    duration: 1.5,
-                    repeat: Infinity,
-                    repeatDelay: 1
-                  }} className="flex items-center gap-2">
+                  x: [0, 4, 0]
+                }} transition={{
+                  duration: 1.5,
+                  repeat: Infinity,
+                  repeatDelay: 1
+                }} className="flex items-center gap-2">
                     Jetzt starten <ArrowRight className="h-4 w-4" />
                   </motion.span>
                 </Button>
               </motion.div>
               
               <Button onClick={() => document.getElementById("benefits")?.scrollIntoView({
-                behavior: "smooth"
-              })} variant="outline" className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300">
+              behavior: "smooth"
+            })} variant="outline" className="w-full sm:w-auto border-gold/30 text-gold hover:bg-gold/5 text-base px-6 py-5 rounded-md transition-all duration-300">
                 Mehr erfahren
               </Button>
             </motion.div>
           </motion.div>
           
           <motion.div className="md:col-span-2 relative" initial={{
-            opacity: 0,
-            scale: 0.9
-          }} animate={{
-            opacity: 1,
-            scale: 1
-          }} transition={{
-            duration: 0.8,
-            delay: 0.7
-          }}>
+          opacity: 0,
+          scale: 0.9
+        }} animate={{
+          opacity: 1,
+          scale: 1
+        }} transition={{
+          duration: 0.8,
+          delay: 0.7
+        }}>
             {/* Modernes Chart-Grafik mit dünneren Linien und mehr Transparenz */}
             <div className="relative backdrop-blur-md border border-[#9b87f5]/20 rounded-xl p-6 shadow-lg shadow-[#9b87f5]/5 bg-black/20">
               {/* Akzent-Elemente */}
               <motion.div className="absolute -top-3 -left-3 bg-black/40 p-3 rounded-lg border border-gold/20 backdrop-blur-sm" whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 15px rgba(255,215,0,0.3)"
-              }} transition={{
-                duration: 0.2
-              }}>
+              scale: 1.05,
+              boxShadow: "0 0 15px rgba(255,215,0,0.3)"
+            }} transition={{
+              duration: 0.2
+            }}>
                 <Bitcoin className="h-5 w-5 text-gold" />
               </motion.div>
               
               <motion.div className="absolute -top-3 -right-3 bg-black/40 p-3 rounded-lg border border-[#9b87f5]/30 backdrop-blur-sm" whileHover={{
-                scale: 1.05,
-                boxShadow: "0 0 15px rgba(155,135,245,0.3)"
-              }} transition={{
-                duration: 0.2
-              }}>
+              scale: 1.05,
+              boxShadow: "0 0 15px rgba(155,135,245,0.3)"
+            }} transition={{
+              duration: 0.2
+            }}>
                 <Bot className="h-5 w-5 text-[#9b87f5]" />
               </motion.div>
               
@@ -318,19 +314,19 @@ const HeroSection = () => {
                   
                   {/* Animierte Diagrammlinie, die mit chartData aktualisiert wird */}
                   <motion.path d={`M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`} fill="none" stroke="url(#line-gradient)" strokeWidth="0.8" strokeLinecap="round" animate={{
-                    d: `M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`
-                  }} transition={{
-                    duration: 0.5,
-                    ease: "easeInOut"
-                  }} />
+                  d: `M${chartData.map(point => `${point.x},${point.y}`).join(' L')}`
+                }} transition={{
+                  duration: 0.5,
+                  ease: "easeInOut"
+                }} />
                   
                   {/* Animierter Farbverlaufsbereich unter der Diagrammlinie */}
                   <motion.path d={`M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length - 1].x},50 L${chartData[0].x},50 Z`} fill="url(#area-gradient)" opacity="0.15" animate={{
-                    d: `M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length - 1].x},50 L${chartData[0].x},50 Z`
-                  }} transition={{
-                    duration: 0.5,
-                    ease: "easeInOut"
-                  }} />
+                  d: `M${chartData[0].x},${chartData[0].y} L${chartData.map(point => `${point.x},${point.y}`).join(' L')} L${chartData[chartData.length - 1].x},50 L${chartData[0].x},50 Z`
+                }} transition={{
+                  duration: 0.5,
+                  ease: "easeInOut"
+                }} />
                   
                   {/* Verbesserte Farbverläufe */}
                   <defs>
@@ -349,13 +345,13 @@ const HeroSection = () => {
                 
                 {/* Verbesserter leuchtender Linieneffekt */}
                 <motion.div className="absolute top-12 left-1/2 w-20 h-0.5 bg-[#9b87f5]/30 blur-md" animate={{
-                  opacity: [0.3, 0.8, 0.3],
-                  width: ["50%", "60%", "50%"]
-                }} transition={{
-                  duration: 3,
-                  repeat: Infinity,
-                  ease: "easeInOut"
-                }}></motion.div>
+                opacity: [0.3, 0.8, 0.3],
+                width: ["50%", "60%", "50%"]
+              }} transition={{
+                duration: 3,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}></motion.div>
                 
                 <div className="absolute bottom-0 left-0 w-full h-1/3 bg-gradient-to-t from-black/30 to-transparent pointer-events-none"></div>
               </div>
@@ -363,49 +359,49 @@ const HeroSection = () => {
               {/* Statistiken unter dem Diagramm mit aktualisiertem Styling */}
               <div className="grid grid-cols-3 gap-3 mt-4">
                 <motion.div initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 2.0
-                }} className="text-center p-2 bg-white/5 rounded-md border border-[#9b87f5]/10" whileHover={{
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  borderColor: "rgba(155,135,245,0.3)"
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 2.0
+              }} className="text-center p-2 bg-white/5 rounded-md border border-[#9b87f5]/10" whileHover={{
+                backgroundColor: "rgba(255,255,255,0.1)",
+                borderColor: "rgba(155,135,245,0.3)"
+              }}>
                   <p className="text-xs text-gray-400">24h Gewinn</p>
                   <p className="text-lg font-semibold text-green-400">+2.4%</p>
                 </motion.div>
                 
                 <motion.div initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 2.2
-                }} className="text-center p-2 bg-white/5 rounded-md border border-gold/10" whileHover={{
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  borderColor: "rgba(255,215,0,0.3)"
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 2.2
+              }} className="text-center p-2 bg-white/5 rounded-md border border-gold/10" whileHover={{
+                backgroundColor: "rgba(255,255,255,0.1)",
+                borderColor: "rgba(255,215,0,0.3)"
+              }}>
                   <p className="text-xs text-gray-400">Erfolgsrate</p>
-                  <p className="text-lg font-semibold text-gold">87%</p>
+                  <p className="text-lg font-semibold text-gold">91%</p>
                 </motion.div>
                 
                 <motion.div initial={{
-                  opacity: 0,
-                  y: 10
-                }} animate={{
-                  opacity: 1,
-                  y: 0
-                }} transition={{
-                  delay: 2.4
-                }} className="text-center p-2 bg-white/5 rounded-md border border-[#9b87f5]/10" whileHover={{
-                  backgroundColor: "rgba(255,255,255,0.1)",
-                  borderColor: "rgba(155,135,245,0.3)"
-                }}>
+                opacity: 0,
+                y: 10
+              }} animate={{
+                opacity: 1,
+                y: 0
+              }} transition={{
+                delay: 2.4
+              }} className="text-center p-2 bg-white/5 rounded-md border border-[#9b87f5]/10" whileHover={{
+                backgroundColor: "rgba(255,255,255,0.1)",
+                borderColor: "rgba(155,135,245,0.3)"
+              }}>
                   <p className="text-xs text-gray-400">Monatlich</p>
                   <p className="text-lg font-semibold text-green-400">+15.2%</p>
                 </motion.div>
@@ -413,47 +409,33 @@ const HeroSection = () => {
             </div>
             
             {/* Add the crypto icon bubbles here - this is the key addition */}
-            {cryptoIcons.map((crypto, index) => (
-              <motion.div
-                key={crypto.name}
-                className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`}
-                initial={{ 
-                  opacity: 0,
-                  scale: 0 
-                }}
-                animate={{ 
-                  x: [0, 10 * (index % 2 === 0 ? 1 : -1), 0],
-                  y: [0, 15 * (index % 3 === 0 ? 1 : -1), 0],
-                  opacity: 1,
-                  scale: 1
-                }}
-                transition={{
-                  delay: 1 + crypto.delay * 0.3,
-                  duration: 3 + index,
-                  repeat: Infinity,
-                  repeatType: 'reverse',
-                  ease: "easeInOut"
-                }}
-                style={{
-                  // Position bubbles around the chart
-                  top: `${(index * 20 + 10) % 100}%`,
-                  left: index % 2 === 0 
-                    ? `${index < 2 ? -10 : 105}%` 
-                    : `${index < 3 ? 105 : -10}%`,
-                }}
-                whileHover={{
-                  scale: 1.2,
-                  boxShadow: "0 0 15px rgba(155,135,245,0.5)"
-                }}
-              >
+            {cryptoIcons.map((crypto, index) => <motion.div key={crypto.name} className={`absolute z-10 rounded-full bg-gradient-to-r ${crypto.color} p-3 backdrop-blur-sm border border-white/10 shadow-lg`} initial={{
+            opacity: 0,
+            scale: 0
+          }} animate={{
+            x: [0, 10 * (index % 2 === 0 ? 1 : -1), 0],
+            y: [0, 15 * (index % 3 === 0 ? 1 : -1), 0],
+            opacity: 1,
+            scale: 1
+          }} transition={{
+            delay: 1 + crypto.delay * 0.3,
+            duration: 3 + index,
+            repeat: Infinity,
+            repeatType: 'reverse',
+            ease: "easeInOut"
+          }} style={{
+            // Position bubbles around the chart
+            top: `${(index * 20 + 10) % 100}%`,
+            left: index % 2 === 0 ? `${index < 2 ? -10 : 105}%` : `${index < 3 ? 105 : -10}%`
+          }} whileHover={{
+            scale: 1.2,
+            boxShadow: "0 0 15px rgba(155,135,245,0.5)"
+          }}>
                 {crypto.icon}
-              </motion.div>
-            ))}
+              </motion.div>)}
           </motion.div>
         </div>
       </div>
-    </section>
-  );
+    </section>;
 };
-
 export default HeroSection;

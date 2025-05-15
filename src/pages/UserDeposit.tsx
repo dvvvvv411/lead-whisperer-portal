@@ -63,6 +63,7 @@ const UserDeposit = () => {
         user_email: user?.email || "Nicht angegeben",
         amount: Math.round(amount * 100), // Convert to cents for consistent format
         currency: 'EUR',
+        wallet_currency: walletCurrency, // Include the selected cryptocurrency
         status: 'pending',
         created_at: new Date().toISOString()
       };

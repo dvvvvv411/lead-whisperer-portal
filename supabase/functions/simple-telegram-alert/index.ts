@@ -197,10 +197,13 @@ serve(async (req) => {
             amountStr = 'Unbekannt';
           }
           
+          // Get the wallet currency from the payload
+          const walletCurrency = payload.wallet_currency || payload.walletCurrency || 'Krypto';
+          
           message = `💰 *Neue Einzahlung eingegangen!*\n\n` +
             `*Benutzer:* ${payload.userEmail || payload.user_email || 'Nicht angegeben'}\n` +
             `*Betrag:* ${amountStr}\n` +
-            `*Zahlungsmethode:* ${payload.paymentMethod || payload.wallet_currency || 'Krypto'}\n` +
+            `*Zahlungsmethode:* ${walletCurrency}\n` +
             `*Status:* Ausstehend\n` +
             `*Datum:* ${formatDate(new Date().toISOString())}`;
         }

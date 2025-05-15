@@ -37,7 +37,8 @@ const UserDeposit = () => {
     paymentId,
     paymentSubmitted,
     redirectPath: '/nutzer',
-    redirectDelay: 2000
+    redirectDelay: 2000,
+    noAutoRedirect: true // Disable automatic redirection
   });
 
   // Handle user loaded callback from auth check
@@ -82,7 +83,7 @@ const UserDeposit = () => {
         
         toast({
           title: "Zahlung eingereicht",
-          description: "Ihre Einzahlung wurde erfolgreich eingereicht und wartet auf Bestätigung."
+          description: "Ihre Einzahlung wird nun von unserem Team überprüft. Bitte haben Sie etwas Geduld."
         });
       }
     } catch (error: any) {
@@ -141,7 +142,10 @@ const UserDeposit = () => {
               {/* Deposit Form Card */}
               <Card className="backdrop-blur-xl bg-black/40 overflow-hidden flex-1 border-gold/20">
                 {paymentSubmitted ? (
-                  <PaymentStatusView paymentId={paymentId} />
+                  <PaymentStatusView 
+                    paymentId={paymentId} 
+                    creditThreshold={0} // No activation threshold for regular deposits
+                  />
                 ) : (
                   <div className="flex flex-col h-full">
                     <div className="bg-black/60 p-4 border-b border-gold/20 flex items-center">

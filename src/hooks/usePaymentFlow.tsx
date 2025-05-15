@@ -16,6 +16,7 @@ interface UsePaymentFlowProps {
   redirectPath?: string;
   redirectDelay?: number;
   isActivation?: boolean;
+  noAutoRedirect?: boolean; // Add option to disable automatic redirection
 }
 
 export const usePaymentFlow = ({
@@ -24,7 +25,8 @@ export const usePaymentFlow = ({
   paymentSubmitted,
   redirectPath = '/nutzer',
   redirectDelay = 2000,
-  isActivation = false
+  isActivation = false,
+  noAutoRedirect = false // Default is to redirect automatically
 }: UsePaymentFlowProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -137,7 +139,7 @@ export const usePaymentFlow = ({
 
   // Handle navigation and notifications based on payment status
   useEffect(() => {
-    if (paymentCompleted && userId) {
+    if (paymentCompleted && userId && !noAutoRedirect) { // Only redirect if noAutoRedirect is false
       toast({
         title: "Zahlung bestätigt",
         description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
@@ -157,6 +159,12 @@ export const usePaymentFlow = ({
       }, redirectDelay);
       
       return () => clearTimeout(redirectTimer);
+    } else if (paymentCompleted && userId && noAutoRedirect) {
+      // When we don't want auto redirect, just show a toast
+      toast({
+        title: "Zahlung eingereicht",
+        description: "Ihre Einzahlung wird überprüft und nach Bestätigung Ihrem Konto gutgeschrieben."
+      });
     }
     
     if (paymentRejected) {
@@ -166,7 +174,7 @@ export const usePaymentFlow = ({
         variant: "destructive"
       });
     }
-  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId]);
+  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId, noAutoRedirect]);
   
   // Prevent navigation when user tries to go back or forward during payment processing
   useEffect(() => {

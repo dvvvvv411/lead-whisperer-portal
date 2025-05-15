@@ -4,15 +4,13 @@ import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
 import { 
   Activity, AlertCircle, CheckCircle, CircleCheck, Database, 
-  Server, TrendingDown, TrendingUp
+  Server
 } from "lucide-react";
 import { useCryptos } from "@/hooks/useCryptos";
 import { toast } from "@/hooks/use-toast";
-import { usePublicTrades } from "@/hooks/usePublicTrades";
 
 const Status = () => {
   const { cryptos, loading: cryptosLoading, usingMockData, updateCryptoPrices } = useCryptos();
-  const { trades: publicTrades, loading: tradesLoading } = usePublicTrades();
   const [serverLatency, setServerLatency] = useState(23);
   const [dbLatency, setDbLatency] = useState(12);
   const [activeTraders, setActiveTraders] = useState(1980);
@@ -55,14 +53,6 @@ const Status = () => {
 
   // Calculate the current trades (between 4000-4500) based on active traders
   const currentTrades = Math.floor(activeTraders * 2.2);
-
-  // Format currency
-  const formatCurrency = (amount: number) => {
-    return new Intl.NumberFormat('de-DE', {
-      style: 'currency',
-      currency: 'EUR'
-    }).format(amount);
-  };
 
   return (
     <PageLayout 
@@ -195,7 +185,7 @@ const Status = () => {
           className="lg:col-span-2 space-y-6"
         >
           {/* Simulated trade chart */}
-          <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg h-64">
+          <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg h-full">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-white">Live Trading Aktivität</h3>
               <div className="flex items-center">
@@ -205,7 +195,7 @@ const Status = () => {
             </div>
             
             {/* Simplified chart simulation */}
-            <div className="w-full h-40 flex items-end justify-between relative">
+            <div className="w-full h-96 flex items-end justify-between relative">
               <div className="absolute inset-0 flex flex-col justify-between">
                 <div className="border-b border-white/10"></div>
                 <div className="border-b border-white/10"></div>
@@ -214,7 +204,7 @@ const Status = () => {
               </div>
               
               {/* Simulated bars */}
-              {Array.from({ length: 24 }).map((_, i) => {
+              {Array.from({ length: 48 }).map((_, i) => {
                 const height = 20 + Math.random() * 80;
                 const isGreen = Math.random() > 0.2;
                 
@@ -226,73 +216,6 @@ const Status = () => {
                   ></div>
                 );
               })}
-            </div>
-          </div>
-          
-          {/* Recent trades - Using public trades data */}
-          <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">Letzte Trades</h3>
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                <span className="text-green-500 text-sm">Live</span>
-              </div>
-            </div>
-            
-            <div className="space-y-3">
-              {tradesLoading ? (
-                <div className="py-10 text-center text-gray-400">
-                  <div className="w-6 h-6 border-2 border-t-2 border-gold rounded-full animate-spin mx-auto mb-2"></div>
-                  Daten werden geladen...
-                </div>
-              ) : publicTrades.length === 0 ? (
-                <div className="py-10 text-center text-gray-400">
-                  Keine Handelsdaten verfügbar
-                </div>
-              ) : (
-                publicTrades.map((trade) => (
-                  <div key={trade.id} className="flex items-center justify-between py-2 border-b border-white/10 last:border-none">
-                    <div className="flex items-center">
-                      {trade.crypto_asset?.image_url ? (
-                        <img 
-                          src={trade.crypto_asset?.image_url} 
-                          alt={trade.crypto_asset?.symbol} 
-                          className="w-8 h-8 rounded-full mr-3 object-contain bg-gray-800"
-                          onError={(e) => {
-                            // Fallback to text if image fails to load
-                            const target = e.target as HTMLImageElement;
-                            target.style.display = 'none';
-                            target.parentElement!.innerHTML = `<div class="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3">${trade.crypto_asset?.symbol.substring(0, 1).toUpperCase()}</div>`;
-                          }}
-                        />
-                      ) : (
-                        <div className="w-8 h-8 rounded-full bg-gray-800 flex items-center justify-center mr-3">
-                          {trade.crypto_asset?.symbol.substring(0, 1).toUpperCase()}
-                        </div>
-                      )}
-                      <div>
-                        <span className="text-white font-medium">{trade.crypto_asset?.symbol.toUpperCase()}/EUR</span>
-                        <p className="text-gray-400 text-sm">
-                          {new Date(trade.created_at).toLocaleTimeString()}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="flex items-center">
-                      <div className="text-right mr-3">
-                        <span className="text-white font-medium">{formatCurrency(trade.total_amount)}</span>
-                        <p className={`text-sm ${trade.is_profit ? "text-green-400" : "text-red-400"}`}>
-                          {trade.change_percentage ? (trade.is_profit ? '+' : '-') + Math.abs(trade.change_percentage).toFixed(2) + '%' : '0%'}
-                        </p>
-                      </div>
-                      {trade.is_profit ? (
-                        <TrendingUp className="w-5 h-5 text-green-400" />
-                      ) : (
-                        <TrendingDown className="w-5 h-5 text-red-400" />
-                      )}
-                    </div>
-                  </div>
-                ))
-              )}
             </div>
           </div>
         </motion.div>

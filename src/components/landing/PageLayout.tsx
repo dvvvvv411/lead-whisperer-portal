@@ -1,7 +1,7 @@
 
 import { ReactNode, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
@@ -11,15 +11,23 @@ interface PageLayoutProps {
   title: string;
   description?: string;
   className?: string;
+  skipAuthCheck?: boolean;
 }
 
-const PageLayout = ({ children, title, description, className = "" }: PageLayoutProps) => {
+const PageLayout = ({ children, title, description, className = "", skipAuthCheck = false }: PageLayoutProps) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
 
   // Check for authenticated user and redirect if needed
   useEffect(() => {
     const checkAuth = async () => {
+      // Skip auth check if specified or on trading-bot page
+      if (skipAuthCheck || location.pathname === "/trading-bot") {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const { data } = await supabase.auth.getUser();
         
@@ -49,7 +57,7 @@ const PageLayout = ({ children, title, description, className = "" }: PageLayout
     };
     
     checkAuth();
-  }, [navigate]);
+  }, [navigate, skipAuthCheck, location.pathname]);
 
   // Show a loading state while checking authentication
   if (loading) {

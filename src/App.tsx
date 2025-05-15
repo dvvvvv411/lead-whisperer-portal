@@ -1,4 +1,3 @@
-
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
@@ -62,7 +61,11 @@ function App() {
             <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
             <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
             
+            {/* Update the trading bot route to be accessible for anonymous users */}
+            <Route path="/trading-bot" element={<TradingBot />} />
+            {/* Keep the existing route for backward compatibility */}
             <Route path="/nutzer/bot" element={<TradingBot />} />
+            
             <Route path="/agb" element={<AGB />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
             <Route path="/impressum" element={<Impressum />} />

@@ -1,3 +1,4 @@
+
 import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
 import { Activity, Lock, TrendingUp, WalletCards } from "lucide-react";
@@ -39,6 +40,7 @@ const TradingBot = () => {
     <PageLayout 
       title="Trading Bot – So funktioniert's" 
       description="In nur wenigen einfachen Schritten zu automatisierten Krypto-Gewinnen"
+      skipAuthCheck={true}
     >
       <div className="max-w-4xl mx-auto">
         <div className="space-y-12 mt-8">

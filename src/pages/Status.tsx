@@ -7,6 +7,7 @@ import {
   Server, TrendingDown, TrendingUp
 } from "lucide-react";
 import { useCryptos } from "@/hooks/useCryptos";
+import { toast } from "@/hooks/use-toast";
 
 interface Trade {
   id: string;
@@ -20,12 +21,23 @@ interface Trade {
 }
 
 const Status = () => {
-  const { cryptos, loading, updateCryptoPrices } = useCryptos();
+  const { cryptos, loading, usingMockData, updateCryptoPrices } = useCryptos();
   const [serverLatency, setServerLatency] = useState(23);
   const [dbLatency, setDbLatency] = useState(12);
   const [activeTraders, setActiveTraders] = useState(1980);
   const [lastTrades, setLastTrades] = useState<Trade[]>([]);
   const [serverLoad, setServerLoad] = useState(35);
+
+  // Show a toast when using mock data
+  useEffect(() => {
+    if (usingMockData) {
+      toast({
+        title: "Demo-Modus",
+        description: "Sie sehen Demowerte. Melden Sie sich an, um Echtdaten zu sehen.",
+        variant: "default"
+      });
+    }
+  }, [usingMockData]);
 
   // Simulate changing statistics
   useEffect(() => {
@@ -117,6 +129,15 @@ const Status = () => {
       title="System Status" 
       description="Überwachen Sie den Status und die Performance unseres KI-Trading-Systems in Echtzeit"
     >
+      {usingMockData && (
+        <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-6 text-yellow-300 text-sm">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-5 h-5" />
+            <span>Sie sehen Demo-Daten. Für Echtdaten melden Sie sich bitte an.</span>
+          </div>
+        </div>
+      )}
+      
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left column - System stats */}
         <motion.div

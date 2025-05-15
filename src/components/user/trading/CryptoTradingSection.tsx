@@ -14,6 +14,7 @@ import TradeForm from "./TradeForm";
 import TradeHistoryList from "./TradeHistoryList";
 import { Skeleton } from "@/components/ui/skeleton";
 import AITradingBot from "./AITradingBot";
+import { AlertCircle } from "lucide-react";
 
 interface CryptoTradingProps {
   user?: any;
@@ -24,7 +25,7 @@ interface CryptoTradingProps {
 const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProps) => {
   const { toast } = useToast();
   const [selectedTab, setSelectedTab] = useState("market");
-  const { cryptos, loading: cryptosLoading, updateCryptoPrices } = useCryptos();
+  const { cryptos, loading: cryptosLoading, updating, usingMockData, updateCryptoPrices } = useCryptos();
   const { portfolio, summary, loading: portfolioLoading, fetchPortfolio } = usePortfolio(user?.id);
   const { trades, botTrades, loading: tradesLoading, fetchTradeHistory } = useTradeHistory(user?.id);
   const { executeTradeSimulation, tradingLoading } = useTrades();
@@ -128,11 +129,21 @@ const CryptoTradingSection = ({ user, userCredit, onUpdated }: CryptoTradingProp
             <CardTitle>Krypto-Trading Simulator</CardTitle>
             <CardDescription>Simulieren Sie Krypto-Trades mit AI-gestützten Strategien</CardDescription>
           </div>
-          <Button variant="outline" onClick={handleRefresh} disabled={cryptosLoading}>
-            Kurse aktualisieren
+          <Button variant="outline" onClick={handleRefresh} disabled={cryptosLoading || updating}>
+            {updating ? "Aktualisiere..." : "Kurse aktualisieren"}
           </Button>
         </div>
       </CardHeader>
+      
+      {usingMockData && (
+        <div className="mx-6 mb-2">
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 text-yellow-300 text-sm flex items-center gap-2">
+            <AlertCircle className="w-5 h-5 flex-shrink-0" />
+            <span>Sie sehen Demo-Daten. Möglicherweise müssen Sie Ihre Sitzung erneuern.</span>
+          </div>
+        </div>
+      )}
+      
       <CardContent>
         <Tabs defaultValue="market" value={selectedTab} onValueChange={handleTabChange}>
           <TabsList className="grid grid-cols-4 mb-4">

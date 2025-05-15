@@ -1,5 +1,5 @@
 
-import { toast as sonnerToast, type ToastOptions as SonnerToastOptions } from "sonner";
+import { toast as sonnerToast } from "sonner";
 
 type ToasterToast = {
   id: string;

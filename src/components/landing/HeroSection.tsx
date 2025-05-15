@@ -371,7 +371,7 @@ const HeroSection = () => {
                 borderColor: "rgba(155,135,245,0.3)"
               }}>
                   <p className="text-xs text-gray-400">24h Gewinn</p>
-                  <p className="text-lg font-semibold text-green-400">+2.4%</p>
+                  <p className="text-lg font-semibold text-green-400">+3.6%</p>
                 </motion.div>
                 
                 <motion.div initial={{

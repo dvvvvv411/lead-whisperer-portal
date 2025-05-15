@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -112,7 +111,7 @@ const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHO
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold mb-2 gradient-text">Zahlung wird überprüft</h1>
+        <h1 className="text-3xl font-bold mb-2 text-white gradient-text">Zahlung wird überprüft</h1>
         <p className="text-gray-400">Bitte verlassen Sie diese Seite nicht, während Ihre Zahlung überprüft wird.</p>
       </motion.div>
       

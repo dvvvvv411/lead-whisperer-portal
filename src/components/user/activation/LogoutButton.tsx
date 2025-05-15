@@ -37,7 +37,7 @@ const LogoutButton = () => {
       variant="outline" 
       size="sm" 
       onClick={handleLogout} 
-      className="flex items-center gap-2"
+      className="flex items-center gap-2 text-white"
       disabled={isLoggingOut}
     >
       <LogOut className="h-4 w-4" />

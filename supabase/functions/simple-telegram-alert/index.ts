@@ -78,13 +78,18 @@ serve(async (req) => {
     
     // Check if this is a request with a body
     if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
-      payload = await req.json();
-      console.log('Received payload:', JSON.stringify(payload));
-      
-      // Check if a specific chat ID was provided
-      if (payload.chatId) {
-        customChatId = payload.chatId;
-        console.log(`Using custom chat ID: ${customChatId}`);
+      try {
+        payload = await req.json();
+        console.log('Received payload:', JSON.stringify(payload));
+        
+        // Check if a specific chat ID was provided
+        if (payload.chatId) {
+          customChatId = payload.chatId;
+          console.log(`Using custom chat ID: ${customChatId}`);
+        }
+      } catch (e) {
+        console.error('Error parsing request body:', e);
+        throw new Error(`Could not parse request body: ${e.message}`);
       }
     }
     
@@ -132,9 +137,8 @@ serve(async (req) => {
     }
     
     // Check if this is a direct API call with payload
-    if (req.method === 'POST' && req.headers.get('content-type')?.includes('application/json')) {
-      const payload = await req.json();
-      console.log('Received direct payload:', JSON.stringify(payload));
+    if (req.method === 'POST' && payload) {
+      console.log('Processing direct payload:', JSON.stringify(payload));
       
       // Handle direct notification with full payload
       if (payload.type === 'lead') {
@@ -329,7 +333,7 @@ serve(async (req) => {
     }
     
     // Send the message to Telegram if it hasn't been sent yet
-    if (message && (!entry_type || !entry_id)) {
+    if (message) {
       const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
       const telegramPayload = {
         chat_id: chatId,

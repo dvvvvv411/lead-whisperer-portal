@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -23,6 +24,7 @@ const UserDeposit = () => {
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   const [depositAmount, setDepositAmount] = useState<number>(0);
+  const [isSendingNotification, setIsSendingNotification] = useState(false);
   
   // Fetch crypto wallets for payment
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
@@ -75,13 +77,15 @@ const UserDeposit = () => {
       if (error) {
         console.error('Error sending telegram notification:', error);
         // No toast needed here since this is a background operation
-        return;
+        return false;
       }
       
       console.log('Direct notification response:', data);
+      return true;
     } catch (err) {
       console.error('Error sending direct payment notification:', err);
       // No need to show error to user as this is a background operation
+      return false;
     }
   };
   
@@ -91,9 +95,14 @@ const UserDeposit = () => {
     
     try {
       setDepositAmount(amount);
+      setIsSendingNotification(true);
       
-      // Send direct notification with details from the form
-      await sendPaymentNotification(amount, walletCurrency);
+      // Send direct notification with details from the form FIRST
+      const notificationSent = await sendPaymentNotification(amount, walletCurrency);
+      
+      if (!notificationSent) {
+        console.warn('Telegram notification could not be sent, but continuing with deposit');
+      }
       
       // Create a new payment record in the database
       const { data, error } = await supabase
@@ -116,6 +125,7 @@ const UserDeposit = () => {
       
       if (data) {
         setPaymentId(data.id);
+        setIsSendingNotification(false);
         setPaymentSubmitted(true);
         
         toast({
@@ -124,6 +134,7 @@ const UserDeposit = () => {
         });
       }
     } catch (error: any) {
+      setIsSendingNotification(false);
       console.error("Fehler bei der Einzahlung:", error.message);
       toast({
         title: "Fehler bei der Einzahlung",
@@ -178,7 +189,19 @@ const UserDeposit = () => {
             <div className="flex flex-col space-y-6">
               {/* Deposit Form Card */}
               <Card className="backdrop-blur-xl bg-black/40 overflow-hidden flex-1 border-gold/20">
-                {paymentSubmitted ? (
+                {isSendingNotification ? (
+                  <div className="p-6 h-full flex flex-col items-center justify-center">
+                    <div className="flex justify-center mb-6">
+                      <Wallet className="h-16 w-16 text-amber-500 animate-pulse" />
+                    </div>
+                    <h2 className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-gold-light to-amber-500 mb-4">
+                      Zahlung wird vorbereitet...
+                    </h2>
+                    <p className="text-center text-white/80">
+                      Einen Moment bitte, wir bereiten Ihre Zahlung vor.
+                    </p>
+                  </div>
+                ) : paymentSubmitted ? (
                   <PaymentStatusViewDeposit status={status} />
                 ) : (
                   <div className="flex flex-col h-full">

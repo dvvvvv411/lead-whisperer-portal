@@ -14,21 +14,21 @@ export function useAdminAuth() {
   useEffect(() => {
     console.log("useAdminAuth: Setting up auth monitoring");
     
-    // Zuerst den Auth-Listener einrichten
+    // Set up the auth listener first
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("useAdminAuth: Auth state changed:", event);
       
       if (session?.user) {
-        console.log("useAdminAuth: User session updated");
+        console.log("useAdminAuth: User session updated:", session.user.email);
         setUser(session.user);
       } else if (event === 'SIGNED_OUT') {
         console.log("useAdminAuth: User signed out");
         setUser(null);
-        navigate("/");
+        navigate("/auth");
       }
     });
     
-    // Dann den aktuellen Status abrufen
+    // Then get the current user state
     const getUser = async () => {
       try {
         console.log("useAdminAuth: Getting current user");
@@ -36,7 +36,8 @@ export function useAdminAuth() {
         
         if (error) {
           console.error("useAdminAuth: Error fetching user:", error);
-          navigate("/admin");
+          navigate("/auth");
+          setAuthLoading(false);
           return;
         }
         
@@ -45,8 +46,7 @@ export function useAdminAuth() {
           setUser(data.user);
         } else {
           console.log("useAdminAuth: No user found, redirecting to login");
-          // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
-          navigate("/admin");
+          navigate("/auth");
         }
       } catch (err) {
         console.error("useAdminAuth: Unexpected error:", err);
@@ -72,7 +72,7 @@ export function useAdminAuth() {
         title: "Erfolgreich abgemeldet",
         description: "Sie wurden erfolgreich abgemeldet."
       });
-      navigate("/");
+      navigate("/auth");
     } catch (error) {
       console.error("Fehler beim Abmelden:", error);
       toast({

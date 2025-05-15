@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -50,6 +51,25 @@ const UserDeposit = () => {
     navigate('/nutzer');
   };
   
+  // Send deposit notification to Telegram
+  const sendDepositNotification = async (amount: number, walletCurrency: string) => {
+    try {
+      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
+        body: {
+          type: 'deposit',
+          amount: amount.toFixed(2),
+          walletCurrency: walletCurrency
+        }
+      });
+
+      if (error) {
+        console.error("Error sending deposit notification:", error);
+      }
+    } catch (err) {
+      console.error("Failed to send deposit notification:", err);
+    }
+  };
+  
   // Handle deposit submission
   const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
     if (!user) return;
@@ -84,6 +104,9 @@ const UserDeposit = () => {
           title: "Zahlung eingereicht",
           description: "Ihre Einzahlung wird nun von unserem Team überprüft. Bitte haben Sie etwas Geduld."
         });
+        
+        // Send simplified notification to Telegram
+        await sendDepositNotification(amount, walletCurrency);
       }
     } catch (error: any) {
       console.error("Fehler bei der Einzahlung:", error.message);

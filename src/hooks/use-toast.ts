@@ -1,8 +1,8 @@
 
-import { toast as sonnerToast, type ToastT } from "sonner";
+import { toast as sonnerToast, type ToastOptions } from "sonner";
 
 // We will modify the type to make id optional
-export type ToastProps = Partial<ToastT> & {
+export type ToastProps = ToastOptions & {
   title?: string;
   description?: string;
   variant?: "default" | "destructive";

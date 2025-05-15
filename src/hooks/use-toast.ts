@@ -1,33 +1,48 @@
 
 import { toast as sonnerToast } from "sonner";
-import { ReactNode } from "react";
 
-export interface ToastProps {
+type ToasterToast = {
+  id: string;
   title?: string;
   description?: string;
-  variant?: "default" | "destructive";
-  id?: string;
-}
+  action?: React.ReactNode;
+};
 
-// Create a wrapper around sonner toast to support our API
-export function toast(props: ToastProps) {
-  const { title, description, variant, id } = props;
+export type ToastProps = {
+  title?: string;
+  description?: string;
+  variant?: "default" | "success" | "error";
+  duration?: number;
+  action?: React.ReactNode;
+};
 
-  // In sonner, the first argument is the message (we'll use description)
-  // and the second argument is options (we'll include title there)
-  return sonnerToast(description || '', {
-    id,
-    title,
-    // Map our variant to sonner's style if needed
-    style: variant === "destructive" ? "error" : undefined
-  });
-}
+const TOAST_LIMIT = 5;
 
-// Export useToast hook that actually comes from sonner
-// Sonner exports toast.useToast instead of useToast directly
 export const useToast = () => {
+  // Using the Sonner toast API
+  const toast = (props: ToastProps) => {
+    const { title, description, variant, duration, action } = props;
+
+    // Map our variant types to Sonner types if needed
+    const type = variant === "error" ? "error" : 
+                variant === "success" ? "success" : "default";
+    
+    return sonnerToast(title, {
+      description,
+      duration,
+      action,
+      // Use the type property instead of variant
+      // This matches Sonner's API
+      type
+    });
+  };
+
   return {
     toast,
-    // Add any other methods you might need from sonner's toast
+    dismiss: sonnerToast.dismiss,
+    clear: sonnerToast.dismiss
   };
 };
+
+// Re-export Sonner's toast function for direct use
+export const toast = sonnerToast;

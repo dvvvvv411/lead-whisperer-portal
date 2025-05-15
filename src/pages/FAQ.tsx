@@ -80,13 +80,13 @@ const faqCategories = [
       {
         id: "what-is-bitloon",
         question: "Was ist bitloon?",
-        answer: "bitloon ist ein KI-gestützter Kryptobot, der automatisiert Kryptowährungen handelt. Mithilfe künstlicher Intelligenz erkennt er Marktchancen und trifft präzise Entscheidungen – ohne dass du selbst handeln musst.",
+        answer: "bitloon ist ein KI-gestützt Kryptobot, der automatisiert Kryptowährungen handelt. Mithilfe künstlicher Intelligenz erkennt er Marktchancen und trifft präzise Entscheidungen - ohne dass du selbst handeln musst.",
         icon: <Info className="w-5 h-5 text-gold mr-2" />
       },
       {
         id: "how-it-works",
         question: "Wie funktioniert bitloon?",
-        answer: "Die KI analysiert in Echtzeit Marktdaten, Trends, Nachrichten und Blockchain-Informationen. Mit einer Trefferquote von bis zu 90 % führt bitloon automatisch profitable Trades durch – direkt über dein persönliches Bot-Panel.",
+        answer: "Die KI analysiert in Echtzeit Marktdaten, Trends, Nachrichten und Blockchain-Informationen. Mit einer Trefferquote von bis zu 90 % führt bitloon automatisch profitable Trades durch - direkt über dein persönliches Bot-Panel.",
         icon: <Settings className="w-5 h-5 text-gold mr-2" />
       },
       {
@@ -104,13 +104,13 @@ const faqCategories = [
       {
         id: "costs",
         question: "Was kostet bitloon?",
-        answer: "Die einmalige Aktivierungsgebühr beträgt 250 €. Diese wird dir vollständig als Tradingguthaben gutgeschrieben und kann bei Bedarf auch wieder ausgezahlt werden. Du bezahlst also nichts „on top" – dein Kapital arbeitet sofort für dich.",
+        answer: "Die einmalige Aktivierungsgebühr beträgt 250 €. Diese wird dir vollständig als Tradingguthaben gutgeschrieben und kann bei Bedarf auch wieder ausgezahlt werden. Du bezahlst also nichts \"on top\" - dein Kapital arbeitet sofort für dich.",
         icon: <Wallet className="w-5 h-5 text-gold mr-2" />
       },
       {
         id: "earnings",
         question: "Wie hoch sind die Erträge mit bitloon?",
-        answer: "bitloon erzielt abhängig von der Marktlage eine Rendite von bis zu 30 % pro Monat – durch KI-gesteuerte, intelligente Handelsstrategien.",
+        answer: "bitloon erzielt abhängig von der Marktlage eine Rendite von bis zu 30 % pro Monat - durch KI-gesteuerte, intelligente Handelsstrategien.",
         icon: <BarChart3 className="w-5 h-5 text-gold mr-2" />
       },
       {
@@ -134,7 +134,7 @@ const faqCategories = [
       {
         id: "decisions",
         question: "Wie entscheidet bitloon, wann gehandelt wird?",
-        answer: "Die KI analysiert fortlaufend Daten aus Märkten, Newsfeeds, On-Chain-Quellen und technischen Indikatoren – so erkennt sie profitable Einstiegspunkte mit hoher Präzision.",
+        answer: "Die KI analysiert fortlaufend Daten aus Märkten, Newsfeeds, On-Chain-Quellen und technischen Indikatoren - so erkennt sie profitable Einstiegspunkte mit hoher Präzision.",
         icon: <Settings className="w-5 h-5 text-gold mr-2" />
       },
       {
@@ -152,7 +152,7 @@ const faqCategories = [
       {
         id: "cryptocurrencies",
         question: "Welche Kryptowährungen werden gehandelt?",
-        answer: "Der Bot fokussiert sich auf große Coins wie Bitcoin, Ethereum und etablierte Altcoins – mit stetiger Anpassung an neue Marktchancen.",
+        answer: "Der Bot fokussiert sich auf große Coins wie Bitcoin, Ethereum und etablierte Altcoins - mit stetiger Anpassung an neue Marktchancen.",
         icon: <Info className="w-5 h-5 text-gold mr-2" />
       }
     ]
@@ -176,19 +176,19 @@ const faqCategories = [
       {
         id: "knowledge",
         question: "Brauche ich Vorkenntnisse?",
-        answer: "Nein. bitloon ist vollständig automatisiert. Du musst weder Charts lesen noch manuell handeln – die KI übernimmt alles für dich.",
+        answer: "Nein. bitloon ist vollständig automatisiert. Du musst weder Charts lesen noch manuell handeln - die KI übernimmt alles für dich.",
         icon: <HelpCircle className="w-5 h-5 text-gold mr-2" />
       },
       {
         id: "support",
         question: "Gibt es telefonische Beratung?",
-        answer: "Ja. Unser Team von Krypto- und KI-Experten steht dir telefonisch zur Verfügung, um alle deine Fragen zu beantworten – auch nach dem Start.",
+        answer: "Ja. Unser Team von Krypto- und KI-Experten steht dir telefonisch zur Verfügung, um alle deine Fragen zu beantworten - auch nach dem Start.",
         icon: <Headphones className="w-5 h-5 text-gold mr-2" />
       },
       {
         id: "demo",
         question: "Gibt es eine Testversion oder Demo?",
-        answer: "Eine kostenlose Testversion gibt es aktuell nicht. Aber du kannst mit den 250 € starten und alles testen – ohne Risiko, da du dein Guthaben jederzeit auszahlen kannst.",
+        answer: "Eine kostenlose Testversion gibt es aktuell nicht. Aber du kannst mit den 250 € starten und alles testen - ohne Risiko, da du dein Guthaben jederzeit auszahlen kannst.",
         icon: <Info className="w-5 h-5 text-gold mr-2" />
       }
     ]
@@ -200,7 +200,7 @@ const faqCategories = [
       {
         id: "frequency",
         question: "Wie häufig handelt bitloon?",
-        answer: "Je nach Marktlage führt bitloon mehrere Trades pro Tag oder auch seltener aus – die Frequenz richtet sich vollständig nach der Erfolgschance.",
+        answer: "Je nach Marktlage führt bitloon mehrere Trades pro Tag oder auch seltener aus - die Frequenz richtet sich vollständig nach der Erfolgschance.",
         icon: <BarChart3 className="w-5 h-5 text-gold mr-2" />
       },
       {
@@ -218,7 +218,7 @@ const faqCategories = [
       {
         id: "results",
         question: "Wie schnell sehe ich Ergebnisse?",
-        answer: "Erste positive Ergebnisse sind oft schon innerhalb der ersten Tage sichtbar – je nach Marktentwicklung und Handelsvolumen.",
+        answer: "Erste positive Ergebnisse sind oft schon innerhalb der ersten Tage sichtbar - je nach Marktentwicklung und Handelsvolumen.",
         icon: <Info className="w-5 h-5 text-gold mr-2" />
       }
     ]

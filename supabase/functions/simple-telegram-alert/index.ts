@@ -69,6 +69,12 @@ serve(async (req) => {
           messageText += `\n📧 *Nutzer:* ${payload.userEmail}`;
         }
       }
+      else if (payload.type === 'withdrawal') {
+        eventType = 'withdrawal';
+        messageText = `💸 *Neue Auszahlungsanfrage*\n\n` +
+          `💰 *Betrag:* ${payload.amount || "0.00"}€\n` +
+          `🪙 *Währung:* ${payload.walletCurrency || "BTC"}`;
+      }
       else {
         eventType = 'unknown';
         messageText = "⚠️ *Neue Benachrichtigung*";

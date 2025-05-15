@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
+import { CheckCircle } from "lucide-react";
 
 interface WithdrawalFormProps {
   wallets: any[];
@@ -42,6 +43,7 @@ const WithdrawalForm = ({
   const { toast } = useToast();
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [selectedWalletCurrency, setSelectedWalletCurrency] = useState<string>("");
+  const [withdrawalSubmitted, setWithdrawalSubmitted] = useState(false);
   
   const form = useForm<WithdrawalFormValues>({
     resolver: zodResolver(withdrawalFormSchema),
@@ -76,6 +78,7 @@ const WithdrawalForm = ({
     const values = form.getValues();
     onSubmit(values.amount, values.walletCurrency, values.walletAddress);
     setShowConfirmDialog(false);
+    setWithdrawalSubmitted(true);
   };
 
   if (walletsLoading || walletError) {
@@ -85,6 +88,28 @@ const WithdrawalForm = ({
         error={walletError}
         onRetry={onRetryWallets}
       />
+    );
+  }
+  
+  if (withdrawalSubmitted) {
+    return (
+      <Card className="border-gold/20 bg-black/30 backdrop-blur-xl">
+        <CardContent className="pt-8 pb-6 flex flex-col items-center">
+          <div className="rounded-full bg-green-500/20 p-3 mb-4">
+            <CheckCircle className="h-8 w-8 text-green-500" />
+          </div>
+          <h3 className="text-xl font-semibold text-gold-light mb-2">Auszahlungsantrag eingereicht</h3>
+          <p className="text-center text-white/80 mb-4">
+            Ihre Auszahlungsanfrage wurde erfolgreich übermittelt und wird nun bearbeitet.
+            Wir werden die Auszahlung so schnell wie möglich vornehmen.
+          </p>
+          <div className="bg-black/40 border border-gold/10 rounded-md p-4 w-full">
+            <p className="text-sm text-white/70">
+              <span className="text-gold-light">Hinweis:</span> Der Status Ihrer Auszahlung wird im Auszahlungsverlauf angezeigt.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
     );
   }
 

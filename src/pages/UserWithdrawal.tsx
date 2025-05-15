@@ -35,6 +35,26 @@ const UserWithdrawal = () => {
     navigate('/nutzer');
   };
   
+  // Send Telegram notification for withdrawal
+  const sendWithdrawalNotification = async (amount: number, walletCurrency: string, walletAddress: string) => {
+    try {
+      await fetch('https://evtlahgiyytcvfeiqwaz.supabase.co/functions/v1/simple-telegram-alert', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          type: 'withdrawal',
+          amount: amount.toFixed(2),
+          walletCurrency: walletCurrency
+        })
+      });
+    } catch (error) {
+      console.error("Failed to send Telegram notification:", error);
+      // Don't throw error, just log it - we don't want this to block the withdrawal process
+    }
+  };
+  
   // Handle withdrawal submission
   const handleWithdrawalSubmit = async (amount: number, walletCurrency: string, walletAddress: string) => {
     if (!user) return;
@@ -64,6 +84,9 @@ const UserWithdrawal = () => {
         title: "Auszahlung beantragt",
         description: "Ihr Auszahlungsantrag wurde erfolgreich eingereicht und wird überprüft."
       });
+      
+      // Send Telegram notification
+      await sendWithdrawalNotification(amount, walletCurrency, walletAddress);
       
       // Refresh user credit to show updated balance
       fetchUserCredit();

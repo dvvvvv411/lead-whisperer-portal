@@ -5,7 +5,7 @@ import { toast } from "@/components/ui/use-toast";
 
 export const PaymentNotifier: React.FC = () => {
   // Function to send payment notifications with additional details
-  const notifyTelegram = async (amount?: number, walletCurrency?: string, userEmail?: string) => {
+  const notifyTelegram = async (amount?: number | string, walletCurrency?: string, userEmail?: string) => {
     try {
       // Prepare enhanced payload for Telegram notification
       const payload = {

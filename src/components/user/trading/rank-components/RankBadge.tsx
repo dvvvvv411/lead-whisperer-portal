@@ -11,8 +11,8 @@ export const RankBadge = ({ currentRank }: RankBadgeProps) => {
   const getRankName = (rank: number) => {
     switch(rank) {
       case 1: return "Anfänger";
-      case 2: return "Profi";
-      case 3: return "Experte";
+      case 2: return "Silber";
+      case 3: return "Gold";
       case 4: return "Platin";
       case 5: return "Diamant";
       default: return "Anfänger";

@@ -5,35 +5,21 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import Navbar from "./Navbar";
 import Footer from "./Footer";
-import { ErrorBoundary } from "@/components/ui/error-boundary";
 
 interface PageLayoutProps {
   children: ReactNode;
   title: string;
   description?: string;
   className?: string;
-  skipAuthCheck?: boolean;
 }
 
-const PageLayout = ({ 
-  children, 
-  title, 
-  description, 
-  className = "", 
-  skipAuthCheck = false 
-}: PageLayoutProps) => {
+const PageLayout = ({ children, title, description, className = "" }: PageLayoutProps) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(skipAuthCheck ? false : true);
+  const [loading, setLoading] = useState(true);
 
   // Check for authenticated user and redirect if needed
   useEffect(() => {
     const checkAuth = async () => {
-      // Skip auth check if requested (for pages like Status that should be accessible to everyone)
-      if (skipAuthCheck) {
-        setLoading(false);
-        return;
-      }
-      
       try {
         const { data } = await supabase.auth.getUser();
         
@@ -63,7 +49,7 @@ const PageLayout = ({
     };
     
     checkAuth();
-  }, [navigate, skipAuthCheck]);
+  }, [navigate]);
 
   // Show a loading state while checking authentication
   if (loading) {
@@ -79,69 +65,37 @@ const PageLayout = ({
 
   return (
     <div className="min-h-screen bg-casino-darker text-white overflow-hidden">
-      <ErrorBoundary fallback={<SimplifiedNavbar />}>
-        <Navbar />
-      </ErrorBoundary>
+      <Navbar />
       
       <main className="pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <ErrorBoundary fallback={<SimplifiedHeader title={title} description={description} />}>
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              className="mb-12 text-center"
-            >
-              <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
-                <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
-                  {title}
-                </span>
-              </h1>
-              {description && (
-                <p className="text-gray-300 max-w-2xl mx-auto">
-                  {description}
-                </p>
-              )}
-            </motion.div>
-          </ErrorBoundary>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-12 text-center"
+          >
+            <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold mb-4">
+              <span className="bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent">
+                {title}
+              </span>
+            </h1>
+            {description && (
+              <p className="text-gray-300 max-w-2xl mx-auto">
+                {description}
+              </p>
+            )}
+          </motion.div>
           
-          <ErrorBoundary fallback={<div className="text-center p-4">Inhalt konnte nicht geladen werden.</div>}>
-            <div className={`${className}`}>
-              {children}
-            </div>
-          </ErrorBoundary>
+          <div className={`${className}`}>
+            {children}
+          </div>
         </div>
       </main>
       
-      <ErrorBoundary fallback={<SimplifiedFooter />}>
-        <Footer />
-      </ErrorBoundary>
+      <Footer />
     </div>
   );
 };
-
-// Simple fallback components
-const SimplifiedNavbar = () => (
-  <div className="fixed w-full top-0 z-50 bg-casino-darker py-4">
-    <div className="container mx-auto px-4">
-      <div className="flex justify-between items-center">
-        <div className="text-gold font-bold">KRYPTO AI</div>
-      </div>
-    </div>
-  </div>
-);
-
-const SimplifiedHeader = ({ title, description }: { title?: string; description?: string }) => (
-  <div className="mb-12 text-center">
-    <h1 className="text-3xl font-bold mb-4 text-gold">{title || "KRYPTO AI"}</h1>
-    {description && <p className="text-gray-300">{description}</p>}
-  </div>
-);
-
-const SimplifiedFooter = () => (
-  <div className="py-8 text-center text-gray-400">
-    © KRYPTO AI
-  </div>
-);
 
 export default PageLayout;

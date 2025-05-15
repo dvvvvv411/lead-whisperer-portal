@@ -1,5 +1,6 @@
+
 import { useState, useEffect } from "react";
-import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart, ArrowLeft } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
@@ -14,14 +15,9 @@ const DEFAULT_CREDIT_THRESHOLD = 250;
 interface PaymentStatusViewProps {
   paymentId: string | null;
   creditThreshold?: number;
-  isRegularDeposit?: boolean;
 }
 
-const PaymentStatusView = ({ 
-  paymentId, 
-  creditThreshold = DEFAULT_CREDIT_THRESHOLD,
-  isRegularDeposit = false
-}: PaymentStatusViewProps) => {
+const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHOLD }: PaymentStatusViewProps) => {
   const [isChecking, setIsChecking] = useState(false);
   const { toast } = useToast();
   const [currentUser, setCurrentUser] = useState<any>(null);
@@ -46,7 +42,7 @@ const PaymentStatusView = ({
 
   // Effect to check if user is activated and show celebration
   useEffect(() => {
-    if (!isRegularDeposit && userCredit !== null && userCredit >= creditThreshold) {
+    if (userCredit !== null && userCredit >= creditThreshold) {
       console.log("Credit threshold reached, showing celebration and preparing redirect");
       setShowCelebration(true);
       
@@ -67,7 +63,7 @@ const PaymentStatusView = ({
       
       return () => clearTimeout(timer);
     }
-  }, [userCredit, creditThreshold, navigate, isRegularDeposit]);
+  }, [userCredit, creditThreshold, navigate]);
 
   // Function to manually check activation status
   const checkActivationStatus = async () => {
@@ -78,7 +74,7 @@ const PaymentStatusView = ({
       // First refresh the user credit to get the latest value
       await fetchUserCredit();
       
-      if (!isRegularDeposit && userCredit >= creditThreshold) {
+      if (userCredit >= creditThreshold) {
         toast({
           title: "Konto aktiviert",
           description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Die Seite wird aktualisiert...`
@@ -97,11 +93,6 @@ const PaymentStatusView = ({
             }
           });
         }, 2000); // Even shorter for manual check
-      } else if (isRegularDeposit) {
-        toast({
-          title: "Zahlung wird überprüft",
-          description: "Ihre Einzahlung wird derzeit überprüft und wird nach Bestätigung Ihrem Konto gutgeschrieben."
-        });
       } else {
         const remaining = creditThreshold - (userCredit || 0);
         toast({
@@ -120,12 +111,6 @@ const PaymentStatusView = ({
       setIsChecking(false);
     }
   };
-  
-  // Function to go back to dashboard
-  const goToDashboard = () => {
-    console.log("Manually navigating back to dashboard");
-    navigate('/nutzer', { replace: true });
-  };
 
   // Function to refresh the page
   const refreshPage = () => {
@@ -134,8 +119,8 @@ const PaymentStatusView = ({
 
   // Calculate remaining amount needed to activate
   const remainingAmount = creditThreshold - (userCredit || 0);
-  const isActivated = !isRegularDeposit && userCredit !== null && userCredit >= creditThreshold;
-  const activationProgress = userCredit !== null && !isRegularDeposit ? Math.min((userCredit / creditThreshold) * 100, 100) : 0;
+  const isActivated = userCredit !== null && userCredit >= creditThreshold;
+  const activationProgress = userCredit !== null ? Math.min((userCredit / creditThreshold) * 100, 100) : 0;
 
   if (showCelebration) {
     return (
@@ -151,12 +136,8 @@ const PaymentStatusView = ({
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <h1 className="text-3xl font-bold mb-2 text-white gradient-text">
-          {isRegularDeposit ? "Zahlung wird überprüft" : "Zahlung wird überprüft"}
-        </h1>
-        <p className="text-gray-400">
-          Bitte verlassen Sie diese Seite nicht, während Ihre Zahlung überprüft wird.
-        </p>
+        <h1 className="text-3xl font-bold mb-2 text-white gradient-text">Zahlung wird überprüft</h1>
+        <p className="text-gray-400">Bitte verlassen Sie diese Seite nicht, während Ihre Zahlung überprüft wird.</p>
       </motion.div>
       
       <motion.div
@@ -168,10 +149,7 @@ const PaymentStatusView = ({
           <CardHeader>
             <CardTitle className="text-white">Zahlungsstatus</CardTitle>
             <CardDescription>
-              {isRegularDeposit 
-                ? "Ihre Einzahlung wurde erfolgreich eingereicht und wird nun überprüft. Nach Bestätigung wird der Betrag Ihrem Konto gutgeschrieben."
-                : "Ihre Zahlungsmeldung wurde erfolgreich eingereicht und wird jetzt überprüft."
-              }
+              Ihre Zahlungsmeldung wurde erfolgreich eingereicht und wird jetzt überprüft.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-6">
@@ -182,7 +160,7 @@ const PaymentStatusView = ({
                 Dies kann bis zu 15 Minuten dauern. Bitte verlassen Sie diese Seite nicht.
               </p>
               
-              {userCredit !== null && !isRegularDeposit && (
+              {userCredit !== null && (
                 <motion.div 
                   className={`mt-6 p-4 ${isActivated ? 'bg-green-900/20 border-green-700/30' : 'bg-amber-900/20 border-amber-700/30'} rounded-md w-full border`}
                   initial={{ opacity: 0 }}
@@ -214,37 +192,19 @@ const PaymentStatusView = ({
                   )}
                 </motion.div>
               )}
-              
-              {isRegularDeposit && userCredit !== null && (
-                <motion.div 
-                  className="mt-6 p-4 bg-blue-900/20 border-blue-700/30 rounded-md w-full border"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.5 }}
-                >
-                  <div className="flex flex-col gap-2">
-                    <p className="font-medium text-white">Aktuelles Guthaben: <span className="text-blue-400">{userCredit.toFixed(2)}€</span></p>
-                    <p className="text-sm text-blue-300">
-                      Nach erfolgreicher Überprüfung wird Ihre Einzahlung diesem Guthaben gutgeschrieben.
-                    </p>
-                  </div>
-                </motion.div>
-              )}
             </div>
             
             <div className="bg-amber-900/10 p-4 rounded-lg border border-amber-700/30">
               <div className="flex items-start">
                 <AlertCircle className="h-5 w-5 text-amber-500 mr-2 mt-0.5" />
                 <p className="text-sm text-amber-400">
-                  <strong>Wichtig:</strong> {isRegularDeposit 
-                    ? "Ihre Einzahlung wird manuell von unserem Team überprüft. Sobald sie bestätigt wurde, wird der Betrag Ihrem Guthaben hinzugefügt."
-                    : `Bitte bleiben Sie auf dieser Seite, bis Ihre Zahlung bestätigt wurde. Sie werden automatisch weitergeleitet, sobald Ihr Guthaben mindestens ${creditThreshold}€ erreicht hat.`
-                  }
+                  <strong>Wichtig:</strong> Bitte bleiben Sie auf dieser Seite, bis Ihre Zahlung bestätigt wurde. 
+                  Sie werden automatisch weitergeleitet, sobald Ihr Guthaben mindestens {creditThreshold}€ erreicht hat.
                 </p>
               </div>
             </div>
           </CardContent>
-          <CardFooter className="flex flex-wrap justify-center gap-4 border-t border-slate-700/50 pt-4">
+          <CardFooter className="flex justify-center gap-4 border-t border-slate-700/50 pt-4">
             <Button
               variant="outline"
               onClick={checkActivationStatus}
@@ -262,16 +222,6 @@ const PaymentStatusView = ({
               <RefreshCw className="h-4 w-4" />
               Seite aktualisieren
             </Button>
-            {isRegularDeposit && (
-              <Button
-                variant="default"
-                onClick={goToDashboard}
-                className="bg-gold hover:bg-gold/80 text-black flex items-center gap-2"
-              >
-                <ArrowLeft className="h-4 w-4" />
-                Zum Dashboard
-              </Button>
-            )}
           </CardFooter>
         </Card>
       </motion.div>

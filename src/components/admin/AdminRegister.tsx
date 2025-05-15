@@ -62,7 +62,7 @@ const AdminRegister = () => {
         setSuccess(true);
         toast({
           title: "Benutzer erstellt",
-          description: "Der Admin-Benutzer wurde erfolgreich registriert."
+          description: "Der Admin-Benutzer wurde erfolgreich registriert.",
         });
       }
     } catch (error: any) {

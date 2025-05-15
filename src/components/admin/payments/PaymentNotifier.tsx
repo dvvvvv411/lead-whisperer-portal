@@ -4,17 +4,20 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
 export const PaymentNotifier: React.FC = () => {
-  // Function to send payment notifications
-  const notifyTelegram = async () => {
+  // Function to send payment notifications with additional details
+  const notifyTelegram = async (amount?: number | string, walletCurrency?: string, userEmail?: string) => {
     try {
-      // Prepare simple payload for Telegram notification - no data fetching
+      // Prepare enhanced payload for Telegram notification
       const payload = {
-        type: 'payment'
+        type: 'payment',
+        amount: amount,
+        paymentMethod: walletCurrency,
+        userEmail: userEmail
       };
       
-      console.log('Sending payment notification with payload:', payload);
+      console.log('Sending enhanced payment notification with payload:', payload);
       
-      // Call the new simplified edge function
+      // Call the edge function with the enhanced payload
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: payload
       });
@@ -22,7 +25,6 @@ export const PaymentNotifier: React.FC = () => {
       if (error) {
         console.error('Error sending telegram notification:', error);
         toast({
-          title: "Fehler",
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
         });
@@ -34,13 +36,11 @@ export const PaymentNotifier: React.FC = () => {
       if (data?.success) {
         console.log('Payment notification sent successfully');
         toast({
-          title: "Erfolg",
-          description: "Zahlungs-Benachrichtigung gesendet"
+          description: "Zahlungs-Benachrichtigung gesendet",
         });
       } else {
         console.error('Payment notification failed:', data?.error || 'Unknown error');
         toast({
-          title: "Fehler",
           description: `Telegram Benachrichtigung fehlgeschlagen: ${data?.error || 'Unbekannter Fehler'}`,
           variant: "destructive"
         });
@@ -48,7 +48,6 @@ export const PaymentNotifier: React.FC = () => {
     } catch (err) {
       console.error('Error preparing payment telegram notification:', err);
       toast({
-        title: "Fehler",
         description: "Fehler bei der Vorbereitung der Zahlungs-Benachrichtigung",
         variant: "destructive"
       });
@@ -70,8 +69,15 @@ export const PaymentNotifier: React.FC = () => {
         },
         (payload) => {
           console.log('New payment detected:', payload);
-          // Simply call notify without passing any data
-          notifyTelegram();
+          
+          // Extract payment details from the payload
+          const newData = payload.new;
+          const amount = newData?.amount ? (newData.amount / 100).toFixed(2) : undefined; // Convert cents to euros
+          const walletCurrency = newData?.wallet_currency;
+          const userEmail = newData?.user_email;
+          
+          // Call notifyTelegram with extracted data
+          notifyTelegram(amount, walletCurrency, userEmail);
         }
       )
       .subscribe((status) => {

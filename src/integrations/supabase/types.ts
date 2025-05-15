@@ -214,53 +214,6 @@ export type Database = {
           },
         ]
       }
-      public_trades: {
-        Row: {
-          change_percentage: number | null
-          created_at: string
-          crypto_asset_id: string
-          id: string
-          is_profit: boolean | null
-          price: number
-          quantity: number
-          total_amount: number
-          type: string
-          updated_at: string
-        }
-        Insert: {
-          change_percentage?: number | null
-          created_at?: string
-          crypto_asset_id: string
-          id?: string
-          is_profit?: boolean | null
-          price: number
-          quantity: number
-          total_amount: number
-          type: string
-          updated_at?: string
-        }
-        Update: {
-          change_percentage?: number | null
-          created_at?: string
-          crypto_asset_id?: string
-          id?: string
-          is_profit?: boolean | null
-          price?: number
-          quantity?: number
-          total_amount?: number
-          type?: string
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "public_trades_crypto_asset_id_fkey"
-            columns: ["crypto_asset_id"]
-            isOneToOne: false
-            referencedRelation: "crypto_assets"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       trade_simulations: {
         Row: {
           created_at: string | null
@@ -529,10 +482,6 @@ export type Database = {
           _user_id: string
           _role: Database["public"]["Enums"]["app_role"]
         }
-        Returns: undefined
-      }
-      sync_public_trades: {
-        Args: Record<PropertyKey, never>
         Returns: undefined
       }
       update_crypto_prices: {

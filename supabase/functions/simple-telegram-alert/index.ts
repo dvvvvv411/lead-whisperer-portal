@@ -57,7 +57,16 @@ serve(async (req) => {
       } 
       else if (payload.type === 'payment') {
         eventType = 'payment';
-        messageText = "💰 *Neue Zahlung erhalten!*";
+        
+        // Enhanced payment notification with amount, method, and user email
+        const amount = payload.amount !== undefined ? `${payload.amount}€` : "Nicht angegeben";
+        const paymentMethod = payload.paymentMethod || "Nicht angegeben";
+        const userEmail = payload.userEmail || "Nicht angegeben";
+        
+        messageText = `💰 *Neue Zahlung erhalten!*\n\n` +
+          `💵 *Betrag:* ${amount}\n` +
+          `💳 *Zahlungsmethode:* ${paymentMethod}\n` +
+          `👤 *Nutzer:* ${userEmail}`;
       }
       else if (payload.type === 'payment-activation') {
         eventType = 'payment-activation';
@@ -68,18 +77,6 @@ serve(async (req) => {
         if (payload.userEmail) {
           messageText += `\n📧 *Nutzer:* ${payload.userEmail}`;
         }
-      }
-      else if (payload.type === 'withdrawal') {
-        eventType = 'withdrawal';
-        messageText = `💸 *Neue Auszahlungsanfrage*\n\n` +
-          `💰 *Betrag:* ${payload.amount || "0.00"}€\n` +
-          `🪙 *Währung:* ${payload.walletCurrency || "BTC"}`;
-      }
-      else if (payload.type === 'deposit') {
-        eventType = 'deposit';
-        messageText = `💰 *Neue Einzahlung*\n\n` +
-          `💰 *Betrag:* ${payload.amount || "0.00"}€\n` +
-          `🪙 *Währung:* ${payload.walletCurrency || "BTC"}`;
       }
       else {
         eventType = 'unknown';

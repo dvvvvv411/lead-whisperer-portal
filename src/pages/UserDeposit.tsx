@@ -37,8 +37,7 @@ const UserDeposit = () => {
     paymentId,
     paymentSubmitted,
     redirectPath: '/nutzer',
-    redirectDelay: 2000,
-    noAutoRedirect: true // Disable automatic redirection
+    redirectDelay: 2000
   });
 
   // Handle user loaded callback from auth check
@@ -51,22 +50,34 @@ const UserDeposit = () => {
     navigate('/nutzer');
   };
   
-  // Send deposit notification to Telegram
-  const sendDepositNotification = async (amount: number, walletCurrency: string) => {
+  // Send direct notification to Telegram with payment details
+  const sendPaymentNotification = async (amount: number, walletCurrency: string) => {
     try {
+      // Create payload with all the information available at submission time
+      const payload = {
+        type: 'payment',
+        amount: amount.toFixed(2), // Format as string with 2 decimal places
+        paymentMethod: walletCurrency,
+        userEmail: user?.email || "Nicht angegeben"
+      };
+      
+      console.log('Sending direct payment notification with details:', payload);
+      
+      // Call the edge function with the enhanced payload
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
-        body: {
-          type: 'deposit',
-          amount: amount.toFixed(2),
-          walletCurrency: walletCurrency
-        }
+        body: payload
       });
-
+      
       if (error) {
-        console.error("Error sending deposit notification:", error);
+        console.error('Error sending telegram notification:', error);
+        // No toast needed here since this is a background operation
+        return;
       }
+      
+      console.log('Direct notification response:', data);
     } catch (err) {
-      console.error("Failed to send deposit notification:", err);
+      console.error('Error sending direct payment notification:', err);
+      // No need to show error to user as this is a background operation
     }
   };
   
@@ -76,6 +87,9 @@ const UserDeposit = () => {
     
     try {
       setDepositAmount(amount);
+      
+      // Send direct notification with details from the form
+      await sendPaymentNotification(amount, walletCurrency);
       
       // Create a new payment record in the database
       const { data, error } = await supabase
@@ -102,11 +116,8 @@ const UserDeposit = () => {
         
         toast({
           title: "Zahlung eingereicht",
-          description: "Ihre Einzahlung wird nun von unserem Team überprüft. Bitte haben Sie etwas Geduld."
+          description: "Ihre Einzahlung wurde erfolgreich eingereicht und wartet auf Bestätigung."
         });
-        
-        // Send simplified notification to Telegram
-        await sendDepositNotification(amount, walletCurrency);
       }
     } catch (error: any) {
       console.error("Fehler bei der Einzahlung:", error.message);
@@ -164,11 +175,7 @@ const UserDeposit = () => {
               {/* Deposit Form Card */}
               <Card className="backdrop-blur-xl bg-black/40 overflow-hidden flex-1 border-gold/20">
                 {paymentSubmitted ? (
-                  <PaymentStatusView 
-                    paymentId={paymentId} 
-                    creditThreshold={0} // No activation threshold for regular deposits
-                    isRegularDeposit={true} // Add this prop to indicate it's a regular deposit
-                  />
+                  <PaymentStatusView paymentId={paymentId} />
                 ) : (
                   <div className="flex flex-col h-full">
                     <div className="bg-black/60 p-4 border-b border-gold/20 flex items-center">

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -15,7 +16,6 @@ interface UsePaymentFlowProps {
   redirectPath?: string;
   redirectDelay?: number;
   isActivation?: boolean;
-  noAutoRedirect?: boolean; // Add option to disable automatic redirection
 }
 
 export const usePaymentFlow = ({
@@ -24,8 +24,7 @@ export const usePaymentFlow = ({
   paymentSubmitted,
   redirectPath = '/nutzer',
   redirectDelay = 2000,
-  isActivation = false,
-  noAutoRedirect = false // Default is to redirect automatically
+  isActivation = false
 }: UsePaymentFlowProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -138,7 +137,7 @@ export const usePaymentFlow = ({
 
   // Handle navigation and notifications based on payment status
   useEffect(() => {
-    if (paymentCompleted && userId && !noAutoRedirect) { // Only redirect if noAutoRedirect is false
+    if (paymentCompleted && userId) {
       toast({
         title: "Zahlung bestätigt",
         description: "Ihre Zahlung wurde bestätigt! Sie werden zum Dashboard weitergeleitet."
@@ -167,7 +166,7 @@ export const usePaymentFlow = ({
         variant: "destructive"
       });
     }
-  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId, noAutoRedirect]);
+  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId]);
   
   // Prevent navigation when user tries to go back or forward during payment processing
   useEffect(() => {

@@ -25,7 +25,6 @@ const LeadTable = () => {
       if (error) {
         console.error('Error sending telegram notification:', error);
         toast({
-          title: "Fehler",
           description: "Telegram Benachrichtigung fehlgeschlagen. Details im Browser-Protokoll",
           variant: "destructive"
         });
@@ -37,13 +36,11 @@ const LeadTable = () => {
       if (data?.success) {
         console.log('Telegram notification sent successfully');
         toast({
-          title: "Erfolg", 
-          description: "Telegram Benachrichtigung gesendet"
+          description: "Telegram Benachrichtigung gesendet",
         });
       } else {
         console.error('Telegram notification failed:', data?.error || 'Unknown error');
         toast({
-          title: "Fehler",
           description: `Telegram Benachrichtigung fehlgeschlagen: ${data?.error || 'Unbekannter Fehler'}`,
           variant: "destructive"
         });
@@ -51,7 +48,6 @@ const LeadTable = () => {
     } catch (err) {
       console.error('Error preparing telegram notification:', err);
       toast({
-        title: "Fehler",
         description: "Fehler bei der Vorbereitung der Telegram-Benachrichtigung",
         variant: "destructive"
       });

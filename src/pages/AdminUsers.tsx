@@ -4,7 +4,6 @@ import { checkUserRole } from "@/services/roleService";
 import { supabase } from "@/integrations/supabase/client";
 import { UserManager } from "@/components/admin/users/UserManager";
 import { motion } from "framer-motion";
-import { toast } from "@/components/ui/use-toast";
 
 const AdminUsers = () => {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
@@ -12,54 +11,28 @@ const AdminUsers = () => {
 
   useEffect(() => {
     const checkAdminStatus = async () => {
-      try {
-        const { data, error } = await supabase.auth.getSession();
-        
-        if (error) {
-          console.error("Error fetching session:", error);
-          toast({
-            title: "Fehler",
-            description: "Fehler beim Überprüfen der Session. Bitte versuchen Sie es erneut.",
-            variant: "destructive"
-          });
-          window.location.href = "/admin";
-          return;
-        }
-        
-        if (!data.session) {
-          console.log("No session found, redirecting to admin login");
-          window.location.href = "/admin";
-          return;
-        }
-        
-        // Spezielle Behandlung für den Benutzer mit der Leads-Only-ID
-        if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-          console.log("Leads-only user detected, allowing access to users page");
-          setIsAdmin(true);
-          setLoading(false);
-          return;
-        }
-        
-        const adminCheck = await checkUserRole('admin');
-        console.log("Admin check result:", adminCheck);
-        setIsAdmin(adminCheck);
-        
-        // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
-        if (!adminCheck) {
-          console.log("User is not admin, redirecting to user dashboard");
-          window.location.href = "/nutzer";
-          return;
-        }
-        
-        setLoading(false);
-      } catch (error) {
-        console.error("Unexpected error checking admin status:", error);
-        toast({
-          title: "Fehler",
-          description: "Es ist ein unerwarteter Fehler aufgetreten.",
-          variant: "destructive"
-        });
+      const { data } = await supabase.auth.getSession();
+      
+      if (!data.session) {
         window.location.href = "/admin";
+        return;
+      }
+      
+      // Spezielle Behandlung für den Benutzer mit der Leads-Only-ID
+      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+        console.log("Leads-only user detected, allowing access to users page");
+        setIsAdmin(true);
+        setLoading(false);
+        return;
+      }
+      
+      const adminCheck = await checkUserRole('admin');
+      setIsAdmin(adminCheck);
+      setLoading(false);
+      
+      // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
+      if (!adminCheck) {
+        window.location.href = "/nutzer";
       }
     };
     

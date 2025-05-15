@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
@@ -61,12 +62,7 @@ function App() {
             <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
             <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
             
-            {/* Keep the /nutzer/bot route for existing links */}
             <Route path="/nutzer/bot" element={<TradingBot />} />
-            
-            {/* New public route for trading bot */}
-            <Route path="/trading-bot" element={<TradingBot />} />
-            
             <Route path="/agb" element={<AGB />} />
             <Route path="/datenschutz" element={<Datenschutz />} />
             <Route path="/impressum" element={<Impressum />} />

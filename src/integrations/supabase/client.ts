@@ -18,7 +18,7 @@ export const supabase = createClient<Database>(
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      storage: typeof window !== 'undefined' ? localStorage : null
+      storage: localStorage
     }
   }
 );
@@ -31,7 +31,7 @@ export const supabaseAdmin = createClient<Database>(
     auth: {
       persistSession: true,
       autoRefreshToken: true,
-      storage: typeof window !== 'undefined' ? localStorage : null
+      storage: localStorage
     }
   }
 );

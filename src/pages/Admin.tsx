@@ -43,29 +43,22 @@ const Admin = () => {
           setIsUser(userCheck);
           
           // Check if user has leads_only restriction
-          // Special case for leads-only user with ID
-          if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-            setIsLeadsOnly(true);
-            console.log("Leads-only user ID detected");
-          } else {
-            const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
-              user_id_param: data.session.user.id
-            });
-            
-            if (!leadsOnlyError && leadsOnlyData) {
-              setIsLeadsOnly(leadsOnlyData);
-              console.log("User has leads_only restriction");
-            }
-          }
+          const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
+            user_id_param: data.session.user.id
+          });
           
-          setLoading(false);
+          if (!leadsOnlyError && leadsOnlyData) {
+            setIsLeadsOnly(leadsOnlyData);
+            console.log("User has leads_only restriction");
+          }
         } else {
           // No session found, redirect to auth page
           console.log("No session found, redirecting to auth page");
-          setLoading(false);
           navigate("/auth");
           return;
         }
+        
+        setLoading(false);
       } catch (err) {
         console.error("Unexpected error during session check:", err);
         setLoading(false);
@@ -88,18 +81,12 @@ const Admin = () => {
         setIsAdmin(adminCheck);
         setIsUser(userCheck);
         
-        // Special case for leads-only user with ID
-        if (newSession.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-          setIsLeadsOnly(true);
-          console.log("Leads-only user ID detected in auth change");
-        } else {
-          // Check if user has leads_only restriction
-          const { data: leadsOnlyData } = await supabase.rpc('is_leads_only_user', {
-            user_id_param: newSession.user.id
-          });
-          
-          setIsLeadsOnly(!!leadsOnlyData);
-        }
+        // Check if user has leads_only restriction
+        const { data: leadsOnlyData } = await supabase.rpc('is_leads_only_user', {
+          user_id_param: newSession.user.id
+        });
+        
+        setIsLeadsOnly(!!leadsOnlyData);
       } else {
         setIsAdmin(null);
         setIsUser(null);

@@ -41,7 +41,7 @@ const AdminLogin = () => {
       
       toast({
         title: "Erfolgreich angemeldet",
-        description: "Du wirst zum Admin-Bereich weitergeleitet."
+        description: "Du wirst zum Admin-Bereich weitergeleitet.",
       });
       
       console.log("Login successful, navigating to admin dashboard...");

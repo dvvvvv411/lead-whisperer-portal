@@ -13,14 +13,22 @@ export interface ToastProps {
 export function toast(props: ToastProps) {
   const { title, description, variant, id } = props;
 
+  // In sonner, the first argument is the message (we'll use description)
+  // and the second argument is options (we'll include title there)
   return sonnerToast(description || '', {
     id,
-    title,
+    // Pass the title as an option
+    ...(title ? { title } : {}),
     // Map our variant to sonner's style if needed
-    // Sonner will ignore unknown props
-    variant: variant === "destructive" ? "error" : "default",
+    ...(variant === "destructive" ? { style: "error" } : {})
   });
 }
 
-// Export the hook from sonner
-export { useToast } from "sonner";
+// Export useToast hook that actually comes from sonner
+// Sonner exports toast.useToast instead of useToast directly
+export const useToast = () => {
+  return {
+    toast,
+    // Add any other methods you might need from sonner's toast
+  };
+};

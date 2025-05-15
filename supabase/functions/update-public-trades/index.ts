@@ -14,42 +14,11 @@ serve(async (req) => {
   }
   
   try {
-    // Create a Supabase client with the service role key for admin access
-    const supabase = createClient(
-      Deno.env.get("SUPABASE_URL") ?? "",
-      Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? ""
-    );
-    
-    // Call the function to sync public trades
-    const { error } = await supabase.rpc('sync_public_trades');
-    
-    if (error) {
-      console.error("Error syncing public trades:", error);
-      return new Response(
-        JSON.stringify({ success: false, error: error.message }),
-        { 
-          headers: { ...corsHeaders, "Content-Type": "application/json" },
-          status: 500
-        }
-      );
-    }
-    
-    // Query to get the count of public trades
-    const { data: countData, error: countError } = await supabase
-      .from('public_trades')
-      .select('*', { count: 'exact', head: true });
-    
-    if (countError) {
-      console.error("Error counting public trades:", countError);
-    }
-    
-    const tradeCount = countData?.length || 0;
-    
+    // This function is now disabled
     return new Response(
       JSON.stringify({ 
-        success: true, 
-        message: "Public trades synced successfully", 
-        count: tradeCount 
+        success: false, 
+        message: "This functionality has been disabled." 
       }),
       { 
         headers: { ...corsHeaders, "Content-Type": "application/json" },

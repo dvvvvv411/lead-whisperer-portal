@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { LogIn } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import MobileNavLink from "./MobileNavLink";
-import { useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 
 interface MobileMenuProps {
   isOpen: boolean;
@@ -33,44 +33,45 @@ const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps)
         </MobileNavLink>
         <MobileNavLink 
           active={currentPath === "/trading-bot"}
-          onClick={() => window.location.href = '/trading-bot'}
+          to="/trading-bot"
         >
           Trading Bot
         </MobileNavLink>
         <MobileNavLink 
           active={currentPath === "/erfahrungen"}
-          onClick={() => window.location.href = '/erfahrungen'}
+          to="/erfahrungen"
         >
           Erfahrungen
         </MobileNavLink>
         <MobileNavLink 
           active={currentPath === "/partner"}
-          onClick={() => window.location.href = '/partner'}
+          to="/partner"
         >
           Partner
         </MobileNavLink>
         <MobileNavLink 
           active={currentPath === "/status"} 
-          onClick={() => window.location.href = '/status'}
+          to="/status"
         >
           Status
         </MobileNavLink>
         <MobileNavLink 
           active={currentPath === "/faq"} 
-          onClick={() => window.location.href = '/faq'}
+          to="/faq"
         >
           FAQ
         </MobileNavLink>
         
         {/* Login button in mobile menu */}
         <div className="pt-2 mt-2 border-t border-gold/10">
-          <Button 
-            className="w-full bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
-            onClick={() => window.location.href = '/auth'} 
-          >
-            <LogIn className="mr-2 h-4 w-4" />
-            Anmelden
-          </Button>
+          <Link to="/auth">
+            <Button 
+              className="w-full bg-gradient-to-r from-gold to-gold-light text-black font-medium hover:shadow-md hover:shadow-gold/20 transition-all"
+            >
+              <LogIn className="mr-2 h-4 w-4" />
+              Anmelden
+            </Button>
+          </Link>
         </div>
       </div>
     </motion.div>

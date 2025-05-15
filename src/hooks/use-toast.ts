@@ -17,10 +17,9 @@ export function toast(props: ToastProps) {
   // and the second argument is options (we'll include title there)
   return sonnerToast(description || '', {
     id,
-    // Pass the title as an option
-    ...(title ? { title } : {}),
+    title,
     // Map our variant to sonner's style if needed
-    ...(variant === "destructive" ? { style: "error" } : {})
+    style: variant === "destructive" ? "error" : undefined
   });
 }
 

@@ -12,15 +12,28 @@ interface PageLayoutProps {
   title: string;
   description?: string;
   className?: string;
+  skipAuthCheck?: boolean;
 }
 
-const PageLayout = ({ children, title, description, className = "" }: PageLayoutProps) => {
+const PageLayout = ({ 
+  children, 
+  title, 
+  description, 
+  className = "", 
+  skipAuthCheck = false 
+}: PageLayoutProps) => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(skipAuthCheck ? false : true);
 
   // Check for authenticated user and redirect if needed
   useEffect(() => {
     const checkAuth = async () => {
+      // Skip auth check if requested (for pages like Status that should be accessible to everyone)
+      if (skipAuthCheck) {
+        setLoading(false);
+        return;
+      }
+      
       try {
         const { data } = await supabase.auth.getUser();
         
@@ -50,7 +63,7 @@ const PageLayout = ({ children, title, description, className = "" }: PageLayout
     };
     
     checkAuth();
-  }, [navigate]);
+  }, [navigate, skipAuthCheck]);
 
   // Show a loading state while checking authentication
   if (loading) {

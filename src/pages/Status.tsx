@@ -74,6 +74,7 @@ const Status = () => {
     <PageLayout 
       title="System Status" 
       description="Überwachen Sie den Status und die Performance unseres KI-Trading-Systems in Echtzeit"
+      skipAuthCheck={true}
     >
       {usingMockData && (
         <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-3 mb-6 text-yellow-300 text-sm">
@@ -419,4 +420,3 @@ const MetricCard = ({ title, value, description, positive }: MetricCardProps) =>
 };
 
 export default Status;
-

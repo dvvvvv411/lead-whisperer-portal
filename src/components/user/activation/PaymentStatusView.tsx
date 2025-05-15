@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart } from "lucide-react";
+import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart, ArrowLeft } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";

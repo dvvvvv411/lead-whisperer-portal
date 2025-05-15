@@ -36,7 +36,7 @@ const LeadTable = () => {
       if (data?.success) {
         console.log('Telegram notification sent successfully');
         toast({
-          description: "Telegram Benachrichtigung gesendet",
+          description: "Telegram Benachrichtigung gesendet"
         });
       } else {
         console.error('Telegram notification failed:', data?.error || 'Unknown error');

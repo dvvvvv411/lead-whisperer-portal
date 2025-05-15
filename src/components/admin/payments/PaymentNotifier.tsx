@@ -33,7 +33,7 @@ export const PaymentNotifier: React.FC = () => {
       if (data?.success) {
         console.log('Payment notification sent successfully');
         toast({
-          description: "Zahlungs-Benachrichtigung gesendet",
+          description: "Zahlungs-Benachrichtigung gesendet"
         });
       } else {
         console.error('Payment notification failed:', data?.error || 'Unknown error');

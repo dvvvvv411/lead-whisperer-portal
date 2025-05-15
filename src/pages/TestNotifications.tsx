@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -20,7 +19,7 @@ const TestNotifications = () => {
       if (data?.success) {
         toast({
           title: "Test erfolgreich",
-          description: "Lead-Benachrichtigung wurde gesendet",
+          description: "Lead-Benachrichtigung wurde gesendet"
         });
       } else {
         toast({
@@ -53,7 +52,7 @@ const TestNotifications = () => {
       if (data?.success) {
         toast({
           title: "Test erfolgreich",
-          description: "Zahlungs-Benachrichtigung wurde gesendet",
+          description: "Zahlungs-Benachrichtigung wurde gesendet"
         });
       } else {
         toast({

@@ -11,7 +11,7 @@ type ToasterToast = {
 export type ToastProps = {
   title?: string;
   description?: string;
-  variant?: "default" | "success" | "error";
+  variant?: "default" | "success" | "error" | "destructive"; // Added "destructive" for backward compatibility
   duration?: number;
   action?: React.ReactNode;
 };
@@ -23,8 +23,9 @@ export const useToast = () => {
   const toast = (props: ToastProps) => {
     const { title, description, variant, duration, action } = props;
 
-    // Map our variant types to Sonner types if needed
-    const type = variant === "error" ? "error" : 
+    // Map our variant types to Sonner types
+    // Map "destructive" to "error" for backward compatibility
+    const type = variant === "error" || variant === "destructive" ? "error" : 
                 variant === "success" ? "success" : "default";
     
     return sonnerToast(title, {

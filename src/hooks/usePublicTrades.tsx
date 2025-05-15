@@ -47,7 +47,30 @@ export const usePublicTrades = () => {
       
       if (data) {
         console.log("Public trades fetched successfully, count:", data.length);
-        setTrades(data as PublicTrade[]);
+        
+        // Simulate 90% success rate with profits 1-7% and losses -1 to -3%
+        const enhancedData = data.map(trade => {
+          // Determine if this is a profit (90% chance) or loss (10% chance)
+          const isProfit = Math.random() <= 0.9;
+          
+          // Calculate change percentage based on profit/loss
+          let changePercentage;
+          if (isProfit) {
+            // Profit between 1% and 7%
+            changePercentage = 1 + Math.random() * 6;
+          } else {
+            // Loss between -1% and -3%
+            changePercentage = -(1 + Math.random() * 2);
+          }
+          
+          return {
+            ...trade,
+            is_profit: isProfit,
+            change_percentage: changePercentage
+          };
+        });
+        
+        setTrades(enhancedData as PublicTrade[]);
       }
     } catch (error: any) {
       console.error('Error fetching public trades:', error.message);

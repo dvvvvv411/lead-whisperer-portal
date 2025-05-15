@@ -1,13 +1,16 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
+import { Link } from "react-router-dom";
 import PageLayout from "@/components/landing/PageLayout";
 import { 
   Activity, AlertCircle, CheckCircle, CircleCheck, Database, 
-  Server
+  Server, ExternalLink
 } from "lucide-react";
 import { useCryptos } from "@/hooks/useCryptos";
 import { toast } from "@/hooks/use-toast";
+import LiveTradesDisplay from "@/components/status/LiveTradesDisplay";
+import TradePerformance from "@/components/status/TradePerformance";
 
 const Status = () => {
   const { cryptos, loading: cryptosLoading, usingMockData, updateCryptoPrices } = useCryptos();
@@ -173,51 +176,33 @@ const Status = () => {
                   <CheckCircle className="w-4 h-4 text-green-400" />
                 </div>
               </div>
+              
+              {/* Trading Bot Link */}
+              <div className="mt-4 pt-4 border-t border-white/10">
+                <Link 
+                  to="/trading-bot"
+                  className="flex items-center justify-between text-gold hover:text-gold/80 transition-colors"
+                >
+                  <span>Trading Bot ausprobieren</span>
+                  <ExternalLink className="w-4 h-4" />
+                </Link>
+              </div>
             </div>
           </div>
         </motion.div>
         
-        {/* Right column - Live activity */}
+        {/* Right column - Live trades and performance */}
         <motion.div
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.5, delay: 0.2 }}
           className="lg:col-span-2 space-y-6"
         >
-          {/* Simulated trade chart */}
-          <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg h-full">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="text-xl font-bold text-white">Live Trading Aktivität</h3>
-              <div className="flex items-center">
-                <div className="w-2 h-2 rounded-full bg-green-500 mr-1 animate-pulse"></div>
-                <span className="text-green-500 text-sm">Live</span>
-              </div>
-            </div>
-            
-            {/* Simplified chart simulation */}
-            <div className="w-full h-96 flex items-end justify-between relative">
-              <div className="absolute inset-0 flex flex-col justify-between">
-                <div className="border-b border-white/10"></div>
-                <div className="border-b border-white/10"></div>
-                <div className="border-b border-white/10"></div>
-                <div className="border-b border-white/10"></div>
-              </div>
-              
-              {/* Simulated bars */}
-              {Array.from({ length: 48 }).map((_, i) => {
-                const height = 20 + Math.random() * 80;
-                const isGreen = Math.random() > 0.2;
-                
-                return (
-                  <div 
-                    key={i} 
-                    className={`w-2 ${isGreen ? "bg-green-500" : "bg-red-500"} relative z-10`}
-                    style={{ height: `${height}%` }}
-                  ></div>
-                );
-              })}
-            </div>
-          </div>
+          {/* Live trades section */}
+          <LiveTradesDisplay />
+          
+          {/* Trade performance section */}
+          <TradePerformance />
         </motion.div>
       </div>
     </PageLayout>

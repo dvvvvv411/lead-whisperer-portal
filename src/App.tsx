@@ -52,10 +52,16 @@ function App() {
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
+            
+            {/* Updated routes to match navigation links */}
             <Route path="/nutzer/einzahlung" element={<UserDeposit />} />
+            <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
             <Route path="/nutzer/auszahlung" element={<UserWithdrawal />} />
+            <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
             <Route path="/nutzer/einstellungen" element={<UserSettings />} />
             <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
+            <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
+            
             <Route path="/nutzer/bot" element={<TradingBot />} />
             <Route path="/agb" element={<AGB />} />
             <Route path="/datenschutz" element={<Datenschutz />} />

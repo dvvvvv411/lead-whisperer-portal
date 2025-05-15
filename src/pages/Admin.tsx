@@ -2,7 +2,6 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import AdminLogin from "@/components/admin/AdminLogin";
 import AdminDashboard from "@/components/admin/AdminDashboard";
 import { checkUserRole } from "@/services/roleService";
 import { motion } from "framer-motion";
@@ -26,13 +25,15 @@ const Admin = () => {
         if (error) {
           console.error("Fehler beim Abrufen der Session:", error);
           setLoading(false);
+          // Redirect to auth page if no session or error
+          navigate("/auth");
           return;
         }
         
         console.log("Session check result:", data.session ? "Session found" : "No session");
         setSession(data.session);
         
-        // Wenn der Benutzer eingeloggt ist, prüfen, ob er Admin oder User ist
+        // If user is logged in, check if they are admin or user
         if (data.session) {
           console.log("User is logged in, checking roles...");
           const adminCheck = await checkUserRole('admin');
@@ -50,18 +51,24 @@ const Admin = () => {
             setIsLeadsOnly(leadsOnlyData);
             console.log("User has leads_only restriction");
           }
+        } else {
+          // No session found, redirect to auth page
+          console.log("No session found, redirecting to auth page");
+          navigate("/auth");
+          return;
         }
         
         setLoading(false);
       } catch (err) {
         console.error("Unexpected error during session check:", err);
         setLoading(false);
+        navigate("/auth");
       }
     };
     
     checkSession();
     
-    // Auth-Status-Änderungen überwachen
+    // Auth state change monitoring
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, newSession) => {
       console.log("Auth state changed:", event);
       setSession(newSession);
@@ -84,6 +91,8 @@ const Admin = () => {
         setIsAdmin(null);
         setIsUser(null);
         setIsLeadsOnly(false);
+        // Redirect to auth on signout
+        navigate("/auth");
       }
     });
     
@@ -110,42 +119,34 @@ const Admin = () => {
     );
   }
 
-  // Wenn der Benutzer angemeldet ist
-  if (session) {
-    console.log("Session exists, admin:", isAdmin, "user:", isUser, "leadsOnly:", isLeadsOnly);
-    
-    // If the user has leads_only role, redirect directly to leads page
-    if (isLeadsOnly) {
-      console.log("Leads-only user detected, redirecting to leads page");
-      navigate("/admin/leads");
-      return null;
-    }
-    // Wenn der Benutzer Admin ist, zeige das Admin-Dashboard
-    else if (isAdmin) {
-      console.log("Displaying admin dashboard");
-      return <AdminDashboard />;
-    }
-    // Wenn der Benutzer ein aktivierter normaler User ist, zum Benutzer-Dashboard weiterleiten
-    else if (isUser) {
-      console.log("Redirecting to user dashboard");
-      navigate("/nutzer");
-      return null;
-    }
-    // Wenn der Benutzer angemeldet ist, aber nicht aktiviert, zur Aktivierungsseite weiterleiten
-    else {
-      console.log("Redirecting to activation page");
-      navigate("/nutzer/aktivierung");
-      return null;
-    }
+  // If the user has leads_only role, redirect directly to leads page
+  if (isLeadsOnly) {
+    console.log("Leads-only user detected, redirecting to leads page");
+    navigate("/admin/leads");
+    return null;
   }
-
-  // Wenn der Benutzer nicht angemeldet ist, Login-Formular anzeigen
-  console.log("No session found, displaying login form");
-  return (
-    <div className="bg-casino-darker">
-      <AdminLogin />
-    </div>
-  );
+  // If the user is an admin, show the admin dashboard
+  else if (isAdmin) {
+    console.log("Displaying admin dashboard");
+    return <AdminDashboard />;
+  }
+  // If the user is a normal activated user, redirect to user dashboard
+  else if (isUser) {
+    console.log("Redirecting to user dashboard");
+    navigate("/nutzer");
+    return null;
+  }
+  // If the user is logged in but not activated, redirect to activation page
+  else if (session) {
+    console.log("Redirecting to activation page");
+    navigate("/nutzer/aktivierung");
+    return null;
+  }
+  
+  // If the user is not logged in, they've been redirected to /auth by now
+  // This is just a fallback
+  navigate("/auth");
+  return null;
 };
 
 export default Admin;

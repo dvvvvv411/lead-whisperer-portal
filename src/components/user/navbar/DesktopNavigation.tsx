@@ -28,7 +28,7 @@ const DesktopNavigation = () => {
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
               "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
-              location.pathname === "/nutzer/trading-archiv" && "text-gold font-medium"
+              (location.pathname === "/nutzer/trading-archiv" || location.pathname === "/nutzer/handel-archiv") && "text-gold font-medium"
             )}>
               <Bot className="mr-1 h-4 w-4" />
               Trading-Archiv
@@ -40,7 +40,7 @@ const DesktopNavigation = () => {
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
               "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
-              location.pathname === "/nutzer/einzahlen" && "text-gold font-medium"
+              (location.pathname === "/nutzer/einzahlen" || location.pathname === "/nutzer/einzahlung") && "text-gold font-medium"
             )}>
               <Wallet className="mr-1 h-4 w-4" />
               Einzahlen
@@ -52,7 +52,7 @@ const DesktopNavigation = () => {
             <NavigationMenuLink className={cn(
               navigationMenuTriggerStyle(),
               "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
-              location.pathname === "/nutzer/auszahlen" && "text-gold font-medium"
+              (location.pathname === "/nutzer/auszahlen" || location.pathname === "/nutzer/auszahlung") && "text-gold font-medium"
             )}>
               <TrendingUp className="mr-1 h-4 w-4" />
               Auszahlen

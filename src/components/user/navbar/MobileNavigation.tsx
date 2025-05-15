@@ -17,21 +17,21 @@ const MobileNavigation = () => {
       </Link>
       <Link to="/nutzer/trading-archiv" className={cn(
         "flex flex-col items-center p-2 rounded",
-        location.pathname === "/nutzer/trading-archiv" ? "text-gold font-medium" : "text-white hover:text-gold/90"
+        (location.pathname === "/nutzer/trading-archiv" || location.pathname === "/nutzer/handel-archiv") ? "text-gold font-medium" : "text-white hover:text-gold/90"
       )}>
         <Bot className="h-5 w-5" />
         <span className="text-xs mt-1 drop-shadow-sm">Archiv</span>
       </Link>
       <Link to="/nutzer/einzahlen" className={cn(
         "flex flex-col items-center p-2 rounded",
-        location.pathname === "/nutzer/einzahlen" ? "text-gold font-medium" : "text-white hover:text-gold/90"
+        (location.pathname === "/nutzer/einzahlen" || location.pathname === "/nutzer/einzahlung") ? "text-gold font-medium" : "text-white hover:text-gold/90"
       )}>
         <Wallet className="h-5 w-5" />
         <span className="text-xs mt-1 drop-shadow-sm">Einzahlen</span>
       </Link>
       <Link to="/nutzer/auszahlen" className={cn(
         "flex flex-col items-center p-2 rounded",
-        location.pathname === "/nutzer/auszahlen" ? "text-gold font-medium" : "text-white hover:text-gold/90"
+        (location.pathname === "/nutzer/auszahlen" || location.pathname === "/nutzer/auszahlung") ? "text-gold font-medium" : "text-white hover:text-gold/90"
       )}>
         <TrendingUp className="h-5 w-5" />
         <span className="text-xs mt-1 drop-shadow-sm">Auszahlen</span>

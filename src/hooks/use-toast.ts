@@ -25,16 +25,18 @@ export const useToast = () => {
 
     // Map our variant types to Sonner types
     // Map "destructive" to "error" for backward compatibility
-    const type = variant === "error" || variant === "destructive" ? "error" : 
+    const mappedType = variant === "error" || variant === "destructive" ? "error" : 
                 variant === "success" ? "success" : "default";
     
-    return sonnerToast(title, {
+    return sonnerToast(title || "", {
       description,
       duration,
       action,
-      // Use the type property instead of variant
-      // This matches Sonner's API
-      type
+      // Use the proper sonner API
+      style: {
+        backgroundColor: mappedType === "error" ? "var(--destructive)" : 
+                         mappedType === "success" ? "var(--success)" : "var(--background)"
+      }
     });
   };
 

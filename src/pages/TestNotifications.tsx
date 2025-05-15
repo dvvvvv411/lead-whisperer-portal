@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { supabase } from "@/integrations/supabase/client";
@@ -17,21 +18,18 @@ const TestNotifications = () => {
       if (error) throw error;
       
       if (data?.success) {
-        toast({
-          title: "Test erfolgreich",
+        toast("Test erfolgreich", {
           description: "Lead-Benachrichtigung wurde gesendet"
         });
       } else {
-        toast({
-          title: "Fehler",
+        toast("Fehler", {
           description: data?.error || "Unbekannter Fehler",
           variant: "destructive"
         });
       }
     } catch (error: any) {
       console.error("Error sending lead test notification:", error);
-      toast({
-        title: "Fehler",
+      toast("Fehler", {
         description: error.message || "Unbekannter Fehler",
         variant: "destructive"
       });
@@ -50,21 +48,18 @@ const TestNotifications = () => {
       if (error) throw error;
       
       if (data?.success) {
-        toast({
-          title: "Test erfolgreich",
+        toast("Test erfolgreich", {
           description: "Zahlungs-Benachrichtigung wurde gesendet"
         });
       } else {
-        toast({
-          title: "Fehler",
+        toast("Fehler", {
           description: data?.error || "Unbekannter Fehler",
           variant: "destructive"
         });
       }
     } catch (error: any) {
       console.error("Error sending payment test notification:", error);
-      toast({
-        title: "Fehler",
+      toast("Fehler", {
         description: error.message || "Unbekannter Fehler",
         variant: "destructive"
       });

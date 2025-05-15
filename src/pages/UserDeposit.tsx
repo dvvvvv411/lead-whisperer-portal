@@ -6,7 +6,7 @@ import { useToast } from "@/hooks/use-toast";
 import UserAuthCheck from "@/components/user/activation/UserAuthCheck";
 import DepositForm from "@/components/user/deposit/DepositForm";
 import DepositHistory from "@/components/user/deposit/DepositHistory";
-import PaymentStatusView from "@/components/user/activation/PaymentStatusView";
+import PaymentStatusViewDeposit from "@/components/user/deposit/PaymentStatusViewDeposit";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft, CircleDollarSign, CreditCard, Wallet, Trophy } from "lucide-react";
 import { usePaymentFlow } from "@/hooks/usePaymentFlow";
@@ -31,13 +31,15 @@ const UserDeposit = () => {
   // Get user credit
   const { userCredit } = useUserCredit(user?.id);
   
-  // Monitor payment status using the custom hook
-  const { paymentCompleted, paymentRejected } = usePaymentFlow({
+  // Monitor payment status using the custom hook with noRedirect option to prevent page reload
+  const { status } = usePaymentFlow({
     userId: user?.id,
     paymentId,
     paymentSubmitted,
     redirectPath: '/nutzer',
-    redirectDelay: 2000
+    redirectDelay: 2000,
+    isActivation: false, // This is a regular deposit, not activation
+    noRedirect: true // Prevent automatic redirect
   });
 
   // Handle user loaded callback from auth check
@@ -175,7 +177,7 @@ const UserDeposit = () => {
               {/* Deposit Form Card */}
               <Card className="backdrop-blur-xl bg-black/40 overflow-hidden flex-1 border-gold/20">
                 {paymentSubmitted ? (
-                  <PaymentStatusView paymentId={paymentId} />
+                  <PaymentStatusViewDeposit status={status} />
                 ) : (
                   <div className="flex flex-col h-full">
                     <div className="bg-black/60 p-4 border-b border-gold/20 flex items-center">

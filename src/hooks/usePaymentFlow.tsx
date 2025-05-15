@@ -16,6 +16,7 @@ interface UsePaymentFlowProps {
   redirectPath?: string;
   redirectDelay?: number;
   isActivation?: boolean;
+  noRedirect?: boolean; // New option to disable redirect
 }
 
 export const usePaymentFlow = ({
@@ -24,7 +25,8 @@ export const usePaymentFlow = ({
   paymentSubmitted,
   redirectPath = '/nutzer',
   redirectDelay = 2000,
-  isActivation = false
+  isActivation = false,
+  noRedirect = false // Default to false to maintain backward compatibility
 }: UsePaymentFlowProps) => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -137,6 +139,9 @@ export const usePaymentFlow = ({
 
   // Handle navigation and notifications based on payment status
   useEffect(() => {
+    // Skip this effect if noRedirect is true
+    if (noRedirect) return;
+    
     if (paymentCompleted && userId) {
       toast({
         title: "Zahlung bestätigt",
@@ -166,7 +171,7 @@ export const usePaymentFlow = ({
         variant: "destructive"
       });
     }
-  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId]);
+  }, [paymentCompleted, paymentRejected, navigate, toast, redirectPath, redirectDelay, userId, noRedirect]);
   
   // Prevent navigation when user tries to go back or forward during payment processing
   useEffect(() => {

@@ -78,6 +78,22 @@ serve(async (req) => {
           messageText += `\n📧 *Nutzer:* ${payload.userEmail}`;
         }
       }
+      // Add new handling for withdrawal notifications
+      else if (payload.type === 'withdrawal') {
+        eventType = 'withdrawal';
+        
+        // Format detailed message for withdrawal requests
+        const amount = payload.amount !== undefined ? `${payload.amount}€` : "Nicht angegeben";
+        const walletCurrency = payload.walletCurrency || "Nicht angegeben";
+        const walletAddress = payload.walletAddress || "Nicht angegeben";
+        const userEmail = payload.userEmail || "Nicht angegeben";
+        
+        messageText = `💸 *Auszahlungsantrag erhalten!*\n\n` +
+          `💵 *Betrag:* ${amount}\n` +
+          `💱 *Währung:* ${walletCurrency}\n` +
+          `📝 *Wallet-Adresse:* ${walletAddress}\n` +
+          `📧 *Nutzer:* ${userEmail}`;
+      }
       else {
         eventType = 'unknown';
         messageText = "⚠️ *Neue Benachrichtigung*";

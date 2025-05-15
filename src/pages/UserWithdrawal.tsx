@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -58,6 +57,29 @@ const UserWithdrawal = () => {
       
       if (error) {
         throw error;
+      }
+      
+      // Send notification to Telegram
+      try {
+        const response = await fetch('https://evtlahgiyytcvfeiqwaz.supabase.co/functions/v1/simple-telegram-alert', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            type: 'withdrawal',
+            amount: amount.toFixed(2), // Format as 2 decimal places
+            walletCurrency: walletCurrency,
+            walletAddress: walletAddress,
+            userEmail: user.email
+          })
+        });
+        
+        const result = await response.json();
+        console.log('Telegram notification result:', result);
+      } catch (notificationError) {
+        // Log the error but don't impact user experience
+        console.error("Fehler beim Senden der Telegram Benachrichtigung:", notificationError);
       }
       
       toast({

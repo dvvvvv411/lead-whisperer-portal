@@ -50,12 +50,46 @@ const UserDeposit = () => {
     navigate('/nutzer');
   };
   
+  // Send direct notification to Telegram with payment details
+  const sendPaymentNotification = async (amount: number, walletCurrency: string) => {
+    try {
+      // Create payload with all the information available at submission time
+      const payload = {
+        type: 'payment',
+        amount: amount.toFixed(2), // Format as string with 2 decimal places
+        paymentMethod: walletCurrency,
+        userEmail: user?.email || "Nicht angegeben"
+      };
+      
+      console.log('Sending direct payment notification with details:', payload);
+      
+      // Call the edge function with the enhanced payload
+      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
+        body: payload
+      });
+      
+      if (error) {
+        console.error('Error sending telegram notification:', error);
+        // No toast needed here since this is a background operation
+        return;
+      }
+      
+      console.log('Direct notification response:', data);
+    } catch (err) {
+      console.error('Error sending direct payment notification:', err);
+      // No need to show error to user as this is a background operation
+    }
+  };
+  
   // Handle deposit submission
   const handleDepositSubmit = async (amount: number, walletCurrency: string, walletId: string) => {
     if (!user) return;
     
     try {
       setDepositAmount(amount);
+      
+      // Send direct notification with details from the form
+      await sendPaymentNotification(amount, walletCurrency);
       
       // Create a new payment record in the database
       const { data, error } = await supabase

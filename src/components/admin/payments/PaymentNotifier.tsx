@@ -4,20 +4,17 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "@/components/ui/use-toast";
 
 export const PaymentNotifier: React.FC = () => {
-  // Function to send payment notifications with additional details
-  const notifyTelegram = async (amount?: number | string, walletCurrency?: string, userEmail?: string) => {
+  // Function to send payment notifications
+  const notifyTelegram = async () => {
     try {
-      // Prepare enhanced payload for Telegram notification
+      // Prepare simple payload for Telegram notification - no data fetching
       const payload = {
-        type: 'payment',
-        amount: amount,
-        paymentMethod: walletCurrency,
-        userEmail: userEmail
+        type: 'payment'
       };
       
-      console.log('Sending enhanced payment notification with payload:', payload);
+      console.log('Sending payment notification with payload:', payload);
       
-      // Call the edge function with the enhanced payload
+      // Call the new simplified edge function
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: payload
       });
@@ -69,15 +66,8 @@ export const PaymentNotifier: React.FC = () => {
         },
         (payload) => {
           console.log('New payment detected:', payload);
-          
-          // Extract payment details from the payload
-          const newData = payload.new;
-          const amount = newData?.amount ? (newData.amount / 100).toFixed(2) : undefined; // Convert cents to euros
-          const walletCurrency = newData?.wallet_currency;
-          const userEmail = newData?.user_email;
-          
-          // Call notifyTelegram with extracted data
-          notifyTelegram(amount, walletCurrency, userEmail);
+          // Simply call notify without passing any data
+          notifyTelegram();
         }
       )
       .subscribe((status) => {

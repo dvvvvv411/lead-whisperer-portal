@@ -68,8 +68,16 @@ export const usePaymentFlow = ({
             description: `Ihr Konto wurde mit ${userCredit.toFixed(2)}€ aktiviert! Sie werden zum Dashboard weitergeleitet.`
           });
           
-          // Redirect to user dashboard immediately
-          navigate(redirectPath);
+          // Redirect to user dashboard using session-preserving navigation
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+              console.log("Redirecting with active session");
+              navigate(redirectPath, { replace: true });
+            } else {
+              console.error("Session lost before redirect, attempting refresh");
+              window.location.href = redirectPath;
+            }
+          });
         }
       })
       .subscribe();
@@ -103,8 +111,16 @@ export const usePaymentFlow = ({
             // Clear interval and redirect
             if (creditCheckInterval) clearInterval(creditCheckInterval);
             
-            // Redirect immediately to ensure the user doesn't stay on the activation page
-            navigate(redirectPath);
+            // Use session-preserving navigation instead of immediate redirect
+            supabase.auth.getSession().then(({ data: { session } }) => {
+              if (session) {
+                console.log("Redirecting with active session from credit check");
+                navigate(redirectPath, { replace: true });
+              } else {
+                console.error("Session lost before redirect, attempting refresh");
+                window.location.href = redirectPath;
+              }
+            });
           }
         } catch (error) {
           console.error("Error checking user credit:", error);
@@ -128,7 +144,16 @@ export const usePaymentFlow = ({
       });
       
       const redirectTimer = setTimeout(() => {
-        navigate(redirectPath);
+        // Use session-preserving navigation
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) {
+            console.log("Redirecting with active session after payment completed");
+            navigate(redirectPath, { replace: true });
+          } else {
+            console.error("Session lost before redirect, attempting refresh");
+            window.location.href = redirectPath;
+          }
+        });
       }, redirectDelay);
       
       return () => clearTimeout(redirectTimer);

@@ -17,20 +17,38 @@ const UserAuthWrapper = ({ children, redirectTo, minCredit = 0 }: UserAuthWrappe
   const { userCredit, loading: creditLoading } = useUserCredit(user?.id);
 
   useEffect(() => {
-    // Check if the user is authenticated
+    // Set up auth state listener FIRST
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      console.log("Auth state change in UserAuthWrapper:", event);
+      if (event === "SIGNED_OUT") {
+        // Use replace: true to avoid history accumulation
+        navigate(redirectTo, { replace: true });
+      } else if (event === "SIGNED_IN" && session?.user) {
+        setUser(session.user);
+      }
+    });
+    
+    // THEN check for existing session
     const getUser = async () => {
       try {
-        const { data } = await supabase.auth.getUser();
+        const { data, error } = await supabase.auth.getUser();
+        
+        if (error) {
+          console.error("Error getting user in UserAuthWrapper:", error.message);
+          throw error;
+        }
         
         if (data?.user) {
+          console.log("User found in UserAuthWrapper:", data.user.email);
           setUser(data.user);
         } else {
-          // If not authenticated, redirect to the specified route (now pointing to landing page)
-          navigate(redirectTo);
+          console.log("No user found in UserAuthWrapper, redirecting");
+          // If not authenticated, redirect to the specified route using replace to avoid history issues
+          navigate(redirectTo, { replace: true });
         }
       } catch (error) {
         console.error("Error checking authentication:", error);
-        navigate(redirectTo);
+        navigate(redirectTo, { replace: true });
       } finally {
         setLoading(false);
       }
@@ -38,17 +56,8 @@ const UserAuthWrapper = ({ children, redirectTo, minCredit = 0 }: UserAuthWrappe
     
     getUser();
     
-    // Set up auth state listener
-    const { data: authListener } = supabase.auth.onAuthStateChange((event, session) => {
-      if (event === "SIGNED_OUT") {
-        navigate(redirectTo);
-      } else if (event === "SIGNED_IN" && session?.user) {
-        setUser(session.user);
-      }
-    });
-    
     return () => {
-      authListener?.subscription.unsubscribe();
+      subscription.unsubscribe();
     };
   }, [navigate, redirectTo]);
 
@@ -56,7 +65,8 @@ const UserAuthWrapper = ({ children, redirectTo, minCredit = 0 }: UserAuthWrappe
   useEffect(() => {
     if (!loading && !creditLoading && minCredit > 0) {
       if (userCredit !== null && userCredit < minCredit) {
-        navigate("/nutzer/aktivierung");
+        console.log("User credit below minimum, redirecting to activation");
+        navigate("/nutzer/aktivierung", { replace: true });
       }
     }
   }, [userCredit, loading, creditLoading, minCredit, navigate]);

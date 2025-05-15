@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { Loader2, AlertCircle, RefreshCw, CheckCircle, Trophy, Award, BarChart } from "lucide-react";
 import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
@@ -29,6 +30,7 @@ const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHO
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         setCurrentUser(data.user);
+        console.log("Current user set in PaymentStatusView:", data.user.id);
       }
     };
     
@@ -41,10 +43,24 @@ const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHO
   // Effect to check if user is activated and show celebration
   useEffect(() => {
     if (userCredit !== null && userCredit >= creditThreshold) {
+      console.log("Credit threshold reached, showing celebration and preparing redirect");
       setShowCelebration(true);
+      
+      // Use a shorter timeout to redirect faster
       const timer = setTimeout(() => {
-        navigate('/nutzer');
-      }, 5000);
+        console.log("Redirecting to /nutzer with active session");
+        // Ensure we have a valid session before redirecting
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          if (session) {
+            navigate('/nutzer', { replace: true });
+          } else {
+            console.error("Session lost before redirect, attempting to refresh");
+            // If somehow the session is lost, refresh the page
+            window.location.href = '/nutzer';
+          }
+        });
+      }, 3000); // Reduced from 5000ms to 3000ms
+      
       return () => clearTimeout(timer);
     }
   }, [userCredit, creditThreshold, navigate]);
@@ -66,8 +82,17 @@ const PaymentStatusView = ({ paymentId, creditThreshold = DEFAULT_CREDIT_THRESHO
         
         setShowCelebration(true);
         setTimeout(() => {
-          navigate('/nutzer');
-        }, 3000);
+          console.log("Manual redirect to /nutzer with active session");
+          // Use session-preserving navigation
+          supabase.auth.getSession().then(({ data: { session } }) => {
+            if (session) {
+              navigate('/nutzer', { replace: true });
+            } else {
+              console.error("Session lost before redirect, attempting to refresh");
+              window.location.href = '/nutzer';
+            }
+          });
+        }, 2000); // Even shorter for manual check
       } else {
         const remaining = creditThreshold - (userCredit || 0);
         toast({
@@ -208,7 +233,16 @@ const ActivationSuccessView = ({ credit }: { credit: number | null }) => {
   const navigate = useNavigate();
   
   const goToDashboard = () => {
-    navigate('/nutzer');
+    console.log("Manual button redirect to /nutzer");
+    // Use session-preserving navigation
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        navigate('/nutzer', { replace: true });
+      } else {
+        console.error("Session lost before redirect, attempting refresh");
+        window.location.href = '/nutzer';
+      }
+    });
   };
   
   return (

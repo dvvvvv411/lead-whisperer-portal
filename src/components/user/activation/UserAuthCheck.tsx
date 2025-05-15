@@ -29,6 +29,12 @@ const UserAuthCheck = ({
         table: 'user_credits'
       }, async () => {
         console.log("User credit change detected");
+        
+        // Refresh session to ensure it's still valid
+        const { data } = await supabase.auth.refreshSession();
+        if (!data.session) {
+          console.warn("Session could not be refreshed in UserAuthCheck");
+        }
       })
       .subscribe();
       
@@ -37,6 +43,7 @@ const UserAuthCheck = ({
     };
   }, [onUserLoaded]);
   
+  // Wrap the children in the UserAuthWrapper
   return (
     <UserAuthWrapper 
       redirectTo="/"

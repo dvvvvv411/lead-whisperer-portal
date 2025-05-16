@@ -1,305 +1,154 @@
 
-import { useState, useEffect } from "react";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Checkbox } from "@/components/ui/checkbox";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
+import { motion } from "framer-motion";
+
+// Components
+import PaymentInfoCard from "@/components/user/activation/PaymentInfoCard";
+import WalletSelector from "@/components/user/activation/WalletSelector";
+import PaymentConfirmationDialog from "@/components/user/activation/PaymentConfirmationDialog";
+
+// Hooks
 import { useWallets } from "@/hooks/useWallets";
-import { Loader2 } from "lucide-react";
 
-// Define the schema for activation form
-const activationSchema = z.object({
-  walletId: z.string().min(1, {
-    message: "Bitte wählen Sie eine Wallet aus.",
-  }),
-  agreeTerms: z.boolean().refine(val => val === true, {
-    message: 'Um fortzufahren, müssen Sie die Bedingungen akzeptieren.'
-  }),
-});
+interface ActivationFormProps {
+  user: any;
+  creditThreshold?: number;
+  onStepChange?: (step: number) => void;
+}
 
-// Define the type for the form data
-type ActivationFormData = z.infer<typeof activationSchema>;
-
-const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, creditThreshold: number, onStepChange: (step: number) => void }) => {
-  const [step, setStep] = useState<'welcome' | 'info' | 'wallets'>('welcome');
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isCheckingStatus, setIsCheckingStatus] = useState(false);
+const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: ActivationFormProps) => {
+  const { toast } = useToast();
+  const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
+  const [showConfirmDialog, setShowConfirmDialog] = useState(false);
+  const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
   
-  // Fetch crypto wallets for payment
+  // Custom hooks
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
   
-  // Get form from hook
-  const form = useForm<ActivationFormData>({
-    resolver: zodResolver(activationSchema),
-    defaultValues: {
-      walletId: '',
-      agreeTerms: false
-    }
-  });
-
-  // Update the parent component's step tracking
-  useEffect(() => {
-    const currentStepNumber = step === 'welcome' ? 0 : step === 'info' ? 1 : 2;
-    onStepChange(currentStepNumber);
-  }, [step, onStepChange]);
-  
-  // Handle proceed to information step
-  const handleProceed = () => {
-    setStep('info');
+  const handleSelectWallet = (currency: string) => {
+    setSelectedWallet(currency);
+    onStepChange?.(0); // Update to wallet selection step
   };
 
-  // Handle back navigation
-  const handleBack = () => {
-    if (step === 'info') {
-      setStep('welcome');
-    } else if (step === 'wallets') {
-      setStep('info');
-    }
+  const handleConfirmPayment = () => {
+    setShowConfirmDialog(true);
+    onStepChange?.(1); // Update to payment confirmation step
   };
 
-  // Handle continue to wallet selection
-  const handleContinueToWallets = () => {
-    setStep('wallets');
-    
-    // Call fetchWallets before showing the wallet list
-    fetchWallets();
-  };
-
-  // Send direct notification to Telegram with activation payment details
-  const sendActivationNotification = async (amount: number, walletCurrency: string) => {
+  const handleCompletePayment = async () => {
     try {
-      // Create payload with all the information available at submission time
-      const payload = {
-        type: 'payment-activation',
-        amount: amount,
-        paymentMethod: walletCurrency,
-        userEmail: user?.email || "Nicht angegeben"
-      };
+      const selectedWalletObj = wallets.find(w => w.currency === selectedWallet);
+      if (!selectedWalletObj) throw new Error("Keine gültige Wallet ausgewählt");
       
-      console.log('Sending activation payment notification:', payload);
-      
-      // Call the simple-telegram-alert function with the payload
-      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
-        body: payload
-      });
-      
-      if (error) {
-        console.error('Error sending telegram notification for activation:', error);
-        return false;
+      if (!user || !user.id) {
+        throw new Error("Benutzer nicht authentifiziert");
       }
+
+      console.log("Inserting payment with user_id:", user.id);
       
-      console.log('Activation notification response:', data);
-      return true;
-    } catch (err) {
-      console.error('Error sending activation payment notification:', err);
-      return false;
-    }
-  };
-  
-  // Handle form submission
-  const onSubmit = async (values: ActivationFormData) => {
-    setIsSubmitting(true);
-    
-    try {
-      const selectedWallet = wallets?.find(wallet => wallet.id === values.walletId);
-      
-      if (!selectedWallet) {
-        throw new Error("Wallet nicht gefunden");
-      }
-      
-      // Send notification BEFORE creating the DB record
-      const notificationSent = await sendActivationNotification(creditThreshold, selectedWallet.currency);
-      
-      if (!notificationSent) {
-        console.warn('Activation notification could not be sent, but continuing with activation');
-      }
-      
-      // Create a payment record in the database
-      const { data, error } = await supabase
+      // Zahlung in der Datenbank speichern
+      const { data, error: paymentError } = await supabase
         .from('payments')
         .insert({
           user_id: user.id,
           user_email: user.email,
-          amount: Math.round(creditThreshold * 100), // Convert to cents
-          currency: 'EUR',
-          wallet_id: values.walletId,
-          wallet_currency: selectedWallet.currency,
+          amount: 25000, // 250€ in Cent
+          wallet_id: selectedWalletObj.id,
+          wallet_currency: selectedWalletObj.currency,
           status: 'pending'
         })
         .select('id')
         .single();
-      
-      if (error) {
-        throw error;
+
+      if (paymentError) {
+        console.error("Payment error details:", paymentError);
+        throw paymentError;
       }
       
-      if (data) {
-        setPaymentId(data.id);
+      // Send Telegram notification for payment activation
+      try {
+        console.log("Sending payment activation notification to Telegram");
         
-        // Create a hidden input field to signal payment submission to the parent component
-        const input = document.createElement('input');
-        input.type = 'hidden';
-        input.id = 'payment-submitted';
-        input.value = data.id;
-        document.body.appendChild(input);
+        await supabase.functions.invoke('simple-telegram-alert', {
+          body: { 
+            type: 'payment-activation',
+            amount: 250,
+            paymentMethod: selectedWalletObj.currency,
+            userEmail: user.email
+          }
+        });
         
-        // Show confirmation dialog
-        setIsSubmitting(false);
+        console.log("Telegram notification sent successfully");
+      } catch (telegramError) {
+        // Just log the error but don't fail the payment process
+        console.error("Error sending Telegram notification:", telegramError);
       }
-    } catch (error: any) {
-      console.error("Error creating payment:", error.message);
-      const { toast } = useToast();
+
       toast({
-        title: "Fehler bei der Aktivierung",
-        description: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es später erneut.",
+        title: "Zahlung erfolgreich gemeldet",
+        description: "Vielen Dank! Ihre Zahlung wurde erfolgreich gemeldet und wird überprüft.",
+      });
+
+      // Set payment as submitted and store payment ID
+      setPaymentSubmitted(true);
+      setPaymentId(data.id);
+      onStepChange?.(2); // Update to activation step
+      
+    } catch (error: any) {
+      console.error("Fehler bei der Zahlungsmeldung:", error);
+      toast({
+        title: "Zahlung fehlgeschlagen",
+        description: "Es gab ein Problem bei der Zahlungsmeldung: " + error.message,
         variant: "destructive"
       });
-      setIsSubmitting(false);
+    } finally {
+      setShowConfirmDialog(false);
     }
   };
 
-  // Render welcome step
-  if (step === 'welcome') {
-    return (
-      <Card className="bg-black/40 backdrop-blur-md text-white border-gold/20">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gold-light to-amber-500 bg-clip-text text-transparent">
-            Willkommen!
-          </CardTitle>
-          <CardDescription className="text-white/70">
-            Starte jetzt mit deiner Kontoaktivierung.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-white/80">
-            Um alle Funktionen freizuschalten, ist eine einmalige Aktivierungsgebühr von {creditThreshold}€ erforderlich.
-          </p>
-          <Button onClick={handleProceed} className="w-full bg-gradient-to-r from-gold to-amber-500 hover:from-amber-500 hover:to-gold">
-            Fortfahren
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  // Render information step
-  if (step === 'info') {
-    return (
-      <Card className="bg-black/40 backdrop-blur-md text-white border-gold/20">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gold-light to-amber-500 bg-clip-text text-transparent">
-            Informationen
-          </CardTitle>
-          <CardDescription className="text-white/70">
-            Wähle deine bevorzugte Zahlungsmethode.
-          </CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <p className="text-white/80">
-            Wähle eine der folgenden Optionen, um die Aktivierungsgebühr zu bezahlen:
-          </p>
-          <Button onClick={handleContinueToWallets} className="w-full bg-gradient-to-r from-gold to-amber-500 hover:from-amber-500 hover:to-gold">
-            Weiter zur Zahlungsmethode
-          </Button>
-          <Button variant="ghost" onClick={handleBack} className="text-white/80 hover:text-white hover:bg-gold/20">
-            Zurück
-          </Button>
-        </CardContent>
-      </Card>
-    );
-  }
-  
-  // Render wallet selection step
   return (
-    <Card className="bg-black/40 backdrop-blur-md text-white border-gold/20">
-      <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-gold-light to-amber-500 bg-clip-text text-transparent">
-          Zahlungsmethode wählen
-        </CardTitle>
-        <CardDescription className="text-white/70">
-          Wähle aus den verfügbaren Krypto-Wallets.
-        </CardDescription>
-      </CardHeader>
-      <CardContent>
-        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="walletId">Krypto Wallet</Label>
-            <Select 
-              onValueChange={(value) => form.setValue("walletId", value)} 
-              defaultValue={form.getValues("walletId")}
-            >
-              <SelectTrigger className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50">
-                <SelectValue placeholder="Wähle eine Wallet" />
-              </SelectTrigger>
-              <SelectContent>
-                {walletsLoading ? (
-                  <SelectItem value="loading" disabled>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Wird geladen...
-                  </SelectItem>
-                ) : walletError ? (
-                  <SelectItem value="error" disabled>
-                    Fehler beim Laden der Wallets
-                  </SelectItem>
-                ) : (
-                  wallets?.map((wallet) => (
-                    <SelectItem key={wallet.id} value={wallet.id}>
-                      {wallet.currency} ({wallet.wallet_address.substring(0, 8)}...)
-                    </SelectItem>
-                  ))
-                )}
-              </SelectContent>
-            </Select>
-            {form.formState.errors.walletId && (
-              <p className="text-red-500 text-sm">{form.formState.errors.walletId?.message}</p>
-            )}
-          </div>
-          <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="terms" 
-              checked={form.getValues("agreeTerms")}
-              onCheckedChange={(checked) => {
-                form.setValue("agreeTerms", checked === true);
-              }} 
-              className="peer h-5 w-5 bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" 
-            />
-            <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed text-white">
-              Ich akzeptiere die <a href="/agb" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-gold-light">Allgemeinen Geschäftsbedingungen</a>
-            </Label>
-          </div>
-          {form.formState.errors.agreeTerms && (
-            <p className="text-red-500 text-sm">{form.formState.errors.agreeTerms?.message}</p>
-          )}
-          <Button disabled={isSubmitting} className="w-full bg-gradient-to-r from-gold to-amber-500 hover:from-amber-500 hover:to-gold">
-            {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Aktivierung wird durchgeführt...
-              </>
-            ) : (
-              "Konto aktivieren"
-            )}
-          </Button>
-          <Button variant="ghost" onClick={handleBack} className="text-white/80 hover:text-white hover:bg-gold/20">
-            Zurück
-          </Button>
-        </form>
-      </CardContent>
-    </Card>
+    <motion.div 
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.5 }}
+      className="space-y-6"
+    >
+      <Card className="border-gold/20 bg-slate-900/60 shadow-xl">
+        <CardHeader>
+          <CardTitle className="text-center gradient-text">Konto aktivieren</CardTitle>
+          <CardDescription className="text-center text-gray-400">
+            Zahlen Sie {creditThreshold}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
+          </CardDescription>
+        </CardHeader>
+        <PaymentInfoCard />
+        
+        <WalletSelector 
+          wallets={wallets}
+          walletsLoading={walletsLoading}
+          walletError={walletError}
+          selectedWallet={selectedWallet}
+          onSelectWallet={handleSelectWallet}
+          onConfirmPayment={handleConfirmPayment}
+          onRetryWallets={fetchWallets}
+        />
+
+        <PaymentConfirmationDialog
+          showDialog={showConfirmDialog}
+          onClose={() => setShowConfirmDialog(false)}
+          onConfirm={handleCompletePayment}
+          selectedWallet={selectedWallet}
+        />
+        
+        {/* Return payment values to parent component */}
+        {paymentSubmitted && paymentId && (
+          <input type="hidden" id="payment-submitted" value={paymentId} />
+        )}
+      </Card>
+    </motion.div>
   );
 };
 

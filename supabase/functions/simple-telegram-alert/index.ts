@@ -35,12 +35,9 @@ function validatePayload(payload: any, type: string): boolean {
   if (!payload) return false;
   
   if (type === 'lead') {
-    return !!(payload.id || payload.name && payload.email && payload.created_at);
+    return !!(payload.id && payload.name && payload.email && payload.created_at);
   } else if (type === 'payment') {
     return !!(payload.user_email && payload.amount);
-  } else if (type === 'payment-activation') {
-    // Added validation for payment-activation type
-    return !!(payload.userEmail && payload.amount);
   } else if (type === 'withdrawal') {
     return !!(payload.amount && payload.walletCurrency && payload.walletAddress && payload.userEmail);
   }
@@ -151,12 +148,12 @@ serve(async (req) => {
         }
         
         entry_type = 'lead';
-        entry_id = payload.id || 'temp_' + Date.now();
+        entry_id = payload.id;
         message = `🔔 *Neuer Lead erhalten!*\n\n` +
           `*Name:* ${payload.name}\n` +
           `*Email:* ${payload.email}\n` +
           `*Telefon:* ${payload.phone || 'Nicht angegeben'}\n` +
-          `*Datum:* ${payload.created_at ? formatDate(payload.created_at) : formatDate(new Date().toISOString())}`;
+          `*Datum:* ${formatDate(payload.created_at)}`;
       } 
       else if (payload.type === 'payment') {
         // For payment, handle both database-created format and direct API call format
@@ -210,36 +207,6 @@ serve(async (req) => {
             `*Status:* Ausstehend\n` +
             `*Datum:* ${formatDate(new Date().toISOString())}`;
         }
-      }
-      else if (payload.type === 'payment-activation') {
-        // New handler for payment-activation type
-        // Validate payload has required fields
-        if (!validatePayload(payload, 'payment-activation')) {
-          throw new Error(`Invalid payment-activation payload: ${JSON.stringify(payload)}`);
-        }
-        
-        entry_type = 'payment-activation';
-        entry_id = 'temp_' + Date.now();
-        
-        // Handle amount in different formats
-        let amountStr: string;
-        if (typeof payload.amount === 'number') {
-          amountStr = `${payload.amount.toFixed(2)}€`;
-        } else if (typeof payload.amount === 'string') {
-          amountStr = `${payload.amount}€`;
-        } else {
-          amountStr = '250.00€'; // Default activation amount
-        }
-        
-        // Get payment method if available
-        const paymentMethod = payload.paymentMethod || payload.walletCurrency || 'Krypto';
-        
-        message = `🚀 *Neue Aktivierungsgebühr eingegangen!*\n\n` +
-          `*Benutzer:* ${payload.userEmail || payload.user_email || 'Nicht angegeben'}\n` +
-          `*Betrag:* ${amountStr}\n` +
-          `*Zahlungsmethode:* ${paymentMethod}\n` +
-          `*Status:* Ausstehend\n` +
-          `*Datum:* ${formatDate(new Date().toISOString())}`;
       }
       else if (payload.type === 'withdrawal') {
         // Validate payload has required fields

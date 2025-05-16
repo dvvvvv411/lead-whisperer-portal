@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -24,10 +25,13 @@ const activationSchema = z.object({
   walletId: z.string().min(1, {
     message: "Bitte wählen Sie eine Wallet aus.",
   }),
-  agreeTerms: z.literal(true, {
-    errorMap: () => ({ message: 'Um fortzufahren, müssen Sie die Bedingungen akzeptieren.' }),
+  agreeTerms: z.boolean().refine(val => val === true, {
+    message: 'Um fortzufahren, müssen Sie die Bedingungen akzeptieren.'
   }),
 });
+
+// Define the type for the form data
+type ActivationFormData = z.infer<typeof activationSchema>;
 
 const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, creditThreshold: number, onStepChange: (step: number) => void }) => {
   const [step, setStep] = useState<'welcome' | 'info' | 'wallets'>('welcome');
@@ -39,7 +43,7 @@ const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, cr
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
   
   // Get form from hook
-  const form = useForm<z.infer<typeof activationSchema>>({
+  const form = useForm<ActivationFormData>({
     resolver: zodResolver(activationSchema),
     defaultValues: {
       walletId: '',
@@ -107,7 +111,7 @@ const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, cr
   };
   
   // Handle form submission
-  const onSubmit = async (values: z.infer<typeof activationSchema>) => {
+  const onSubmit = async (values: ActivationFormData) => {
     setIsSubmitting(true);
     
     try {
@@ -234,7 +238,10 @@ const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, cr
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <div className="space-y-2">
             <Label htmlFor="walletId">Krypto Wallet</Label>
-            <Select onValueChange={form.setValue} defaultValue={form.getValues("walletId")}>
+            <Select 
+              onValueChange={(value) => form.setValue("walletId", value)} 
+              defaultValue={form.getValues("walletId")}
+            >
               <SelectTrigger className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50">
                 <SelectValue placeholder="Wähle eine Wallet" />
               </SelectTrigger>
@@ -251,7 +258,7 @@ const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, cr
                 ) : (
                   wallets?.map((wallet) => (
                     <SelectItem key={wallet.id} value={wallet.id}>
-                      {wallet.name} ({wallet.currency})
+                      {wallet.currency} ({wallet.wallet_address.substring(0, 8)}...)
                     </SelectItem>
                   ))
                 )}
@@ -262,7 +269,14 @@ const ActivationForm = ({ user, creditThreshold, onStepChange }: { user: any, cr
             )}
           </div>
           <div className="flex items-center space-x-2">
-            <Checkbox id="terms" onCheckedChange={checked => form.setValue("agreeTerms", checked)} className="peer h-5 w-5 bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
+            <Checkbox 
+              id="terms" 
+              checked={form.getValues("agreeTerms")}
+              onCheckedChange={(checked) => {
+                form.setValue("agreeTerms", checked === true);
+              }} 
+              className="peer h-5 w-5 bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" 
+            />
             <Label htmlFor="terms" className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed text-white">
               Ich akzeptiere die <a href="/agb" target="_blank" rel="noopener noreferrer" className="underline underline-offset-2 text-gold-light">Allgemeinen Geschäftsbedingungen</a>
             </Label>

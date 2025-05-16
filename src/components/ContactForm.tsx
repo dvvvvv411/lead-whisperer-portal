@@ -33,28 +33,32 @@ const ContactForm = () => {
   };
   
   // Function to send Telegram notification
-  const sendTelegramNotification = async () => {
+  const sendTelegramNotification = async (leadId: string, created_at: string) => {
     try {
       // Include the form data in the notification payload
       const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
         body: { 
           type: 'lead',
+          id: leadId,
           name: formData.name,
           email: formData.email,
-          phone: formData.phone,
-          message: formData.message || "Keine Nachricht"
+          phone: formData.phone || "Nicht angegeben",
+          message: formData.message || "Keine Nachricht",
+          created_at: created_at
         }
       });
       
       if (error) {
         console.error("Error sending Telegram notification:", error);
-        return;
+        return false;
       }
       
       console.log("Telegram notification sent:", data);
+      return true;
     } catch (err) {
       console.error("Failed to send Telegram notification:", err);
       // Non-blocking - we don't want to affect the user experience if this fails
+      return false;
     }
   };
   
@@ -85,15 +89,23 @@ const ContactForm = () => {
 
       // In Supabase speichern
       const {
+        data: leadData,
         error
-      } = await supabase.from('leads').insert(finalData);
+      } = await supabase.from('leads').insert(finalData).select('id, created_at').single();
+      
       if (error) {
         console.error("Formular-Fehler:", error);
         throw error;
       }
 
-      // Send Telegram notification after successful form submission
-      await sendTelegramNotification();
+      if (leadData) {
+        // Send Telegram notification after successful lead creation
+        const notificationSent = await sendTelegramNotification(leadData.id, leadData.created_at);
+        
+        if (!notificationSent) {
+          console.warn("Telegram notification could not be sent for lead, but continuing");
+        }
+      }
 
       // Send confirmation email
       try {

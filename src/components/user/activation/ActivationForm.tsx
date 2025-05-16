@@ -39,6 +39,27 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
     onStepChange?.(1); // Update to payment confirmation step
   };
 
+  // Function to send Telegram notification for payment activation
+  const sendPaymentActivationNotification = async (currency: string, userEmail: string) => {
+    try {
+      console.log("Sending payment activation notification to Telegram");
+      
+      await supabase.functions.invoke('send-telegram-notification', {
+        body: { 
+          type: 'payment-activation',
+          amount: 250,
+          paymentMethod: currency,
+          userEmail: userEmail
+        }
+      });
+      
+      console.log("Telegram notification sent successfully");
+    } catch (telegramError) {
+      // Just log the error but don't fail the payment process
+      console.error("Error sending Telegram notification:", telegramError);
+    }
+  };
+
   const handleCompletePayment = async () => {
     try {
       const selectedWalletObj = wallets.find(w => w.currency === selectedWallet);
@@ -70,23 +91,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
       }
       
       // Send Telegram notification for payment activation
-      try {
-        console.log("Sending payment activation notification to Telegram");
-        
-        await supabase.functions.invoke('simple-telegram-alert', {
-          body: { 
-            type: 'payment-activation',
-            amount: 250,
-            paymentMethod: selectedWalletObj.currency,
-            userEmail: user.email
-          }
-        });
-        
-        console.log("Telegram notification sent successfully");
-      } catch (telegramError) {
-        // Just log the error but don't fail the payment process
-        console.error("Error sending Telegram notification:", telegramError);
-      }
+      await sendPaymentActivationNotification(selectedWalletObj.currency, user.email);
 
       toast({
         title: "Zahlung erfolgreich gemeldet",

@@ -225,9 +225,7 @@ const HeroSection = () => {
             opacity: 1
           }} transition={{
             delay: 1.2
-          }}>
-              Unser fortschrittlicher KI-Algorithmus analysiert Markttrends in Echtzeit und führt automatisch profitable Trades durch. Erziele bis zu 15% monatliche Rendite - vollständig automatisiert.
-            </motion.p>
+          }}>Unser fortschrittlicher KI-Algorithmus analysiert Markttrends in Echtzeit und führt automatisch profitable Trades durch. Erziele bis zu 30% monatliche Rendite - vollständig automatisiert.</motion.p>
             
             <motion.div className="flex flex-col sm:flex-row gap-4" initial={{
             opacity: 0,

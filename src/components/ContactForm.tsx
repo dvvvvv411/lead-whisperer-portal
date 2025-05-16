@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -32,13 +31,13 @@ const ContactForm = () => {
     }));
   };
   
-  // Function to send Telegram notification
-  const sendTelegramNotification = async () => {
+  // Function to send Telegram notification using the new edge function
+  const sendLeadTelegramNotification = async () => {
     try {
-      // Include the form data in the notification payload
-      const { data, error } = await supabase.functions.invoke('simple-telegram-alert', {
+      console.log("Sending lead notification to Telegram using lead-form-notification function");
+      
+      const { data, error } = await supabase.functions.invoke('lead-form-notification', {
         body: { 
-          type: 'lead',
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
@@ -47,13 +46,13 @@ const ContactForm = () => {
       });
       
       if (error) {
-        console.error("Error sending Telegram notification:", error);
+        console.error("Error sending lead Telegram notification:", error);
         return;
       }
       
-      console.log("Telegram notification sent:", data);
+      console.log("Lead Telegram notification sent:", data);
     } catch (err) {
-      console.error("Failed to send Telegram notification:", err);
+      console.error("Failed to send lead Telegram notification:", err);
       // Non-blocking - we don't want to affect the user experience if this fails
     }
   };
@@ -92,8 +91,8 @@ const ContactForm = () => {
         throw error;
       }
 
-      // Send Telegram notification after successful form submission
-      await sendTelegramNotification();
+      // Send Telegram notification using our new edge function
+      await sendLeadTelegramNotification();
 
       // Send confirmation email
       try {

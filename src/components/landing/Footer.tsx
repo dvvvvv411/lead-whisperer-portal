@@ -103,9 +103,7 @@ const Footer = () => {
           </div>
           
           <div className="text-center mt-6">
-            <p className="text-xs text-gray-500">
-              Risikohinweis: Der Handel mit Kryptowährungen birgt erhebliche Risiken und kann zum Verlust Ihres investierten Kapitals führen. Bitte investieren Sie nur Beträge, deren Verlust Sie sich leisten können.
-            </p>
+            
           </div>
         </div>
       </div>

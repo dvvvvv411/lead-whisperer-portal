@@ -8,7 +8,7 @@ import { useNavigate } from "react-router-dom";
 
 interface LogoutButtonProps {
   className?: string;
-  variant?: "default" | "ghost" | "outline";
+  variant?: "default" | "ghost" | "outline" | "destructive";
 }
 
 const LogoutButton = ({ className, variant = "outline" }: LogoutButtonProps) => {

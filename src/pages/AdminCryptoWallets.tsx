@@ -1,44 +1,28 @@
 
 import { useEffect, useState } from "react";
-import { checkUserRole } from "@/services/roleService";
 import { supabase } from "@/integrations/supabase/client";
 import { CryptoWalletManager } from "@/components/admin/crypto-wallets/CryptoWalletManager";
 import { motion } from "framer-motion";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const AdminCryptoWallets = () => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { user, authLoading } = useAdminAuth();
+  const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState<boolean>(false);
 
+  // Check if this is a leads-only user
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      const { data } = await supabase.auth.getSession();
+    if (user) {
+      const isLeadsOnly = user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
+      setIsLeadsOnlyUser(isLeadsOnly);
       
-      if (!data.session) {
-        window.location.href = "/admin";
-        return;
-      }
-      
-      // Prüfen, ob der Benutzer die spezielle Leads-Only-ID hat
-      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-        console.log("Leads-only user detected, redirecting to leads page");
+      // Wenn es ein Leads-Only-Benutzer ist, zur Leads-Seite weiterleiten
+      if (isLeadsOnly) {
         window.location.href = "/admin/leads";
-        return;
       }
-      
-      const adminCheck = await checkUserRole('admin');
-      setIsAdmin(adminCheck);
-      setLoading(false);
-      
-      // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
-      if (!adminCheck) {
-        window.location.href = "/nutzer";
-      }
-    };
-    
-    checkAdminStatus();
-  }, []);
+    }
+  }, [user]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
         <motion.div 
@@ -55,7 +39,7 @@ const AdminCryptoWallets = () => {
     );
   }
 
-  return isAdmin ? <CryptoWalletManager /> : null;
+  return !isLeadsOnlyUser ? <CryptoWalletManager /> : null;
 };
 
 export default AdminCryptoWallets;

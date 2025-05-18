@@ -6,6 +6,7 @@ import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Men
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
+import LogoutButton from "./LogoutButton";
 
 export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -47,6 +48,11 @@ export const AdminNavbar = () => {
               <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
             </div>
             
+            {/* Logout Button */}
+            <div className="hidden md:block">
+              <LogoutButton />
+            </div>
+            
             {/* Mobile Navigation Trigger */}
             <div className="md:hidden">
               <Button variant="ghost" size="sm" className="text-gold hover:text-gold/80" onClick={() => setIsOpen(!isOpen)}>
@@ -77,6 +83,11 @@ export const AdminNavbar = () => {
             <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
+            
+            {/* Mobile Logout Button */}
+            <div className="px-3 py-2 mt-2 border-t border-gold/10 pt-2">
+              <LogoutButton className="w-full justify-center" variant="ghost" />
+            </div>
           </motion.div>}
       </div>
     </div>;

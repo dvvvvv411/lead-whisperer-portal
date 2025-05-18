@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -8,6 +9,7 @@ import { Search, MessageSquareHeart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TelegramChatIdDialog } from "../telegram/TelegramChatIdDialog";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 interface UserData {
   id: string;
@@ -22,47 +24,21 @@ interface UserData {
 
 export const UserManager = () => {
   const { toast } = useToast();
+  const { user } = useAdminAuth();
   const [users, setUsers] = useState<UserData[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<UserData[]>([]);
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [isLoading, setIsLoading] = useState(true);
-  const [currentUser, setCurrentUser] = useState<any>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState<boolean>(false);
   const [telegramDialogOpen, setTelegramDialogOpen] = useState(false);
 
-  // Benutzer-Session abrufen
+  // Check if this is a leads-only user
   useEffect(() => {
-    const getUser = async () => {
-      try {
-        const { data, error } = await supabase.auth.getUser();
-        if (error) {
-          throw error;
-        }
-        
-        if (data?.user) {
-          setCurrentUser(data.user);
-          // Prüfen, ob es sich um den speziellen Leads-Only-Benutzer handelt
-          setIsLeadsOnlyUser(data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f");
-        } else {
-          // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
-          window.location.href = "/admin";
-        }
-      } catch (error) {
-        console.error("Error fetching current user:", error);
-        toast({
-          title: "Fehler beim Laden des Benutzers",
-          description: "Ihre Sitzung könnte abgelaufen sein. Bitte melden Sie sich erneut an.",
-          variant: "destructive"
-        });
-        
-        // Redirect to login on error
-        window.location.href = "/admin";
-      }
-    };
-    
-    getUser();
-  }, [toast]);
+    if (user) {
+      setIsLeadsOnlyUser(user.id === "7eccf781-5911-4d90-a683-1df251069a2f");
+    }
+  }, [user]);
 
   // Benutzer und deren Guthaben abrufen
   const fetchUsers = useCallback(async () => {
@@ -214,7 +190,7 @@ export const UserManager = () => {
           transition={{ duration: 0.4 }}
         >
           <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Benutzerverwaltung</h1>
-          <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
+          <p className="text-gray-400">Eingeloggt als: {user?.email}</p>
         </motion.div>
 
         {/* Suchfunktion und Admin Tools */}

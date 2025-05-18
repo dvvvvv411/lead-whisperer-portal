@@ -1,30 +1,14 @@
 
-import { useEffect, useState } from "react";
-import { checkUserRole } from "@/services/roleService";
+import { useState } from "react";
 import { PaymentManager } from "@/components/admin/payments/PaymentManager";
 import { motion } from "framer-motion";
 import { PaymentNotifier } from "@/components/admin/payments/PaymentNotifier";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const AdminPayments = () => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const checkAdminStatus = async () => {
-      const adminCheck = await checkUserRole('admin');
-      setIsAdmin(adminCheck);
-      setLoading(false);
-      
-      // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
-      if (!adminCheck) {
-        window.location.href = "/nutzer";
-      }
-    };
-    
-    checkAdminStatus();
-  }, []);
-
-  if (loading) {
+  const { user, authLoading } = useAdminAuth();
+  
+  if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
         <motion.div 
@@ -41,12 +25,12 @@ const AdminPayments = () => {
     );
   }
 
-  return isAdmin ? (
+  return (
     <>
       <PaymentNotifier />
       <PaymentManager />
     </>
-  ) : null;
+  );
 };
 
 export default AdminPayments;

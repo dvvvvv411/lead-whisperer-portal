@@ -1,49 +1,33 @@
 
 import { useEffect, useState } from "react";
 import LeadTable from "@/components/admin/LeadTable";
-import { checkUserRole } from "@/services/roleService";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
+import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const AdminLeads = () => {
-  const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
+  const { user, authLoading } = useAdminAuth();
   const [isLeadsOnly, setIsLeadsOnly] = useState<boolean>(false);
-  const [loading, setLoading] = useState(true);
 
+  // Check for leads_only role when user data is available
   useEffect(() => {
-    const checkAdminStatus = async () => {
-      const { data } = await supabase.auth.getSession();
-      
-      if (!data.session) {
-        window.location.href = "/admin";
-        return;
-      }
-      
-      // Check for admin role
-      const adminCheck = await checkUserRole('admin');
-      setIsAdmin(adminCheck);
-      
-      // Check if user has leads_only restriction
-      const { data: leadsOnlyData, error } = await supabase.rpc('is_leads_only_user', {
-        user_id_param: data.session.user.id
-      });
-      
-      if (!error && leadsOnlyData) {
-        setIsLeadsOnly(leadsOnlyData);
-      }
-      
-      setLoading(false);
-      
-      // If not admin or leads_only, redirect to user dashboard
-      if (!adminCheck && !leadsOnlyData) {
-        window.location.href = "/nutzer";
+    const checkRole = async () => {
+      if (user) {
+        // Check if user has leads_only restriction
+        const { data: leadsOnlyData, error } = await supabase.rpc('is_leads_only_user', {
+          user_id_param: user.id
+        });
+        
+        if (!error && leadsOnlyData) {
+          setIsLeadsOnly(leadsOnlyData);
+        }
       }
     };
     
-    checkAdminStatus();
-  }, []);
+    checkRole();
+  }, [user]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
         <motion.div 
@@ -60,7 +44,8 @@ const AdminLeads = () => {
     );
   }
 
-  return (isAdmin || isLeadsOnly) ? <LeadTable /> : null;
+  // If user is admin or isLeadsOnly, show the lead table
+  return <LeadTable />;
 };
 
 export default AdminLeads;

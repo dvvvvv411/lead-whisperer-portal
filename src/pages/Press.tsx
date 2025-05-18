@@ -1,7 +1,9 @@
+
 import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
 import { Card, CardContent } from "@/components/ui/card";
 import { ExternalLink } from "lucide-react";
+
 interface PressItem {
   id: string;
   logo: string;
@@ -11,6 +13,7 @@ interface PressItem {
   url: string;
   date: string;
 }
+
 const pressItems: PressItem[] = [{
   id: "handelsblatt",
   logo: "/press/handelsblatt-logo.png",
@@ -36,46 +39,38 @@ const pressItems: PressItem[] = [{
   url: "https://www.wirtschafts-woche.net/finanzen/geldanlage/bitloon-aus-frankfurt-wie-ein-ki-start-up-den-krypto-handel-professionalisieren-will/100127150.html",
   date: "3. Mai 2024"
 }];
+
 const Press = () => {
   return <PageLayout title="Pressemitteilungen" description="Erfahren Sie, was die Medien über unsere KI-gestützte Krypto-Trading-Plattform sagen.">
       <div className="max-w-4xl mx-auto">
         <div className="mb-12 text-center">
-          <motion.h2 className="text-2xl md:text-3xl font-bold mb-4" initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.2
-        }}>Medienberichte über Bitloon</motion.h2>
-          <motion.p className="text-gray-300 max-w-2xl mx-auto" initial={{
-          opacity: 0
-        }} animate={{
-          opacity: 1
-        }} transition={{
-          delay: 0.4
-        }}>
+          <motion.h2 className="text-2xl md:text-3xl font-bold mb-4" 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.2 }}
+          >
+            Medienberichte über Bitloon
+          </motion.h2>
+          <motion.p className="text-gray-300 max-w-2xl mx-auto" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ delay: 0.4 }}
+          >
             Unsere innovative KI-Trading-Technologie erregt Aufmerksamkeit in der Finanzwelt. Hier finden Sie aktuelle Medienberichte über Bitloon.
           </motion.p>
         </div>
 
-        <motion.div className="grid gap-8" initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} transition={{
-        delay: 0.6
-      }}>
-          {pressItems.map((item, index) => <motion.div key={item.id} initial={{
-          opacity: 0,
-          y: 20
-        }} animate={{
-          opacity: 1,
-          y: 0
-        }} transition={{
-          delay: 0.2 + index * 0.2
-        }}>
+        <motion.div className="grid gap-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          {pressItems.map((item, index) => (
+            <motion.div key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.2 }}
+            >
               <a href={item.url} target="_blank" rel="noopener noreferrer" className="block">
                 <Card className="overflow-hidden backdrop-blur-sm border-gold/30 bg-gradient-to-b from-casino-card/90 to-casino-dark/90 hover:shadow-lg hover:shadow-gold/10 transition-all duration-300">
                   <CardContent className="p-0">
@@ -100,9 +95,11 @@ const Press = () => {
                   </CardContent>
                 </Card>
               </a>
-            </motion.div>)}
+            </motion.div>
+          ))}
         </motion.div>
       </div>
     </PageLayout>;
 };
+
 export default Press;

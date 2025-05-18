@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
 import { motion } from "framer-motion";
-import { Search, MessageSquareAlert } from "lucide-react";
+import { Search, MessageSquareHeart } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { TelegramChatIdDialog } from "../telegram/TelegramChatIdDialog";
@@ -242,7 +242,7 @@ export const UserManager = () => {
               className="bg-gold/80 hover:bg-gold text-black font-medium whitespace-nowrap"
               disabled={isLoading}
             >
-              <MessageSquareAlert className="h-4 w-4 mr-2" />
+              <MessageSquareHeart className="h-4 w-4 mr-2" />
               Telegram Chat-IDs
             </Button>
           </div>

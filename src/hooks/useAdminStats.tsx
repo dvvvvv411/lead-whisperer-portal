@@ -1,6 +1,6 @@
 
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { supabase, supabaseAdmin } from "@/integrations/supabase/client";
 
 interface AdminStats {
   leads: {
@@ -68,8 +68,8 @@ export function useAdminStats(): AdminStats {
         (lead: LeadData) => new Date(lead.created_at).toDateString() === new Date().toDateString()
       ).length : 0;
       
-      // Fetch users stats
-      const { data: usersData, error: usersError } = await supabase.auth.admin.listUsers();
+      // Fetch users stats - Using supabaseAdmin for admin operations
+      const { data: usersData, error: usersError } = await supabaseAdmin.auth.admin.listUsers();
       
       if (usersError) throw new Error(`Users error: ${usersError.message}`);
 

@@ -2,7 +2,6 @@
 import { RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { motion } from "framer-motion";
-import LogoutButton from "../LogoutButton";
 
 interface LeadTableHeaderProps {
   userEmail: string | undefined;
@@ -37,10 +36,6 @@ export const LeadTableHeader = ({
           <RefreshCw className="h-4 w-4" />
           Aktualisieren
         </Button>
-        <LogoutButton 
-          className="bg-red-900/50 border border-red-500/30 hover:bg-red-800/30 text-red-300"
-          variant="destructive"
-        />
       </div>
     </motion.div>
   );

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
@@ -46,11 +45,8 @@ export const AdminNavbar = () => {
               <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
               <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
               <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
-            </div>
-            
-            {/* Logout Button */}
-            <div className="hidden md:block">
-              <LogoutButton />
+              {/* Logout Button for desktop */}
+              <LogoutButton className="ml-2" variant="outline" />
             </div>
             
             {/* Mobile Navigation Trigger */}

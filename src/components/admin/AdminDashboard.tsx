@@ -3,24 +3,18 @@ import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { useToast } from "@/hooks/use-toast";
 import { 
   LayoutDashboard, 
   List, 
-  Menu, 
-  LogOut, 
   Wallet,
   Users,
   CreditCard,
   ArrowUpRight
 } from "lucide-react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 
 export const AdminDashboard = () => {
-  const { toast } = useToast();
-  const navigate = useNavigate();
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,24 +29,6 @@ export const AdminDashboard = () => {
     
     getUser();
   }, []);
-
-  const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-      toast({
-        title: "Erfolgreich abgemeldet",
-        description: "Sie wurden erfolgreich abgemeldet."
-      });
-      navigate("/");
-    } catch (error: any) {
-      console.error("Fehler beim Abmelden:", error);
-      toast({
-        title: "Fehler beim Abmelden",
-        description: error.message || "Ein unerwarteter Fehler ist aufgetreten.",
-        variant: "destructive"
-      });
-    }
-  };
 
   if (loading) {
     return (
@@ -125,19 +101,9 @@ export const AdminDashboard = () => {
       <AdminNavbar />
       
       <div className="container mx-auto p-4">
-        <div className="flex justify-between items-center mb-8">
-          <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Admin Dashboard</h1>
-            {currentUser && <p className="text-gray-400">Angemeldet als: {currentUser.email}</p>}
-          </div>
-          <Button 
-            variant="outline" 
-            onClick={handleLogout} 
-            className="flex items-center gap-2 border-gold/30 text-gold hover:bg-gold/10 hover:text-gold"
-          >
-            <LogOut className="w-4 h-4" />
-            Abmelden
-          </Button>
+        <div className="mb-8">
+          <h1 className="text-3xl font-bold bg-gradient-to-r from-gold via-gold-light to-gold bg-clip-text text-transparent">Admin Dashboard</h1>
+          {currentUser && <p className="text-gray-400">Angemeldet als: {currentUser.email}</p>}
         </div>
         
         <motion.div 

@@ -28,6 +28,12 @@ interface AdminStats {
   refresh: () => void;
 }
 
+// Define a type for the lead data returned from Supabase
+interface LeadData {
+  created_at: string;
+  // Add other fields that might be present in your leads table if needed
+}
+
 export function useAdminStats(): AdminStats {
   const [stats, setStats] = useState<Omit<AdminStats, 'isLoading' | 'error' | 'refresh'>>({
     leads: { total: 0, today: 0 },
@@ -53,7 +59,7 @@ export function useAdminStats(): AdminStats {
       
       const totalLeads = leadsData ? leadsData.length : 0;
       const todayLeads = leadsData ? leadsData.filter(
-        lead => new Date(lead.created_at).toDateString() === new Date().toDateString()
+        (lead: LeadData) => new Date(lead.created_at).toDateString() === new Date().toDateString()
       ).length : 0;
       
       // Fetch users stats

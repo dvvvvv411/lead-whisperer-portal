@@ -9,14 +9,28 @@ import {
   Wallet,
   Users,
   CreditCard,
-  ArrowUpRight
+  ArrowUpRight,
+  BarChart2,
+  ArrowUp,
+  Coins,
+  DollarSign,
+  TrendingUp,
+  FileText,
+  Inbox
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import { useAdminStats } from "@/hooks/useAdminStats";
+import { Badge } from "@/components/ui/badge";
+import { formatCurrency } from "@/lib/utils";
 
 export const AdminDashboard = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const { 
+    leads, users, credits, payments, withdrawals, 
+    isLoading: statsLoading, refresh: refreshStats 
+  } = useAdminStats();
 
   useEffect(() => {
     const getUser = async () => {
@@ -96,6 +110,13 @@ export const AdminDashboard = () => {
     show: { y: 0, opacity: 1 }
   };
 
+  // Animation for stat counters
+  const countAnimation = {
+    initial: { opacity: 0, y: 10 },
+    animate: { opacity: 1, y: 0 },
+    transition: { duration: 0.5 }
+  };
+
   return (
     <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
@@ -132,29 +153,156 @@ export const AdminDashboard = () => {
         {/* Stats Summary Card */}
         <Card className="border-gold/10 bg-casino-card bg-gradient-to-br from-casino-dark to-casino-card">
           <CardHeader>
-            <CardTitle className="text-xl text-gray-200">System Übersicht</CardTitle>
+            <CardTitle className="text-xl text-gray-200 flex items-center justify-between">
+              <span>System Übersicht</span>
+              {statsLoading ? (
+                <Badge variant="outline" className="bg-gold/10 text-gold text-xs">
+                  Wird geladen...
+                </Badge>
+              ) : (
+                <Badge 
+                  variant="outline" 
+                  className="bg-green-900/20 text-green-400 text-xs cursor-pointer hover:bg-green-900/30"
+                  onClick={refreshStats}
+                >
+                  Aktualisiert {new Date().toLocaleTimeString()}
+                </Badge>
+              )}
+            </CardTitle>
           </CardHeader>
-          <CardContent className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div className="p-4 rounded-lg bg-casino-darker border border-gold/10 flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Gesamt Benutzer</p>
-                <p className="text-2xl font-bold text-gold">--</p>
+          <CardContent>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+              {/* Leads Stats */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-blue-500/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Leads Gesamt</p>
+                  <BarChart2 className="w-5 h-5 text-blue-400/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-blue-400" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-blue-400/20 rounded animate-pulse"></span>
+                  ) : leads.total.toLocaleString()}
+                </motion.p>
+                <div className="flex items-center gap-1 mt-1">
+                  <ArrowUp className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-green-400">
+                    {statsLoading ? (
+                      <span className="inline-block h-3 w-10 bg-green-400/20 rounded animate-pulse"></span>
+                    ) : leads.today}
+                  </span>
+                  <span className="text-xs text-gray-400">heute</span>
+                </div>
               </div>
-              <Users className="w-10 h-10 text-gold/40" />
-            </div>
-            <div className="p-4 rounded-lg bg-casino-darker border border-gold/10 flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Aktive Wallets</p>
-                <p className="text-2xl font-bold text-green-400">--</p>
+
+              {/* Users Stats */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-gold/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Benutzer Gesamt</p>
+                  <Users className="w-5 h-5 text-gold/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-gold" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-gold/20 rounded animate-pulse"></span>
+                  ) : users.total.toLocaleString()}
+                </motion.p>
+                <div className="flex items-center gap-1 mt-1">
+                  <ArrowUp className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-green-400">
+                    {statsLoading ? (
+                      <span className="inline-block h-3 w-10 bg-green-400/20 rounded animate-pulse"></span>
+                    ) : users.today}
+                  </span>
+                  <span className="text-xs text-gray-400">heute</span>
+                </div>
               </div>
-              <Wallet className="w-10 h-10 text-green-400/40" />
-            </div>
-            <div className="p-4 rounded-lg bg-casino-darker border border-gold/10 flex items-center justify-between">
-              <div>
-                <p className="text-sm text-gray-400">Offene Auszahlungen</p>
-                <p className="text-2xl font-bold text-blue-400">--</p>
+
+              {/* Credits Stats */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-green-500/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Kundenguthaben Gesamt</p>
+                  <Coins className="w-5 h-5 text-green-400/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-green-400" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-green-400/20 rounded animate-pulse"></span>
+                  ) : formatCurrency(credits.totalEur)}
+                </motion.p>
               </div>
-              <ArrowUpRight className="w-10 h-10 text-blue-400/40" />
+
+              {/* Payments Stats - Total Amount */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-purple-500/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Einzahlungen Gesamt</p>
+                  <DollarSign className="w-5 h-5 text-purple-400/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-purple-400" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-purple-400/20 rounded animate-pulse"></span>
+                  ) : formatCurrency(payments.totalAmount)}
+                </motion.p>
+                <div className="flex items-center gap-1 mt-1">
+                  <TrendingUp className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-green-400">
+                    {statsLoading ? (
+                      <span className="inline-block h-3 w-10 bg-green-400/20 rounded animate-pulse"></span>
+                    ) : formatCurrency(payments.todayAmount)}
+                  </span>
+                  <span className="text-xs text-gray-400">heute</span>
+                </div>
+              </div>
+
+              {/* Payments Stats - Count */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-teal-500/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Anzahl Transaktionen</p>
+                  <FileText className="w-5 h-5 text-teal-400/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-teal-400" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-teal-400/20 rounded animate-pulse"></span>
+                  ) : payments.total.toLocaleString()}
+                </motion.p>
+                <div className="flex items-center gap-1 mt-1">
+                  <ArrowUp className="w-4 h-4 text-green-400" />
+                  <span className="text-xs text-green-400">
+                    {statsLoading ? (
+                      <span className="inline-block h-3 w-10 bg-green-400/20 rounded animate-pulse"></span>
+                    ) : payments.todayCount}
+                  </span>
+                  <span className="text-xs text-gray-400">heute</span>
+                </div>
+              </div>
+
+              {/* Withdrawals Stats */}
+              <div className="p-4 rounded-lg bg-casino-darker border border-blue-500/10 flex flex-col gap-2">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm text-gray-400">Offene Auszahlungen</p>
+                  <Inbox className="w-5 h-5 text-blue-400/60" />
+                </div>
+                <motion.p 
+                  className="text-2xl font-bold text-blue-400" 
+                  {...countAnimation}
+                >
+                  {statsLoading ? (
+                    <span className="inline-block h-8 w-16 bg-blue-400/20 rounded animate-pulse"></span>
+                  ) : withdrawals.pendingCount.toLocaleString()}
+                </motion.p>
+              </div>
             </div>
           </CardContent>
         </Card>

@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/user/theme/theme-provider";
@@ -30,6 +31,7 @@ import TradingBot from "./pages/TradingBot";
 import Experiences from "./pages/Experiences";
 import Haftungsausschluss from "./pages/Haftungsausschluss";
 import TestNotifications from "./pages/TestNotifications";
+import Press from "./pages/Press";
 
 const queryClient = new QueryClient();
 
@@ -72,6 +74,7 @@ function App() {
             <Route path="/faq" element={<FAQ />} />
             <Route path="/status" element={<Status />} />
             <Route path="/partner" element={<Partners />} />
+            <Route path="/presse" element={<Press />} />
             <Route path="/erfahrungen" element={<Experiences />} />
             <Route path="/haftungsausschluss" element={<Haftungsausschluss />} />
             <Route path="/test-notifications" element={<TestNotifications />} />

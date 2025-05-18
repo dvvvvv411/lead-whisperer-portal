@@ -50,6 +50,12 @@ const MobileMenu = ({ isOpen, activeSection, scrollToSection }: MobileMenuProps)
           Partner
         </MobileNavLink>
         <MobileNavLink 
+          active={currentPath === "/presse"} 
+          onClick={() => window.location.href = '/presse'}
+        >
+          Presse
+        </MobileNavLink>
+        <MobileNavLink 
           active={currentPath === "/status"} 
           onClick={() => window.location.href = '/status'}
         >

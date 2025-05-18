@@ -42,6 +42,12 @@ const DesktopNavigation = ({ activeSection, scrollToSection }: DesktopNavigation
         Partner
       </NavLink>
       <NavLink 
+        active={currentPath === "/presse"} 
+        onClick={() => window.location.href = '/presse'}
+      >
+        Presse
+      </NavLink>
+      <NavLink 
         active={currentPath === "/status"} 
         onClick={() => window.location.href = '/status'}
       >

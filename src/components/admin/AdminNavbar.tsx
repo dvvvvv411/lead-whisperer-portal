@@ -1,7 +1,8 @@
+
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
-import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu, Info } from "lucide-react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -40,11 +41,14 @@ export const AdminNavbar = () => {
               )}
               <NavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" />
               {!isLeadsOnlyUser && (
-                <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
+                <>
+                  <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
+                  <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
+                  <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
+                  <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
+                  <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
+                </>
               )}
-              <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
-              <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
-              <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
               {/* Logout Button for desktop */}
               <LogoutButton className="ml-2" variant="outline" />
             </div>
@@ -74,11 +78,14 @@ export const AdminNavbar = () => {
             )}
             <MobileNavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" onClick={() => setIsOpen(false)} />
             {!isLeadsOnlyUser && (
-              <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
+              <>
+                <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
+                <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
+                <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
+                <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
+                <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
+              </>
             )}
-            <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
-            <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
-            <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
             
             {/* Mobile Logout Button */}
             <div className="px-3 py-2 mt-2 border-t border-gold/10 pt-2">

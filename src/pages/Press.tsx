@@ -16,7 +16,7 @@ interface PressItem {
 
 const pressItems: PressItem[] = [{
   id: "handelsblatt",
-  logo: "/press/handelsblatt-logo.png",
+  logo: "https://www.implify.de/wp-content/uploads/2020/07/handelsblatt.png",
   name: "Handelsblatt",
   title: "Frankfurter Start-up Bitloon: KI-Plattform für Krypto-Investments sorgt für Aufmerksamkeit",
   excerpt: "Das Frankfurter Start-up Bitloon hat mit seiner KI-gestützten Plattform für Krypto-Investments für Aufmerksamkeit in der Finanzwelt gesorgt...",
@@ -24,7 +24,7 @@ const pressItems: PressItem[] = [{
   date: "15. Mai 2024"
 }, {
   id: "focus",
-  logo: "/press/focus-logo.png",
+  logo: "https://d1epvft2eg9h7o.cloudfront.net/filer_public_thumbnails/filer_public/23/c5/23c57677-262c-44a6-95f3-6465aa3f990d/focus_online-2022-logo-color-large.png__1200x628_crop_subject_location-FOCUS%20online-2022-logo-color-large.png_subsampling-2_upscale.png",
   name: "Focus Online",
   title: "Frankfurter KI-Fintech Bitloon überzeugt erste Anleger - Carsten Maschmeyer zeigt sich beeindruckt",
   excerpt: "Das Frankfurter KI-Fintech-Unternehmen Bitloon hat mit seiner automatisierten Krypto-Plattform erste Investoren überzeugt. Auch Investor Carsten Maschmeyer äußerte sich positiv...",
@@ -32,7 +32,7 @@ const pressItems: PressItem[] = [{
   date: "28. April 2024"
 }, {
   id: "wiwo",
-  logo: "/press/wiwo-logo.png",
+  logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/WirtschaftsWoche_Logo.png",
   name: "Wirtschafts Woche",
   title: "Bitloon aus Frankfurt: Wie ein KI-Start-up den Krypto-Handel professionalisieren will",
   excerpt: "Das Frankfurter Start-up Bitloon setzt auf künstliche Intelligenz, um den Krypto-Handel zu professionalisieren. Die innovative Plattform verspricht hohe Renditen bei minimiertem Risiko...",
@@ -77,7 +77,12 @@ const Press = () => {
                     <div className="grid md:grid-cols-[180px_1fr] grid-cols-1">
                       <div className="flex items-center justify-center p-6 bg-white/10 backdrop-blur-sm">
                         <div className="h-16 flex items-center justify-center">
-                          <img src={item.logo} alt={`${item.name} Logo`} className="max-h-full max-w-full object-contain" />
+                          <img 
+                            src={item.logo} 
+                            alt={`${item.name} Logo`} 
+                            className="max-h-full max-w-full object-contain" 
+                            loading="lazy"
+                          />
                         </div>
                       </div>
                       <div className="p-6">

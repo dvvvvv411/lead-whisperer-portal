@@ -34,6 +34,12 @@ interface LeadData {
   // Add other fields that might be present in your leads table if needed
 }
 
+// Define a type for the user data returned from Supabase auth admin
+interface UserData {
+  created_at: string;
+  // Add other fields that might be present in the user data if needed
+}
+
 export function useAdminStats(): AdminStats {
   const [stats, setStats] = useState<Omit<AdminStats, 'isLoading' | 'error' | 'refresh'>>({
     leads: { total: 0, today: 0 },
@@ -69,7 +75,7 @@ export function useAdminStats(): AdminStats {
 
       const totalUsers = usersData ? usersData.users.length : 0;
       const todayUsers = usersData ? usersData.users.filter(
-        user => new Date(user.created_at).toDateString() === new Date().toDateString()
+        (user: UserData) => new Date(user.created_at).toDateString() === new Date().toDateString()
       ).length : 0;
       
       // Fetch credits stats

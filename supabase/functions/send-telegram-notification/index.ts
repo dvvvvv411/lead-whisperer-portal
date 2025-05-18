@@ -36,6 +36,36 @@ function formatPaymentActivationMessage(payload: PaymentActivationPayload): stri
     `➡️ Bitte im Admin-Panel überprüfen: https://app.kitrading.io/admin/payments`;
 }
 
+// Helper function to get all registered Telegram chat IDs
+async function getChatIds(supabase: any): Promise<string[]> {
+  try {
+    const { data, error } = await supabase
+      .from('telegram_chat_ids')
+      .select('chat_id');
+    
+    if (error) {
+      console.error('Error fetching chat IDs:', error);
+      // Fall back to environment variable if DB fetch fails
+      const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+      return [defaultChatId];
+    }
+    
+    if (!data || data.length === 0) {
+      // If no chat IDs in database, use environment variable as fallback
+      const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+      console.log(`No chat IDs found in database, using default: ${defaultChatId}`);
+      return [defaultChatId];
+    }
+    
+    return data.map((row: any) => row.chat_id);
+  } catch (err) {
+    console.error('Exception getting chat IDs:', err);
+    // Fall back to environment variable
+    const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+    return [defaultChatId];
+  }
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -45,11 +75,20 @@ serve(async (req) => {
   try {
     // Get environment variables
     const botToken = Deno.env.get('TELEGRAM_BOT_TOKEN');
-    const chatId = Deno.env.get('TELEGRAM_CHAT_ID');
+    const supabaseUrl = Deno.env.get('SUPABASE_URL');
+    const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
     
-    if (!botToken || !chatId) {
+    if (!botToken) {
       console.error('Missing required environment variables');
-      throw new Error('Missing TELEGRAM_BOT_TOKEN or TELEGRAM_CHAT_ID environment variables');
+      throw new Error('Missing TELEGRAM_BOT_TOKEN environment variable');
+    }
+
+    // Initialize Supabase client with admin privileges
+    let supabase;
+    if (supabaseUrl && supabaseServiceKey) {
+      supabase = createClient(supabaseUrl, supabaseServiceKey);
+    } else {
+      throw new Error('Missing Supabase credentials');
     }
 
     // Parse request body
@@ -69,47 +108,82 @@ serve(async (req) => {
       throw new Error(`Unsupported notification type: ${payload.type}`);
     }
 
-    // Send message to Telegram
-    const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+    // Get all chat IDs from the database
+    const chatIds = await getChatIds(supabase);
+    let allSuccess = true;
+    const results = [];
     
-    console.log('Sending Telegram notification...');
-    
-    const telegramPayload = {
-      chat_id: chatId,
-      text: message,
-      parse_mode: 'Markdown',
-    };
+    // Send message to all Telegram chat IDs
+    for (const chatId of chatIds) {
+      const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+      const telegramPayload = {
+        chat_id: chatId,
+        text: message,
+        parse_mode: 'Markdown',
+      };
 
-    const telegramResponse = await fetch(telegramApiUrl, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(telegramPayload),
-    });
+      console.log(`Sending notification to Telegram chat ID: ${chatId}`);
+      
+      try {
+        const telegramResponse = await fetch(telegramApiUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(telegramPayload),
+        });
 
-    const telegramResult = await telegramResponse.json();
-    
-    if (!telegramResponse.ok) {
-      console.error('Telegram API error:', JSON.stringify(telegramResult));
-      throw new Error(`Telegram API error: ${JSON.stringify(telegramResult)}`);
+        const telegramResult = await telegramResponse.json();
+        
+        if (!telegramResponse.ok) {
+          allSuccess = false;
+          results.push({
+            chat_id: chatId,
+            success: false,
+            error: telegramResult
+          });
+        } else {
+          results.push({
+            chat_id: chatId,
+            success: true
+          });
+        }
+      } catch (error: any) {
+        allSuccess = false;
+        results.push({
+          chat_id: chatId,
+          success: false,
+          error: error.message
+        });
+      }
     }
 
-    console.log('Notification sent successfully to Telegram');
+    if (!allSuccess) {
+      console.error('Some notifications failed to send:', results.filter(r => !r.success));
+    } else {
+      console.log('Notifications sent successfully to all chat IDs');
+    }
 
     return new Response(
-      JSON.stringify({ success: true, message: 'Notification sent to Telegram' }),
+      JSON.stringify({ 
+        success: true, 
+        message: 'Notifications sent to Telegram',
+        results: results
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 200,
+        status: 200
       }
     );
   } catch (error) {
     console.error('Error sending notification:', error);
     
     return new Response(
-      JSON.stringify({ success: false, error: error.message || 'Unknown error occurred' }),
+      JSON.stringify({ 
+        success: false, 
+        error: error.message || 'Unknown error occurred'
+      }),
       { 
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-        status: 500,
+        status: 500
       }
     );
   }

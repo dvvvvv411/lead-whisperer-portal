@@ -34,7 +34,7 @@ export const PaymentNotifier: React.FC = () => {
       console.log('Telegram notification response:', data);
       
       if (data?.success) {
-        console.log('Payment notification sent successfully');
+        console.log('Payment notification sent successfully to all registered chat IDs');
         toast({
           description: "Zahlungs-Benachrichtigung gesendet",
         });

@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.1";
 
@@ -40,9 +39,46 @@ function validatePayload(payload: any, type: string): boolean {
     return !!(payload.user_email && payload.amount);
   } else if (type === 'withdrawal') {
     return !!(payload.amount && payload.walletCurrency && payload.walletAddress && payload.userEmail);
+  } else if (type === 'test') {
+    return true; // Test messages don't need validation
   }
   
   return false;
+}
+
+// Helper function to get all registered Telegram chat IDs
+async function getChatIds(supabase: any, specificId?: string): Promise<string[]> {
+  try {
+    let query = supabase.from('telegram_chat_ids').select('chat_id');
+    
+    // If a specific ID was provided, only get that one
+    if (specificId) {
+      query = query.eq('chat_id', specificId);
+    }
+    
+    const { data, error } = await query;
+    
+    if (error) {
+      console.error('Error fetching chat IDs:', error);
+      // Fall back to environment variable if DB fetch fails
+      const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+      return [defaultChatId];
+    }
+    
+    if (!data || data.length === 0) {
+      // If no chat IDs in database, use environment variable as fallback
+      const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+      console.log(`No chat IDs found in database, using default: ${defaultChatId}`);
+      return [defaultChatId];
+    }
+    
+    return data.map((row: any) => row.chat_id);
+  } catch (err) {
+    console.error('Exception getting chat IDs:', err);
+    // Fall back to environment variable
+    const defaultChatId = Deno.env.get('TELEGRAM_CHAT_ID') || "7111152096";
+    return [defaultChatId];
+  }
 }
 
 serve(async (req) => {
@@ -63,10 +99,12 @@ serve(async (req) => {
       throw new Error('Missing required environment variable: TELEGRAM_BOT_TOKEN');
     }
 
-    // Initialize Supabase client with admin privileges if needed for database operations
+    // Initialize Supabase client with admin privileges
     let supabase;
     if (supabaseUrl && supabaseServiceKey) {
       supabase = createClient(supabaseUrl, supabaseServiceKey);
+    } else {
+      throw new Error('Missing Supabase credentials');
     }
 
     // Initialize variables
@@ -93,45 +131,75 @@ serve(async (req) => {
       }
     }
     
-    // Use the default chat ID (7111152096) unless a custom one is provided
-    const chatId = customChatId || defaultChatId;
-    
     // Test endpoint for direct verification
     const url = new URL(req.url);
-    if (url.pathname.endsWith('/test')) {
-      console.log('Test endpoint called with chat ID:', chatId);
+    if (url.pathname.endsWith('/test') || payload?.type === 'test') {
+      console.log('Test endpoint called');
       
-      // Simple test message
-      message = `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}\n\nGesendet an Chat-ID: ${chatId}`;
+      // Determine which chat IDs to use
+      let chatIds: string[];
+      if (customChatId) {
+        // If a specific chat ID was provided in the payload, only use that one
+        chatIds = [customChatId];
+      } else {
+        // Otherwise, get all chat IDs from the database
+        chatIds = await getChatIds(supabase);
+      }
       
-      // Send test message to Telegram
-      const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-      const telegramPayload = {
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'Markdown',
-      };
+      // Use custom message if provided in payload, otherwise use default test message
+      const testMessage = payload?.message || `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}`;
+      
+      // Track success for all chat IDs
+      const results = [];
+      
+      // Send test message to each chat ID
+      for (const chatId of chatIds) {
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        const telegramPayload = {
+          chat_id: chatId,
+          text: testMessage + `\n\nGesendet an Chat-ID: ${chatId}`,
+          parse_mode: 'Markdown',
+        };
 
-      console.log('Sending test message to Telegram with payload:', telegramPayload);
-      const telegramResponse = await fetch(telegramApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(telegramPayload),
-      });
+        console.log(`Sending test message to Telegram chat ID: ${chatId}`);
+        
+        try {
+          const telegramResponse = await fetch(telegramApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(telegramPayload),
+          });
 
-      const telegramResult = await telegramResponse.json();
-      console.log('Telegram API response:', telegramResult);
+          const telegramResult = await telegramResponse.json();
+          console.log(`Telegram API response for ${chatId}:`, telegramResult);
+          
+          results.push({
+            chat_id: chatId,
+            success: telegramResponse.ok,
+            details: telegramResult
+          });
+        } catch (error) {
+          console.error(`Error sending test to ${chatId}:`, error);
+          results.push({
+            chat_id: chatId,
+            success: false,
+            error: error.message
+          });
+        }
+      }
+      
+      // Check if all messages were sent successfully
+      const allSuccess = results.every(r => r.success);
       
       return new Response(
         JSON.stringify({ 
-          success: telegramResponse.ok, 
-          message: 'Test message sent to Telegram',
-          telegram_response: telegramResult,
-          chat_id: chatId
+          success: allSuccess, 
+          message: allSuccess ? 'Test message sent to all Telegram chat IDs' : 'Some messages failed to send',
+          results: results
         }),
         { 
           headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-          status: telegramResponse.ok ? 200 : 500
+          status: allSuccess ? 200 : 500
         }
       );
     }
@@ -287,35 +355,50 @@ serve(async (req) => {
         if (message) {
           console.log(`Sending notification for ${entry_type}:${entry_id}`);
           
-          // Send the message to Telegram
-          const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-          const telegramPayload = {
-            chat_id: chatId,
-            text: message,
-            parse_mode: 'Markdown',
-          };
+          // Get all chat IDs from the database
+          const chatIds = await getChatIds(supabase);
+          let success = true;
+          let errorMessages = [];
+          
+          // Send to all chat IDs
+          for (const chatId of chatIds) {
+            // Send the message to Telegram
+            const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+            const telegramPayload = {
+              chat_id: chatId,
+              text: message,
+              parse_mode: 'Markdown',
+            };
 
-          const telegramResponse = await fetch(telegramApiUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(telegramPayload),
-          });
+            try {
+              const telegramResponse = await fetch(telegramApiUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(telegramPayload),
+              });
 
-          const telegramResult = await telegramResponse.json();
+              const telegramResult = await telegramResponse.json();
+              
+              if (!telegramResponse.ok) {
+                success = false;
+                errorMessages.push(`Error with chat_id ${chatId}: ${JSON.stringify(telegramResult)}`);
+              }
+            } catch (error: any) {
+              success = false;
+              errorMessages.push(`Exception with chat_id ${chatId}: ${error.message}`);
+            }
+          }
           
           // Create a log entry regardless of success (to avoid duplicate notifications)
-          const success = telegramResponse.ok;
-          const errorMessage = success ? null : JSON.stringify(telegramResult);
-          
           await supabase.from('notification_log').insert({
             entry_type,
             entry_id,
             success,
-            error_message: errorMessage
+            error_message: errorMessages.length > 0 ? errorMessages.join('; ') : null
           });
           
-          if (!telegramResponse.ok) {
-            throw new Error(`Telegram API error: ${JSON.stringify(telegramResult)}`);
+          if (!success) {
+            throw new Error(`Telegram API errors: ${errorMessages.join('; ')}`);
           }
           
           // Only process one notification at a time
@@ -335,27 +418,60 @@ serve(async (req) => {
       );
     }
     
-    // Send the message to Telegram if it hasn't been sent yet
+    // Send the message to all Telegram chat IDs
     if (message) {
-      const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
-      const telegramPayload = {
-        chat_id: chatId,
-        text: message,
-        parse_mode: 'Markdown',
-      };
-
-      console.log('Calling Telegram API with payload:', JSON.stringify(telegramPayload).replace(chatId, '[REDACTED]'));
-      const telegramResponse = await fetch(telegramApiUrl, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(telegramPayload),
-      });
-
-      const telegramResult = await telegramResponse.json();
-      console.log('Telegram API response:', telegramResult);
+      // Get chat IDs - if a specific ID was provided, only use that one
+      const chatIds = customChatId ? [customChatId] : await getChatIds(supabase);
+      console.log(`Sending notification to ${chatIds.length} chat IDs`);
       
-      if (!telegramResponse.ok) {
-        throw new Error(`Telegram API error: ${JSON.stringify(telegramResult)}`);
+      const results = [];
+      let allSuccess = true;
+      
+      for (const chatId of chatIds) {
+        const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage`;
+        const telegramPayload = {
+          chat_id: chatId,
+          text: message,
+          parse_mode: 'Markdown',
+        };
+
+        console.log(`Sending to chat ID ${chatId}`);
+        
+        try {
+          const telegramResponse = await fetch(telegramApiUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(telegramPayload),
+          });
+
+          const telegramResult = await telegramResponse.json();
+          console.log(`Response for ${chatId}:`, telegramResult);
+          
+          if (!telegramResponse.ok) {
+            allSuccess = false;
+            results.push({
+              chat_id: chatId, 
+              success: false, 
+              error: telegramResult
+            });
+          } else {
+            results.push({
+              chat_id: chatId, 
+              success: true
+            });
+          }
+        } catch (error: any) {
+          allSuccess = false;
+          results.push({
+            chat_id: chatId, 
+            success: false, 
+            error: error.message
+          });
+        }
+      }
+      
+      if (!allSuccess) {
+        console.error('Some Telegram notifications failed:', results.filter(r => !r.success));
       }
     }
 

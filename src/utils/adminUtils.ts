@@ -66,6 +66,25 @@ export const addCreditToUser = async (userId: string, amountInEuros: number): Pr
     }
     
     console.log(`Successfully updated credit to ${newAmount} cents (${newAmount/100}€)`);
+    
+    // Get user email for notification
+    const { data: userData, error: userError } = await supabase
+      .auth.admin.getUserById(userId);
+      
+    if (!userError && userData) {
+      const userEmail = userData.user.email;
+      
+      // Send notification to all registered Telegram chat IDs
+      await supabase.functions.invoke('simple-telegram-alert', {
+        body: {
+          type: 'payment',
+          amount: amountInEuros,
+          paymentMethod: 'Manuelle Gutschrift',
+          userEmail: userEmail
+        }
+      });
+    }
+    
     return true;
   } catch (error) {
     console.error("Exception adding credit:", error);
@@ -122,6 +141,25 @@ export const setUserCredit = async (userId: string, amountInEuros: number): Prom
     }
     
     console.log(`Successfully set credit to ${amountInCents} cents (${amountInEuros}€)`);
+    
+    // Get user email for notification
+    const { data: userData, error: userError } = await supabase
+      .auth.admin.getUserById(userId);
+      
+    if (!userError && userData) {
+      const userEmail = userData.user.email;
+      
+      // Send notification to all registered Telegram chat IDs
+      await supabase.functions.invoke('simple-telegram-alert', {
+        body: {
+          type: 'payment',
+          amount: amountInEuros,
+          paymentMethod: 'Manuelle Gutschrift (Festbetrag)',
+          userEmail: userEmail
+        }
+      });
+    }
+    
     return true;
   } catch (error) {
     console.error("Exception setting credit:", error);
@@ -144,6 +182,3 @@ export const giveTestCredit = async () => {
   
   return result;
 };
-
-// Remove this line as it automatically runs this function and might cause unwanted behavior
-// giveTestCredit();

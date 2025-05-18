@@ -1,12 +1,13 @@
-
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
 import { motion } from "framer-motion";
-import { Search } from "lucide-react";
+import { Search, MessageSquareAlert } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+import { TelegramChatIdDialog } from "../telegram/TelegramChatIdDialog";
 
 interface UserData {
   id: string;
@@ -28,6 +29,7 @@ export const UserManager = () => {
   const [currentUser, setCurrentUser] = useState<any>(null);
   const [lastUpdateTime, setLastUpdateTime] = useState<number>(Date.now());
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState<boolean>(false);
+  const [telegramDialogOpen, setTelegramDialogOpen] = useState(false);
 
   // Benutzer-Session abrufen
   useEffect(() => {
@@ -196,6 +198,10 @@ export const UserManager = () => {
     setFilteredUsers(filtered);
   };
 
+  const toggleTelegramDialog = () => {
+    setTelegramDialogOpen(!telegramDialogOpen);
+  };
+
   return (
     <div className="min-h-screen bg-casino-darker text-gray-300">
       <AdminNavbar />
@@ -211,22 +217,34 @@ export const UserManager = () => {
           <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
         </motion.div>
 
-        {/* Suchfunktion */}
+        {/* Suchfunktion und Admin Tools */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.3 }}
           className="mb-6"
         >
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-            <Input
-              type="text"
-              placeholder="Suche nach E-Mail oder Telefonnummer..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="pl-10 bg-casino-card border-gold/20 focus:border-gold/50 text-white"
-            />
+          <div className="flex flex-col sm:flex-row gap-4 items-center">
+            <div className="relative flex-grow">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+              <Input
+                type="text"
+                placeholder="Suche nach E-Mail oder Telefonnummer..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="pl-10 bg-casino-card border-gold/20 focus:border-gold/50 text-white"
+              />
+            </div>
+            
+            {/* Admin Tools Button */}
+            <Button
+              onClick={toggleTelegramDialog}
+              className="bg-gold/80 hover:bg-gold text-black font-medium whitespace-nowrap"
+              disabled={isLoading}
+            >
+              <MessageSquareAlert className="h-4 w-4 mr-2" />
+              Telegram Chat-IDs
+            </Button>
           </div>
         </motion.div>
 
@@ -251,6 +269,12 @@ export const UserManager = () => {
           </motion.div>
         )}
       </div>
+      
+      {/* Telegram Chat ID Management Dialog */}
+      <TelegramChatIdDialog
+        open={telegramDialogOpen}
+        onOpenChange={setTelegramDialogOpen}
+      />
     </div>
   );
 };

@@ -9,7 +9,8 @@ import {
   Wallet,
   Users,
   CreditCard,
-  ArrowUpRight
+  ArrowUpRight,
+  Info
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -78,6 +79,13 @@ export const AdminDashboard = () => {
       icon: <ArrowUpRight className="w-12 h-12 text-teal-400" />,
       link: "/admin/withdrawals",
       bgClass: "bg-gradient-to-br from-teal-900/40 to-teal-800/20"
+    },
+    {
+      title: "Rechtstexte",
+      description: "Impressum und Rechtstexte bearbeiten",
+      icon: <Info className="w-12 h-12 text-red-400" />,
+      link: "/admin/rechtstexte",
+      bgClass: "bg-gradient-to-br from-red-900/40 to-red-800/20"
     }
   ];
 
@@ -107,7 +115,7 @@ export const AdminDashboard = () => {
         </div>
         
         <motion.div 
-          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 mb-8"
+          className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3 gap-6 mb-8"
           variants={container}
           initial="hidden"
           animate="show"

@@ -134,6 +134,30 @@ export type Database = {
         }
         Relationships: []
       }
+      legal_info: {
+        Row: {
+          email: string
+          id: string
+          phone_number: string
+          updated_at: string | null
+          vat_id: string
+        }
+        Insert: {
+          email?: string
+          id?: string
+          phone_number?: string
+          updated_at?: string | null
+          vat_id?: string
+        }
+        Update: {
+          email?: string
+          id?: string
+          phone_number?: string
+          updated_at?: string | null
+          vat_id?: string
+        }
+        Relationships: []
+      }
       notification_log: {
         Row: {
           entry_id: string

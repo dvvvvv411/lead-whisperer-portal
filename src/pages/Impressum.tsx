@@ -12,7 +12,7 @@ interface LegalInfo {
 const Impressum = () => {
   const [legalInfo, setLegalInfo] = useState<LegalInfo>({
     phone_number: "+49 (0) 69 254 931 30",
-    email: "info@gms-service.de",
+    email: "info@bitbamba.de",
     vat_id: "DE341123456"
   });
   const [loading, setLoading] = useState(true);
@@ -52,22 +52,21 @@ const Impressum = () => {
         <section className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-xl font-bold mb-4 text-gold">Angaben gemäß § 5 TMG</h2>
           <p>
-            GMS Management und Service GmbH<br />
-            Platz der Republik 6<br />
-            60325 Frankfurt am Main<br />
+            Cryptosoft GmbH<br />
+            Maximiliansplatz 5<br />
+            80333 München<br />
             Deutschland
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Handelsregister</h3>
           <p>
-            Amtsgericht Frankfurt am Main<br />
-            HRB 136900
+            Amtsgericht München<br />
+            HRB 245429
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Vertreten durch</h3>
           <p>
-            Stefan Schlieter (Geschäftsführer)<br />
-            Walid Abu Al Ghon (Geschäftsführer)
+            Raffael Koishirou Catta (Geschäftsführer)
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Kontakt</h3>
@@ -86,10 +85,10 @@ const Impressum = () => {
         <section className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-xl font-bold mb-4 text-gold">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
           <p>
-            Stefan Schlieter<br />
-            GMS Management und Service GmbH<br />
-            Platz der Republik 6<br />
-            60325 Frankfurt am Main<br />
+            Raffael Koishirou Catta<br />
+            Cryptosoft GmbH<br />
+            Maximiliansplatz 5<br />
+            80333 München<br />
             Deutschland
           </p>
         </section>

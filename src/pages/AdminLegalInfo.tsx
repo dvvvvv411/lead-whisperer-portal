@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,7 +25,7 @@ const AdminLegalInfo = () => {
   const form = useForm<Omit<LegalInfo, 'id' | 'updated_at'>>({
     defaultValues: {
       phone_number: '',
-      email: '',
+      email: 'info@bitbamba.de',
       vat_id: ''
     }
   });

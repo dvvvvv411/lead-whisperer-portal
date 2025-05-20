@@ -1,14 +1,43 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { PaymentManager } from "@/components/admin/payments/PaymentManager";
 import { motion } from "framer-motion";
 import { PaymentNotifier } from "@/components/admin/payments/PaymentNotifier";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminPayments = () => {
   const { user, authLoading } = useAdminAuth();
+  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [loading, setLoading] = useState(true);
   
-  if (authLoading) {
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (user) {
+        // Special handling for the leads user with extended access
+        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+          setIsAuthorized(true);
+          setLoading(false);
+          return;
+        }
+        
+        // For all other users, check admin role
+        const { data, error } = await supabase.rpc('check_is_admin');
+        if (!error && data) {
+          setIsAuthorized(true);
+        } else {
+          window.location.href = "/admin";
+        }
+      }
+      setLoading(false);
+    };
+    
+    if (!authLoading && user) {
+      checkAccess();
+    }
+  }, [user, authLoading]);
+  
+  if (authLoading || loading) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
         <motion.div 
@@ -25,12 +54,12 @@ const AdminPayments = () => {
     );
   }
 
-  return (
+  return isAuthorized ? (
     <>
       <PaymentNotifier />
       <PaymentManager />
     </>
-  );
+  ) : null;
 };
 
 export default AdminPayments;

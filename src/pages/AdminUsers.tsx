@@ -18,9 +18,9 @@ const AdminUsers = () => {
         return;
       }
       
-      // Spezielle Behandlung für den Benutzer mit der Leads-Only-ID
+      // Special handling for the leads user with extended access
       if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-        console.log("Leads-only user detected, allowing access to users page");
+        console.log("Special leads user detected, allowing access to users page");
         setIsAdmin(true);
         setLoading(false);
         return;
@@ -30,7 +30,7 @@ const AdminUsers = () => {
       setIsAdmin(adminCheck);
       setLoading(false);
       
-      // Wenn kein Admin, zum Benutzer-Dashboard weiterleiten
+      // If not admin, redirect to user dashboard
       if (!adminCheck) {
         window.location.href = "/nutzer";
       }

@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +11,7 @@ import { motion } from "framer-motion";
 import { Mail, Phone, Info, Building, MapPin, User, Globe, Link, FileImage } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Json } from "@/integrations/supabase/types";
+import { useBranding } from "@/contexts/BrandingContext";
 
 interface RebrandingFormData {
   site_name: string;
@@ -47,6 +47,7 @@ const AdminRebranding = () => {
   
   const logoFileInputRef = useRef<HTMLInputElement>(null);
   const faviconFileInputRef = useRef<HTMLInputElement>(null);
+  const { refreshBranding } = useBranding();
   
   const form = useForm<RebrandingFormData>({
     defaultValues: {
@@ -255,10 +256,8 @@ const AdminRebranding = () => {
         description: "Die Branding-Informationen wurden erfolgreich aktualisiert.",
       });
       
-      // Refresh the page to apply new branding
-      setTimeout(() => {
-        window.location.reload();
-      }, 1500);
+      // Refresh the branding context to update all components
+      await refreshBranding();
       
     } catch (error) {
       console.error("Error updating branding info:", error);

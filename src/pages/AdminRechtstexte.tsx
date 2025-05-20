@@ -1,9 +1,8 @@
 
-import AdminRebranding from "./AdminRebranding";
+import AdminLegalInfo from "./AdminLegalInfo";
 
 const AdminRechtstexte = () => {
-  // This redirects to AdminRebranding for backward compatibility
-  return <AdminRebranding />;
+  return <AdminLegalInfo />;
 };
 
 export default AdminRechtstexte;

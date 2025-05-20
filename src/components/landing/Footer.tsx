@@ -1,34 +1,7 @@
-
-import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-
 const Footer = () => {
   const currentYear = new Date().getFullYear();
-  const [siteName, setSiteName] = useState("bitloon");
-  const [logoUrl, setLogoUrl] = useState("https://i.imgur.com/Q191f5z.png");
-
-  useEffect(() => {
-    const fetchBrandingInfo = async () => {
-      try {
-        const { data } = await supabase
-          .from('legal_info')
-          .select('site_name, logo_url')
-          .single();
-
-        if (data) {
-          setSiteName(data.site_name);
-          setLogoUrl(data.logo_url);
-        }
-      } catch (error) {
-        console.error("Error fetching branding info:", error);
-      }
-    };
-
-    fetchBrandingInfo();
-  }, []);
-
   return <footer className="bg-casino-darker relative overflow-hidden">
       {/* Background effect */}
       <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
@@ -49,7 +22,7 @@ const Footer = () => {
           duration: 0.5
         }} className="col-span-1 md:col-span-2 lg:col-span-1">
             <div className="mb-4">
-              <img src={logoUrl} alt={`${siteName} Logo`} className="h-14 object-contain" />
+              <img src="https://i.imgur.com/Q191f5z.png" alt="bitloon Logo" className="h-14 object-contain" />
             </div>
             <p className="text-gray-400 mb-4">
               Die Zukunft des Krypto-Tradings mit KI-Unterstützung. Maximiere deine Renditen durch unseren fortschrittlichen Algorithmus.
@@ -118,7 +91,7 @@ const Footer = () => {
         <div className="border-t border-white/10 mt-12 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              &copy; {currentYear} {siteName}. Alle Rechte vorbehalten.
+              &copy; {currentYear} bitloon. Alle Rechte vorbehalten.
             </p>
             
             <div className="flex space-x-6">

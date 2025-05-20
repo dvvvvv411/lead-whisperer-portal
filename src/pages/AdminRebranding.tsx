@@ -11,6 +11,7 @@ import { useForm } from "react-hook-form";
 import { motion } from "framer-motion";
 import { Mail, Phone, Info, Building, MapPin, User, Globe, Link, FileImage } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
+import { Json } from "@/integrations/supabase/types";
 
 interface RebrandingFormData {
   site_name: string;
@@ -93,7 +94,8 @@ const AdminRebranding = () => {
           // Try to parse press_links from database
           if (data.press_links && Array.isArray(data.press_links)) {
             try {
-              const pressList = data.press_links as PressLinkItem[];
+              // First convert Json[] to unknown, then to PressLinkItem[]
+              const pressList = data.press_links as unknown as PressLinkItem[];
               
               // Map the array of PressLinkItem to our form structure
               pressList.forEach(item => {
@@ -196,7 +198,7 @@ const AdminRebranding = () => {
     try {
       // Prepare press_links as JSON for storage
       // Ensure we're creating the correct JSON structure for Supabase
-      const pressLinksJson: PressLinkItem[] = [
+      const pressLinksJson = [
         {
           name: "Handelsblatt",
           url: values.press_links.handelsblatt
@@ -209,7 +211,7 @@ const AdminRebranding = () => {
           name: "WirtschaftsWoche",
           url: values.press_links.wiwo
         }
-      ];
+      ] as Json;
       
       // Get the legal info id first to make sure it exists
       const { data: infoData, error: infoError } = await supabase

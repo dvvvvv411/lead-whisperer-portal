@@ -26,7 +26,7 @@ const AdminLegalInfo = () => {
   const form = useForm<Omit<LegalInfo, 'id' | 'updated_at'>>({
     defaultValues: {
       phone_number: '',
-      email: 'info@bitbamba.com',
+      email: '',
       vat_id: ''
     }
   });

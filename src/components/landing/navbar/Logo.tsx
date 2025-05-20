@@ -16,8 +16,8 @@ const Logo = () => {
     >
       <Link to="/">
         <img 
-          src="https://i.imgur.com/oXGr0DY.png" 
-          alt="bitbamba Logo" 
+          src="https://i.imgur.com/Q191f5z.png" 
+          alt="KRYPTO AI Logo" 
           className="h-14 object-contain" 
         />
       </Link>

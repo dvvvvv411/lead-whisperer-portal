@@ -5,14 +5,14 @@ const AGB = () => {
   return (
     <PageLayout
       title="Allgemeine Geschäftsbedingungen"
-      description="AGB der Cryptosoft GmbH"
+      description="AGB der GMS Management und Service GmbH"
     >
       <div className="prose prose-invert max-w-none">
         <section className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-xl font-bold mb-4 text-gold">1. Geltungsbereich</h2>
           <p>
-            1.1 Die nachstehenden allgemeinen Geschäftsbedingungen gelten für alle Rechtsgeschäfte der Cryptosoft GmbH, 
-            Maximiliansplatz 5, 80333 München – nachstehend „Anbieter" genannt – mit ihrem Vertragspartner – nachstehend 
+            1.1 Die nachstehenden allgemeinen Geschäftsbedingungen gelten für alle Rechtsgeschäfte der GMS Management und Service GmbH, 
+            Platz der Republik 6, 60325 Frankfurt am Main – nachstehend „Anbieter" genannt – mit ihrem Vertragspartner – nachstehend 
             „Kunde" genannt.
           </p>
           <p>
@@ -87,7 +87,7 @@ const AGB = () => {
           <h2 className="text-xl font-bold mb-4 text-gold">7. Schlussbestimmungen</h2>
           <p>
             7.1 Erfüllungsort und Gerichtsstand für alle Streitigkeiten aus und im Zusammenhang mit diesem Vertrag ist bei 
-            Verträgen mit Kaufleuten München.
+            Verträgen mit Kaufleuten Frankfurt am Main.
           </p>
           <p>
             7.2 Es gilt das Recht der Bundesrepublik Deutschland unter Ausschluss des UN-Kaufrechts.

@@ -31,13 +31,13 @@ serve(async (req) => {
     }
 
     // Extract origin from the request URL or use a fallback
-    const origin = redirectUrl || "https://bitbamba.com";
+    const origin = redirectUrl || "https://bitloon.net";
     const loginUrl = `${origin}/nutzer`;
 
     const emailResponse = await resend.emails.send({
-      from: "bitbamba <noreply@bitbamba.com>",
+      from: "bitloon <noreply@bitloon.net>",
       to: [email],
-      subject: "Ihre Zugangsdaten für bitbamba",
+      subject: "Ihre Zugangsdaten für bitloon",
       html: `
         <!DOCTYPE html>
         <html lang="de">
@@ -119,7 +119,7 @@ serve(async (req) => {
         <body>
           <div class="container">
             <header>
-              <img src="https://i.imgur.com/oXGr0DY.png" alt="bitbamba Logo" style="height: 60px; margin-bottom: 10px;">
+              <img src="https://i.imgur.com/Q191f5z.png" alt="Bitloon Logo" style="height: 60px; margin-bottom: 10px;">
             </header>
             <div class="content">
               <h2>Zugangsdaten für Ihr Konto</h2>
@@ -132,10 +132,10 @@ serve(async (req) => {
               <a href="${loginUrl}" class="cta">Zum Login</a>
             </div>
             <footer>
-              &copy; ${new Date().getFullYear()} bitbamba - Cryptosoft GmbH | 
-              <a href="https://bitbamba.com/impressum" target="_blank">Impressum</a> | 
-              <a href="https://bitbamba.com" target="_blank">Webseite</a> | 
-              <a href="https://bitbamba.com/datenschutz" target="_blank">Datenschutz</a>
+              &copy; ${new Date().getFullYear()} Bitloon - GMS Management und Service GmbH | 
+              <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
+              <a href="https://bitloon.net" target="_blank">Webseite</a> | 
+              <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>
             </footer>
           </div>
         </body>

@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
 const Footer = () => {
@@ -23,7 +22,7 @@ const Footer = () => {
           duration: 0.5
         }} className="col-span-1 md:col-span-2 lg:col-span-1">
             <div className="mb-4">
-              <img src="https://i.imgur.com/oXGr0DY.png" alt="bitbamba Logo" className="h-14 object-contain" />
+              <img src="https://i.imgur.com/Q191f5z.png" alt="bitloon Logo" className="h-14 object-contain" />
             </div>
             <p className="text-gray-400 mb-4">
               Die Zukunft des Krypto-Tradings mit KI-Unterstützung. Maximiere deine Renditen durch unseren fortschrittlichen Algorithmus.
@@ -92,7 +91,7 @@ const Footer = () => {
         <div className="border-t border-white/10 mt-12 pt-6">
           <div className="flex flex-col md:flex-row justify-between items-center">
             <p className="text-gray-400 text-sm mb-4 md:mb-0">
-              &copy; {currentYear} bitbamba. Alle Rechte vorbehalten.
+              &copy; {currentYear} bitloon. Alle Rechte vorbehalten.
             </p>
             
             <div className="flex space-x-6">
@@ -110,5 +109,4 @@ const Footer = () => {
       </div>
     </footer>;
 };
-
 export default Footer;

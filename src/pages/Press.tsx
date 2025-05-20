@@ -1,4 +1,3 @@
-
 import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
 import { Card, CardContent } from "@/components/ui/card";
@@ -18,25 +17,25 @@ const pressItems: PressItem[] = [{
   id: "handelsblatt",
   logo: "https://www.implify.de/wp-content/uploads/2020/07/handelsblatt.png",
   name: "Handelsblatt",
-  title: "Frankfurter Start-up bitbamba: KI-Plattform für Krypto-Investments sorgt für Aufmerksamkeit",
-  excerpt: "Das Frankfurter Start-up bitbamba hat mit seiner KI-gestützten Plattform für Krypto-Investments für Aufmerksamkeit in der Finanzwelt gesorgt...",
-  url: "https://www.handels-blatt.com/finanzen/steuern-recht/steuern/frankfurter-start-up-bitbamba-ki-plattform-fuer-krypto-investments-sorgt-fuer-aufmerksamkeit/100124798.html",
+  title: "Frankfurter Start-up bitloon: KI-Plattform für Krypto-Investments sorgt für Aufmerksamkeit",
+  excerpt: "Das Frankfurter Start-up bitloon hat mit seiner KI-gestützten Plattform für Krypto-Investments für Aufmerksamkeit in der Finanzwelt gesorgt...",
+  url: "https://www.handels-blatt.com/finanzen/steuern-recht/steuern/frankfurter-start-up-bitloon-ki-plattform-fuer-krypto-investments-sorgt-fuer-aufmerksamkeit/100124798.html",
   date: "15. Mai 2025"
 }, {
   id: "focus",
   logo: "https://d1epvft2eg9h7o.cloudfront.net/filer_public_thumbnails/filer_public/23/c5/23c57677-262c-44a6-95f3-6465aa3f990d/focus_online-2022-logo-color-large.png__1200x628_crop_subject_location-FOCUS%20online-2022-logo-color-large.png_subsampling-2_upscale.png",
   name: "Focus Online",
-  title: "Frankfurter KI-Fintech bitbamba überzeugt erste Anleger - Carsten Maschmeyer zeigt sich beeindruckt",
-  excerpt: "Das Frankfurter KI-Fintech-Unternehmen bitbamba hat mit seiner automatisierten Krypto-Plattform erste Investoren überzeugt. Auch Investor Carsten Maschmeyer äußerte sich positiv...",
-  url: "https://www.focus-online.net/finanzen/boerse/frankfurter-ki-fintech-bitbamba-ueberzeugt-erste-anleger-carsten-maschmeyer-zeigt-sich-beeindruckt-von-automatisierter-krypto-plattform_025fd55e-1d5f-4964-83c2-8e73df7c6012.html",
+  title: "Frankfurter KI-Fintech bitloon überzeugt erste Anleger - Carsten Maschmeyer zeigt sich beeindruckt",
+  excerpt: "Das Frankfurter KI-Fintech-Unternehmen bitloon hat mit seiner automatisierten Krypto-Plattform erste Investoren überzeugt. Auch Investor Carsten Maschmeyer äußerte sich positiv...",
+  url: "https://www.focus-online.net/finanzen/boerse/frankfurter-ki-fintech-bitloon-ueberzeugt-erste-anleger-carsten-maschmeyer-zeigt-sich-beeindruckt-von-automatisierter-krypto-plattform_025fd55e-1d5f-4964-83c2-8e73df7c6012.html",
   date: "14. Mai 2025"
 }, {
   id: "wiwo",
   logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/WirtschaftsWoche_Logo.png",
   name: "Wirtschafts Woche",
-  title: "bitbamba aus Frankfurt: Wie ein KI-Start-up den Krypto-Handel professionalisieren will",
-  excerpt: "Das Frankfurter Start-up bitbamba setzt auf künstliche Intelligenz, um den Krypto-Handel zu professionalisieren. Die innovative Plattform verspricht hohe Renditen bei minimiertem Risiko...",
-  url: "https://www.wirtschafts-woche.net/finanzen/geldanlage/bitbamba-aus-frankfurt-wie-ein-ki-start-up-den-krypto-handel-professionalisieren-will/100127150.html",
+  title: "bitloon aus Frankfurt: Wie ein KI-Start-up den Krypto-Handel professionalisieren will",
+  excerpt: "Das Frankfurter Start-up bitloon setzt auf künstliche Intelligenz, um den Krypto-Handel zu professionalisieren. Die innovative Plattform verspricht hohe Renditen bei minimiertem Risiko...",
+  url: "https://www.wirtschafts-woche.net/finanzen/geldanlage/bitloon-aus-frankfurt-wie-ein-ki-start-up-den-krypto-handel-professionalisieren-will/100127150.html",
   date: "09. Mai 2025"
 }];
 
@@ -49,14 +48,14 @@ const Press = () => {
             animate={{ opacity: 1, y: 0 }} 
             transition={{ delay: 0.2 }}
           >
-            Medienberichte über bitbamba
+            Medienberichte über bitloon
           </motion.h2>
           <motion.p className="text-gray-300 max-w-2xl mx-auto" 
             initial={{ opacity: 0 }} 
             animate={{ opacity: 1 }} 
             transition={{ delay: 0.4 }}
           >
-            Unsere innovative KI-Trading-Technologie erregt Aufmerksamkeit in der Finanzwelt. Hier finden Sie aktuelle Medienberichte über bitbamba.
+            Unsere innovative KI-Trading-Technologie erregt Aufmerksamkeit in der Finanzwelt. Hier finden Sie aktuelle Medienberichte über bitloon.
           </motion.p>
         </div>
 

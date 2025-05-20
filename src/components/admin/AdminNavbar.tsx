@@ -11,68 +11,36 @@ import LogoutButton from "./LogoutButton";
 export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState(false);
-  const [isSpecialLeadsUser, setIsSpecialLeadsUser] = useState(false);
   
   // Check if the current user is the special leads-only user
   useEffect(() => {
     const checkSpecialUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
-        const isLeadsOnly = data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
-        setIsSpecialLeadsUser(isLeadsOnly);
-        
-        // For all other leads-only users that aren't the special one
-        const isLeadsOnlyRegular = data.user.id !== "7eccf781-5911-4d90-a683-1df251069a2f" && 
-                                  await checkLeadsOnlyRole(data.user.id);
-        setIsLeadsOnlyUser(isLeadsOnlyRegular);
+        const isSpecial = data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
+        setIsLeadsOnlyUser(isSpecial);
       }
     };
     
     checkSpecialUser();
   }, []);
   
-  // Helper function to check if user has leads_only role
-  const checkLeadsOnlyRole = async (userId: string) => {
-    try {
-      const { data, error } = await supabase.rpc('is_leads_only_user', {
-        user_id_param: userId
-      });
-      
-      if (error) {
-        console.error("Error checking user role:", error);
-        return false;
-      }
-      
-      return data || false;
-    } catch (error) {
-      console.error("Error:", error);
-      return false;
-    }
-  };
-  
   return <div className="w-full border-b border-gold/10 mb-6 bg-casino-darker/80 backdrop-blur-lg sticky top-0 z-50">
       <div className="container mx-auto">
         <Menubar className="py-3 px-4 w-full bg-transparent border-none">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <img alt="bitbamba Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/oXGr0DY.png" />
+              <img alt="KRYPTO AI Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/Q191f5z.png" />
               <span className="text-gold font-bold text-lg hidden md:block">Admin Dashboard</span>
             </div>
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-1">
-              {!isLeadsOnlyUser && !isSpecialLeadsUser && (
+              {!isLeadsOnlyUser && (
                 <NavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" />
               )}
               <NavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" />
-              {isSpecialLeadsUser && (
-                <>
-                  <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
-                  <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
-                  <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
-                </>
-              )}
-              {!isLeadsOnlyUser && !isSpecialLeadsUser && (
+              {!isLeadsOnlyUser && (
                 <>
                   <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
                   <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
@@ -105,18 +73,11 @@ export const AdminNavbar = () => {
         opacity: 0,
         y: -10
       }} className="md:hidden bg-casino-card border border-gold/10 rounded-lg shadow-lg p-2 mb-4 mx-2">
-            {!isLeadsOnlyUser && !isSpecialLeadsUser && (
+            {!isLeadsOnlyUser && (
               <MobileNavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" onClick={() => setIsOpen(false)} />
             )}
             <MobileNavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" onClick={() => setIsOpen(false)} />
-            {isSpecialLeadsUser && (
-              <>
-                <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
-              </>
-            )}
-            {!isLeadsOnlyUser && !isSpecialLeadsUser && (
+            {!isLeadsOnlyUser && (
               <>
                 <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
                 <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />

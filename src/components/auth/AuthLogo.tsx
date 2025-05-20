@@ -12,8 +12,8 @@ const AuthLogo = () => {
     >
       <Link to="/">
         <img 
-          src="https://i.imgur.com/Q191f5z.png" 
-          alt="KRYPTO AI Logo" 
+          src="https://i.imgur.com/oXGr0DY.png" 
+          alt="bitbamba Logo" 
           className="h-20 object-contain"
         />
       </Link>

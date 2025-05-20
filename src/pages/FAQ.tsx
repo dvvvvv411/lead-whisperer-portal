@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { motion } from "framer-motion";
 import { 
@@ -14,23 +13,23 @@ import CtaBanner from "@/components/landing/CtaBanner";
 const faqCategories = [
   {
     id: "general",
-    title: "🔍 Allgemeines zu bitloon",
+    title: "🔍 Allgemeines zu bitbamba",
     icon: <HelpCircle className="w-5 h-5 text-gold mr-2" />,
     items: [
       {
         id: "what-is-bitloon",
-        question: "Was ist bitloon?",
-        answer: "bitloon ist ein KI-gestützter Kryptobot, der automatisiert Kryptowährungen handelt. Mithilfe künstlicher Intelligenz erkennt er Marktchancen und trifft präzise Entscheidungen – ohne dass du selbst handeln musst."
+        question: "Was ist bitbamba?",
+        answer: "bitbamba ist ein KI-gestützter Kryptobot, der automatisiert Kryptowährungen handelt. Mithilfe künstlicher Intelligenz erkennt er Marktchancen und trifft präzise Entscheidungen – ohne dass du selbst handeln musst."
       },
       {
         id: "how-works",
-        question: "Wie funktioniert bitloon?",
-        answer: "Die KI analysiert in Echtzeit Marktdaten, Trends, Nachrichten und Blockchain-Informationen. Mit einer Trefferquote von bis zu 90 % führt bitloon automatisch profitable Trades durch – direkt über dein persönliches Bot-Panel."
+        question: "Wie funktioniert bitbamba?",
+        answer: "Die KI analysiert in Echtzeit Marktdaten, Trends, Nachrichten und Blockchain-Informationen. Mit einer Trefferquote von bis zu 90 % führt bitbamba automatisch profitable Trades durch – direkt über dein persönliches Bot-Panel."
       },
       {
         id: "difference",
-        question: "Was unterscheidet bitloon von anderen Trading-Bots?",
-        answer: "bitloon erkennt potenzielle Verlusttrades frühzeitig und bricht diese automatisch ab, bevor sie ausgeführt werden. Das senkt dein Risiko und erhöht die Stabilität der Rendite."
+        question: "Was unterscheidet bitbamba von anderen Trading-Bots?",
+        answer: "bitbamba erkennt potenzielle Verlusttrades frühzeitig und bricht diese automatisch ab, bevor sie ausgeführt werden. Das senkt dein Risiko und erhöht die Stabilität der Rendite."
       }
     ]
   },
@@ -41,13 +40,13 @@ const faqCategories = [
     items: [
       {
         id: "cost",
-        question: "Was kostet bitloon?",
+        question: "Was kostet bitbamba?",
         answer: "Die einmalige Aktivierungsgebühr beträgt 250 €. Diese wird dir vollständig als Tradingguthaben gutgeschrieben und kann bei Bedarf auch wieder ausgezahlt werden. Du bezahlst also nichts \"on top\" – dein Kapital arbeitet sofort für dich."
       },
       {
         id: "returns",
-        question: "Wie hoch sind die Erträge mit bitloon?",
-        answer: "bitloon erzielt abhängig von der Marktlage eine Rendite von bis zu 30 % pro Monat – durch KI-gesteuerte, intelligente Handelsstrategien."
+        question: "Wie hoch sind die Erträge mit bitbamba?",
+        answer: "bitbamba erzielt abhängig von der Marktlage eine Rendite von bis zu 30 % pro Monat – durch KI-gesteuerte, intelligente Handelsstrategien."
       },
       {
         id: "withdraw",
@@ -68,18 +67,18 @@ const faqCategories = [
     items: [
       {
         id: "decisions",
-        question: "Wie entscheidet bitloon, wann gehandelt wird?",
+        question: "Wie entscheidet bitbamba, wann gehandelt wird?",
         answer: "Die KI analysiert fortlaufend Daten aus Märkten, Newsfeeds, On-Chain-Quellen und technischen Indikatoren – so erkennt sie profitable Einstiegspunkte mit hoher Präzision."
       },
       {
         id: "bad-market",
         question: "Was passiert bei einem schlechten Marktumfeld?",
-        answer: "bitloon schützt dein Kapital aktiv: Sollte sich ein Trade als verlustreich herausstellen, wird dieser vor Ausführung abgebrochen. So wird unnötiger Schaden vermieden."
+        answer: "bitbamba schützt dein Kapital aktiv: Sollte sich ein Trade als verlustreich herausstellen, wird dieser vor Ausführung abgebrochen. So wird unnötiger Schaden vermieden."
       },
       {
         id: "security",
         question: "Wie sicher ist mein Investment?",
-        answer: "Es gibt keine Garantien, aber bitloon verwendet fortschrittliches Risikomanagement, Stop-Loss-Strategien und Kapitalschutzmechanismen, um deine Anlage zu sichern."
+        answer: "Es gibt keine Garantien, aber bitbamba verwendet fortschrittliches Risikomanagement, Stop-Loss-Strategien und Kapitalschutzmechanismen, um deine Anlage zu sichern."
       },
       {
         id: "cryptocurrencies",
@@ -95,8 +94,8 @@ const faqCategories = [
     items: [
       {
         id: "activation",
-        question: "Wie kann ich bitloon aktivieren?",
-        answer: "Mit der Zahlung der einmaligen Aktivierungsgebühr von 250 € erhältst du sofort Zugriff auf das bitloon Bot Panel, in dem alle Trades und Statistiken live einsehbar sind."
+        question: "Wie kann ich bitbamba aktivieren?",
+        answer: "Mit der Zahlung der einmaligen Aktivierungsgebühr von 250 € erhältst du sofort Zugriff auf das bitbamba Bot Panel, in dem alle Trades und Statistiken live einsehbar sind."
       },
       {
         id: "panel",
@@ -106,7 +105,7 @@ const faqCategories = [
       {
         id: "prerequisites",
         question: "Brauche ich Vorkenntnisse?",
-        answer: "Nein. bitloon ist vollständig automatisiert. Du musst weder Charts lesen noch manuell handeln – die KI übernimmt alles für dich."
+        answer: "Nein. bitbamba ist vollständig automatisiert. Du musst weder Charts lesen noch manuell handeln – die KI übernimmt alles für dich."
       },
       {
         id: "phone-support",
@@ -127,8 +126,8 @@ const faqCategories = [
     items: [
       {
         id: "frequency",
-        question: "Wie häufig handelt bitloon?",
-        answer: "Je nach Marktlage führt bitloon mehrere Trades pro Tag oder auch seltener aus – die Frequenz richtet sich vollständig nach der Erfolgschance."
+        question: "Wie häufig handelt bitbamba?",
+        answer: "Je nach Marktlage führt bitbamba mehrere Trades pro Tag oder auch seltener aus – die Frequenz richtet sich vollständig nach der Erfolgschance."
       },
       {
         id: "settings",
@@ -137,7 +136,7 @@ const faqCategories = [
       },
       {
         id: "exchanges",
-        question: "Welche Börsen nutzt bitloon?",
+        question: "Welche Börsen nutzt bitbamba?",
         answer: "Die Trades erfolgen über geprüfte Schnittstellen (APIs). Anbindungen an bekannte Börsen wie Binance, Coinbase und Kraken sind in Arbeit."
       },
       {

@@ -30,7 +30,7 @@ export const AdminNavbar = () => {
         <Menubar className="py-3 px-4 w-full bg-transparent border-none">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <img alt="KRYPTO AI Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/Q191f5z.png" />
+              <img alt="bitbamba Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/oXGr0DY.png" />
               <span className="text-gold font-bold text-lg hidden md:block">Admin Dashboard</span>
             </div>
             

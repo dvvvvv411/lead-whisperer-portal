@@ -21,8 +21,12 @@ const AdminPayments = () => {
           return;
         }
         
-        // For all other users, check admin role
-        const { data, error } = await supabase.rpc('check_is_admin');
+        // For all other users, check admin role using the has_role function
+        const { data, error } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin'
+        });
+        
         if (!error && data) {
           setIsAuthorized(true);
         } else {

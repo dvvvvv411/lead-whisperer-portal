@@ -119,10 +119,10 @@ serve(async (req) => {
       </div>
     </div>
     <footer>
-      &copy; 2025 bitbamba - GMS Management und Service GmbH | 
-      <a href="https://bitbamba.net/impressum" target="_blank">Impressum</a> | 
-      <a href="https://bitbamba.net" target="_blank">Webseite</a> | 
-      <a href="https://bitbamba.net/datenschutz" target="_blank">Datenschutz</a>
+      &copy; 2025 bitbamba - Cryptosoft GmbH | 
+      <a href="https://bitbamba.de/impressum" target="_blank">Impressum</a> | 
+      <a href="https://bitbamba.de" target="_blank">Webseite</a> | 
+      <a href="https://bitbamba.de/datenschutz" target="_blank">Datenschutz</a>
     </footer>
   </div>
 </body>

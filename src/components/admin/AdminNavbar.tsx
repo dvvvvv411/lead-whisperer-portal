@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
-import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu, Info } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu, Settings } from "lucide-react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -30,7 +30,7 @@ export const AdminNavbar = () => {
         <Menubar className="py-3 px-4 w-full bg-transparent border-none">
           <div className="flex items-center justify-between w-full">
             <div className="flex items-center gap-2">
-              <img alt="KRYPTO AI Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/Q191f5z.png" />
+              <img alt="Logo" className="h-8 object-contain hidden md:block" src="https://i.imgur.com/Q191f5z.png" />
               <span className="text-gold font-bold text-lg hidden md:block">Admin Dashboard</span>
             </div>
             
@@ -46,7 +46,7 @@ export const AdminNavbar = () => {
                   <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
                   <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
                   <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
-                  <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
+                  <NavItem to="/admin/rebranding" icon={<Settings className="w-4 h-4 mr-2" />} label="Rebranding" />
                 </>
               )}
               {/* Logout Button for desktop */}
@@ -83,7 +83,7 @@ export const AdminNavbar = () => {
                 <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
                 <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
                 <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
+                <MobileNavItem to="/admin/rebranding" icon={<Settings className="w-4 h-4 mr-2" />} label="Rebranding" onClick={() => setIsOpen(false)} />
               </>
             )}
             

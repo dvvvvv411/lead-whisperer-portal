@@ -1,8 +1,31 @@
 
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
 
 const AuthLogo = () => {
+  const [logoUrl, setLogoUrl] = useState("https://i.imgur.com/Q191f5z.png");
+
+  useEffect(() => {
+    const fetchLogo = async () => {
+      try {
+        const { data } = await supabase
+          .from('legal_info')
+          .select('logo_url')
+          .single();
+
+        if (data?.logo_url) {
+          setLogoUrl(data.logo_url);
+        }
+      } catch (error) {
+        console.error("Error fetching logo:", error);
+      }
+    };
+
+    fetchLogo();
+  }, []);
+  
   return (
     <motion.div 
       initial={{ opacity: 0, y: -20 }}
@@ -12,8 +35,8 @@ const AuthLogo = () => {
     >
       <Link to="/">
         <img 
-          src="https://i.imgur.com/Q191f5z.png" 
-          alt="KRYPTO AI Logo" 
+          src={logoUrl} 
+          alt="Logo" 
           className="h-20 object-contain"
         />
       </Link>

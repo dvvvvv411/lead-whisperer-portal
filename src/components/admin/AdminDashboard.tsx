@@ -10,7 +10,7 @@ import {
   Users,
   CreditCard,
   ArrowUpRight,
-  Info
+  Settings
 } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -81,10 +81,10 @@ export const AdminDashboard = () => {
       bgClass: "bg-gradient-to-br from-teal-900/40 to-teal-800/20"
     },
     {
-      title: "Rechtstexte",
-      description: "Impressum und Rechtstexte bearbeiten",
-      icon: <Info className="w-12 h-12 text-red-400" />,
-      link: "/admin/rechtstexte",
+      title: "Rebranding",
+      description: "Logo, Name und Unternehmensdaten ändern",
+      icon: <Settings className="w-12 h-12 text-red-400" />,
+      link: "/admin/rebranding",
       bgClass: "bg-gradient-to-br from-red-900/40 to-red-800/20"
     }
   ];

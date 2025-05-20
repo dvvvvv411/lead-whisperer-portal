@@ -4,6 +4,12 @@ import PageLayout from "@/components/landing/PageLayout";
 import { supabase } from "@/integrations/supabase/client";
 
 interface LegalInfo {
+  company_name: string;
+  street: string;
+  postal_code: string;
+  city: string;
+  ceo_1: string;
+  ceo_2: string;
   phone_number: string;
   email: string;
   vat_id: string;
@@ -11,6 +17,12 @@ interface LegalInfo {
 
 const Impressum = () => {
   const [legalInfo, setLegalInfo] = useState<LegalInfo>({
+    company_name: "GMS Management und Service GmbH",
+    street: "Platz der Republik 6",
+    postal_code: "60325",
+    city: "Frankfurt am Main",
+    ceo_1: "Stefan Schlieter",
+    ceo_2: "Walid Abu Al Ghon",
     phone_number: "+49 (0) 69 254 931 30",
     email: "info@gms-service.de",
     vat_id: "DE341123456"
@@ -22,7 +34,7 @@ const Impressum = () => {
       try {
         const { data, error } = await supabase
           .from('legal_info')
-          .select('phone_number, email, vat_id')
+          .select('company_name, street, postal_code, city, ceo_1, ceo_2, phone_number, email, vat_id')
           .single();
           
         if (error) {
@@ -52,9 +64,9 @@ const Impressum = () => {
         <section className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-xl font-bold mb-4 text-gold">Angaben gemäß § 5 TMG</h2>
           <p>
-            GMS Management und Service GmbH<br />
-            Platz der Republik 6<br />
-            60325 Frankfurt am Main<br />
+            {legalInfo.company_name}<br />
+            {legalInfo.street}<br />
+            {legalInfo.postal_code} {legalInfo.city}<br />
             Deutschland
           </p>
 
@@ -66,8 +78,8 @@ const Impressum = () => {
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Vertreten durch</h3>
           <p>
-            Stefan Schlieter (Geschäftsführer)<br />
-            Walid Abu Al Ghon (Geschäftsführer)
+            {legalInfo.ceo_1} (Geschäftsführer)<br />
+            {legalInfo.ceo_2} (Geschäftsführer)
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Kontakt</h3>
@@ -86,10 +98,10 @@ const Impressum = () => {
         <section className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg mb-8">
           <h2 className="text-xl font-bold mb-4 text-gold">Verantwortlich für den Inhalt nach § 55 Abs. 2 RStV</h2>
           <p>
-            Stefan Schlieter<br />
-            GMS Management und Service GmbH<br />
-            Platz der Republik 6<br />
-            60325 Frankfurt am Main<br />
+            {legalInfo.ceo_1}<br />
+            {legalInfo.company_name}<br />
+            {legalInfo.street}<br />
+            {legalInfo.postal_code} {legalInfo.city}<br />
             Deutschland
           </p>
         </section>

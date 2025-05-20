@@ -16,6 +16,7 @@ import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import AdminPayments from "./pages/AdminPayments";
 import AdminWithdrawals from "./pages/AdminWithdrawals";
 import AdminLegalInfo from "./pages/AdminLegalInfo";
+import AdminRebranding from "./pages/AdminRebranding";
 import UserActivation from "./pages/UserActivation";
 import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
@@ -54,6 +55,7 @@ function App() {
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
             <Route path="/admin/rechtstexte" element={<AdminLegalInfo />} />
+            <Route path="/admin/rebranding" element={<AdminRebranding />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             
             {/* Updated routes to match navigation links */}

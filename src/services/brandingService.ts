@@ -27,12 +27,36 @@ export const fetchBrandingInfo = async (): Promise<BrandingInfo | null> => {
       return null;
     }
     
+    // Ensure press_links is properly typed as an array
+    let pressLinks: Array<{ name: string; url: string; }> = [];
+    
+    // Handle press_links data safely
+    if (data.press_links) {
+      try {
+        // If it's a string, try to parse it
+        if (typeof data.press_links === 'string') {
+          pressLinks = JSON.parse(data.press_links);
+        }
+        // If it's already an array, use it directly
+        else if (Array.isArray(data.press_links)) {
+          pressLinks = data.press_links;
+        }
+        // Validate that each item has name and url properties
+        pressLinks = pressLinks.filter(link => 
+          link && typeof link === 'object' && 'name' in link && 'url' in link
+        );
+      } catch (e) {
+        console.error("Error parsing press_links:", e);
+        pressLinks = [];
+      }
+    }
+    
     return {
       site_name: data.site_name,
       site_description: data.site_description,
       logo_url: data.logo_url,
       favicon_url: data.favicon_url,
-      press_links: data.press_links || [],
+      press_links: pressLinks,
       phone_number: data.phone_number,
       email: data.email,
       vat_id: data.vat_id

@@ -31,11 +31,11 @@ serve(async (req) => {
     }
 
     // Extract origin from the request URL or use a fallback
-    const origin = redirectUrl || "https://bitbamba.net";
+    const origin = redirectUrl || "https://bitbamba.com";
     const loginUrl = `${origin}/nutzer`;
 
     const emailResponse = await resend.emails.send({
-      from: "bitbamba <noreply@bitbamba.net>",
+      from: "bitbamba <noreply@bitbamba.com>",
       to: [email],
       subject: "Ihre Zugangsdaten für bitbamba",
       html: `
@@ -132,10 +132,10 @@ serve(async (req) => {
               <a href="${loginUrl}" class="cta">Zum Login</a>
             </div>
             <footer>
-              &copy; ${new Date().getFullYear()} bitbamba - GMS Management und Service GmbH | 
-              <a href="https://bitbamba.net/impressum" target="_blank">Impressum</a> | 
-              <a href="https://bitbamba.net" target="_blank">Webseite</a> | 
-              <a href="https://bitbamba.net/datenschutz" target="_blank">Datenschutz</a>
+              &copy; ${new Date().getFullYear()} bitbamba - Cryptosoft GmbH | 
+              <a href="https://bitbamba.com/impressum" target="_blank">Impressum</a> | 
+              <a href="https://bitbamba.com" target="_blank">Webseite</a> | 
+              <a href="https://bitbamba.com/datenschutz" target="_blank">Datenschutz</a>
             </footer>
           </div>
         </body>

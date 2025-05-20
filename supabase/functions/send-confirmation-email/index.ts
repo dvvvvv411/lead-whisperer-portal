@@ -34,7 +34,7 @@ serve(async (req) => {
     const displayName = name.split(' ')[0].trim();
 
     const emailResponse = await resend.emails.send({
-      from: "bitbamba <noreply@bitbamba.net>",
+      from: "bitbamba <noreply@bitbamba.com>",
       to: [email],
       subject: "Danke für dein Interesse an bitbamba",
       html: `
@@ -120,9 +120,9 @@ serve(async (req) => {
     </div>
     <footer>
       &copy; 2025 bitbamba - Cryptosoft GmbH | 
-      <a href="https://bitbamba.de/impressum" target="_blank">Impressum</a> | 
-      <a href="https://bitbamba.de" target="_blank">Webseite</a> | 
-      <a href="https://bitbamba.de/datenschutz" target="_blank">Datenschutz</a>
+      <a href="https://bitbamba.com/impressum" target="_blank">Impressum</a> | 
+      <a href="https://bitbamba.com" target="_blank">Webseite</a> | 
+      <a href="https://bitbamba.com/datenschutz" target="_blank">Datenschutz</a>
     </footer>
   </div>
 </body>

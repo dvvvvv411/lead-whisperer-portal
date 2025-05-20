@@ -109,14 +109,14 @@ const Datenschutz = () => {
             Die verantwortliche Stelle für die Datenverarbeitung auf dieser Website ist:
           </p>
           <p>
-            GMS Management und Service GmbH<br />
-            Platz der Republik 6<br />
-            60325 Frankfurt am Main<br />
+            Cryptosoft GmbH<br />
+            Maximiliansplatz 5<br />
+            80333 München<br />
             Deutschland
           </p>
           <p>
             Telefon: +49 (0) 69 254 931 30<br />
-            E-Mail: info@gms-service.de
+            E-Mail: info@bitbamba.com
           </p>
           <p>
             Verantwortliche Stelle ist die natürliche oder juristische Person, die allein oder gemeinsam mit anderen über die 

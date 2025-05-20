@@ -12,7 +12,7 @@ interface LegalInfo {
 const Impressum = () => {
   const [legalInfo, setLegalInfo] = useState<LegalInfo>({
     phone_number: "+49 (0) 69 254 931 30",
-    email: "info@bitbamba.de",
+    email: "info@bitbamba.com",
     vat_id: "DE341123456"
   });
   const [loading, setLoading] = useState(true);

@@ -39,12 +39,21 @@ export const fetchBrandingInfo = async (): Promise<BrandingInfo | null> => {
         }
         // If it's already an array, use it directly
         else if (Array.isArray(data.press_links)) {
-          pressLinks = data.press_links;
+          // Cast and validate each item in the array
+          pressLinks = data.press_links
+            .filter(item => item && typeof item === 'object')
+            .map(item => {
+              // Ensure each item has the required properties
+              if (typeof item === 'object' && item !== null && 'name' in item && 'url' in item) {
+                return {
+                  name: String(item.name),
+                  url: String(item.url)
+                };
+              }
+              return null;
+            })
+            .filter((item): item is { name: string; url: string } => item !== null);
         }
-        // Validate that each item has name and url properties
-        pressLinks = pressLinks.filter(link => 
-          link && typeof link === 'object' && 'name' in link && 'url' in link
-        );
       } catch (e) {
         console.error("Error parsing press_links:", e);
         pressLinks = [];

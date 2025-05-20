@@ -33,6 +33,11 @@ interface RebrandingFormData {
   };
 }
 
+interface PressLinkItem {
+  name: string;
+  url: string;
+}
+
 const AdminRebranding = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
@@ -84,6 +89,26 @@ const AdminRebranding = () => {
             focus: 'https://www.focus-online.net/finanzen/boerse/frankfurter-ki-fintech-bitloon-ueberzeugt-erste-anleger-carsten-maschmeyer-zeigt-sich-beeindruckt-von-automatisierter-krypto-plattform_025fd55e-1d5f-4964-83c2-8e73df7c6012.html',
             wiwo: 'https://www.wirtschafts-woche.net/finanzen/geldanlage/bitloon-aus-frankfurt-wie-ein-ki-start-up-den-krypto-handel-professionalisieren-will/100127150.html'
           };
+          
+          // Try to parse press_links from database
+          if (data.press_links && Array.isArray(data.press_links)) {
+            try {
+              const pressList = data.press_links as PressLinkItem[];
+              
+              // Map the array of PressLinkItem to our form structure
+              pressList.forEach(item => {
+                if (item.name === 'Handelsblatt' && item.url) {
+                  pressLinks.handelsblatt = item.url;
+                } else if (item.name === 'Focus' && item.url) {
+                  pressLinks.focus = item.url;
+                } else if (item.name === 'WirtschaftsWoche' && item.url) {
+                  pressLinks.wiwo = item.url;
+                }
+              });
+            } catch (parseError) {
+              console.error("Error parsing press links:", parseError);
+            }
+          }
           
           // Form reset with retrieved data
           form.reset({
@@ -170,7 +195,8 @@ const AdminRebranding = () => {
     setSubmitting(true);
     try {
       // Prepare press_links as JSON for storage
-      const pressLinksJson = [
+      // Ensure we're creating the correct JSON structure for Supabase
+      const pressLinksJson: PressLinkItem[] = [
         {
           name: "Handelsblatt",
           url: values.press_links.handelsblatt
@@ -184,6 +210,17 @@ const AdminRebranding = () => {
           url: values.press_links.wiwo
         }
       ];
+      
+      // Get the legal info id first to make sure it exists
+      const { data: infoData, error: infoError } = await supabase
+        .from('legal_info')
+        .select('id')
+        .single();
+        
+      if (infoError) {
+        console.error("Error fetching legal info id:", infoError);
+        throw new Error("Could not find legal info record");
+      }
       
       const { error } = await supabase
         .from('legal_info')
@@ -204,9 +241,10 @@ const AdminRebranding = () => {
           press_links: pressLinksJson,
           updated_at: new Date().toISOString()
         })
-        .eq('id', (await supabase.from('legal_info').select('id').single()).data.id);
+        .eq('id', infoData.id);
       
       if (error) {
+        console.error("Supabase error details:", error);
         throw error;
       }
       
@@ -224,7 +262,7 @@ const AdminRebranding = () => {
       console.error("Error updating branding info:", error);
       toast({
         title: "Fehler",
-        description: "Die Änderungen konnten nicht gespeichert werden.",
+        description: "Die Änderungen konnten nicht gespeichert werden. Bitte prüfen Sie die Eingaben und versuchen Sie es erneut.",
         variant: "destructive"
       });
     } finally {

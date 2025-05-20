@@ -137,37 +137,22 @@ export type Database = {
       legal_info: {
         Row: {
           email: string
-          favicon_url: string | null
           id: string
-          logo_url: string | null
           phone_number: string
-          press_links: Json | null
-          site_description: string
-          site_name: string
           updated_at: string | null
           vat_id: string
         }
         Insert: {
           email?: string
-          favicon_url?: string | null
           id?: string
-          logo_url?: string | null
           phone_number?: string
-          press_links?: Json | null
-          site_description?: string
-          site_name?: string
           updated_at?: string | null
           vat_id?: string
         }
         Update: {
           email?: string
-          favicon_url?: string | null
           id?: string
-          logo_url?: string | null
           phone_number?: string
-          press_links?: Json | null
-          site_description?: string
-          site_name?: string
           updated_at?: string | null
           vat_id?: string
         }

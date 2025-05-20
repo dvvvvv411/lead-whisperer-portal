@@ -1,7 +1,6 @@
 
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
-import DynamicLogo from "@/components/common/DynamicLogo";
 
 const AuthLogo = () => {
   return (
@@ -12,7 +11,11 @@ const AuthLogo = () => {
       className="mb-8 flex flex-col items-center gap-4"
     >
       <Link to="/">
-        <DynamicLogo height={20} />
+        <img 
+          src="https://i.imgur.com/Q191f5z.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-20 object-contain"
+        />
       </Link>
       
       {/* Back to homepage button */}

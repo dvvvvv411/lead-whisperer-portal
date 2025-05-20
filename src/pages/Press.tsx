@@ -1,132 +1,109 @@
-
+import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
-import { useBranding } from "@/contexts/BrandingContext";
-import DynamicText from "@/components/common/DynamicText";
+import { Card, CardContent } from "@/components/ui/card";
+import { ExternalLink } from "lucide-react";
+
+interface PressItem {
+  id: string;
+  logo: string;
+  name: string;
+  title: string;
+  excerpt: string;
+  url: string;
+  date: string;
+}
+
+const pressItems: PressItem[] = [{
+  id: "handelsblatt",
+  logo: "https://www.implify.de/wp-content/uploads/2020/07/handelsblatt.png",
+  name: "Handelsblatt",
+  title: "Frankfurter Start-up bitloon: KI-Plattform für Krypto-Investments sorgt für Aufmerksamkeit",
+  excerpt: "Das Frankfurter Start-up bitloon hat mit seiner KI-gestützten Plattform für Krypto-Investments für Aufmerksamkeit in der Finanzwelt gesorgt...",
+  url: "https://www.handels-blatt.com/finanzen/steuern-recht/steuern/frankfurter-start-up-bitloon-ki-plattform-fuer-krypto-investments-sorgt-fuer-aufmerksamkeit/100124798.html",
+  date: "15. Mai 2025"
+}, {
+  id: "focus",
+  logo: "https://d1epvft2eg9h7o.cloudfront.net/filer_public_thumbnails/filer_public/23/c5/23c57677-262c-44a6-95f3-6465aa3f990d/focus_online-2022-logo-color-large.png__1200x628_crop_subject_location-FOCUS%20online-2022-logo-color-large.png_subsampling-2_upscale.png",
+  name: "Focus Online",
+  title: "Frankfurter KI-Fintech bitloon überzeugt erste Anleger - Carsten Maschmeyer zeigt sich beeindruckt",
+  excerpt: "Das Frankfurter KI-Fintech-Unternehmen bitloon hat mit seiner automatisierten Krypto-Plattform erste Investoren überzeugt. Auch Investor Carsten Maschmeyer äußerte sich positiv...",
+  url: "https://www.focus-online.net/finanzen/boerse/frankfurter-ki-fintech-bitloon-ueberzeugt-erste-anleger-carsten-maschmeyer-zeigt-sich-beeindruckt-von-automatisierter-krypto-plattform_025fd55e-1d5f-4964-83c2-8e73df7c6012.html",
+  date: "14. Mai 2025"
+}, {
+  id: "wiwo",
+  logo: "https://upload.wikimedia.org/wikipedia/commons/0/08/WirtschaftsWoche_Logo.png",
+  name: "Wirtschafts Woche",
+  title: "bitloon aus Frankfurt: Wie ein KI-Start-up den Krypto-Handel professionalisieren will",
+  excerpt: "Das Frankfurter Start-up bitloon setzt auf künstliche Intelligenz, um den Krypto-Handel zu professionalisieren. Die innovative Plattform verspricht hohe Renditen bei minimiertem Risiko...",
+  url: "https://www.wirtschafts-woche.net/finanzen/geldanlage/bitloon-aus-frankfurt-wie-ein-ki-start-up-den-krypto-handel-professionalisieren-will/100127150.html",
+  date: "09. Mai 2025"
+}];
 
 const Press = () => {
-  const { branding } = useBranding();
-  
-  // Default press links
-  const defaultPressLinks = [
-    { name: "Focus", url: "https://www.focus.de" },
-    { name: "Handelsblatt", url: "https://www.handelsblatt.com" },
-    { name: "WirtschaftsWoche", url: "https://www.wiwo.de" }
-  ];
-  
-  // Use custom press links if available, otherwise use defaults
-  const pressLinks = (branding?.press_links && branding.press_links.length > 0) 
-    ? branding.press_links 
-    : defaultPressLinks;
-    
-  return (
-    <PageLayout
-      title="Presse"
-      description="Pressemitteilungen und Medienpräsenz"
-    >
+  return <PageLayout title="Pressemitteilungen" description="Erfahren Sie, was die Medien über unsere KI-gestützte Krypto-Trading-Plattform sagen.">
       <div className="max-w-4xl mx-auto">
-        <section className="mb-12">
-          <h2 className="text-2xl font-bold mb-6 text-gold">Pressemitteilungen</h2>
-          
-          <div className="space-y-6">
-            <div className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg">
-              <span className="text-gray-400 text-sm">23. März 2025</span>
-              <h3 className="text-xl font-semibold mt-2 mb-3 text-white">
-                <DynamicText text="bitloon setzt neue Maßstäbe im KI-gestützten Krypto-Trading" />
-              </h3>
-              <p className="text-gray-300">
-                <DynamicText text="Frankfurt am Main - Das Fintech-Startup bitloon hat heute seine innovative Plattform für KI-gestütztes Krypto-Trading offiziell vorgestellt. Mit der Nutzung fortschrittlicher künstlicher Intelligenz verspricht das Unternehmen, den Kryptowährungshandel zu revolutionieren und für Anleger jeder Erfahrungsstufe zugänglich zu machen." />
-              </p>
-              <div className="mt-4">
-                <a 
-                  href="#" 
-                  className="text-gold hover:text-gold/80 transition-colors font-medium inline-flex items-center"
-                >
-                  Vollständige Pressemitteilung lesen
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4 ml-1" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M14 5l7 7m0 0l-7 7m7-7H3" 
-                    />
-                  </svg>
-                </a>
-              </div>
-            </div>
+        <div className="mb-12 text-center">
+          <motion.h2 className="text-2xl md:text-3xl font-bold mb-4" 
+            initial={{ opacity: 0, y: 20 }} 
+            animate={{ opacity: 1, y: 0 }} 
+            transition={{ delay: 0.2 }}
+          >
+            Medienberichte über bitloon
+          </motion.h2>
+          <motion.p className="text-gray-300 max-w-2xl mx-auto" 
+            initial={{ opacity: 0 }} 
+            animate={{ opacity: 1 }} 
+            transition={{ delay: 0.4 }}
+          >
+            Unsere innovative KI-Trading-Technologie erregt Aufmerksamkeit in der Finanzwelt. Hier finden Sie aktuelle Medienberichte über bitloon.
+          </motion.p>
+        </div>
 
-            <div className="bg-casino-card border border-gold/20 p-6 rounded-lg shadow-lg">
-              <span className="text-gray-400 text-sm">10. Februar 2025</span>
-              <h3 className="text-xl font-semibold mt-2 mb-3 text-white">
-                <DynamicText text="bitloon erhält 5 Millionen Euro in Seed-Finanzierungsrunde" />
-              </h3>
-              <p className="text-gray-300">
-                <DynamicText text="Frankfurt am Main - Das deutsche Fintech-Startup bitloon hat in einer Seed-Finanzierungsrunde 5 Millionen Euro eingesammelt. Die Runde wurde von führenden deutschen und europäischen Risikokapitalgebern angeführt, die das Potenzial der KI-gestützten Handelsplattform für Kryptowährungen erkannt haben." />
-              </p>
-              <div className="mt-4">
-                <a 
-                  href="#" 
-                  className="text-gold hover:text-gold/80 transition-colors font-medium inline-flex items-center"
-                >
-                  Vollständige Pressemitteilung lesen
-                  <svg 
-                    xmlns="http://www.w3.org/2000/svg" 
-                    className="h-4 w-4 ml-1" 
-                    fill="none" 
-                    viewBox="0 0 24 24" 
-                    stroke="currentColor"
-                  >
-                    <path 
-                      strokeLinecap="round" 
-                      strokeLinejoin="round" 
-                      strokeWidth={2} 
-                      d="M14 5l7 7m0 0l-7 7m7-7H3" 
-                    />
-                  </svg>
-                </a>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        <section>
-          <h2 className="text-2xl font-bold mb-6 text-gold">In den Medien</h2>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {pressLinks.map((press, index) => (
-              <a 
-                key={index}
-                href={press.url}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="bg-casino-card border border-gold/20 p-4 rounded-lg shadow-lg hover:border-gold/40 transition-all group flex flex-col items-center justify-center"
-              >
-                <div className="w-40 h-20 flex items-center justify-center mb-2">
-                  <img 
-                    src={`/press/${press.name.toLowerCase()}-logo.png`} 
-                    alt={`${press.name} Logo`}
-                    className="max-h-full max-w-full object-contain opacity-70 group-hover:opacity-100 transition-opacity"
-                    onError={(e) => {
-                      // Fallback for missing logos
-                      (e.target as HTMLImageElement).src = "https://via.placeholder.com/160x80?text=" + press.name;
-                    }}
-                  />
-                </div>
-                <span className="text-gray-300 group-hover:text-white transition-colors text-sm mt-2">
-                  Artikel lesen
-                </span>
+        <motion.div className="grid gap-8"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.6 }}
+        >
+          {pressItems.map((item, index) => (
+            <motion.div key={item.id}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: 0.2 + index * 0.2 }}
+            >
+              <a href={item.url} target="_blank" rel="noopener noreferrer" className="block">
+                <Card className="overflow-hidden backdrop-blur-sm border-gold/30 bg-gradient-to-b from-casino-card/90 to-casino-dark/90 hover:shadow-lg hover:shadow-gold/10 transition-all duration-300">
+                  <CardContent className="p-0">
+                    <div className="grid md:grid-cols-[180px_1fr] grid-cols-1">
+                      <div className="flex items-center justify-center p-6 bg-white/10 backdrop-blur-sm">
+                        <div className="h-16 flex items-center justify-center">
+                          <img 
+                            src={item.logo} 
+                            alt={`${item.name} Logo`} 
+                            className="max-h-full max-w-full object-contain" 
+                            loading="lazy"
+                          />
+                        </div>
+                      </div>
+                      <div className="p-6">
+                        <div className="flex justify-between items-start">
+                          <h3 className="text-xl font-semibold text-white mb-2">{item.title}</h3>
+                          <ExternalLink className="h-5 w-5 text-gold/70 flex-shrink-0 ml-2" />
+                        </div>
+                        <p className="text-gray-300 mb-4">{item.excerpt}</p>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm text-gray-400">{item.date}</span>
+                          <span className="text-gold font-medium text-sm hover:underline">Vollständigen Artikel lesen</span>
+                        </div>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
               </a>
-            ))}
-          </div>
-        </section>
+            </motion.div>
+          ))}
+        </motion.div>
       </div>
-    </PageLayout>
-  );
+    </PageLayout>;
 };
 
 export default Press;

@@ -1,12 +1,15 @@
 
 import { Link } from "react-router-dom";
-import DynamicLogo from "@/components/common/DynamicLogo";
 
 const UserNavbarLogo = () => {
   return (
     <div className="flex items-center">
       <Link to="/nutzer" className="flex items-center">
-        <DynamicLogo height={10} />
+        <img 
+          src="https://i.imgur.com/Q191f5z.png" 
+          alt="KRYPTO AI Logo" 
+          className="h-10 object-contain" 
+        />
       </Link>
     </div>
   );

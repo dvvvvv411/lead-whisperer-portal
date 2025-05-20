@@ -1,11 +1,37 @@
 
+import { useState, useEffect } from "react";
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import WithdrawalManager from "@/components/admin/withdrawals/WithdrawalManager";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 const AdminWithdrawals = () => {
-  const { user, authLoading, handleLogout } = useAdminAuth();
+  const { user, authLoading } = useAdminAuth();
+  const [isAllowed, setIsAllowed] = useState(false);
+  
+  useEffect(() => {
+    const checkAccess = async () => {
+      if (user) {
+        // Allow access for the specific user ID
+        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+          setIsAllowed(true);
+        } else {
+          // For other users, check if they're admins
+          const { data: isAdmin } = await supabase.rpc('has_role', {
+            _user_id: user.id,
+            _role: 'admin'
+          });
+          
+          setIsAllowed(isAdmin || false);
+        }
+      }
+    };
+    
+    if (user) {
+      checkAccess();
+    }
+  }, [user]);
 
   if (authLoading) {
     return (
@@ -22,6 +48,11 @@ const AdminWithdrawals = () => {
         </motion.div>
       </div>
     );
+  }
+
+  if (!isAllowed && !authLoading) {
+    window.location.href = "/admin";
+    return null;
   }
 
   return <WithdrawalManager />;

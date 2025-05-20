@@ -8,23 +8,30 @@ import { useAdminAuth } from "@/hooks/useAdminAuth";
 const AdminLeads = () => {
   const { user, authLoading } = useAdminAuth();
   const [isLeadsOnly, setIsLeadsOnly] = useState<boolean>(false);
+  const [isAllowed, setIsAllowed] = useState<boolean>(false);
 
-  // Check for leads_only role when user data is available
+  // Check for access when user data is available
   useEffect(() => {
-    const checkRole = async () => {
+    const checkAccess = async () => {
       if (user) {
-        // Check if user has leads_only restriction
-        const { data: leadsOnlyData, error } = await supabase.rpc('is_leads_only_user', {
-          user_id_param: user.id
+        // Allow access for the specific user ID
+        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+          setIsAllowed(true);
+          setIsLeadsOnly(false); // Now this user has expanded access
+          return;
+        }
+        
+        // Check if user has admin role
+        const { data: isAdmin } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin'
         });
         
-        if (!error && leadsOnlyData) {
-          setIsLeadsOnly(leadsOnlyData);
-        }
+        setIsAllowed(isAdmin || false);
       }
     };
     
-    checkRole();
+    checkAccess();
   }, [user]);
 
   if (authLoading) {
@@ -44,7 +51,12 @@ const AdminLeads = () => {
     );
   }
 
-  // If user is admin or isLeadsOnly, show the lead table
+  if (!isAllowed && !authLoading) {
+    window.location.href = "/admin";
+    return null;
+  }
+
+  // If user has access, show the lead table
   return <LeadTable />;
 };
 

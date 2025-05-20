@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
@@ -11,6 +10,7 @@ import LogoutButton from "./LogoutButton";
 export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState(false);
+  const [isRestrictedUser, setIsRestrictedUser] = useState(false);
   
   // Check if the current user is the special leads-only user
   useEffect(() => {
@@ -18,7 +18,8 @@ export const AdminNavbar = () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
         const isSpecial = data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
-        setIsLeadsOnlyUser(isSpecial);
+        setIsRestrictedUser(isSpecial);
+        // No longer setting isLeadsOnlyUser to true, this user now has expanded access
       }
     };
     
@@ -36,18 +37,16 @@ export const AdminNavbar = () => {
             
             {/* Desktop Navigation */}
             <div className="hidden md:flex space-x-1">
-              {!isLeadsOnlyUser && (
+              {!isRestrictedUser && (
                 <NavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" />
               )}
               <NavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" />
-              {!isLeadsOnlyUser && (
-                <>
-                  <NavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" />
-                  <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
-                  <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
-                  <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
-                  <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
-                </>
+              {/* Allow restricted user to see these pages */}
+              <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
+              <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
+              <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
+              {!isRestrictedUser && (
+                <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
               )}
               {/* Logout Button for desktop */}
               <LogoutButton className="ml-2" variant="outline" />
@@ -73,18 +72,16 @@ export const AdminNavbar = () => {
         opacity: 0,
         y: -10
       }} className="md:hidden bg-casino-card border border-gold/10 rounded-lg shadow-lg p-2 mb-4 mx-2">
-            {!isLeadsOnlyUser && (
+            {!isRestrictedUser && (
               <MobileNavItem to="/admin" icon={<LayoutDashboard className="w-4 h-4 mr-2" />} label="Dashboard" onClick={() => setIsOpen(false)} />
             )}
             <MobileNavItem to="/admin/leads" icon={<FileText className="w-4 h-4 mr-2" />} label="Leads" onClick={() => setIsOpen(false)} />
-            {!isLeadsOnlyUser && (
-              <>
-                <MobileNavItem to="/admin/crypto-wallets" icon={<Wallet className="w-4 h-4 mr-2" />} label="Krypto Wallets" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
-                <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
-              </>
+            {/* Allow restricted user to see these pages on mobile too */}
+            <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
+            <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
+            <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
+            {!isRestrictedUser && (
+              <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
             )}
             
             {/* Mobile Logout Button */}

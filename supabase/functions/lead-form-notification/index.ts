@@ -77,14 +77,18 @@ serve(async (req) => {
       throw new Error('Invalid lead data: Name, email and phone are required');
     }
 
+    // Get source URL
+    const sourceUrl = payload.source_url || "Keine Quelle";
+
     // Format message
     const message = `🚨 *Neuer Lead über Landingpage!* 🚨\n\n` +
       `*Name:* ${payload.name}\n` +
       `*Email:* ${payload.email}\n` +
       `*Telefon:* ${payload.phone}\n` +
       `*Nachricht:* ${payload.message || "Keine Nachricht"}\n` +
+      `*Quelle:* ${sourceUrl}\n` +
       `*Zeit:* ${new Date().toLocaleString('de-DE')}\n\n` +
-      `➡️ Admin-Panel: https://app.kitrading.io/admin/leads`;
+      `➡️ Admin-Panel: ${sourceUrl ? sourceUrl.split('?')[0].replace(/\/[^/]*$/, '/admin/leads') : ""}`;
 
     // Get all chat IDs from the database
     const chatIds = await getChatIds(supabase);

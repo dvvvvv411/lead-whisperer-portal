@@ -8,6 +8,7 @@ export interface Lead {
   company: string | null;
   message: string;
   status: 'neu' | 'akzeptiert' | 'abgelehnt';
+  source_url: string | null;
 }
 
 export interface Comment {

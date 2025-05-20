@@ -1,14 +1,9 @@
 
+import { useState } from "react";
 import { Lead, Comment } from "@/types/leads";
 import { LeadTableRow } from "./LeadTableRow";
-import { 
-  Table,
-  TableHeader,
-  TableBody,
-  TableHead,
-  TableRow
-} from "@/components/ui/table";
-import { motion } from "framer-motion";
+import { Table, TableHeader, TableRow, TableHead, TableBody } from "@/components/ui/table";
+import { AlertCircle } from "lucide-react";
 
 interface LeadsTableContentProps {
   leads: Lead[];
@@ -17,7 +12,7 @@ interface LeadsTableContentProps {
   onCommentAdded: (newComment: Comment) => void;
   onLeadUpdated?: (updatedLead: Lead) => void;
   userEmail: string;
-  isRefreshing: boolean;
+  isRefreshing?: boolean;
 }
 
 export const LeadsTableContent = ({
@@ -27,65 +22,62 @@ export const LeadsTableContent = ({
   onCommentAdded,
   onLeadUpdated,
   userEmail,
-  isRefreshing
+  isRefreshing = false
 }: LeadsTableContentProps) => {
-  if (isRefreshing) {
-    return (
-      <div className="text-center py-4">
-        <span className="text-blue-400 flex items-center justify-center gap-2">
-          <svg className="animate-spin h-5 w-5 text-blue-400" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-          </svg>
-          Daten werden aktualisiert...
-        </span>
-      </div>
-    );
-  }
-
-  if (leads.length === 0) {
-    return (
-      <div className="text-center p-10 bg-casino-darker rounded-lg border border-gold/10">
-        <p className="text-gray-400">Keine Leads vorhanden für diese Filterauswahl.</p>
-      </div>
-    );
-  }
+  // Sort leads by created_at - newest first
+  const sortedLeads = [...leads].sort((a, b) => 
+    new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+  );
+  
+  // Function to filter comments for a specific lead
+  const getLeadComments = (leadId: string): Comment[] => {
+    return comments.filter(comment => comment.lead_id === leadId);
+  };
 
   return (
-    <div className="overflow-x-auto rounded-lg border border-gold/20 shadow-lg">
-      <Table className="border-collapse">
-        <TableHeader className="bg-gradient-to-r from-casino-dark via-casino-card to-casino-dark border-b border-gold/20">
-          <TableRow className="border-gold/10">
-            <TableHead className="text-gray-300 font-medium">Datum</TableHead>
-            <TableHead className="text-gray-300 font-medium">Name</TableHead>
-            <TableHead className="text-gray-300 font-medium">Email</TableHead>
-            <TableHead className="text-gray-300 font-medium">Telefon</TableHead>
-            <TableHead className="text-gray-300 font-medium">Status</TableHead>
-            <TableHead className="text-gray-300 font-medium">Kommentare</TableHead>
-            <TableHead className="text-gray-300 font-medium">Aktionen</TableHead>
-          </TableRow>
-        </TableHeader>
-        <TableBody>
-          {leads.map((lead, index) => (
-            <motion.tr
-              key={lead.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.3, delay: index * 0.05 }}
-              className="contents"
-            >
-              <LeadTableRow 
-                lead={lead} 
-                comments={comments}
-                onStatusChange={onStatusChange}
-                onCommentAdded={onCommentAdded}
-                onLeadUpdated={onLeadUpdated}
-                userEmail={userEmail || ''}
-              />
-            </motion.tr>
-          ))}
-        </TableBody>
-      </Table>
+    <div>
+      {leads.length > 0 ? (
+        <div className="overflow-x-auto">
+          <Table>
+            <TableHeader>
+              <TableRow className="bg-casino-darker hover:bg-casino-darker/90">
+                <TableHead className="text-gold">Datum</TableHead>
+                <TableHead className="text-gold">Name</TableHead>
+                <TableHead className="text-gold">Email</TableHead>
+                <TableHead className="text-gold">Telefon</TableHead>
+                <TableHead className="text-gold">Quelle</TableHead>
+                <TableHead className="text-gold">Status</TableHead>
+                <TableHead className="text-gold">Kommentare</TableHead>
+                <TableHead className="text-gold">Aktionen</TableHead>
+              </TableRow>
+            </TableHeader>
+            
+            <TableBody className={isRefreshing ? "opacity-50" : ""}>
+              {sortedLeads.map(lead => (
+                <LeadTableRow
+                  key={lead.id}
+                  lead={lead}
+                  comments={getLeadComments(lead.id)}
+                  onStatusChange={onStatusChange}
+                  onCommentAdded={onCommentAdded}
+                  onLeadUpdated={onLeadUpdated}
+                  userEmail={userEmail}
+                />
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      ) : (
+        <div className="p-8 text-center">
+          <div className="flex justify-center mb-4">
+            <AlertCircle className="h-12 w-12 text-gray-400" />
+          </div>
+          <h3 className="text-lg font-medium mb-2">Keine Leads gefunden</h3>
+          <p className="text-gray-400">
+            Es wurden keine Leads mit den aktuellen Filtereinstellungen gefunden.
+          </p>
+        </div>
+      )}
     </div>
   );
 };

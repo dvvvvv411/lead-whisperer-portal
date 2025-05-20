@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -14,12 +14,21 @@ const ContactForm = () => {
   } = useToast();
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [currentUrl, setCurrentUrl] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
     phone: "",
     message: ""
   });
+  
+  // Capture the current URL when component mounts
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setCurrentUrl(window.location.href);
+    }
+  }, []);
+  
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const {
       name,
@@ -41,7 +50,8 @@ const ContactForm = () => {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
-          message: formData.message || "Keine Nachricht"
+          message: formData.message || "Keine Nachricht",
+          source_url: currentUrl
         }
       });
       
@@ -79,7 +89,8 @@ const ContactForm = () => {
         phone: formData.phone,
         status: 'neu',
         company: "Leer",
-        message: formData.message || "Leer"
+        message: formData.message || "Leer",
+        source_url: currentUrl
       };
 
       // In Supabase speichern

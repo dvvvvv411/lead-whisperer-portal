@@ -30,6 +30,12 @@ export const LeadTableRow = ({
       <td className="px-4 py-3">{lead.name}</td>
       <td className="px-4 py-3">{lead.email}</td>
       <td className="px-4 py-3">{lead.phone || "-"}</td>
+      <td className="px-4 py-3" title={lead.source_url || "Keine Quelle"}>
+        {lead.source_url ? 
+          <span className="text-xs block max-w-[150px] truncate">{lead.source_url}</span> :
+          <span className="text-xs text-gray-400">-</span>
+        }
+      </td>
       <td className="px-4 py-3">
         <LeadStatusBadge status={lead.status} />
       </td>

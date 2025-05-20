@@ -3,9 +3,13 @@ import { motion } from "framer-motion";
 import { TrendingUp } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
+import DynamicLogo from "@/components/common/DynamicLogo";
+import { useBranding } from "@/contexts/BrandingContext";
+import DynamicText from "@/components/common/DynamicText";
 
 const Logo = () => {
   const isMobile = useIsMobile();
+  const { branding } = useBranding();
   
   return (
     <motion.div 
@@ -15,11 +19,7 @@ const Logo = () => {
       className={`flex flex-col items-center ${isMobile ? 'mx-auto' : ''}`}
     >
       <Link to="/">
-        <img 
-          src="https://i.imgur.com/Q191f5z.png" 
-          alt="KRYPTO AI Logo" 
-          className="h-14 object-contain" 
-        />
+        <DynamicLogo height={14} />
       </Link>
       
       {/* Trading badge positioned below logo in mobile view */}
@@ -32,7 +32,8 @@ const Logo = () => {
           whileHover={{ backgroundColor: "rgba(255, 215, 0, 0.1)" }}
         >
           <span className="text-gold flex items-center gap-2 text-sm">
-            <TrendingUp className="h-3.5 w-3.5" /> KI-gestütztes Trading
+            <TrendingUp className="h-3.5 w-3.5" />
+            <DynamicText text="KI-gestütztes Trading" />
           </span>
         </motion.div>
       )}

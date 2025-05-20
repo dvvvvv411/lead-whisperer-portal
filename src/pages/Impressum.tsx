@@ -2,46 +2,15 @@
 import { useState, useEffect } from "react";
 import PageLayout from "@/components/landing/PageLayout";
 import { supabase } from "@/integrations/supabase/client";
-
-interface LegalInfo {
-  phone_number: string;
-  email: string;
-  vat_id: string;
-}
+import { useBranding } from "@/contexts/BrandingContext";
 
 const Impressum = () => {
-  const [legalInfo, setLegalInfo] = useState<LegalInfo>({
-    phone_number: "+49 (0) 69 254 931 30",
-    email: "info@gms-service.de",
-    vat_id: "DE341123456"
-  });
+  const { branding, loading: brandingLoading } = useBranding();
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLegalInfo = async () => {
-      try {
-        const { data, error } = await supabase
-          .from('legal_info')
-          .select('phone_number, email, vat_id')
-          .single();
-          
-        if (error) {
-          console.error("Error fetching legal info:", error);
-          return;
-        }
-        
-        if (data) {
-          setLegalInfo(data);
-        }
-      } catch (error) {
-        console.error("Error fetching legal info:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    fetchLegalInfo();
-  }, []);
+    setLoading(brandingLoading);
+  }, [brandingLoading]);
 
   return (
     <PageLayout
@@ -72,14 +41,14 @@ const Impressum = () => {
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Kontakt</h3>
           <p>
-            Telefon: {loading ? "Wird geladen..." : legalInfo.phone_number}<br />
-            E-Mail: {loading ? "Wird geladen..." : legalInfo.email}
+            Telefon: {loading ? "Wird geladen..." : branding?.phone_number}<br />
+            E-Mail: {loading ? "Wird geladen..." : branding?.email}
           </p>
 
           <h3 className="text-lg font-semibold mt-6 mb-2">Umsatzsteuer-ID</h3>
           <p>
             Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br />
-            {loading ? "Wird geladen..." : legalInfo.vat_id}
+            {loading ? "Wird geladen..." : branding?.vat_id}
           </p>
         </section>
 

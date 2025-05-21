@@ -13,6 +13,7 @@ export const AdminNavbar = () => {
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState(false);
   const [isRestrictedUser, setIsRestrictedUser] = useState(false);
   const [canAccessCryptoWallets, setCanAccessCryptoWallets] = useState(false);
+  const [canAccessRechtstexte, setCanAccessRechtstexte] = useState(false);
   
   // Check if the current user is the special leads-only user
   useEffect(() => {
@@ -25,6 +26,9 @@ export const AdminNavbar = () => {
         
         // Only allow crypto wallets access for specific user ID
         setCanAccessCryptoWallets(userId === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8");
+        
+        // Allow access to Rechtstexte for specific user (054c7ee0...) even if restricted
+        setCanAccessRechtstexte(userId === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8" || !isSpecial);
       }
     };
     
@@ -53,7 +57,7 @@ export const AdminNavbar = () => {
               {canAccessCryptoWallets && (
                 <NavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" />
               )}
-              {!isRestrictedUser && (
+              {canAccessRechtstexte && (
                 <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
               )}
               {/* Logout Button for desktop */}
@@ -91,7 +95,7 @@ export const AdminNavbar = () => {
             {canAccessCryptoWallets && (
               <MobileNavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" onClick={() => setIsOpen(false)} />
             )}
-            {!isRestrictedUser && (
+            {canAccessRechtstexte && (
               <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
             )}
             

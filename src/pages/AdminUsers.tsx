@@ -33,17 +33,21 @@ const AdminUsers = () => {
         const adminCheck = await checkUserRole('admin');
         console.log(`Admin role check: ${adminCheck ? "Is admin" : "Not admin"}`);
         setIsAdmin(adminCheck);
+        
+        // If not admin, redirect to user dashboard
+        if (!adminCheck) {
+          console.log("Not an admin, redirecting to user dashboard");
+          window.location.href = "/nutzer";
+        }
       } catch (error) {
         console.error("Error checking admin role:", error);
         setIsAdmin(false);
+        
+        // Redirect on error as well
+        console.log("Error checking admin status, redirecting to user dashboard");
+        window.location.href = "/nutzer";
       } finally {
         setLoading(false);
-      }
-      
-      // If not admin, redirect to user dashboard
-      if (!adminCheck) {
-        console.log("Not an admin, redirecting to user dashboard");
-        window.location.href = "/nutzer";
       }
     };
     

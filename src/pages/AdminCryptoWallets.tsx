@@ -12,9 +12,9 @@ const AdminCryptoWallets = () => {
   useEffect(() => {
     const checkAccess = async () => {
       if (user) {
-        // Allow access for specific admin users by ID
-        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
-            user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+        // Only allow access for specific admin user by ID
+        // Removed 7eccf781-5911-4d90-a683-1df251069a2f from the allowed list
+        if (user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
           console.log(`Access granted to crypto wallets for user with ID: ${user.id}`);
           setIsAllowed(true);
         } else {

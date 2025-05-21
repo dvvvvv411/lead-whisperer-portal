@@ -12,15 +12,19 @@ export const AdminNavbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLeadsOnlyUser, setIsLeadsOnlyUser] = useState(false);
   const [isRestrictedUser, setIsRestrictedUser] = useState(false);
+  const [canAccessCryptoWallets, setCanAccessCryptoWallets] = useState(false);
   
   // Check if the current user is the special leads-only user
   useEffect(() => {
     const checkSpecialUser = async () => {
       const { data } = await supabase.auth.getUser();
       if (data?.user) {
-        const isSpecial = data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f";
+        const userId = data.user.id;
+        const isSpecial = userId === "7eccf781-5911-4d90-a683-1df251069a2f";
         setIsRestrictedUser(isSpecial);
-        // No longer setting isLeadsOnlyUser to true, this user now has expanded access
+        
+        // Only allow crypto wallets access for specific user ID
+        setCanAccessCryptoWallets(userId === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8");
       }
     };
     
@@ -46,7 +50,9 @@ export const AdminNavbar = () => {
               <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
               <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
               <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
-              <NavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" />
+              {canAccessCryptoWallets && (
+                <NavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" />
+              )}
               {!isRestrictedUser && (
                 <NavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" />
               )}
@@ -82,7 +88,9 @@ export const AdminNavbar = () => {
             <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
-            <MobileNavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" onClick={() => setIsOpen(false)} />
+            {canAccessCryptoWallets && (
+              <MobileNavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" onClick={() => setIsOpen(false)} />
+            )}
             {!isRestrictedUser && (
               <MobileNavItem to="/admin/rechtstexte" icon={<Info className="w-4 h-4 mr-2" />} label="Rechtstexte" onClick={() => setIsOpen(false)} />
             )}

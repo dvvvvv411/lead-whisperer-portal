@@ -22,6 +22,8 @@ interface LegalInfo {
 const AdminLegalInfo = () => {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
+  const [isAllowed, setIsAllowed] = useState(false);
+  const [user, setUser] = useState<any>(null);
   
   const form = useForm<Omit<LegalInfo, 'id' | 'updated_at'>>({
     defaultValues: {
@@ -31,41 +33,101 @@ const AdminLegalInfo = () => {
     }
   });
 
+  // Check if user has access to this page
   useEffect(() => {
-    const fetchLegalInfo = async () => {
+    const checkAccess = async () => {
       try {
-        const { data, error } = await supabase
-          .from('legal_info')
-          .select('*')
-          .single();
-          
+        const { data, error } = await supabase.auth.getUser();
         if (error) {
-          throw error;
+          console.error("Error fetching user:", error);
+          window.location.href = "/admin";
+          return;
         }
         
-        if (data) {
-          form.reset({
-            phone_number: data.phone_number,
-            email: data.email,
-            vat_id: data.vat_id
-          });
+        if (!data.user) {
+          console.log("No user found, redirecting to admin");
+          window.location.href = "/admin";
+          return;
         }
-      } catch (error) {
-        console.error("Error fetching legal info:", error);
-        toast({
-          title: "Fehler",
-          description: "Die Rechtsinformationen konnten nicht geladen werden.",
-          variant: "destructive"
-        });
-      } finally {
-        setLoading(false);
+        
+        setUser(data.user);
+        
+        // Allow access for specific admin users by ID
+        if (data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+            data.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+          console.log(`Access granted to legal info for user with ID: ${data.user.id}`);
+          setIsAllowed(true);
+        } else {
+          // For other users, check if they're admins
+          const { data: isAdmin, error: roleError } = await supabase.rpc('has_role', {
+            _user_id: data.user.id,
+            _role: 'admin'
+          });
+          
+          if (roleError) {
+            console.error("Error checking admin role:", roleError);
+          }
+          
+          setIsAllowed(isAdmin || false);
+          console.log(`Admin role check for user ${data.user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
+        }
+        
+        if (!isAllowed) {
+          window.location.href = "/admin";
+          return;
+        }
+        
+        // Proceed with fetching legal info
+        fetchLegalInfo();
+      } catch (err) {
+        console.error("Unexpected error during access check:", err);
+        window.location.href = "/admin";
       }
     };
     
-    fetchLegalInfo();
-  }, [form]);
+    checkAccess();
+  }, []);
+
+  const fetchLegalInfo = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('legal_info')
+        .select('*')
+        .single();
+        
+      if (error) {
+        throw error;
+      }
+      
+      if (data) {
+        form.reset({
+          phone_number: data.phone_number,
+          email: data.email,
+          vat_id: data.vat_id
+        });
+      }
+    } catch (error) {
+      console.error("Error fetching legal info:", error);
+      toast({
+        title: "Fehler",
+        description: "Die Rechtsinformationen konnten nicht geladen werden.",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const onSubmit = async (values: Omit<LegalInfo, 'id' | 'updated_at'>) => {
+    if (!isAllowed) {
+      toast({
+        title: "Fehler",
+        description: "Sie haben keine Berechtigung, diese Informationen zu ändern.",
+        variant: "destructive"
+      });
+      return;
+    }
+    
     setSubmitting(true);
     try {
       const { data, error } = await supabase
@@ -115,6 +177,12 @@ const AdminLegalInfo = () => {
         </div>
       </div>
     );
+  }
+
+  if (!isAllowed) {
+    console.log("Access denied to legal info page, redirecting to admin");
+    window.location.href = "/admin";
+    return null;
   }
 
   return (

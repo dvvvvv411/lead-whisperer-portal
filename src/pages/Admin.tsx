@@ -36,20 +36,44 @@ const Admin = () => {
         // If user is logged in, check if they are admin or user
         if (data.session) {
           console.log("User is logged in, checking roles...");
-          const adminCheck = await checkUserRole('admin');
-          const userCheck = await checkUserRole('user');
-          console.log("Role check results - Admin:", adminCheck, "User:", userCheck);
-          setIsAdmin(adminCheck);
-          setIsUser(userCheck);
+          
+          // Special handling for specific admin users by ID
+          if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+              data.session.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+            console.log(`Admin user detected (ID: ${data.session.user.id})`);
+            setIsAdmin(true);
+            setIsUser(true);
+            setLoading(false);
+            return;
+          }
+          
+          // Standard role check
+          try {
+            const adminCheck = await checkUserRole('admin');
+            const userCheck = await checkUserRole('user');
+            console.log("Role check results - Admin:", adminCheck, "User:", userCheck);
+            setIsAdmin(adminCheck);
+            setIsUser(userCheck);
+          } catch (error) {
+            console.error("Error checking user roles:", error);
+            setIsAdmin(false);
+            setIsUser(false);
+          }
           
           // Check if user has leads_only restriction
-          const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
-            user_id_param: data.session.user.id
-          });
-          
-          if (!leadsOnlyError && leadsOnlyData) {
-            setIsLeadsOnly(leadsOnlyData);
-            console.log("User has leads_only restriction");
+          try {
+            const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
+              user_id_param: data.session.user.id
+            });
+            
+            if (leadsOnlyError) {
+              console.error("Error checking leads_only role:", leadsOnlyError);
+            } else {
+              setIsLeadsOnly(!!leadsOnlyData);
+              console.log("Leads-only check:", leadsOnlyData ? "Is leads-only" : "Not leads-only");
+            }
+          } catch (error) {
+            console.error("Unexpected error checking leads_only:", error);
           }
         } else {
           // No session found, redirect to auth page
@@ -75,18 +99,43 @@ const Admin = () => {
       
       if (newSession) {
         console.log("New session detected, checking roles");
-        const adminCheck = await checkUserRole('admin');
-        const userCheck = await checkUserRole('user');
-        console.log("Updated role check - Admin:", adminCheck, "User:", userCheck);
-        setIsAdmin(adminCheck);
-        setIsUser(userCheck);
+        
+        // Special handling for specific admin users by ID
+        if (newSession.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+            newSession.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+          console.log(`Admin user detected in auth change (ID: ${newSession.user.id})`);
+          setIsAdmin(true);
+          setIsUser(true);
+          return;
+        }
+        
+        try {
+          const adminCheck = await checkUserRole('admin');
+          const userCheck = await checkUserRole('user');
+          console.log("Updated role check - Admin:", adminCheck, "User:", userCheck);
+          setIsAdmin(adminCheck);
+          setIsUser(userCheck);
+        } catch (error) {
+          console.error("Error checking user roles:", error);
+          setIsAdmin(false);
+          setIsUser(false);
+        }
         
         // Check if user has leads_only restriction
-        const { data: leadsOnlyData } = await supabase.rpc('is_leads_only_user', {
-          user_id_param: newSession.user.id
-        });
-        
-        setIsLeadsOnly(!!leadsOnlyData);
+        try {
+          const { data: leadsOnlyData, error: leadsOnlyError } = await supabase.rpc('is_leads_only_user', {
+            user_id_param: newSession.user.id
+          });
+          
+          if (leadsOnlyError) {
+            console.error("Error checking leads_only role:", leadsOnlyError);
+          } else {
+            setIsLeadsOnly(!!leadsOnlyData);
+          }
+        } catch (error) {
+          console.error("Unexpected error checking leads_only:", error);
+          setIsLeadsOnly(false);
+        }
       } else {
         setIsAdmin(null);
         setIsUser(null);

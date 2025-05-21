@@ -14,24 +14,35 @@ const AdminUsers = () => {
       const { data } = await supabase.auth.getSession();
       
       if (!data.session) {
+        console.log("No session found, redirecting to admin login");
         window.location.href = "/admin";
         return;
       }
       
-      // Special handling for the restricted user with specific ID
-      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
-        console.log("Restricted user detected, allowing access to users page");
+      // Special handling for specific admin users
+      if (data.session.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+          data.session.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+        console.log(`Admin user detected (ID: ${data.session.user.id}), allowing access to users page`);
         setIsAdmin(true);
         setLoading(false);
         return;
       }
       
-      const adminCheck = await checkUserRole('admin');
-      setIsAdmin(adminCheck);
-      setLoading(false);
+      // For other users, check admin role
+      try {
+        const adminCheck = await checkUserRole('admin');
+        console.log(`Admin role check: ${adminCheck ? "Is admin" : "Not admin"}`);
+        setIsAdmin(adminCheck);
+      } catch (error) {
+        console.error("Error checking admin role:", error);
+        setIsAdmin(false);
+      } finally {
+        setLoading(false);
+      }
       
       // If not admin, redirect to user dashboard
       if (!adminCheck) {
+        console.log("Not an admin, redirecting to user dashboard");
         window.location.href = "/nutzer";
       }
     };

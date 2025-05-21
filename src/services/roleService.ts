@@ -9,9 +9,23 @@ export const checkUserRole = async (role: "admin" | "user"): Promise<boolean> =>
   try {
     // Get current user
     const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError) throw userError;
+    if (userError) {
+      console.error("Error getting current user:", userError);
+      throw userError;
+    }
     
-    if (!userData?.user) return false;
+    if (!userData?.user) {
+      console.log("No user found in checkUserRole");
+      return false;
+    }
+    
+    // Special handling for specific admin users by ID
+    if (role === 'admin' && (
+        userData.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+        userData.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8")) {
+      console.log(`Admin access granted to user with ID: ${userData.user.id}`);
+      return true;
+    }
     
     // Special handling for 'user' role - check credit instead
     if (role === 'user') {
@@ -24,7 +38,10 @@ export const checkUserRole = async (role: "admin" | "user"): Promise<boolean> =>
       _role: role
     });
     
-    if (error) throw error;
+    if (error) {
+      console.error("Error checking user role:", error);
+      throw error;
+    }
     
     return data || false;
   } catch (error) {
@@ -38,16 +55,29 @@ export const checkUserCredit = async (): Promise<boolean> => {
   try {
     // Get current user
     const { data: userData, error: userError } = await supabase.auth.getUser();
-    if (userError) throw userError;
+    if (userError) {
+      console.error("Error getting current user for credit check:", userError);
+      throw userError;
+    }
     
-    if (!userData?.user) return false;
+    if (!userData?.user) {
+      console.log("No user found in checkUserCredit");
+      return false;
+    }
+    
+    // Special handling for specific admin users by ID
+    if (userData.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+        userData.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+      console.log(`Credit check bypassed for admin user with ID: ${userData.user.id}`);
+      return true;
+    }
     
     // Get user credit
     const { data: creditData, error: creditError } = await supabase
       .from('user_credits')
       .select('amount')
       .eq('user_id', userData.user.id)
-      .single();
+      .maybeSingle();
     
     if (creditError) {
       if (creditError.code === 'PGRST116') {
@@ -55,6 +85,7 @@ export const checkUserCredit = async (): Promise<boolean> => {
         console.log("No credit record found for user");
         return false;
       }
+      console.error("Error checking user credit:", creditError);
       throw creditError;
     }
     

@@ -14,20 +14,27 @@ const AdminLeads = () => {
   useEffect(() => {
     const checkAccess = async () => {
       if (user) {
-        // Allow access for the specific user ID
-        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f") {
+        // Allow access for specific admin users by ID
+        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
+            user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
+          console.log(`Access granted to leads for user with ID: ${user.id}`);
           setIsAllowed(true);
-          setIsLeadsOnly(false); // Now this user has expanded access
+          setIsLeadsOnly(false);
           return;
         }
         
         // Check if user has admin role
-        const { data: isAdmin } = await supabase.rpc('has_role', {
+        const { data: isAdmin, error } = await supabase.rpc('has_role', {
           _user_id: user.id,
           _role: 'admin'
         });
         
+        if (error) {
+          console.error("Error checking admin role:", error);
+        }
+        
         setIsAllowed(isAdmin || false);
+        console.log(`Admin role check for user ${user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
       }
     };
     
@@ -52,6 +59,7 @@ const AdminLeads = () => {
   }
 
   if (!isAllowed && !authLoading) {
+    console.log("Access denied to leads page, redirecting to admin");
     window.location.href = "/admin";
     return null;
   }

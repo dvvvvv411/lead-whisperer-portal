@@ -52,13 +52,20 @@ const AdminLegalInfo = () => {
         
         setUser(data.user);
         
-        // Allow access for specific admin users by ID
-        if (data.user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
-            data.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
-          console.log(`Access granted to legal info for user with ID: ${data.user.id}`);
+        // Allow access for specific admin users by ID or regular admins
+        // Special access for user with ID 054c7ee0-7f82-4e34-a0c0-45552f6a67f8
+        const isSpecialUser = data.user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8";
+        
+        if (isSpecialUser) {
+          console.log(`Special access granted to legal info for user with ID: ${data.user.id}`);
           setIsAllowed(true);
-        } else {
-          // For other users, check if they're admins
+          // Proceed with fetching legal info after confirming access
+          fetchLegalInfo();
+          return;
+        }
+        
+        // For other users (except the restricted one), check if they're admins
+        if (data.user.id !== "7eccf781-5911-4d90-a683-1df251069a2f") {
           const { data: isAdmin, error: roleError } = await supabase.rpc('has_role', {
             _user_id: data.user.id,
             _role: 'admin'
@@ -68,20 +75,26 @@ const AdminLegalInfo = () => {
             console.error("Error checking admin role:", roleError);
           }
           
-          setIsAllowed(isAdmin || false);
-          console.log(`Admin role check for user ${data.user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
+          if (isAdmin) {
+            console.log(`Admin role check for user ${data.user.id}: Is admin`);
+            setIsAllowed(true);
+            // Proceed with fetching legal info after confirming access
+            fetchLegalInfo();
+            return;
+          } else {
+            console.log(`Admin role check for user ${data.user.id}: Not admin`);
+          }
+        } else {
+          console.log(`Access denied for restricted user: ${data.user.id}`);
         }
         
-        if (!isAllowed) {
-          window.location.href = "/admin";
-          return;
-        }
-        
-        // Proceed with fetching legal info
-        fetchLegalInfo();
+        // If we get here, the user doesn't have access
+        window.location.href = "/admin";
       } catch (err) {
         console.error("Unexpected error during access check:", err);
         window.location.href = "/admin";
+      } finally {
+        setLoading(false);
       }
     };
     
@@ -179,9 +192,9 @@ const AdminLegalInfo = () => {
     );
   }
 
+  // Only check isAllowed after loading is complete
   if (!isAllowed) {
-    console.log("Access denied to legal info page, redirecting to admin");
-    window.location.href = "/admin";
+    // Component will be unmounted and redirected by the useEffect
     return null;
   }
 

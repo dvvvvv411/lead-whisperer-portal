@@ -31,7 +31,7 @@ serve(async (req) => {
     }
 
     // Always use the correct login URL regardless of redirectUrl
-    const loginUrl = "https://ai-bitloon.com/nutzer";
+    const loginUrl = "https://ai-bitloon.com/auth";
 
     const emailResponse = await resend.emails.send({
       from: "bitloon <noreply@ai-bitloon.com>",

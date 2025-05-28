@@ -110,7 +110,7 @@ serve(async (req) => {
 
       // Send welcome email
       try {
-        const origin = req.headers.get('Origin') || "https://bitloon-ai.com";
+        const origin = req.headers.get('Origin') || "https://ai-bitloon.com";
         const emailResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/send-welcome-email`, {
           method: 'POST',
           headers: {

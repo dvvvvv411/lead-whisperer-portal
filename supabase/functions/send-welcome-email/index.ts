@@ -31,11 +31,11 @@ serve(async (req) => {
     }
 
     // Extract origin from the request URL or use a fallback
-    const origin = redirectUrl || "https://bitloon-ai.com";
+    const origin = redirectUrl || "https://ai-bitloon.com";
     const loginUrl = `${origin}/nutzer`;
 
     const emailResponse = await resend.emails.send({
-      from: "bitloon <noreply@bitloon-ai.com>",
+      from: "bitloon <noreply@ai-bitloon.com>",
       to: [email],
       subject: "Ihre Zugangsdaten für bitloon",
       html: `
@@ -133,9 +133,9 @@ serve(async (req) => {
             </div>
             <footer>
               &copy; ${new Date().getFullYear()} Bitloon - GMS Management und Service GmbH | 
-              <a href="https://bitloon-ai.com/impressum" target="_blank">Impressum</a> | 
-              <a href="https://bitloon-ai.com" target="_blank">Webseite</a> | 
-              <a href="https://bitloon-ai.com/datenschutz" target="_blank">Datenschutz</a>
+              <a href="https://ai-bitloon.com/impressum" target="_blank">Impressum</a> | 
+              <a href="https://ai-bitloon.com" target="_blank">Webseite</a> | 
+              <a href="https://ai-bitloon.com/datenschutz" target="_blank">Datenschutz</a>
             </footer>
           </div>
         </body>

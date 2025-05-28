@@ -30,9 +30,8 @@ serve(async (req) => {
       );
     }
 
-    // Extract origin from the request URL or use a fallback
-    const origin = redirectUrl || "https://ai-bitloon.com";
-    const loginUrl = `${origin}/nutzer`;
+    // Always use the correct login URL regardless of redirectUrl
+    const loginUrl = "https://ai-bitloon.com/nutzer";
 
     const emailResponse = await resend.emails.send({
       from: "bitloon <noreply@ai-bitloon.com>",

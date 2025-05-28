@@ -34,7 +34,7 @@ serve(async (req) => {
     const displayName = name.split(' ')[0].trim();
 
     const emailResponse = await resend.emails.send({
-      from: "bitloon <noreply@bitloon.net>",
+      from: "bitloon <noreply@bitloon-ai.com>",
       to: [email],
       subject: "Danke für dein Interesse an bitloon",
       html: `
@@ -120,9 +120,9 @@ serve(async (req) => {
     </div>
     <footer>
       &copy; 2025 Bitloon - GMS Management und Service GmbH | 
-      <a href="https://bitloon.net/impressum" target="_blank">Impressum</a> | 
-      <a href="https://bitloon.net" target="_blank">Webseite</a> | 
-      <a href="https://bitloon.net/datenschutz" target="_blank">Datenschutz</a>
+      <a href="https://bitloon-ai.com/impressum" target="_blank">Impressum</a> | 
+      <a href="https://bitloon-ai.com" target="_blank">Webseite</a> | 
+      <a href="https://bitloon-ai.com/datenschutz" target="_blank">Datenschutz</a>
     </footer>
   </div>
 </body>

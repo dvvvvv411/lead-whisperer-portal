@@ -1,4 +1,3 @@
-
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.1";
 
@@ -149,7 +148,7 @@ serve(async (req) => {
       }
       
       // Use custom message if provided in payload, otherwise use default test message
-      const testMessage = payload?.message || `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert. Uhrzeit: ${formatDate(new Date().toISOString())}`;
+      const testMessage = payload?.message || `🧪 *Test Nachricht* 🧪\n\nDiese Nachricht bestätigt, dass der Telegram-Bot funktioniert.`;
       
       // Track success for all chat IDs
       const results = [];
@@ -222,8 +221,7 @@ serve(async (req) => {
         message = `🔔 *Neuer Lead erhalten!*\n\n` +
           `*Name:* ${payload.name}\n` +
           `*Email:* ${payload.email}\n` +
-          `*Telefon:* ${payload.phone || 'Nicht angegeben'}\n` +
-          `*Datum:* ${formatDate(payload.created_at)}`;
+          `*Telefon:* ${payload.phone || 'Nicht angegeben'}`;
       } 
       else if (payload.type === 'payment') {
         // For payment, handle both database-created format and direct API call format
@@ -240,8 +238,7 @@ serve(async (req) => {
             `*Benutzer:* ${payload.user_email}\n` +
             `*Betrag:* ${formatAmount(payload.amount)}\n` +
             `*Währung:* ${payload.currency || 'EUR'}\n` +
-            `*Status:* ${payload.status || 'pending'}\n` +
-            `*Datum:* ${formatDate(payload.created_at)}`;
+            `*Status:* ${payload.status || 'pending'}`;
         } else {
           // Direct API call format with minimal info (from frontend)
           entry_type = 'payment';
@@ -274,8 +271,7 @@ serve(async (req) => {
             `*Benutzer:* ${payload.userEmail || payload.user_email || 'Nicht angegeben'}\n` +
             `*Betrag:* ${amountStr}\n` +
             `*Zahlungsmethode:* ${walletCurrency}\n` +
-            `*Status:* Ausstehend\n` +
-            `*Datum:* ${formatDate(new Date().toISOString())}`;
+            `*Status:* Ausstehend`;
         }
       }
       else if (payload.type === 'withdrawal') {
@@ -342,16 +338,14 @@ serve(async (req) => {
           message = `🔔 *Neuer Lead erhalten!*\n\n` +
             `*Name:* ${entry.name}\n` +
             `*Email:* ${entry.email}\n` +
-            `*Telefon:* ${entry.phone || 'Nicht angegeben'}\n` +
-            `*Datum:* ${formatDate(entry.created_at)}`;
+            `*Telefon:* ${entry.phone || 'Nicht angegeben'}`;
         } 
         else if (entry_type === 'payment') {
           message = `💰 *Neue Zahlung erhalten!*\n\n` +
             `*Benutzer:* ${entry.email}\n` +
             `*Betrag:* ${formatAmount(entry.amount)}\n` +
             `*Währung:* ${entry.currency}\n` +
-            `*Status:* ${entry.status}\n` +
-            `*Datum:* ${formatDate(entry.created_at)}`;
+            `*Status:* ${entry.status}`;
         }
         
         // Send the message to Telegram

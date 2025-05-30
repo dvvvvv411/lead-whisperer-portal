@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.38.1";
 
@@ -38,6 +39,7 @@ function validatePayload(payload: any, type: string): boolean {
   } else if (type === 'payment') {
     return !!(payload.user_email && payload.amount);
   } else if (type === 'withdrawal') {
+    // Updated validation for withdrawal payload from frontend
     return !!(payload.amount && payload.walletCurrency && payload.walletAddress && payload.userEmail);
   } else if (type === 'test') {
     return true; // Test messages don't need validation
@@ -279,7 +281,8 @@ serve(async (req) => {
       else if (payload.type === 'withdrawal') {
         // Validate payload has required fields
         if (!validatePayload(payload, 'withdrawal')) {
-          throw new Error(`Invalid withdrawal payload: ${JSON.stringify(payload)}`);
+          console.error('Withdrawal payload validation failed:', payload);
+          throw new Error(`Invalid withdrawal payload. Required fields: amount, walletCurrency, walletAddress, userEmail. Received: ${JSON.stringify(payload)}`);
         }
         
         entry_type = 'withdrawal';
@@ -287,7 +290,7 @@ serve(async (req) => {
         message = `💸 *Auszahlungsantrag erhalten!*\n\n` +
           `💵 *Betrag:* ${payload.amount}€\n` +
           `💱 *Währung:* ${payload.walletCurrency}\n` +
-          `📝 *Wallet-Adresse:* ${payload.walletAddress}\n` +
+          `📝 *Wallet-Adresse:* \`${payload.walletAddress}\`\n` +
           `📧 *Nutzer:* ${payload.userEmail}`;
       }
       else {

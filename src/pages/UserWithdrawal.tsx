@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
@@ -59,24 +60,32 @@ const UserWithdrawal = () => {
         throw error;
       }
       
-      // Send notification to Telegram
+      // Send notification to Telegram with proper payload format
       try {
-        const response = await fetch('https://evtlahgiyytcvfeiqwaz.supabase.co/functions/v1/simple-telegram-alert', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({
-            type: 'withdrawal',
-            amount: amount.toFixed(2), // Format as 2 decimal places
-            walletCurrency: walletCurrency,
-            walletAddress: walletAddress,
-            userEmail: user.email
-          })
+        console.log('Sending Telegram notification for withdrawal...');
+        
+        const telegramPayload = {
+          type: 'withdrawal',
+          amount: amount.toFixed(2), // Format as string with 2 decimal places
+          walletCurrency: walletCurrency,
+          walletAddress: walletAddress,
+          userEmail: user.email
+        };
+        
+        console.log('Telegram payload:', telegramPayload);
+        
+        const response = await supabase.functions.invoke('simple-telegram-alert', {
+          body: telegramPayload
         });
         
-        const result = await response.json();
-        console.log('Telegram notification result:', result);
+        console.log('Telegram notification response:', response);
+        
+        if (response.error) {
+          console.error('Telegram notification failed:', response.error);
+          // Don't throw error - withdrawal was successful even if notification failed
+        } else {
+          console.log('Telegram notification sent successfully');
+        }
       } catch (notificationError) {
         // Log the error but don't impact user experience
         console.error("Fehler beim Senden der Telegram Benachrichtigung:", notificationError);

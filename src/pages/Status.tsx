@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import PageLayout from "@/components/landing/PageLayout";
@@ -19,6 +18,12 @@ interface Trade {
   imageUrl: string | null;
 }
 
+// List of stablecoins to exclude from trade display
+const STABLECOINS = [
+  'usdt', 'usdc', 'busd', 'dai', 'tusd', 'usdp', 'usdd', 'frax', 'lusd', 'fei',
+  'ust', 'usdn', 'usdk', 'gusd', 'husd', 'susd', 'cusd', 'ousd', 'musd', 'nusd'
+];
+
 const Status = () => {
   const { cryptos, loading, updateCryptoPrices } = useCryptos();
   const [serverLatency, setServerLatency] = useState(23);
@@ -26,6 +31,11 @@ const Status = () => {
   const [activeTraders, setActiveTraders] = useState(1980);
   const [lastTrades, setLastTrades] = useState<Trade[]>([]);
   const [serverLoad, setServerLoad] = useState(35);
+
+  // Filter out stablecoins from available cryptos
+  const volatileCryptos = cryptos.filter(crypto => 
+    !STABLECOINS.includes(crypto.symbol.toLowerCase())
+  );
 
   // Simulate changing statistics
   useEffect(() => {
@@ -44,13 +54,13 @@ const Status = () => {
     return () => clearInterval(intervalId);
   }, []);
 
-  // Generate realistic trades based on actual crypto data
+  // Generate realistic trades based on actual crypto data (excluding stablecoins)
   useEffect(() => {
-    if (!cryptos || cryptos.length === 0) return;
+    if (!volatileCryptos || volatileCryptos.length === 0) return;
 
     const generateTrade = () => {
-      // Pick a random crypto from available data
-      const crypto = cryptos[Math.floor(Math.random() * cryptos.length)];
+      // Pick a random crypto from available volatile cryptos (excluding stablecoins)
+      const crypto = volatileCryptos[Math.floor(Math.random() * volatileCryptos.length)];
       
       // Generate realistic trade data based on actual crypto price
       const isProfit = Math.random() > 0.2; // 80% chance of profit to match good success rate
@@ -100,7 +110,7 @@ const Status = () => {
     }, 3000);
     
     return () => clearInterval(addTradeInterval);
-  }, [cryptos]);
+  }, [volatileCryptos]);
 
   // Trigger initial load and periodic refresh of crypto data
   useEffect(() => {
@@ -268,7 +278,7 @@ const Status = () => {
             </div>
           </div>
           
-          {/* Recent trades - Now using real crypto data */}
+          {/* Recent trades - Now using filtered crypto data (no stablecoins) */}
           <div className="bg-casino-card border border-white/10 rounded-xl p-6 shadow-lg">
             <div className="flex justify-between items-center mb-4">
               <h3 className="text-xl font-bold text-white">Letzte Trades</h3>

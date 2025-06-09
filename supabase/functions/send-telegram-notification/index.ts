@@ -28,8 +28,11 @@ function formatPaymentActivationMessage(payload: PaymentActivationPayload): stri
     throw new Error('Missing required fields for payment activation notification');
   }
 
+  // Convert amount from cents to euros for display
+  const amountInEuros = (amount / 100).toFixed(2);
+
   return `🔔 *Neue Zahlungsbestätigung* 🔔\n\n` +
-    `*Betrag:* ${amount}€\n` +
+    `*Betrag:* ${amountInEuros}€\n` +
     `*Zahlungsmethode:* ${paymentMethod}\n` +
     `*Benutzer:* ${userEmail}\n` +
     `*Zeit:* ${new Date().toLocaleString('de-DE')}\n\n` +

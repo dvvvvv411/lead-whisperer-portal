@@ -2,8 +2,8 @@
 import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Users, Wallet, TrendingDown, Menu, X, Home, Users2, Settings, Database } from "lucide-react";
-import { AdminLogo } from "./AdminLogo";
-import { LogoutButton } from "./LogoutButton";
+import AdminLogo from "./AdminLogo";
+import LogoutButton from "./LogoutButton";
 import { motion, AnimatePresence } from "framer-motion";
 
 export const AdminNavbar = () => {

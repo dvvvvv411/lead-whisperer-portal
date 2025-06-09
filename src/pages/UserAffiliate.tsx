@@ -1,6 +1,6 @@
 
 import UserAuthWrapper from "@/components/user/auth/UserAuthWrapper";
-import { UserNavbar } from "@/components/user/UserNavbar";
+import UserNavbar from "@/components/user/UserNavbar";
 import AffiliateOverview from "@/components/user/affiliate/AffiliateOverview";
 import { motion } from "framer-motion";
 

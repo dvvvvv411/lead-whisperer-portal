@@ -66,6 +66,7 @@ export const useAffiliate = (userId?: string) => {
         .from('affiliate_invitations')
         .select(`
           id,
+          invited_user_id,
           invited_at,
           bonus_paid_to_inviter,
           bonus_paid_to_invited,

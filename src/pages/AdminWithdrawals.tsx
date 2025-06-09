@@ -4,41 +4,9 @@ import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import WithdrawalManager from "@/components/admin/withdrawals/WithdrawalManager";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { motion } from "framer-motion";
-import { supabase } from "@/integrations/supabase/client";
 
 const AdminWithdrawals = () => {
-  const { user, authLoading } = useAdminAuth();
-  const [isAllowed, setIsAllowed] = useState(false);
-  
-  useEffect(() => {
-    const checkAccess = async () => {
-      if (user) {
-        // Allow access for specific admin users by ID
-        if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
-            user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
-          console.log(`Access granted to withdrawals for user with ID: ${user.id}`);
-          setIsAllowed(true);
-        } else {
-          // For other users, check if they're admins
-          const { data: isAdmin, error } = await supabase.rpc('has_role', {
-            _user_id: user.id,
-            _role: 'admin'
-          });
-          
-          if (error) {
-            console.error("Error checking admin role:", error);
-          }
-          
-          setIsAllowed(isAdmin || false);
-          console.log(`Admin role check for user ${user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
-        }
-      }
-    };
-    
-    if (user) {
-      checkAccess();
-    }
-  }, [user]);
+  const { user, authLoading, isAdminUser } = useAdminAuth();
 
   if (authLoading) {
     return (
@@ -57,11 +25,19 @@ const AdminWithdrawals = () => {
     );
   }
 
-  if (!isAllowed && !authLoading) {
-    console.log("Access denied to withdrawals page, redirecting to admin");
+  if (!user) {
+    console.log("AdminWithdrawals: No user found, redirecting to admin login");
     window.location.href = "/admin";
     return null;
   }
+
+  if (!isAdminUser) {
+    console.log("AdminWithdrawals: Access denied, user is not admin, redirecting to admin dashboard");
+    window.location.href = "/admin";
+    return null;
+  }
+
+  console.log("AdminWithdrawals: Access granted, rendering withdrawal manager");
 
   return <WithdrawalManager />;
 };

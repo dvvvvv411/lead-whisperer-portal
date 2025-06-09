@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
@@ -19,13 +20,24 @@ const ContactForm = () => {
     name: "",
     email: "",
     phone: "",
-    message: ""
+    message: "",
+    invitationCode: ""
   });
   
-  // Capture the current URL when component mounts
+  // Check for invitation code in URL on component mount
   useEffect(() => {
     if (typeof window !== 'undefined') {
       setCurrentUrl(window.location.href);
+      
+      // Check for invitation code in URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const inviteCode = urlParams.get('invite');
+      if (inviteCode) {
+        setFormData(prev => ({
+          ...prev,
+          invitationCode: inviteCode
+        }));
+      }
     }
   }, []);
   
@@ -51,7 +63,8 @@ const ContactForm = () => {
           email: formData.email,
           phone: formData.phone,
           message: formData.message || "Keine Nachricht",
-          source_url: currentUrl
+          source_url: currentUrl,
+          invitation_code: formData.invitationCode || null
         }
       });
       
@@ -90,7 +103,8 @@ const ContactForm = () => {
         status: 'neu',
         company: "Leer",
         message: formData.message || "Leer",
-        source_url: currentUrl
+        source_url: currentUrl,
+        invitation_code: formData.invitationCode || null
       };
 
       // In Supabase speichern
@@ -133,7 +147,8 @@ const ContactForm = () => {
         name: "",
         email: "",
         phone: "",
-        message: ""
+        message: "",
+        invitationCode: ""
       });
     } catch (error) {
       console.error("Fehler beim Absenden des Formulars:", error);
@@ -151,13 +166,11 @@ const ContactForm = () => {
   const SuccessDialog = () => {
     const [showConfetti, setShowConfetti] = useState(false);
 
-    // Show confetti effect after dialog opens
     useState(() => {
       const timer = setTimeout(() => setShowConfetti(true), 400);
       return () => clearTimeout(timer);
     });
 
-    // Generate confetti particles
     const renderConfetti = () => {
       if (!showConfetti) return null;
       const particles = Array.from({
@@ -214,6 +227,9 @@ const ContactForm = () => {
                   <div className="text-sm text-center">
                     <p>Wir werden uns in Kürze bei dir melden, um den nächsten Schritt zu besprechen.</p>
                     <p className="mt-2">Halte dein Telefon bereit für Informationen zu unserer KI-Trading Lösung!</p>
+                    {formData.invitationCode && (
+                      <p className="mt-2 text-gold">Du erhältst einen 50€ Bonus durch deinen Einladungscode!</p>
+                    )}
                   </div>
                 </div>
               </div>
@@ -237,6 +253,7 @@ const ContactForm = () => {
         </DialogContent>
       </Dialog>;
   };
+  
   return <div className="w-full max-w-md mx-auto">
       {/* Show success dialog */}
       {showSuccessDialog && <SuccessDialog />}
@@ -269,6 +286,11 @@ const ContactForm = () => {
         <p className="text-gray-300 text-sm text-center">
           Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch. Einmalig 250€ Aktivierungsgebühr, die als Trading-Guthaben verwendet wird.
         </p>
+        {formData.invitationCode && (
+          <p className="text-gold text-sm text-center mt-2 font-medium">
+            🎉 Mit deinem Einladungscode erhältst du 50€ Bonus!
+          </p>
+        )}
       </motion.div>
       
       <form onSubmit={handleSubmit} className="space-y-4">
@@ -309,6 +331,29 @@ const ContactForm = () => {
       }}>
           <Label htmlFor="phone" className="text-white">Telefon *</Label>
           <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Deine Telefonnummer" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
+        </motion.div>
+
+        <motion.div className="space-y-2" initial={{
+        opacity: 0,
+        x: 20
+      }} animate={{
+        opacity: 1,
+        x: 0
+      }} transition={{
+        delay: 0.4
+      }}>
+          <Label htmlFor="invitationCode" className="text-white">Einladungscode (optional)</Label>
+          <Input 
+            id="invitationCode" 
+            name="invitationCode" 
+            value={formData.invitationCode} 
+            onChange={handleChange} 
+            placeholder="Falls du einen Einladungscode hast" 
+            className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" 
+          />
+          {formData.invitationCode && (
+            <p className="text-xs text-gold">✓ Einladungscode erkannt - Du erhältst 50€ Bonus!</p>
+          )}
         </motion.div>
         
         <motion.div initial={{

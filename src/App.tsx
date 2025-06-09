@@ -16,11 +16,13 @@ import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import AdminPayments from "./pages/AdminPayments";
 import AdminWithdrawals from "./pages/AdminWithdrawals";
 import AdminLegalInfo from "./pages/AdminLegalInfo";
+import AdminAffiliate from "./pages/AdminAffiliate";
 import UserActivation from "./pages/UserActivation";
 import UserDeposit from "./pages/UserDeposit";
 import UserWithdrawal from "./pages/UserWithdrawal";
 import UserSettings from "./pages/UserSettings";
 import UserTradeArchive from "./pages/UserTradeArchive";
+import UserInvite from "./pages/UserInvite";
 import NotFound from "./pages/NotFound";
 import AGB from "./pages/AGB";
 import Datenschutz from "./pages/Datenschutz";
@@ -54,6 +56,7 @@ function App() {
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
             <Route path="/admin/rechtstexte" element={<AdminLegalInfo />} />
+            <Route path="/admin/affiliate" element={<AdminAffiliate />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             
             {/* Updated routes to match navigation links */}
@@ -64,6 +67,7 @@ function App() {
             <Route path="/nutzer/einstellungen" element={<UserSettings />} />
             <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
             <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
+            <Route path="/nutzer/freunde-einladen" element={<UserInvite />} />
             
             {/* Update the trading bot route to be accessible for anonymous users */}
             <Route path="/trading-bot" element={<TradingBot />} />

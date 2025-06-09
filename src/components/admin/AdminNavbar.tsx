@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import { Menubar, MenubarContent, MenubarItem, MenubarMenu, MenubarTrigger } from "../ui/menubar";
-import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu, Info, Bitcoin } from "lucide-react";
+import { LayoutDashboard, Users, FileText, Wallet, CreditCard, ArrowUpRight, Menu, Info, Bitcoin, UserPlus } from "lucide-react";
 import { Button } from "../ui/button";
 import { motion } from "framer-motion";
 import { supabase } from "@/integrations/supabase/client";
@@ -54,6 +54,7 @@ export const AdminNavbar = () => {
               <NavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" />
               <NavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" />
               <NavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" />
+              <NavItem to="/admin/affiliate" icon={<UserPlus className="w-4 h-4 mr-2" />} label="Affiliate" />
               {canAccessCryptoWallets && (
                 <NavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" />
               )}
@@ -92,6 +93,7 @@ export const AdminNavbar = () => {
             <MobileNavItem to="/admin/users" icon={<Users className="w-4 h-4 mr-2" />} label="Benutzer" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/payments" icon={<CreditCard className="w-4 h-4 mr-2" />} label="Zahlungen" onClick={() => setIsOpen(false)} />
             <MobileNavItem to="/admin/withdrawals" icon={<ArrowUpRight className="w-4 h-4 mr-2" />} label="Auszahlungen" onClick={() => setIsOpen(false)} />
+            <MobileNavItem to="/admin/affiliate" icon={<UserPlus className="w-4 h-4 mr-2" />} label="Affiliate" onClick={() => setIsOpen(false)} />
             {canAccessCryptoWallets && (
               <MobileNavItem to="/admin/crypto-wallets" icon={<Bitcoin className="w-4 h-4 mr-2" />} label="Crypto Wallets" onClick={() => setIsOpen(false)} />
             )}
@@ -131,7 +133,6 @@ const NavItem = ({
     </Link>;
 };
 
-// Mobile Navigation Item
 const MobileNavItem = ({
   to,
   icon,

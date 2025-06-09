@@ -1,12 +1,12 @@
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardHeader, CardTitle, CardDescription, CardContent } from "@/components/ui/card";
 import { motion } from "framer-motion";
 
 // Components
-import DynamicPaymentInfoCard from "@/components/user/activation/DynamicPaymentInfoCard";
+import PaymentInfoCard from "@/components/user/activation/PaymentInfoCard";
 import WalletSelector from "@/components/user/activation/WalletSelector";
 import PaymentConfirmationDialog from "@/components/user/activation/PaymentConfirmationDialog";
 
@@ -15,58 +15,19 @@ import { useWallets } from "@/hooks/useWallets";
 
 interface ActivationFormProps {
   user: any;
-  userCredit: number | null;
   creditThreshold?: number;
   onStepChange?: (step: number) => void;
 }
 
-const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange }: ActivationFormProps) => {
+const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: ActivationFormProps) => {
   const { toast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
   const [paymentSubmitted, setPaymentSubmitted] = useState(false);
   const [paymentId, setPaymentId] = useState<string | null>(null);
-  const [invitationCode, setInvitationCode] = useState<string | null>(null);
   
   // Custom hooks
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
-  
-  // Fetch the user's invitation code from the lead or affiliate system
-  useEffect(() => {
-    const fetchInvitationCode = async () => {
-      if (!user?.email) return;
-      
-      try {
-        // First, check if the user was created from a lead with an invitation code
-        const { data: leadData, error: leadError } = await supabase
-          .from('leads')
-          .select('invitation_code')
-          .eq('email', user.email)
-          .eq('status', 'akzeptiert')
-          .single();
-          
-        if (!leadError && leadData?.invitation_code) {
-          setInvitationCode(leadData.invitation_code);
-          return;
-        }
-        
-        // If no lead found, check affiliate_invitations table
-        const { data: affiliateData, error: affiliateError } = await supabase
-          .from('affiliate_invitations')
-          .select('affiliate_code')
-          .eq('invited_user_id', user.id)
-          .single();
-          
-        if (!affiliateError && affiliateData?.affiliate_code) {
-          setInvitationCode(affiliateData.affiliate_code);
-        }
-      } catch (error) {
-        console.error("Error fetching invitation code:", error);
-      }
-    };
-    
-    fetchInvitationCode();
-  }, [user?.email, user?.id]);
   
   const handleSelectWallet = (currency: string) => {
     setSelectedWallet(currency);
@@ -83,12 +44,10 @@ const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange 
     try {
       console.log("Sending payment activation notification to Telegram");
       
-      const remainingAmount = Math.max(0, creditThreshold - (userCredit || 0));
-      
       await supabase.functions.invoke('send-telegram-notification', {
         body: { 
           type: 'payment-activation',
-          amount: remainingAmount * 100, // Convert to cents
+          amount: 250,
           paymentMethod: currency,
           userEmail: userEmail
         }
@@ -112,15 +71,13 @@ const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange 
 
       console.log("Inserting payment with user_id:", user.id);
       
-      const remainingAmount = Math.max(0, creditThreshold - (userCredit || 0));
-      
       // Zahlung in der Datenbank speichern
       const { data, error: paymentError } = await supabase
         .from('payments')
         .insert({
           user_id: user.id,
           user_email: user.email,
-          amount: remainingAmount * 100, // Convert to cents
+          amount: 25000, // 250€ in Cent
           wallet_id: selectedWalletObj.id,
           wallet_currency: selectedWalletObj.currency,
           status: 'pending'
@@ -158,8 +115,6 @@ const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange 
     }
   };
 
-  const remainingAmount = Math.max(0, creditThreshold - (userCredit || 0));
-
   return (
     <motion.div 
       initial={{ opacity: 0, y: 20 }}
@@ -171,15 +126,10 @@ const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange 
         <CardHeader>
           <CardTitle className="text-center gradient-text">Konto aktivieren</CardTitle>
           <CardDescription className="text-center text-gray-400">
-            Zahlen Sie {remainingAmount.toFixed(2)}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
+            Zahlen Sie {creditThreshold}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
           </CardDescription>
         </CardHeader>
-        
-        <DynamicPaymentInfoCard 
-          requiredAmount={creditThreshold}
-          userCredit={userCredit}
-          invitationCode={invitationCode}
-        />
+        <PaymentInfoCard />
         
         <WalletSelector 
           wallets={wallets}
@@ -196,7 +146,6 @@ const ActivationForm = ({ user, userCredit, creditThreshold = 250, onStepChange 
           onClose={() => setShowConfirmDialog(false)}
           onConfirm={handleCompletePayment}
           selectedWallet={selectedWallet}
-          paymentAmount={remainingAmount}
         />
         
         {/* Return payment values to parent component */}

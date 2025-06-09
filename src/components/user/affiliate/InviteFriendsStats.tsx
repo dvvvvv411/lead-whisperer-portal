@@ -1,7 +1,7 @@
 
 import { motion } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
-import { Users, Gift, TrendingUp } from 'lucide-react';
+import { Users, Gift } from 'lucide-react';
 
 interface InviteFriendsStatsProps {
   totalInvitations: number;
@@ -27,27 +27,11 @@ const InviteFriendsStats = ({
     },
     {
       icon: Gift,
-      label: "Bezahlte Boni",
-      value: paidBonuses,
-      color: "text-green-400",
-      bgColor: "bg-green-500/10",
-      delay: 0.1,
-    },
-    {
-      icon: TrendingUp,
-      label: "Ausstehend",
-      value: pendingBonuses,
-      color: "text-yellow-400",
-      bgColor: "bg-yellow-500/10",
-      delay: 0.2,
-    },
-    {
-      icon: Gift,
       label: "Verdient",
       value: `€${totalEarned}`,
       color: "text-gold",
       bgColor: "bg-gold/10",
-      delay: 0.3,
+      delay: 0.1,
     },
   ];
 

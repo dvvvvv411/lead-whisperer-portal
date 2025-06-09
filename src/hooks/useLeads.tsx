@@ -16,14 +16,21 @@ export function useLeads() {
   const fetchLeads = async () => {
     try {
       setIsRefreshing(true);
+      console.log('=== Fetching leads from database ===');
+      
       const { data, error } = await supabase
         .from('leads')
         .select('*')
         .order('created_at', { ascending: false });
       
       if (error) {
+        console.error('❌ Error fetching leads:', error);
         throw error;
       }
+      
+      console.log(`✅ Fetched ${data?.length || 0} leads from database`);
+      console.log('First lead sample:', data?.[0]);
+      console.log('Lead fields:', data?.[0] ? Object.keys(data[0]) : 'No leads');
       
       if (data) {
         setLeads(data as Lead[]);
@@ -35,7 +42,7 @@ export function useLeads() {
         }
       }
     } catch (error) {
-      console.error("Fehler beim Abrufen der Leads:", error);
+      console.error("❌ Fehler beim Abrufen der Leads:", error);
       toast({
         title: "Fehler beim Laden",
         description: "Die Leads konnten nicht geladen werden.",
@@ -63,14 +70,19 @@ export function useLeads() {
 
   const handleStatusChange = async (id: string, status: 'akzeptiert' | 'abgelehnt') => {
     try {
+      console.log(`Updating lead ${id} status to: ${status}`);
+      
       const { error } = await supabase
         .from('leads')
         .update({ status })
         .eq('id', id);
       
       if (error) {
+        console.error('❌ Error updating lead status:', error);
         throw error;
       }
+      
+      console.log(`✅ Lead ${id} status updated to: ${status}`);
       
       // Lokale Daten aktualisieren
       setLeads(prevLeads => 
@@ -85,7 +97,7 @@ export function useLeads() {
       });
       
     } catch (error) {
-      console.error("Fehler bei der Statusänderung:", error);
+      console.error("❌ Fehler bei der Statusänderung:", error);
       toast({
         title: "Fehler",
         description: "Der Status konnte nicht aktualisiert werden.",

@@ -22,6 +22,8 @@ export const LeadTableRow = ({
   onLeadUpdated,
   userEmail
 }: LeadTableRowProps) => {
+  console.log('LeadTableRow for lead:', lead.id, 'invitation_code:', lead.invitation_code);
+  
   return (
     <tr key={lead.id} className="border-t border-gold/10 hover:bg-casino-card/60">
       <td className="px-4 py-3">
@@ -35,6 +37,15 @@ export const LeadTableRow = ({
           <span className="text-xs block max-w-[150px] truncate">{lead.source_url}</span> :
           <span className="text-xs text-gray-400">-</span>
         }
+      </td>
+      <td className="px-4 py-3">
+        {lead.invitation_code ? (
+          <span className="text-xs font-mono bg-gold/10 text-gold px-2 py-1 rounded border border-gold/30">
+            {lead.invitation_code}
+          </span>
+        ) : (
+          <span className="text-xs text-gray-400">-</span>
+        )}
       </td>
       <td className="px-4 py-3">
         <LeadStatusBadge status={lead.status} />

@@ -9,6 +9,8 @@ export interface Lead {
   message: string;
   status: 'neu' | 'akzeptiert' | 'abgelehnt';
   source_url: string | null;
+  affiliate_code: string | null;
+  invitation_code: string | null;
 }
 
 export interface Comment {

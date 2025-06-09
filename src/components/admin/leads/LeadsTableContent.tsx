@@ -24,6 +24,9 @@ export const LeadsTableContent = ({
   userEmail,
   isRefreshing = false
 }: LeadsTableContentProps) => {
+  console.log('LeadsTableContent rendered with leads:', leads.length);
+  console.log('First lead sample:', leads[0]);
+  
   // Sort leads by created_at - newest first
   const sortedLeads = [...leads].sort((a, b) => 
     new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
@@ -46,6 +49,7 @@ export const LeadsTableContent = ({
                 <TableHead className="text-gold">Email</TableHead>
                 <TableHead className="text-gold">Telefon</TableHead>
                 <TableHead className="text-gold">Quelle</TableHead>
+                <TableHead className="text-gold">Einladungscode</TableHead>
                 <TableHead className="text-gold">Status</TableHead>
                 <TableHead className="text-gold">Kommentare</TableHead>
                 <TableHead className="text-gold">Aktionen</TableHead>

@@ -1,6 +1,6 @@
 
 import { Link, useLocation } from "react-router-dom";
-import { Home, Wallet, TrendingUp, Settings, Bot } from "lucide-react";
+import { Home, Wallet, TrendingUp, Settings, Bot, Users } from "lucide-react";
 import { NavigationMenu, NavigationMenuLink, NavigationMenuItem, 
   NavigationMenuList, navigationMenuTriggerStyle } from "@/components/ui/navigation-menu";
 import { cn } from "@/lib/utils";
@@ -32,6 +32,18 @@ const DesktopNavigation = () => {
             )}>
               <Bot className="mr-1 h-4 w-4" />
               Trading-Archiv
+            </NavigationMenuLink>
+          </Link>
+        </NavigationMenuItem>
+        <NavigationMenuItem>
+          <Link to="/nutzer/freunde-einladen">
+            <NavigationMenuLink className={cn(
+              navigationMenuTriggerStyle(),
+              "bg-transparent hover:bg-casino-highlight text-white shadow-sm",
+              location.pathname === "/nutzer/freunde-einladen" && "text-gold font-medium"
+            )}>
+              <Users className="mr-1 h-4 w-4" />
+              Freunde einladen
             </NavigationMenuLink>
           </Link>
         </NavigationMenuItem>

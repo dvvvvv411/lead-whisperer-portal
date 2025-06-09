@@ -13,25 +13,29 @@ export const CryptoWalletManager = () => {
   const { toast } = useToast();
   const [wallets, setWallets] = useState<CryptoWallet[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [user, setUser] = useState<any>(null);
+  const [currentUser, setCurrentUser] = useState<any>(null);
   const [addMode, setAddMode] = useState(false);
 
-  // Benutzer-Session abrufen
+  // Get user session
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setUser(data.user);
-      } else {
-        // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
-        window.location.href = "/admin";
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) {
+          console.log("CryptoWalletManager: User found", data.user.email);
+          setCurrentUser(data.user);
+        } else {
+          console.log("CryptoWalletManager: No user found");
+        }
+      } catch (error) {
+        console.error("CryptoWalletManager: Error getting user:", error);
       }
     };
     
     getUser();
   }, []);
 
-  // Wallets abrufen
+  // Fetch wallets
   const fetchWallets = async () => {
     try {
       setIsLoading(true);
@@ -79,7 +83,7 @@ export const CryptoWalletManager = () => {
             <h1 className="text-3xl font-bold bg-gradient-to-r from-green-400 via-green-300 to-green-400 bg-clip-text text-transparent">
               Krypto Wallet-Verwaltung
             </h1>
-            <p className="text-gray-400">Eingeloggt als: {user?.email}</p>
+            <p className="text-gray-400">Eingeloggt als: {currentUser?.email}</p>
           </div>
           <Button 
             onClick={() => {

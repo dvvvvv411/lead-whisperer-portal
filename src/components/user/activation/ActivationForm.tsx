@@ -17,9 +17,10 @@ interface ActivationFormProps {
   user: any;
   creditThreshold?: number;
   onStepChange?: (step: number) => void;
+  userCredit?: number | null;
 }
 
-const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: ActivationFormProps) => {
+const ActivationForm = ({ user, creditThreshold = 250, onStepChange, userCredit }: ActivationFormProps) => {
   const { toast } = useToast();
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [showConfirmDialog, setShowConfirmDialog] = useState(false);
@@ -28,6 +29,9 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
   
   // Custom hooks
   const { wallets, walletsLoading, walletError, fetchWallets } = useWallets();
+  
+  // Calculate remaining amount needed for activation
+  const remainingAmount = Math.max(0, creditThreshold - (userCredit || 0));
   
   const handleSelectWallet = (currency: string) => {
     setSelectedWallet(currency);
@@ -47,7 +51,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
       await supabase.functions.invoke('send-telegram-notification', {
         body: { 
           type: 'payment-activation',
-          amount: 250,
+          amount: remainingAmount * 100, // Convert to cents
           paymentMethod: currency,
           userEmail: userEmail
         }
@@ -77,7 +81,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
         .insert({
           user_id: user.id,
           user_email: user.email,
-          amount: 25000, // 250€ in Cent
+          amount: remainingAmount * 100, // Convert to cents
           wallet_id: selectedWalletObj.id,
           wallet_currency: selectedWalletObj.currency,
           status: 'pending'
@@ -126,7 +130,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
         <CardHeader>
           <CardTitle className="text-center gradient-text">Konto aktivieren</CardTitle>
           <CardDescription className="text-center text-gray-400">
-            Zahlen Sie {creditThreshold}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
+            Zahlen Sie {remainingAmount.toFixed(2)}€ ein, um Ihr Konto zu aktivieren und mit KI-Trading zu beginnen.
           </CardDescription>
         </CardHeader>
         <PaymentInfoCard />
@@ -139,6 +143,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
           onSelectWallet={handleSelectWallet}
           onConfirmPayment={handleConfirmPayment}
           onRetryWallets={fetchWallets}
+          remainingAmount={remainingAmount}
         />
 
         <PaymentConfirmationDialog
@@ -146,6 +151,7 @@ const ActivationForm = ({ user, creditThreshold = 250, onStepChange }: Activatio
           onClose={() => setShowConfirmDialog(false)}
           onConfirm={handleCompletePayment}
           selectedWallet={selectedWallet}
+          remainingAmount={remainingAmount}
         />
         
         {/* Return payment values to parent component */}

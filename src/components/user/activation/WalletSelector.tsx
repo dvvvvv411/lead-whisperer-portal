@@ -21,6 +21,7 @@ interface WalletSelectorProps {
   selectedWallet: string | null;
   onConfirmPayment: () => void;
   onRetryWallets: () => void;
+  remainingAmount?: number;
 }
 
 const WalletSelector = ({
@@ -30,7 +31,8 @@ const WalletSelector = ({
   onSelectWallet,
   selectedWallet,
   onConfirmPayment,
-  onRetryWallets
+  onRetryWallets,
+  remainingAmount = 250
 }: WalletSelectorProps) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
@@ -123,7 +125,7 @@ const WalletSelector = ({
                   animate={{ opacity: 1 }}
                   transition={{ delay: 0.3 }}
                 >
-                  Bitte senden Sie genau <span className="text-gold font-bold">250€</span> in {selectedWallet} an die oben angegebene Adresse.
+                  Bitte senden Sie genau <span className="text-gold font-bold">{remainingAmount.toFixed(2)}€</span> in {selectedWallet} an die oben angegebene Adresse.
                 </motion.p>
               </motion.div>
             )}

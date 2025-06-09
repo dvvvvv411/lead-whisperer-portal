@@ -176,6 +176,7 @@ const UserActivation = () => {
                     user={user} 
                     creditThreshold={CREDIT_ACTIVATION_THRESHOLD}
                     onStepChange={handleStepChange} 
+                    userCredit={userCredit}
                   />
                 </div>
               </div>

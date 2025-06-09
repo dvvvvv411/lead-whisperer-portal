@@ -12,14 +12,20 @@ export const PaymentManager = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [currentUser, setCurrentUser] = useState<any>(null);
 
-  // Benutzer-Session abrufen
+  // Get user session
   useEffect(() => {
     const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (data?.user) {
-        setCurrentUser(data.user);
-      } else {
-        // Wenn kein Benutzer eingeloggt ist, zur Login-Seite weiterleiten
+      try {
+        const { data } = await supabase.auth.getUser();
+        if (data?.user) {
+          console.log("PaymentManager: User found", data.user.email);
+          setCurrentUser(data.user);
+        } else {
+          console.log("PaymentManager: No user found, redirecting to admin login");
+          window.location.href = "/admin";
+        }
+      } catch (error) {
+        console.error("PaymentManager: Error getting user:", error);
         window.location.href = "/admin";
       }
     };
@@ -27,26 +33,43 @@ export const PaymentManager = () => {
     getUser();
   }, []);
 
-  // Zahlungen abrufen
+  // Fetch payments with enhanced error handling
   const fetchPayments = async () => {
+    if (!currentUser) return;
+    
     try {
       setIsLoading(true);
       
-      // Zahlungen über die gesicherte Funktion abrufen (nur für Admins)
+      console.log("PaymentManager: Fetching payments for user:", currentUser.id);
+      
+      // Use the secure RPC function to get all payments (admin only)
       const { data, error } = await supabase.rpc('get_all_payments');
       
       if (error) {
+        console.error("PaymentManager: Error from get_all_payments RPC:", error);
         throw error;
       }
+      
+      console.log("PaymentManager: Successfully fetched payments:", data?.length || 0);
       
       if (data) {
         setPayments(data as Payment[]);
       }
     } catch (error: any) {
-      console.error("Fehler beim Abrufen der Zahlungen:", error);
+      console.error("PaymentManager: Error fetching payments:", error);
+      
+      // Provide more specific error messages
+      let errorMessage = "Die Zahlungsdaten konnten nicht geladen werden.";
+      
+      if (error.message?.includes('Nur Administratoren')) {
+        errorMessage = "Zugriff verweigert. Nur Administratoren können Zahlungen einsehen.";
+      } else if (error.message?.includes('RPC call failed')) {
+        errorMessage = "Datenbankfehler beim Laden der Zahlungen.";
+      }
+      
       toast({
         title: "Fehler beim Laden",
-        description: "Die Zahlungsdaten konnten nicht geladen werden: " + error.message,
+        description: errorMessage + " Details: " + error.message,
         variant: "destructive"
       });
     } finally {
@@ -54,10 +77,12 @@ export const PaymentManager = () => {
     }
   };
   
-  // Initial Load of payments
+  // Initial load of payments
   useEffect(() => {
-    fetchPayments();
-  }, []);
+    if (currentUser) {
+      fetchPayments();
+    }
+  }, [currentUser]);
 
   return (
     <div className="min-h-screen bg-casino-darker text-gray-300">

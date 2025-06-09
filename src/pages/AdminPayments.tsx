@@ -9,29 +9,45 @@ import { supabase } from "@/integrations/supabase/client";
 const AdminPayments = () => {
   const { user, authLoading } = useAdminAuth();
   const [isAllowed, setIsAllowed] = useState(false);
+  const [checkingAccess, setCheckingAccess] = useState(false);
   
   useEffect(() => {
     const checkAccess = async () => {
-      if (user) {
-        // Allow access for specific admin users by ID
+      if (!user) return;
+      
+      setCheckingAccess(true);
+      
+      try {
+        // Extended hardcoded admin check for both special users
         if (user.id === "7eccf781-5911-4d90-a683-1df251069a2f" || 
             user.id === "054c7ee0-7f82-4e34-a0c0-45552f6a67f8") {
-          console.log(`Access granted to payments for user with ID: ${user.id}`);
+          console.log(`Direct admin access granted to user with ID: ${user.id}`);
           setIsAllowed(true);
-        } else {
-          // For other users, check if they're admins
-          const { data: isAdmin, error } = await supabase.rpc('has_role', {
-            _user_id: user.id,
-            _role: 'admin'
-          });
-          
-          if (error) {
-            console.error("Error checking admin role:", error);
-          }
-          
-          setIsAllowed(isAdmin || false);
-          console.log(`Admin role check for user ${user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
+          setCheckingAccess(false);
+          return;
         }
+        
+        // For other users, check admin role with proper error handling
+        console.log(`Checking admin role for user: ${user.id}`);
+        
+        const { data: isAdmin, error } = await supabase.rpc('has_role', {
+          _user_id: user.id,
+          _role: 'admin'
+        });
+        
+        if (error) {
+          console.error("Error checking admin role:", error);
+          console.log("Fallback: Denying access due to role check error");
+          setIsAllowed(false);
+        } else {
+          console.log(`Admin role check result for user ${user.id}: ${isAdmin ? "Is admin" : "Not admin"}`);
+          setIsAllowed(isAdmin || false);
+        }
+      } catch (err) {
+        console.error("Unexpected error during access check:", err);
+        setIsAllowed(false);
+      } finally {
+        setCheckingAccess(false);
       }
     };
     
@@ -40,7 +56,7 @@ const AdminPayments = () => {
     }
   }, [user]);
   
-  if (authLoading) {
+  if (authLoading || checkingAccess) {
     return (
       <div className="flex justify-center items-center min-h-screen bg-casino-darker text-gray-300">
         <motion.div 
@@ -51,14 +67,20 @@ const AdminPayments = () => {
           <div className="h-12 w-12 bg-purple-500/20 rounded-full mb-4 flex items-center justify-center">
             <div className="h-6 w-6 bg-purple-500/60 rounded-full animate-ping"></div>
           </div>
-          <p>Wird geladen...</p>
+          <p>{checkingAccess ? "Überprüfe Zugriffsberechtigung..." : "Wird geladen..."}</p>
         </motion.div>
       </div>
     );
   }
 
-  if (!isAllowed && !authLoading) {
-    console.log("Access denied to payments page, redirecting to admin");
+  if (!user) {
+    console.log("No user found, redirecting to admin login");
+    window.location.href = "/admin";
+    return null;
+  }
+
+  if (!isAllowed) {
+    console.log("Access denied to payments page, redirecting to admin dashboard");
     window.location.href = "/admin";
     return null;
   }

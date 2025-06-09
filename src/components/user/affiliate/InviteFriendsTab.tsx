@@ -6,16 +6,20 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Badge } from '@/components/ui/badge';
 import { useAffiliate } from '@/hooks/useAffiliate';
-import { Copy, Users, Gift, TrendingUp, Share2 } from 'lucide-react';
+import { Copy, Users, Gift, TrendingUp, Share2, AlertCircle } from 'lucide-react';
 
 const InviteFriendsTab = () => {
-  const { affiliateCode, invitations, copyAffiliateLink } = useAffiliate();
+  const { affiliateCode, invitations, copyAffiliateLink, error } = useAffiliate();
   const [affiliateLink, setAffiliateLink] = useState('');
 
   useEffect(() => {
     if (affiliateCode) {
       const baseUrl = window.location.origin;
-      setAffiliateLink(`${baseUrl}/?ref=${affiliateCode.code}`);
+      const link = `${baseUrl}/?ref=${affiliateCode.code}`;
+      setAffiliateLink(link);
+      console.log('Affiliate link set:', link);
+    } else {
+      console.log('No affiliate code available, link not set');
     }
   }, [affiliateCode]);
 
@@ -23,6 +27,34 @@ const InviteFriendsTab = () => {
   const paidBonuses = invitations.filter(inv => inv.bonus_paid_to_inviter).length;
   const pendingBonuses = totalInvitations - paidBonuses;
   const totalEarned = paidBonuses * 50; // 50€ per bonus
+
+  // Show error state if there's an error
+  if (error) {
+    return (
+      <div className="space-y-6">
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5 }}
+        >
+          <Card className="bg-casino-card border-red-500/20">
+            <CardContent className="p-6">
+              <div className="flex items-center">
+                <AlertCircle className="h-8 w-8 text-red-400 mr-4" />
+                <div>
+                  <h3 className="text-white font-semibold mb-2">Fehler beim Laden</h3>
+                  <p className="text-gray-400">{error}</p>
+                  <p className="text-gray-500 text-sm mt-2">
+                    Bitte versuchen Sie es später erneut oder kontaktieren Sie den Support.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -37,6 +69,16 @@ const InviteFriendsTab = () => {
           Verdiene 50€ für jeden Freund, der sich registriert und seine erste Einzahlung tätigt.
         </p>
       </motion.div>
+
+      {/* Debug Info (only in development) */}
+      {process.env.NODE_ENV === 'development' && (
+        <div className="bg-gray-800 p-4 rounded-lg text-sm text-gray-300">
+          <strong>Debug Info:</strong><br />
+          Affiliate Code: {affiliateCode ? affiliateCode.code : 'Loading...'}<br />
+          Affiliate Link: {affiliateLink || 'Not set yet'}<br />
+          Error: {error || 'None'}
+        </div>
+      )}
 
       {/* Stats Cards */}
       <motion.div
@@ -116,11 +158,13 @@ const InviteFriendsTab = () => {
               <Input
                 value={affiliateLink}
                 readOnly
+                placeholder={affiliateCode ? "Link wird generiert..." : "Affiliate-Code wird geladen..."}
                 className="bg-casino-darker border-gold/30 text-white"
               />
               <Button
                 onClick={copyAffiliateLink}
-                className="bg-gold hover:bg-gold-light text-black font-medium"
+                disabled={!affiliateCode || !affiliateLink}
+                className="bg-gold hover:bg-gold-light text-black font-medium disabled:opacity-50"
               >
                 <Copy className="h-4 w-4 mr-2" />
                 Kopieren
@@ -133,6 +177,12 @@ const InviteFriendsTab = () => {
                 <Badge variant="outline" className="text-gold border-gold/50 text-lg px-4 py-2">
                   {affiliateCode.code}
                 </Badge>
+              </div>
+            )}
+
+            {!affiliateCode && !error && (
+              <div className="text-center text-gray-400 text-sm">
+                Affiliate-Code wird erstellt...
               </div>
             )}
           </CardContent>

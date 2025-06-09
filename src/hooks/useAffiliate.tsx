@@ -34,13 +34,18 @@ export const useAffiliate = () => {
   const [invitations, setInvitations] = useState<AffiliateInvitation[]>([]);
   const [stats, setStats] = useState<AffiliateStats[]>([]);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
 
   // Get user's affiliate code
   const fetchAffiliateCode = async () => {
     try {
+      console.log('Fetching affiliate code...');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
+      if (!user) {
+        console.log('No user found');
+        return;
+      }
 
       const { data, error } = await supabase
         .from('affiliate_codes')
@@ -50,39 +55,65 @@ export const useAffiliate = () => {
 
       if (error && error.code !== 'PGRST116') {
         console.error('Error fetching affiliate code:', error);
+        setError('Fehler beim Laden des Affiliate-Codes');
         return;
       }
 
       if (data) {
+        console.log('Affiliate code found:', data);
         setAffiliateCode(data);
+        setError(null);
       } else {
+        console.log('No affiliate code found, creating one...');
         // Create affiliate code if it doesn't exist
         await createAffiliateCode();
       }
     } catch (error) {
       console.error('Error in fetchAffiliateCode:', error);
+      setError('Fehler beim Laden des Affiliate-Codes');
     }
   };
 
-  // Create affiliate code for user
+  // Create affiliate code for user - using direct INSERT instead of RPC
   const createAffiliateCode = async () => {
     try {
+      console.log('Creating affiliate code...');
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const { data, error } = await supabase.rpc('create_affiliate_code_for_user', {
-        user_id_param: user.id
-      });
-
-      if (error) {
-        console.error('Error creating affiliate code:', error);
+      if (!user) {
+        console.log('No user found for creating affiliate code');
         return;
       }
 
-      // Fetch the created code
-      await fetchAffiliateCode();
+      // Generate a simple affiliate code
+      const code = `REF${Math.random().toString(36).substring(2, 8).toUpperCase()}`;
+      console.log('Generated code:', code);
+
+      const { data, error } = await supabase
+        .from('affiliate_codes')
+        .insert({
+          user_id: user.id,
+          code: code
+        })
+        .select()
+        .single();
+
+      if (error) {
+        console.error('Error creating affiliate code:', error);
+        setError('Fehler beim Erstellen des Affiliate-Codes');
+        toast({
+          title: "Fehler",
+          description: "Affiliate-Code konnte nicht erstellt werden.",
+          variant: "destructive"
+        });
+        return;
+      }
+
+      console.log('Affiliate code created successfully:', data);
+      setAffiliateCode(data);
+      setError(null);
     } catch (error) {
       console.error('Error in createAffiliateCode:', error);
+      setError('Fehler beim Erstellen des Affiliate-Codes');
     }
   };
 
@@ -155,10 +186,18 @@ export const useAffiliate = () => {
 
   // Copy affiliate link to clipboard
   const copyAffiliateLink = async () => {
-    if (!affiliateCode) return;
+    if (!affiliateCode) {
+      toast({
+        title: "Fehler",
+        description: "Kein Affiliate-Code verfügbar.",
+        variant: "destructive"
+      });
+      return;
+    }
 
     const baseUrl = window.location.origin;
     const affiliateLink = `${baseUrl}/?ref=${affiliateCode.code}`;
+    console.log('Copying affiliate link:', affiliateLink);
 
     try {
       await navigator.clipboard.writeText(affiliateLink);
@@ -186,6 +225,7 @@ export const useAffiliate = () => {
     invitations,
     stats,
     loading,
+    error,
     fetchAffiliateCode,
     fetchInvitations,
     fetchAffiliateStats,

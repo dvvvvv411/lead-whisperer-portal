@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -35,13 +34,23 @@ const AdminAffiliateOverview = () => {
         
         if (error) throw error;
         
-        setStats(data || []);
+        // Map the snake_case data to camelCase
+        const mappedData = (data || []).map(item => ({
+          inviterEmail: item.inviter_email,
+          inviterId: item.inviter_id,
+          affiliateCode: item.affiliate_code,
+          totalInvitations: item.total_invitations,
+          totalBonusesPaid: item.total_bonuses_paid,
+          totalBonusAmount: item.total_bonus_amount
+        }));
+        
+        setStats(mappedData);
         
         // Calculate totals
-        const totals = (data || []).reduce((acc, curr) => ({
-          totalInvitations: acc.totalInvitations + curr.total_invitations,
-          totalBonuses: acc.totalBonuses + curr.total_bonuses_paid,
-          totalAmount: acc.totalAmount + curr.total_bonus_amount
+        const totals = mappedData.reduce((acc, curr) => ({
+          totalInvitations: acc.totalInvitations + curr.totalInvitations,
+          totalBonuses: acc.totalBonuses + curr.totalBonusesPaid,
+          totalAmount: acc.totalAmount + curr.totalBonusAmount
         }), { totalInvitations: 0, totalBonuses: 0, totalAmount: 0 });
         
         setTotalStats(totals);

@@ -1,360 +1,283 @@
+
 import { useState, useEffect } from "react";
-import { useToast } from "@/components/ui/use-toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
+import { CheckCircle2, ArrowRight, Sparkles } from "lucide-react";
 import { motion } from "framer-motion";
-import { CheckCircle, ShieldCheck, Lock, Sparkles, Award } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from "@/components/ui/dialog";
+
+interface FormData {
+  name: string;
+  email: string;
+  phone: string;
+  company: string;
+  message: string;
+  invitationCode: string;
+}
 
 const ContactForm = () => {
-  const {
-    toast
-  } = useToast();
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
-  const [currentUrl, setCurrentUrl] = useState("");
-  const [formData, setFormData] = useState({
+  const { toast } = useToast();
+  const [formData, setFormData] = useState<FormData>({
     name: "",
     email: "",
     phone: "",
-    message: ""
+    company: "",
+    message: "",
+    invitationCode: ""
   });
-  
-  // Capture the current URL when component mounts
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmitted, setIsSubmitted] = useState(false);
+
+  // Check for invite parameter in URL
   useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setCurrentUrl(window.location.href);
+    const urlParams = new URLSearchParams(window.location.search);
+    const inviteCode = urlParams.get('invite');
+    if (inviteCode) {
+      setFormData(prev => ({
+        ...prev,
+        invitationCode: inviteCode
+      }));
     }
   }, []);
-  
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const {
-      name,
-      value
-    } = e.target;
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
     setFormData(prev => ({
       ...prev,
       [name]: value
     }));
   };
-  
-  // Function to send Telegram notification using the new edge function
-  const sendLeadTelegramNotification = async () => {
-    try {
-      console.log("Sending lead notification to Telegram using lead-form-notification function");
-      
-      const { data, error } = await supabase.functions.invoke('lead-form-notification', {
-        body: { 
-          name: formData.name,
-          email: formData.email,
-          phone: formData.phone,
-          message: formData.message || "Keine Nachricht",
-          source_url: currentUrl
-        }
+
+  const validateForm = (): boolean => {
+    if (!formData.name.trim() || !formData.email.trim()) {
+      toast({
+        title: "Fehlende Angaben",
+        description: "Bitte füllen Sie mindestens Name und E-Mail aus.",
+        variant: "destructive",
       });
-      
-      if (error) {
-        console.error("Error sending lead Telegram notification:", error);
-        return;
-      }
-      
-      console.log("Lead Telegram notification sent:", data);
-    } catch (err) {
-      console.error("Failed to send lead Telegram notification:", err);
-      // Non-blocking - we don't want to affect the user experience if this fails
+      return false;
     }
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Ungültige E-Mail",
+        description: "Bitte geben Sie eine gültige E-Mail-Adresse ein.",
+        variant: "destructive",
+      });
+      return false;
+    }
+
+    return true;
   };
-  
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
+    if (!validateForm()) return;
+
     setIsSubmitting(true);
+
     try {
-      // Validierung
-      if (!formData.name || !formData.email || !formData.phone) {
-        toast({
-          title: "Fehlerhafte Eingabe",
-          description: "Bitte fülle alle Pflichtfelder aus.",
-          variant: "destructive"
-        });
-        setIsSubmitting(false);
-        return;
-      }
+      const { data, error } = await supabase
+        .from('leads')
+        .insert([{
+          name: formData.name.trim(),
+          email: formData.email.trim(),
+          phone: formData.phone.trim() || null,
+          company: formData.company.trim() || null,
+          message: formData.message.trim() || null,
+          invitation_code: formData.invitationCode.trim() || null,
+          source_url: window.location.href,
+          status: 'neu'
+        }])
+        .select('id')
+        .single();
 
-      // Defaultwerte für leere Felder setzen
-      const finalData = {
-        name: formData.name,
-        email: formData.email,
-        phone: formData.phone,
-        status: 'neu',
-        company: "Leer",
-        message: formData.message || "Leer",
-        source_url: currentUrl
-      };
+      if (error) throw error;
 
-      // In Supabase speichern
-      const {
-        error
-      } = await supabase.from('leads').insert(finalData);
-      if (error) {
-        console.error("Formular-Fehler:", error);
-        throw error;
-      }
+      console.log('Lead created successfully:', data);
+      
+      setIsSubmitted(true);
+      
+      toast({
+        title: "Vielen Dank!",
+        description: "Ihre Anfrage wurde erfolgreich übermittelt. Wir melden uns in Kürze bei Ihnen.",
+      });
 
-      // Send Telegram notification using our new edge function
-      await sendLeadTelegramNotification();
-
-      // Send confirmation email
-      try {
-        const emailResponse = await supabase.functions.invoke('send-confirmation-email', {
-          body: {
-            name: formData.name,
-            email: formData.email
-          }
-        });
-        
-        if (emailResponse.error) {
-          console.error("Email send error:", emailResponse.error);
-          // Do not throw here to still show success dialog even if email fails
-        } else {
-          console.log("Confirmation email sent successfully");
-        }
-      } catch (emailError) {
-        console.error("Error calling email function:", emailError);
-        // Continue with form success even if email fails
-      }
-
-      // Show success dialog
-      setShowSuccessDialog(true);
-
-      // Formular zurücksetzen
+      // Reset form
       setFormData({
         name: "",
         email: "",
         phone: "",
-        message: ""
+        company: "",
+        message: "",
+        invitationCode: formData.invitationCode // Keep invitation code if it was pre-filled
       });
-    } catch (error) {
-      console.error("Fehler beim Absenden des Formulars:", error);
+
+    } catch (error: any) {
+      console.error('Error submitting form:', error);
       toast({
-        title: "Etwas ist schiefgelaufen",
-        description: "Bitte versuche es später noch einmal.",
-        variant: "destructive"
+        title: "Fehler",
+        description: "Es ist ein Fehler aufgetreten. Bitte versuchen Sie es erneut.",
+        variant: "destructive",
       });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Success Dialog Component
-  const SuccessDialog = () => {
-    const [showConfetti, setShowConfetti] = useState(false);
-
-    // Show confetti effect after dialog opens
-    useState(() => {
-      const timer = setTimeout(() => setShowConfetti(true), 400);
-      return () => clearTimeout(timer);
-    });
-
-    // Generate confetti particles
-    const renderConfetti = () => {
-      if (!showConfetti) return null;
-      const particles = Array.from({
-        length: 80
-      }).map((_, i) => {
-        const size = Math.floor(Math.random() * 8) + 5;
-        const left = Math.random() * 100;
-        const animationDelay = Math.random() * 0.5;
-        const color = i % 3 === 0 ? 'bg-gold' : i % 3 === 1 ? 'bg-accent1' : 'bg-white';
-        return <div key={i} className={`absolute z-50 rounded-full ${color} animate-confetti`} style={{
-          width: size + 'px',
-          height: size + 'px',
-          left: left + '%',
-          animationDelay: animationDelay + 's',
-          opacity: Math.random() * 0.8 + 0.2
-        }} />;
-      });
-      return <div className="confetti-container absolute inset-0 overflow-hidden pointer-events-none">{particles}</div>;
-    };
-    return <Dialog open={showSuccessDialog} onOpenChange={setShowSuccessDialog}>
-        <DialogContent className="max-w-md bg-gradient-to-b from-casino-darker to-casino-card border border-gold/20 shadow-xl overflow-hidden">
-          {renderConfetti()}
-          
-          <div className="absolute top-0 left-0 w-full h-1.5 bg-gradient-to-r from-gold via-accent1 to-gold bg-[length:200%_auto] animate-gradient-shift"></div>
-          
-          <DialogHeader className="relative">
-            <div className="absolute -top-10 left-1/2 transform -translate-x-1/2 w-20 h-20">
-              <div className="absolute inset-0 bg-gradient-to-r from-gold to-accent1 rounded-full opacity-20 animate-pulse"></div>
+  if (isSubmitted) {
+    return (
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        className="max-w-md mx-auto"
+      >
+        <Card className="bg-casino-card border-gold/20 text-center">
+          <CardContent className="pt-6">
+            <div className="mx-auto w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
+              <CheckCircle2 className="w-8 h-8 text-green-600" />
             </div>
-            
-            <DialogTitle className="flex items-center justify-center text-xl text-center pt-5">
-              <div className="relative bg-gradient-to-r from-gold to-accent1 p-4 rounded-full shadow-glow mb-2">
-                <Sparkles className="h-6 w-6 text-black animate-pulse" />
-              </div>
-            </DialogTitle>
-            
-            <div className="text-center space-y-2">
-              <h2 className="text-xl font-bold text-white">Vielen Dank!</h2>
-              <div className="text-3xl font-bold transition-all duration-700 scale-125 text-gold">
-                Anfrage erfolgreich
-              </div>
-            </div>
-            
-            <DialogDescription className="space-y-5 mt-4">
-              <div className="transition-all duration-500 opacity-100 translate-y-0">
-                <div className="bg-casino-dark/50 backdrop-blur-sm p-4 rounded-md shadow-inner border border-gold/10">
-                  <div className="flex items-center justify-center mb-3">
-                    <div className="w-8 h-8 rounded-full bg-gradient-to-r from-accent1/30 to-gold/30 flex items-center justify-center mr-2">
-                      <CheckCircle className="h-4 w-4 text-green-500" />
-                    </div>
-                    <span className="font-medium">Deine Anfrage wurde gesendet</span>
-                  </div>
-                  
-                  <div className="text-sm text-center">
-                    <p>Wir werden uns in Kürze bei dir melden, um den nächsten Schritt zu besprechen.</p>
-                    <p className="mt-2">Halte dein Telefon bereit für Informationen zu unserer KI-Trading Lösung!</p>
-                  </div>
-                </div>
-              </div>
-              
-              <div className="text-center transition-all duration-500 delay-300 opacity-100">
-                <div className="flex items-center justify-center gap-2">
-                  <Award className="h-5 w-5 text-gold animate-pulse" />
-                  <span className="text-sm text-gold/90">
-                    Du bist nur noch einen Schritt von finanzieller Freiheit entfernt
-                  </span>
-                </div>
-              </div>
-            </DialogDescription>
-          </DialogHeader>
-          
-          <DialogFooter className="mt-4">
-            <Button onClick={() => setShowSuccessDialog(false)} className="w-full bg-gradient-to-r from-gold to-accent1 hover:from-gold hover:to-gold text-black font-medium transition-all duration-300">
-              Schließen
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>;
-  };
-  return <div className="w-full max-w-md mx-auto">
-      {/* Show success dialog */}
-      {showSuccessDialog && <SuccessDialog />}
-      
-      {/* Logo added above the motivational text */}
-      <motion.div initial={{
-      opacity: 0,
-      y: -10
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} className="flex justify-center mb-4">
-        <img alt="KI-Trading Logo" className="h-14 object-contain" src="https://i.imgur.com/Q191f5z.png" />
-      </motion.div>
-      
-      {/* Motivational text section */}
-      <motion.div initial={{
-      opacity: 0,
-      y: 10
-    }} animate={{
-      opacity: 1,
-      y: 0
-    }} transition={{
-      delay: 0.2
-    }} className="mb-6 p-4 rounded-lg bg-gradient-to-br from-gold/10 to-accent1/10 border border-gold/20">
-        <h3 className="text-xl font-bold text-center bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
-          Jetzt mit KI-Trading starten!
-        </h3>
-        <p className="text-white text-center font-medium mb-1">Bis zu 30% Gewinn monatlich</p>
-        <p className="text-gray-300 text-sm text-center">
-          Unser KI-Bot analysiert automatisch Marktdaten und führt profitable Trades für dich durch. Einmalig 250€ Aktivierungsgebühr, die als Trading-Guthaben verwendet wird.
-        </p>
-      </motion.div>
-      
-      <form onSubmit={handleSubmit} className="space-y-4">
-        <motion.div className="space-y-2" initial={{
-        opacity: 0,
-        x: 20
-      }} animate={{
-        opacity: 1,
-        x: 0
-      }} transition={{
-        delay: 0.1
-      }}>
-          <Label htmlFor="name" className="text-white">Dein Name *</Label>
-          <Input id="name" name="name" value={formData.name} onChange={handleChange} placeholder="Dein vollständiger Name" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
-        </motion.div>
-        
-        <motion.div className="space-y-2" initial={{
-        opacity: 0,
-        x: 20
-      }} animate={{
-        opacity: 1,
-        x: 0
-      }} transition={{
-        delay: 0.2
-      }}>
-          <Label htmlFor="email" className="text-white">E-Mail *</Label>
-          <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} placeholder="Deine E-Mail Adresse" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
-        </motion.div>
-        
-        <motion.div className="space-y-2" initial={{
-        opacity: 0,
-        x: 20
-      }} animate={{
-        opacity: 1,
-        x: 0
-      }} transition={{
-        delay: 0.3
-      }}>
-          <Label htmlFor="phone" className="text-white">Telefon *</Label>
-          <Input id="phone" name="phone" value={formData.phone} onChange={handleChange} placeholder="Deine Telefonnummer" required className="bg-black/30 border-gold/30 text-white placeholder:text-gray-400 focus:border-gold focus:ring-1 focus:ring-gold/50" />
-        </motion.div>
-        
-        <motion.div initial={{
-        opacity: 0,
-        y: 10
-      }} animate={{
-        opacity: 1,
-        y: 0
-      }} transition={{
-        delay: 0.6
-      }} whileHover={{
-        scale: 1.03
-      }} className="pt-4">
-          <Button type="submit" className="w-full bg-gradient-to-r from-gold to-gold-light hover:from-gold-light hover:to-gold text-black font-medium py-6" disabled={isSubmitting}>
-            {isSubmitting ? "Wird gesendet..." : "Jetzt Zugang sichern"}
-          </Button>
-        </motion.div>
-        
-        {/* Security reassurance section */}
-        <motion.div initial={{
-        opacity: 0
-      }} animate={{
-        opacity: 1
-      }} transition={{
-        delay: 0.8
-      }} className="mt-6">
-          <div className="flex flex-col items-center space-y-3 py-4 border-t border-white/10">
-            <div className="flex items-center justify-center gap-4">
-              <div className="flex items-center p-2 bg-white/5 rounded-full">
-                <ShieldCheck className="w-5 h-5 text-green-400" />
-              </div>
-              <div className="flex items-center p-2 bg-white/5 rounded-full">
-                <Lock className="w-5 h-5 text-gold" />
-              </div>
-            </div>
-            <p className="text-sm text-center text-gray-300">
-              Deine Daten werden sicher verarbeitet und nicht an Dritte weitergegeben
+            <h3 className="text-xl font-semibold text-white mb-2">Erfolgreich gesendet!</h3>
+            <p className="text-gray-300 mb-4">
+              Vielen Dank für Ihr Interesse. Unser Team wird sich innerhalb von 24 Stunden bei Ihnen melden.
             </p>
-            <div className="flex items-center justify-center gap-2 bg-green-500/10 px-4 py-2 rounded-full">
-              <div className="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
-              <p className="text-xs text-green-400 font-medium">Risikofrei starten – Keine Vorabkosten</p>
+            <Button 
+              onClick={() => setIsSubmitted(false)}
+              className="bg-gold hover:bg-gold/90 text-casino-darker"
+            >
+              Weitere Anfrage senden
+            </Button>
+          </CardContent>
+        </Card>
+      </motion.div>
+    );
+  }
+
+  return (
+    <Card className="max-w-lg mx-auto bg-casino-card border-gold/20">
+      <CardHeader className="text-center">
+        <CardTitle className="text-2xl font-bold text-white flex items-center justify-center gap-2">
+          <Sparkles className="h-6 w-6 text-gold" />
+          Jetzt Zugang anfragen
+        </CardTitle>
+        <CardDescription className="text-gray-300">
+          Werden Sie Teil der Zukunft des Krypto-Investments
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="name" className="text-white">Name *</Label>
+              <Input
+                id="name"
+                name="name"
+                type="text"
+                value={formData.name}
+                onChange={handleChange}
+                className="bg-casino-darker border-gold/30 text-white"
+                placeholder="Ihr vollständiger Name"
+                required
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="email" className="text-white">E-Mail *</Label>
+              <Input
+                id="email"
+                name="email"
+                type="email"
+                value={formData.email}
+                onChange={handleChange}
+                className="bg-casino-darker border-gold/30 text-white"
+                placeholder="ihre@email.de"
+                required
+              />
             </div>
           </div>
-        </motion.div>
-      </form>
-    </div>;
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-2">
+              <Label htmlFor="phone" className="text-white">Telefon</Label>
+              <Input
+                id="phone"
+                name="phone"
+                type="tel"
+                value={formData.phone}
+                onChange={handleChange}
+                className="bg-casino-darker border-gold/30 text-white"
+                placeholder="+49 123 456 789"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label htmlFor="company" className="text-white">Unternehmen</Label>
+              <Input
+                id="company"
+                name="company"
+                type="text"
+                value={formData.company}
+                onChange={handleChange}
+                className="bg-casino-darker border-gold/30 text-white"
+                placeholder="Ihr Unternehmen"
+              />
+            </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="invitationCode" className="text-white">
+              Einladungscode 
+              <span className="text-gold ml-1">(Optional)</span>
+            </Label>
+            <Input
+              id="invitationCode"
+              name="invitationCode"
+              type="text"
+              value={formData.invitationCode}
+              onChange={handleChange}
+              className="bg-casino-darker border-gold/30 text-white font-mono"
+              placeholder="Haben Sie einen Einladungscode?"
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="message" className="text-white">Nachricht</Label>
+            <Textarea
+              id="message"
+              name="message"
+              value={formData.message}
+              onChange={handleChange}
+              className="bg-casino-darker border-gold/30 text-white min-h-[100px]"
+              placeholder="Erzählen Sie uns von Ihrem Interesse an KI-gesteuerten Krypto-Investments..."
+            />
+          </div>
+
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full bg-gold hover:bg-gold/90 text-casino-darker font-semibold py-6 text-lg transition-all duration-200 hover:scale-105"
+          >
+            {isSubmitting ? (
+              "Wird gesendet..."
+            ) : (
+              <>
+                Zugang anfragen
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </>
+            )}
+          </Button>
+
+          <p className="text-xs text-gray-400 text-center">
+            * Pflichtfelder. Ihre Daten werden vertraulich behandelt.
+          </p>
+        </form>
+      </CardContent>
+    </Card>
+  );
 };
 
 export default ContactForm;

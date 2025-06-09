@@ -1,6 +1,6 @@
 
 import { useState } from "react";
-import { Bitcoin, AlertCircle, Loader2, CreditCard, Check } from "lucide-react";
+import { Bitcoin, AlertCircle, Loader2, CreditCard, Check, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
@@ -60,6 +60,25 @@ const WalletSelector = ({
         <CardDescription>Wählen Sie eine der verfügbaren Kryptowährungen</CardDescription>
       </CardHeader>
       <CardContent>
+        {/* Einladungscode Nachricht */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="mb-6 p-4 rounded-lg bg-green-900/20 border border-green-700/30"
+        >
+          <div className="flex items-start">
+            <div className="mr-3 p-1.5 rounded-full bg-green-500/20">
+              <Gift className="h-5 w-5 text-green-400" />
+            </div>
+            <div>
+              <h4 className="font-medium text-green-400 mb-1">Einladungscode verwendet!</h4>
+              <p className="text-sm text-green-300">
+                Sie haben den Einladungscode %CODE% verwendet und erhalten deshalb 50€ Startguthaben.
+              </p>
+            </div>
+          </div>
+        </motion.div>
+
         {walletsLoading ? (
           <div className="text-center p-6 bg-slate-800/50 rounded-lg flex flex-col items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-gold mb-2" />

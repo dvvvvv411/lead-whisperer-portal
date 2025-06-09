@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
@@ -204,8 +205,7 @@ export const InviteFriendsTab = ({ userId }: InviteFriendsTabProps) => {
                     <Button
                       onClick={copyToClipboard}
                       variant="outline"
-                      size="icon"
-                      className="border-gold/30 hover:bg-gold/10 h-16 w-16"
+                      className="border-gold/30 hover:bg-gold/10 py-4 px-4 h-auto"
                     >
                       <Copy className="h-6 w-6" />
                     </Button>

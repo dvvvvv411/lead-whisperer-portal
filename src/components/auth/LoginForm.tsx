@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock, Key, Mail, ArrowRight } from "lucide-react";
+import { ShieldCheck, Lock, Key, Mail, ArrowRight, UserPlus } from "lucide-react";
 
 interface LoginFormProps {
   onResetPassword: () => void;
@@ -17,39 +17,115 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
   const [isLoading, setIsLoading] = useState(false);
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
     
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password
-      });
-      
-      if (error) throw error;
-      
-      toast({
-        title: "Erfolgreich angemeldet",
-        description: "Du wirst weitergeleitet...",
-      });
-      
-      // Use React Router's navigate instead of window.location for smoother transitions
-      navigate("/admin");
+      if (isRegisterMode) {
+        // Registration flow
+        if (password !== confirmPassword) {
+          throw new Error("Passwörter stimmen nicht überein");
+        }
+
+        if (password.length < 6) {
+          throw new Error("Passwort muss mindestens 6 Zeichen lang sein");
+        }
+
+        const { data, error } = await supabase.auth.signUp({
+          email,
+          password,
+          options: {
+            emailRedirectTo: `${window.location.origin}/nutzer`
+          }
+        });
+        
+        if (error) throw error;
+        
+        if (data.user) {
+          // Add user role after successful registration
+          try {
+            const { error: roleError } = await supabase.rpc('add_user_role', {
+              _user_id: data.user.id,
+              _role: 'user'
+            });
+            
+            if (roleError) {
+              console.error("Error adding user role:", roleError);
+              // Don't throw here as the user is already created
+            }
+          } catch (roleError) {
+            console.error("Error adding user role:", roleError);
+          }
+        }
+        
+        toast({
+          title: "Registrierung erfolgreich",
+          description: "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+        });
+        
+        // Reset form
+        setEmail("");
+        setPassword("");
+        setConfirmPassword("");
+        setIsRegisterMode(false);
+        
+      } else {
+        // Login flow
+        const { data, error } = await supabase.auth.signInWithPassword({
+          email,
+          password
+        });
+        
+        if (error) throw error;
+        
+        if (data.user) {
+          // Check if user is admin
+          const { data: adminRoleData } = await supabase
+            .from('user_roles')
+            .select('role')
+            .eq('user_id', data.user.id)
+            .eq('role', 'admin')
+            .maybeSingle();
+          
+          const isAdmin = !!adminRoleData;
+          
+          toast({
+            title: "Erfolgreich angemeldet",
+            description: "Du wirst weitergeleitet...",
+          });
+          
+          // Navigate based on user role
+          if (isAdmin) {
+            navigate("/admin");
+          } else {
+            navigate("/nutzer");
+          }
+        }
+      }
       
     } catch (error: any) {
-      console.error("Login-Fehler:", error);
+      console.error(isRegisterMode ? "Registration error:" : "Login error:", error);
       toast({
-        title: "Anmeldung fehlgeschlagen",
-        description: error.message || "Ungültige Anmeldedaten.",
+        title: isRegisterMode ? "Registrierung fehlgeschlagen" : "Anmeldung fehlgeschlagen",
+        description: error.message || "Ein Fehler ist aufgetreten.",
         variant: "destructive"
       });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setIsRegisterMode(!isRegisterMode);
+    setEmail("");
+    setPassword("");
+    setConfirmPassword("");
   };
 
   // Animation variants
@@ -68,21 +144,26 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   return (
     <div className="w-full max-w-md">
       <div className="bg-casino-dark border border-gold/20 rounded-xl shadow-lg p-6">
-        <form onSubmit={handleLogin} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
           <div className="flex justify-center mb-6">
             <div className="h-16 w-16 rounded-full bg-gradient-to-br from-gold/20 to-accent1/20 flex items-center justify-center">
-              <ShieldCheck className="h-8 w-8 text-gold" />
+              {isRegisterMode ? (
+                <UserPlus className="h-8 w-8 text-gold" />
+              ) : (
+                <ShieldCheck className="h-8 w-8 text-gold" />
+              )}
             </div>
           </div>
 
           <motion.h2 
+            key={isRegisterMode ? "register" : "login"}
             custom={0}
             variants={fadeIn}
             initial="hidden"
             animate="visible"
             className="text-2xl font-bold text-center text-white mb-6"
           >
-            Anmelden
+            {isRegisterMode ? "Registrieren" : "Anmelden"}
           </motion.h2>
 
           <motion.div 
@@ -122,13 +203,38 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
                 onChange={(e) => setPassword(e.target.value)}
                 className="pl-10 bg-casino-darker border-gold/30 text-white"
                 required
+                minLength={6}
               />
               <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
             </div>
           </motion.div>
 
+          {isRegisterMode && (
+            <motion.div
+              custom={3}
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              className="space-y-2"
+            >
+              <Label htmlFor="confirmPassword" className="text-gray-300">Passwort bestätigen</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pl-10 bg-casino-darker border-gold/30 text-white"
+                  required
+                  minLength={6}
+                />
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              </div>
+            </motion.div>
+          )}
+
           <motion.div
-            custom={3}
+            custom={isRegisterMode ? 4 : 3}
             variants={fadeIn}
             initial="hidden"
             animate="visible"
@@ -140,34 +246,46 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
             >
               {isLoading ? (
                 <span className="flex items-center">
-                  <span className="animate-spin mr-2">⟳</span> Anmelden...
+                  <span className="animate-spin mr-2">⟳</span> 
+                  {isRegisterMode ? "Registrierung läuft..." : "Anmelden..."}
                 </span>
               ) : (
                 <span className="flex items-center">
-                  Anmelden <ArrowRight className="ml-2 h-4 w-4" />
+                  {isRegisterMode ? "Registrieren" : "Anmelden"} 
+                  <ArrowRight className="ml-2 h-4 w-4" />
                 </span>
               )}
             </Button>
           </motion.div>
 
           <motion.div
-            custom={4}
+            custom={isRegisterMode ? 5 : 4}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 
-            className="text-center"
+            className="text-center space-y-2"
           >
             <button
               type="button"
-              onClick={onResetPassword}
-              className="text-gold/80 hover:text-gold text-sm"
+              onClick={toggleMode}
+              className="text-gold/80 hover:text-gold text-sm block w-full"
             >
-              Passwort vergessen?
+              {isRegisterMode ? "Bereits ein Konto? Jetzt anmelden" : "Noch kein Konto? Jetzt registrieren"}
             </button>
+            
+            {!isRegisterMode && (
+              <button
+                type="button"
+                onClick={onResetPassword}
+                className="text-gold/60 hover:text-gold/80 text-xs"
+              >
+                Passwort vergessen?
+              </button>
+            )}
           </motion.div>
 
           <motion.div
-            custom={5}
+            custom={isRegisterMode ? 6 : 5}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 

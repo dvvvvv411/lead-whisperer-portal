@@ -1,10 +1,9 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { AdminNavbar } from "./AdminNavbar";
+import AdminNavbar from "./AdminNavbar";
 
 const AdminRegister = () => {
   const { toast } = useToast();

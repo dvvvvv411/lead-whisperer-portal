@@ -5,7 +5,7 @@ import InviteFriendsTab from "@/components/user/affiliate/InviteFriendsTab";
 
 const UserInviteFriends = () => {
   return (
-    <UserAuthWrapper>
+    <UserAuthWrapper redirectTo="/auth">
       {({ user }) => (
         <div className="min-h-screen bg-casino-darker">
           <UserNavbar userId={user.id} userEmail={user.email} />

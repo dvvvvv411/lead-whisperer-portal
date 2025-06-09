@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -75,14 +76,14 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
             // Process affiliate invitation if code provided
             if (affiliateCode.trim()) {
               try {
-                const result = await processAffiliateInvitation(data.user.id, affiliateCode.trim());
-                if (result.success) {
+                const result = await processAffiliateInvitation(data.user.id, affiliateCode.trim()) as { success?: boolean; message?: string };
+                if (result?.success) {
                   toast({
                     title: "Bonus erhalten!",
                     description: "Du hast 50€ Bonus für die Nutzung eines Einladungscodes erhalten!",
                   });
                 } else {
-                  console.warn("Affiliate invitation failed:", result.message);
+                  console.warn("Affiliate invitation failed:", result?.message);
                 }
               } catch (affiliateError) {
                 console.error("Error processing affiliate invitation:", affiliateError);

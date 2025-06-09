@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { AdminNavbar } from "../AdminNavbar";
+import AdminNavbar from "../AdminNavbar";
 import { Plus } from "lucide-react";
 import { WalletTable, CryptoWallet } from "./WalletTable";
 import { WalletForm } from "./WalletForm";

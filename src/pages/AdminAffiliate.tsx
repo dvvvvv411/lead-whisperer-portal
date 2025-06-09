@@ -6,16 +6,16 @@ import AffiliateManager from "@/components/admin/affiliate/AffiliateManager";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 
 const AdminAffiliate = () => {
-  const { user, loading } = useAdminAuth();
+  const { user, authLoading, handleLogout } = useAdminAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (!loading && !user) {
+    if (!authLoading && !user) {
       navigate('/admin');
     }
-  }, [user, loading, navigate]);
+  }, [user, authLoading, navigate]);
 
-  if (loading) {
+  if (authLoading) {
     return (
       <div className="min-h-screen bg-casino-darker flex items-center justify-center">
         <div className="text-white">Laden...</div>

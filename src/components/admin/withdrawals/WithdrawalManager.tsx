@@ -2,7 +2,7 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import WithdrawalManagerContent from "./WithdrawalManagerContent";
 import { useAdminWithdrawals } from "@/hooks/useAdminWithdrawals";
-import { AdminNavbar } from "../AdminNavbar";
+import AdminNavbar from "../AdminNavbar";
 import { motion } from "framer-motion";
 
 const WithdrawalManager = () => {

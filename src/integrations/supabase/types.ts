@@ -9,6 +9,60 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
+      affiliate_codes: {
+        Row: {
+          code: string
+          created_at: string
+          id: string
+          user_id: string
+        }
+        Insert: {
+          code: string
+          created_at?: string
+          id?: string
+          user_id: string
+        }
+        Update: {
+          code?: string
+          created_at?: string
+          id?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      affiliate_invitations: {
+        Row: {
+          affiliate_code: string
+          bonus_paid_at: string | null
+          bonus_paid_to_invited: boolean
+          bonus_paid_to_inviter: boolean
+          id: string
+          invited_at: string
+          invited_user_id: string
+          inviter_id: string
+        }
+        Insert: {
+          affiliate_code: string
+          bonus_paid_at?: string | null
+          bonus_paid_to_invited?: boolean
+          bonus_paid_to_inviter?: boolean
+          id?: string
+          invited_at?: string
+          invited_user_id: string
+          inviter_id: string
+        }
+        Update: {
+          affiliate_code?: string
+          bonus_paid_at?: string | null
+          bonus_paid_to_invited?: boolean
+          bonus_paid_to_inviter?: boolean
+          id?: string
+          invited_at?: string
+          invited_user_id?: string
+          inviter_id?: string
+        }
+        Relationships: []
+      }
       comments: {
         Row: {
           content: string
@@ -103,6 +157,7 @@ export type Database = {
       }
       leads: {
         Row: {
+          affiliate_code: string | null
           company: string | null
           created_at: string
           email: string
@@ -114,6 +169,7 @@ export type Database = {
           status: string
         }
         Insert: {
+          affiliate_code?: string | null
           company?: string | null
           created_at?: string
           email: string
@@ -125,6 +181,7 @@ export type Database = {
           status?: string
         }
         Update: {
+          affiliate_code?: string | null
           company?: string | null
           created_at?: string
           email?: string
@@ -523,6 +580,25 @@ export type Database = {
         }
         Returns: undefined
       }
+      create_affiliate_code_for_user: {
+        Args: { user_id_param: string }
+        Returns: string
+      }
+      generate_affiliate_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      get_affiliate_statistics: {
+        Args: Record<PropertyKey, never>
+        Returns: {
+          inviter_email: string
+          inviter_id: string
+          affiliate_code: string
+          total_invitations: number
+          total_bonuses_paid: number
+          total_bonus_amount: number
+        }[]
+      }
       get_all_payments: {
         Args: Record<PropertyKey, never>
         Returns: {
@@ -595,6 +671,14 @@ export type Database = {
       is_leads_only_user: {
         Args: { user_id_param: string }
         Returns: boolean
+      }
+      pay_affiliate_bonus_to_inviter: {
+        Args: { invited_user_id_param: string }
+        Returns: Json
+      }
+      process_affiliate_invitation: {
+        Args: { invited_user_id_param: string; affiliate_code_param: string }
+        Returns: Json
       }
       process_withdrawal_status: {
         Args: {

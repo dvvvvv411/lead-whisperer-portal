@@ -61,7 +61,7 @@ serve(async (req) => {
     }
 
     // Get request body
-    const { email, password, name, phone, leadId } = await req.json();
+    const { email, password, name, phone, leadId, invitationCode } = await req.json();
     
     if (!email || !password || !leadId) {
       return new Response(
@@ -91,7 +91,7 @@ serve(async (req) => {
       );
     }
     
-    // Update the lead status
+    // Update the lead status and process invitation code if provided
     if (userData.user) {
       const { error: leadError } = await supabaseAdmin
         .from('leads')
@@ -106,6 +106,28 @@ serve(async (req) => {
       if (leadError) {
         console.error("Error updating lead:", leadError);
         // Continue even if lead update fails
+      }
+
+      // Process invitation code if provided
+      if (invitationCode && invitationCode.trim() !== '') {
+        console.log("Processing invitation code:", invitationCode);
+        
+        try {
+          const { data: invitationResult, error: invitationError } = await supabaseAdmin.rpc('process_affiliate_invitation', {
+            invited_user_id_param: userData.user.id,
+            affiliate_code_param: invitationCode.trim()
+          });
+          
+          if (invitationError) {
+            console.error("Error processing invitation code:", invitationError);
+            // Don't fail the account creation, just log the error
+          } else {
+            console.log("Invitation code processed successfully:", invitationResult);
+          }
+        } catch (err) {
+          console.error("Exception processing invitation code:", err);
+          // Don't fail the account creation, just log the error
+        }
       }
 
       // Send welcome email

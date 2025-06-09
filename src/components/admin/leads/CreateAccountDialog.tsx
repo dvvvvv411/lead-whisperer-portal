@@ -27,6 +27,7 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
+  const [invitationCode, setInvitationCode] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Initialize form fields with lead data when the dialog opens
@@ -35,6 +36,7 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
       setName(lead.name || "");
       setEmail(lead.email || "");
       setPhone(lead.phone || "");
+      setInvitationCode(lead.invitation_code || "");
     }
   }, [lead, open]);
 
@@ -78,7 +80,8 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
           password: generatedPassword,
           name: name,
           phone: phone,
-          leadId: lead.id
+          leadId: lead.id,
+          invitationCode: invitationCode || null
         },
         headers: {
           Authorization: `Bearer ${sessionData.session.access_token}`
@@ -156,6 +159,20 @@ export const CreateAccountDialog = ({ open, onClose, lead }: CreateAccountDialog
               id="phone"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
+              placeholder="Optional"
+              className="bg-casino-card border-gold/20 text-gray-200"
+            />
+          </div>
+          
+          <div className="grid gap-2">
+            <Label htmlFor="invitationCode" className="text-gray-300">
+              Einladungscode
+            </Label>
+            <Input
+              type="text"
+              id="invitationCode"
+              value={invitationCode}
+              onChange={(e) => setInvitationCode(e.target.value)}
               placeholder="Optional"
               className="bg-casino-card border-gold/20 text-gray-200"
             />

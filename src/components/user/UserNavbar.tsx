@@ -39,15 +39,10 @@ const UserNavbar = ({ userId, userEmail, className }: UserNavbarProps) => {
         
         {/* User info and controls */}
         <div className="flex items-center gap-4">
-          {/* Credit display with animation */}
-          <UserCreditDisplay userCredit={userCredit} loading={creditLoading} />
-          
-          {/* User email (visible on larger screens) */}
-          {userEmail && (
-            <div className="hidden md:block text-sm text-white/90">
-              {userEmail}
-            </div>
-          )}
+          {/* Credit display moved to where email was */}
+          <div className="hidden md:block">
+            <UserCreditDisplay userCredit={userCredit} loading={creditLoading} />
+          </div>
           
           {/* Logout button */}
           <LogoutButton />

@@ -1,7 +1,7 @@
 
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
-import { BarChart3, Settings, LogOut, CreditCard, TrendingUp, Users } from "lucide-react";
+import { BarChart3, Settings, LogOut, CreditCard, TrendingUp, Users, Archive } from "lucide-react";
 
 const DesktopNavigation = () => {
   const navItems = [
@@ -9,6 +9,7 @@ const DesktopNavigation = () => {
     { to: "/nutzer/einzahlung", label: "Einzahlung", icon: CreditCard },
     { to: "/nutzer/auszahlung", label: "Auszahlung", icon: TrendingUp },
     { to: "/nutzer/freunde-einladen", label: "Freunde einladen", icon: Users },
+    { to: "/nutzer/trading-archiv", label: "Trading-Archiv", icon: Archive },
     { to: "/nutzer/einstellungen", label: "Einstellungen", icon: Settings },
   ];
 

@@ -19,9 +19,7 @@ const UserInviteFriends = () => {
         return (
           <div className="min-h-screen bg-casino-darker">
             <UserNavbar userId={user.id} userEmail={user.email} />
-            <main className="container mx-auto px-4 py-8">
-              <InviteFriendsTab />
-            </main>
+            <InviteFriendsTab />
           </div>
         );
       }}

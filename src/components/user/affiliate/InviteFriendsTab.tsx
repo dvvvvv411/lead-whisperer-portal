@@ -9,15 +9,6 @@ const InviteFriendsTab = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-casino-darker via-casino-dark to-casino-darker">
-      {/* Debug Info (only in development) */}
-      {process.env.NODE_ENV === 'development' && (
-        <div className="bg-gray-800 p-4 rounded-lg text-sm text-gray-300 mb-6">
-          <strong>Debug Info:</strong><br />
-          Affiliate Code: {affiliateCode ? affiliateCode.code : 'Loading...'}<br />
-          Error: {error || 'None'}
-        </div>
-      )}
-
       <div className="container mx-auto px-4 py-8">
         <div className="grid lg:grid-cols-2 gap-8 items-start">
           {/* Left Column - Header/Hero Section */}

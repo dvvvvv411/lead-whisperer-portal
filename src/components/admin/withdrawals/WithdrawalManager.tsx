@@ -1,6 +1,7 @@
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import WithdrawalManagerContent from "./WithdrawalManagerContent";
+import { WithdrawalNotifier } from "./WithdrawalNotifier";
 import { useAdminWithdrawals } from "@/hooks/useAdminWithdrawals";
 import { AdminNavbar } from "../AdminNavbar";
 import { motion } from "framer-motion";
@@ -10,6 +11,7 @@ const WithdrawalManager = () => {
 
   return (
     <div className="min-h-screen bg-casino-darker text-gray-300">
+      <WithdrawalNotifier />
       <AdminNavbar />
       
       <div className="container mx-auto p-4">

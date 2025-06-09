@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import WithdrawalManager from "@/components/admin/withdrawals/WithdrawalManager";
+import { WithdrawalNotifier } from "@/components/admin/withdrawals/WithdrawalNotifier";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { motion } from "framer-motion";
 
@@ -39,7 +40,12 @@ const AdminWithdrawals = () => {
 
   console.log("AdminWithdrawals: Access granted, rendering withdrawal manager");
 
-  return <WithdrawalManager />;
+  return (
+    <>
+      <WithdrawalNotifier />
+      <WithdrawalManager />
+    </>
+  );
 };
 
 export default AdminWithdrawals;

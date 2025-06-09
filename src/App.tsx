@@ -1,113 +1,90 @@
 
-import { useEffect } from "react";
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThemeProvider } from "@/components/user/theme/theme-provider";
+import { Toaster } from "@/components/ui/toaster";
+
+// Importing all pages
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import User from "./pages/User";
-import UserSettings from "./pages/UserSettings";
-import UserDeposit from "./pages/UserDeposit";
-import UserWithdrawal from "./pages/UserWithdrawal";
-import UserTradeArchive from "./pages/UserTradeArchive";
-import UserActivation from "./pages/UserActivation";
-import UserAffiliate from "./pages/UserAffiliate";
 import Admin from "./pages/Admin";
-import AdminRegister from "./pages/AdminRegister";
 import AdminLeads from "./pages/AdminLeads";
 import AdminUsers from "./pages/AdminUsers";
+import AdminRegister from "./pages/AdminRegister";
+import AdminCryptoWallets from "./pages/AdminCryptoWallets";
 import AdminPayments from "./pages/AdminPayments";
 import AdminWithdrawals from "./pages/AdminWithdrawals";
-import AdminAffiliate from "./pages/AdminAffiliate";
-import AdminCryptoWallets from "./pages/AdminCryptoWallets";
-import AdminRechtstexte from "./pages/AdminRechtstexte";
 import AdminLegalInfo from "./pages/AdminLegalInfo";
-import TradingBot from "./pages/TradingBot";
+import UserActivation from "./pages/UserActivation";
+import UserDeposit from "./pages/UserDeposit";
+import UserWithdrawal from "./pages/UserWithdrawal";
+import UserSettings from "./pages/UserSettings";
+import UserTradeArchive from "./pages/UserTradeArchive";
 import NotFound from "./pages/NotFound";
-import Status from "./pages/Status";
-import TestNotifications from "./pages/TestNotifications";
-import Impressum from "./pages/Impressum";
-import Datenschutz from "./pages/Datenschutz";
 import AGB from "./pages/AGB";
-import Haftungsausschluss from "./pages/Haftungsausschluss";
-import Partners from "./pages/Partners";
-import Press from "./pages/Press";
+import Datenschutz from "./pages/Datenschutz";
+import Impressum from "./pages/Impressum";
 import FAQ from "./pages/FAQ";
+import Status from "./pages/Status";
+import Partners from "./pages/Partners";
+import TradingBot from "./pages/TradingBot";
 import Experiences from "./pages/Experiences";
+import Haftungsausschluss from "./pages/Haftungsausschluss";
+import TestNotifications from "./pages/TestNotifications";
+import Press from "./pages/Press";
 
 const queryClient = new QueryClient();
 
 function App() {
-  useEffect(() => {
-    // Check for affiliate code in URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const ref = urlParams.get('ref');
-    
-    if (ref) {
-      // Store affiliate code in localStorage for later use during registration
-      localStorage.setItem('affiliate_code', ref);
-    }
-  }, []);
-
   return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
+    <BrowserRouter>
+      <Toaster />
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider defaultTheme="dark" storageKey="casino-theme">
           <Routes>
             <Route path="/" element={<Index />} />
             <Route path="/auth" element={<Auth />} />
-            
-            {/* User Routes */}
             <Route path="/nutzer" element={<User />} />
-            <Route path="/nutzer/aktivierung" element={<UserActivation />} />
-            <Route path="/nutzer/einstellungen" element={<UserSettings />} />
-            <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
-            <Route path="/nutzer/einzahlung" element={<UserDeposit />} />
-            <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
-            <Route path="/nutzer/auszahlung" element={<UserWithdrawal />} />
-            <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
-            <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
-            <Route path="/nutzer/freunde-einladen" element={<UserAffiliate />} />
-            
-            {/* Admin Routes */}
             <Route path="/admin" element={<Admin />} />
-            <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/admin/leads" element={<AdminLeads />} />
-            <Route path="/admin/nutzer" element={<AdminUsers />} />
-            <Route path="/admin/einzahlungen" element={<AdminPayments />} />
-            <Route path="/admin/auszahlungen" element={<AdminWithdrawals />} />
-            <Route path="/admin/affiliate" element={<AdminAffiliate />} />
+            <Route path="/admin/users" element={<AdminUsers />} />
+            <Route path="/admin/register" element={<AdminRegister />} />
             <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
-            <Route path="/admin/rechtstexte" element={<AdminRechtstexte />} />
-            <Route path="/admin/legal-info" element={<AdminLegalInfo />} />
+            <Route path="/admin/payments" element={<AdminPayments />} />
+            <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+            <Route path="/admin/rechtstexte" element={<AdminLegalInfo />} />
+            <Route path="/nutzer/aktivierung" element={<UserActivation />} />
             
-            {/* Special Routes */}
+            {/* Updated routes to match navigation links */}
+            <Route path="/nutzer/einzahlung" element={<UserDeposit />} />
+            <Route path="/nutzer/einzahlen" element={<UserDeposit />} />
+            <Route path="/nutzer/auszahlung" element={<UserWithdrawal />} />
+            <Route path="/nutzer/auszahlen" element={<UserWithdrawal />} />
+            <Route path="/nutzer/einstellungen" element={<UserSettings />} />
+            <Route path="/nutzer/handel-archiv" element={<UserTradeArchive />} />
+            <Route path="/nutzer/trading-archiv" element={<UserTradeArchive />} />
+            
+            {/* Update the trading bot route to be accessible for anonymous users */}
             <Route path="/trading-bot" element={<TradingBot />} />
-            <Route path="/status" element={<Status />} />
-            <Route path="/test-notifications" element={<TestNotifications />} />
+            {/* Keep the existing route for backward compatibility */}
+            <Route path="/nutzer/bot" element={<TradingBot />} />
             
-            {/* Legal Pages */}
-            <Route path="/impressum" element={<Impressum />} />
-            <Route path="/datenschutz" element={<Datenschutz />} />
             <Route path="/agb" element={<AGB />} />
-            <Route path="/haftungsausschluss" element={<Haftungsausschluss />} />
-            
-            {/* Marketing Pages */}
+            <Route path="/datenschutz" element={<Datenschutz />} />
+            <Route path="/impressum" element={<Impressum />} />
+            <Route path="/faq" element={<FAQ />} />
+            <Route path="/status" element={<Status />} />
             <Route path="/partner" element={<Partners />} />
             <Route path="/presse" element={<Press />} />
-            <Route path="/faq" element={<FAQ />} />
             <Route path="/erfahrungen" element={<Experiences />} />
-            
-            {/* 404 Route */}
+            <Route path="/haftungsausschluss" element={<Haftungsausschluss />} />
+            <Route path="/test-notifications" element={<TestNotifications />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </BrowserRouter>
   );
 }
 

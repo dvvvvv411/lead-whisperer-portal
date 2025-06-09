@@ -6,14 +6,25 @@ import InviteFriendsTab from "@/components/user/affiliate/InviteFriendsTab";
 const UserInviteFriends = () => {
   return (
     <UserAuthWrapper redirectTo="/auth">
-      {({ user }) => (
-        <div className="min-h-screen bg-casino-darker">
-          <UserNavbar userId={user.id} userEmail={user.email} />
-          <main className="container mx-auto px-4 py-8">
-            <InviteFriendsTab />
-          </main>
-        </div>
-      )}
+      {(user) => {
+        // Add null check for user object
+        if (!user) {
+          return (
+            <div className="flex justify-center items-center min-h-screen bg-casino-darker">
+              <p className="text-white">Wird geladen...</p>
+            </div>
+          );
+        }
+
+        return (
+          <div className="min-h-screen bg-casino-darker">
+            <UserNavbar userId={user.id} userEmail={user.email} />
+            <main className="container mx-auto px-4 py-8">
+              <InviteFriendsTab />
+            </main>
+          </div>
+        );
+      }}
     </UserAuthWrapper>
   );
 };

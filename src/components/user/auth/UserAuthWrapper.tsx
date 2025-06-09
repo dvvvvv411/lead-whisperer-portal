@@ -79,16 +79,7 @@ const UserAuthWrapper = ({ children, redirectTo, minCredit = 0 }: UserAuthWrappe
     );
   }
 
-  // Ensure user is not null before calling children
-  if (!user) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <p>Wird geladen...</p>
-      </div>
-    );
-  }
-
-  return <>{children(user)}</>;
+  return <>{user && children(user)}</>;
 };
 
 export default UserAuthWrapper;

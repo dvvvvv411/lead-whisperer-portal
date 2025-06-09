@@ -8,8 +8,6 @@ import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
 import { ShieldCheck, Lock, Key, Mail, ArrowRight, UserPlus } from "lucide-react";
-import AffiliateCodeInput from "@/components/affiliate/AffiliateCodeInput";
-import { useAffiliate } from "@/hooks/useAffiliate";
 
 interface LoginFormProps {
   onResetPassword: () => void;
@@ -18,23 +16,11 @@ interface LoginFormProps {
 const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const { processAffiliateInvitation } = useAffiliate();
   const [isLoading, setIsLoading] = useState(false);
   const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [affiliateCode, setAffiliateCode] = useState("");
-
-  // Get affiliate code from URL on component mount
-  useState(() => {
-    const urlParams = new URLSearchParams(window.location.search);
-    const refCode = urlParams.get('ref');
-    if (refCode) {
-      setAffiliateCode(refCode);
-      setIsRegisterMode(true); // Switch to registration mode if there's a ref code
-    }
-  });
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -71,23 +57,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
             
             if (roleError) {
               console.error("Error adding user role:", roleError);
-            }
-
-            // Process affiliate invitation if code provided
-            if (affiliateCode.trim()) {
-              try {
-                const result = await processAffiliateInvitation(data.user.id, affiliateCode.trim()) as { success?: boolean; message?: string };
-                if (result?.success) {
-                  toast({
-                    title: "Bonus erhalten!",
-                    description: "Du hast 50€ Bonus für die Nutzung eines Einladungscodes erhalten!",
-                  });
-                } else {
-                  console.warn("Affiliate invitation failed:", result?.message);
-                }
-              } catch (affiliateError) {
-                console.error("Error processing affiliate invitation:", affiliateError);
-              }
+              // Don't throw here as the user is already created
             }
           } catch (roleError) {
             console.error("Error adding user role:", roleError);
@@ -96,16 +66,13 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
         
         toast({
           title: "Registrierung erfolgreich",
-          description: affiliateCode.trim() ? 
-            "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung. Ihr Bonus wurde bereits gutgeschrieben!" :
-            "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+          description: "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
         });
         
         // Reset form
         setEmail("");
         setPassword("");
         setConfirmPassword("");
-        setAffiliateCode("");
         setIsRegisterMode(false);
         
       } else {
@@ -159,12 +126,6 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
     setEmail("");
     setPassword("");
     setConfirmPassword("");
-    if (!isRegisterMode) {
-      // Keep affiliate code when switching to register mode
-      // setAffiliateCode("");
-    } else {
-      setAffiliateCode("");
-    }
   };
 
   // Animation variants
@@ -249,45 +210,31 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           {isRegisterMode && (
-            <>
-              <motion.div
-                custom={3}
-                variants={fadeIn}
-                initial="hidden"
-                animate="visible"
-                className="space-y-2"
-              >
-                <Label htmlFor="confirmPassword" className="text-gray-300">Passwort bestätigen</Label>
-                <div className="relative">
-                  <Input
-                    id="confirmPassword"
-                    type="password"
-                    value={confirmPassword}
-                    onChange={(e) => setConfirmPassword(e.target.value)}
-                    className="pl-10 bg-casino-darker border-gold/30 text-white"
-                    required
-                    minLength={6}
-                  />
-                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-                </div>
-              </motion.div>
-
-              <motion.div
-                custom={4}
-                variants={fadeIn}
-                initial="hidden"
-                animate="visible"
-              >
-                <AffiliateCodeInput
-                  value={affiliateCode}
-                  onChange={setAffiliateCode}
+            <motion.div
+              custom={3}
+              variants={fadeIn}
+              initial="hidden"
+              animate="visible"
+              className="space-y-2"
+            >
+              <Label htmlFor="confirmPassword" className="text-gray-300">Passwort bestätigen</Label>
+              <div className="relative">
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={confirmPassword}
+                  onChange={(e) => setConfirmPassword(e.target.value)}
+                  className="pl-10 bg-casino-darker border-gold/30 text-white"
+                  required
+                  minLength={6}
                 />
-              </motion.div>
-            </>
+                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+              </div>
+            </motion.div>
           )}
 
           <motion.div
-            custom={isRegisterMode ? 5 : 3}
+            custom={isRegisterMode ? 4 : 3}
             variants={fadeIn}
             initial="hidden"
             animate="visible"
@@ -312,7 +259,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           <motion.div
-            custom={isRegisterMode ? 6 : 4}
+            custom={isRegisterMode ? 5 : 4}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 
@@ -338,7 +285,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           <motion.div
-            custom={isRegisterMode ? 7 : 5}
+            custom={isRegisterMode ? 6 : 5}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 

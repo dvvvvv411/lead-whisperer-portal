@@ -1,7 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import AdminNavbar from "@/components/admin/AdminNavbar";
+import { AdminNavbar } from "@/components/admin/AdminNavbar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { 
   LayoutDashboard, 

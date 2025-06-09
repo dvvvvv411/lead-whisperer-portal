@@ -1,7 +1,8 @@
+
 import { useState, useEffect, useCallback } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import AdminNavbar from "../AdminNavbar";
+import { AdminNavbar } from "../AdminNavbar";
 import { UserTable } from "./UserTable";
 import { motion } from "framer-motion";
 import { Search, MessageSquareHeart } from "lucide-react";

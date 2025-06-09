@@ -3,7 +3,7 @@ import { useState } from "react";
 import { LeadFilterBar } from "./LeadFilterBar";
 import { LeadTableHeader } from "./LeadTableHeader";
 import { LeadsTableContent } from "./LeadsTableContent";
-import AdminNavbar from "../AdminNavbar";
+import { AdminNavbar } from "../AdminNavbar";
 import { Lead } from "@/types/leads";
 
 // Custom hooks

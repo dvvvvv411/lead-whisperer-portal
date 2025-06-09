@@ -32,14 +32,21 @@ export const InviteFriendsTab = ({ userId }: InviteFriendsTabProps) => {
   const fetchAffiliateCode = async () => {
     try {
       setLoading(true);
+      console.log("InviteFriendsTab: Fetching affiliate code for user:", userId);
+      
       const { data, error } = await supabase.rpc('create_affiliate_code_for_user', {
         user_id_param: userId
       });
 
-      if (error) throw error;
+      if (error) {
+        console.error('InviteFriendsTab: Error fetching affiliate code:', error);
+        throw error;
+      }
+      
+      console.log("InviteFriendsTab: Affiliate code fetched successfully:", data);
       setAffiliateCode(data);
     } catch (error) {
-      console.error('Error fetching affiliate code:', error);
+      console.error('InviteFriendsTab: Error in fetchAffiliateCode:', error);
       toast({
         title: "Fehler",
         description: "Affiliatecode konnte nicht geladen werden.",
@@ -52,13 +59,20 @@ export const InviteFriendsTab = ({ userId }: InviteFriendsTabProps) => {
 
   const fetchInviteStats = async () => {
     try {
+      console.log("InviteFriendsTab: Fetching invite stats for user:", userId);
+      
       const { data: invitationsData, error } = await supabase
         .from('affiliate_invitations')
         .select('*')
         .eq('inviter_id', userId);
 
-      if (error) throw error;
+      if (error) {
+        console.error('InviteFriendsTab: Error fetching invite stats:', error);
+        throw error;
+      }
 
+      console.log("InviteFriendsTab: Invite stats data:", invitationsData);
+      
       const totalInvitations = invitationsData?.length || 0;
       const bonusesPaid = invitationsData?.filter(inv => inv.bonus_paid_to_inviter).length || 0;
       const totalEarnings = bonusesPaid * 50;
@@ -68,8 +82,14 @@ export const InviteFriendsTab = ({ userId }: InviteFriendsTabProps) => {
         bonusesPaid,
         totalEarnings
       });
+
+      console.log("InviteFriendsTab: Calculated stats:", {
+        totalInvitations,
+        bonusesPaid,
+        totalEarnings
+      });
     } catch (error) {
-      console.error('Error fetching invite stats:', error);
+      console.error('InviteFriendsTab: Error fetching invite stats:', error);
     }
   };
 

@@ -1,134 +1,147 @@
 
 import { motion } from "framer-motion";
-import { Users, UserPlus, Gift, ArrowRight, Sparkles } from "lucide-react";
+import { Users, UserPlus, Gift, ArrowRight, Sparkles, Euro, Share2 } from "lucide-react";
 
 const InviteFriendsVisualization = () => {
   return (
-    <div className="relative h-full flex flex-col items-center justify-center p-8 overflow-hidden">
+    <div className="relative h-full flex flex-col items-center justify-center p-6 overflow-hidden">
       {/* Background Effects */}
       <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 rounded-full blur-xl"></div>
       <div className="absolute bottom-0 left-0 w-24 h-24 bg-gold/10 rounded-full blur-xl"></div>
       
       {/* Main Content */}
-      <div className="relative z-10 text-center">
+      <div className="relative z-10 text-center w-full max-w-md">
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8 }}
-          className="mb-8"
+          className="mb-6"
         >
-          <h2 className="text-3xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-4">
-            Freunde einladen & Verdienen
+          <h2 className="text-2xl font-bold bg-gradient-to-r from-gold to-gold-light bg-clip-text text-transparent mb-2">
+            So funktioniert's
           </h2>
-          <p className="text-gray-300 text-lg">
-            Teile deine Erfolgsgeschichte und verdiene dabei
+          <p className="text-gray-300 text-sm">
+            In 3 einfachen Schritten zum Bonus
           </p>
         </motion.div>
 
-        {/* Animation Sequence */}
-        <div className="space-y-8">
-          {/* Step 1 - You */}
+        {/* Compact Process Flow */}
+        <div className="space-y-4">
+          {/* Step 1 - Share Code */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
             transition={{ delay: 0.2, duration: 0.6 }}
-            className="flex items-center justify-center"
+            className="flex items-center bg-gradient-to-r from-casino-card/50 to-casino-dark/30 p-4 rounded-lg border border-gold/20"
           >
-            <div className="bg-gradient-to-br from-gold/20 to-gold/10 p-6 rounded-full border border-gold/30">
-              <Users className="h-12 w-12 text-gold" />
+            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-gold/30 to-gold/20 rounded-full flex items-center justify-center border border-gold/40 mr-4">
+              <Share2 className="h-6 w-6 text-gold" />
             </div>
-          </motion.div>
-
-          {/* Arrow */}
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.8 }}
-            className="flex justify-center"
-          >
-            <ArrowRight className="h-6 w-6 text-gold animate-pulse" />
-          </motion.div>
-
-          {/* Step 2 - Invite */}
-          <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.0, duration: 0.6 }}
-            className="flex items-center justify-center space-x-4"
-          >
-            <div className="bg-gradient-to-br from-blue-500/20 to-blue-400/10 p-4 rounded-full border border-blue-400/30">
-              <UserPlus className="h-8 w-8 text-blue-400" />
+            <div className="flex-1 text-left">
+              <div className="text-white font-medium text-sm">1. Code teilen</div>
+              <div className="text-gray-400 text-xs">Sende deinen Code an Freunde</div>
             </div>
             <motion.div
-              animate={{ x: [0, 10, 0] }}
+              animate={{ x: [0, 5, 0] }}
               transition={{ repeat: Infinity, duration: 2 }}
-              className="text-gray-300"
+              className="text-gold"
             >
-              Freund registriert sich
+              <ArrowRight className="h-4 w-4" />
             </motion.div>
           </motion.div>
 
-          {/* Arrow */}
+          {/* Step 2 - Friend Registers */}
           <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1.4 }}
-            className="flex justify-center"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 0.6, duration: 0.6 }}
+            className="flex items-center bg-gradient-to-r from-casino-card/50 to-casino-dark/30 p-4 rounded-lg border border-blue-400/20"
           >
-            <ArrowRight className="h-6 w-6 text-gold animate-pulse" />
+            <div className="flex-shrink-0 w-12 h-12 bg-gradient-to-br from-blue-500/30 to-blue-400/20 rounded-full flex items-center justify-center border border-blue-400/40 mr-4">
+              <UserPlus className="h-6 w-6 text-blue-400" />
+            </div>
+            <div className="flex-1 text-left">
+              <div className="text-white font-medium text-sm">2. Freund registriert sich</div>
+              <div className="text-gray-400 text-xs">Mit deinem Code + erste Einzahlung</div>
+            </div>
+            <motion.div
+              animate={{ x: [0, 5, 0] }}
+              transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+              className="text-blue-400"
+            >
+              <ArrowRight className="h-4 w-4" />
+            </motion.div>
           </motion.div>
 
-          {/* Step 3 - Rewards */}
+          {/* Step 3 - Both Get Rewards */}
           <motion.div
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: 1.6, duration: 0.6 }}
-            className="flex items-center justify-center space-x-6"
+            initial={{ opacity: 0, x: -50 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ delay: 1.0, duration: 0.6 }}
+            className="bg-gradient-to-r from-green-500/20 to-gold/20 p-4 rounded-lg border border-gold/30"
           >
-            <div className="text-center">
-              <div className="bg-gradient-to-br from-green-500/20 to-green-400/10 p-4 rounded-full border border-green-400/30 mb-2">
-                <Gift className="h-8 w-8 text-green-400 mx-auto" />
+            <div className="flex items-center justify-between">
+              <div className="text-center flex-1">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 2 }}
+                  className="w-12 h-12 bg-gradient-to-br from-green-500/30 to-green-400/20 rounded-full flex items-center justify-center border border-green-400/40 mx-auto mb-2"
+                >
+                  <Gift className="h-6 w-6 text-green-400" />
+                </motion.div>
+                <div className="text-xs text-green-400 font-medium">Freund</div>
+                <div className="text-lg font-bold text-green-400">50€</div>
               </div>
-              <div className="text-sm text-gray-300">Freund erhält 50€</div>
-            </div>
-            
-            <div className="text-center">
+
               <motion.div
                 animate={{ rotate: [0, 360] }}
-                transition={{ repeat: Infinity, duration: 3, ease: "linear" }}
-                className="bg-gradient-to-br from-gold/20 to-gold/10 p-4 rounded-full border border-gold/30 mb-2"
+                transition={{ repeat: Infinity, duration: 4, ease: "linear" }}
+                className="mx-4"
               >
-                <Sparkles className="h-8 w-8 text-gold mx-auto" />
+                <Sparkles className="h-6 w-6 text-gold" />
               </motion.div>
-              <div className="text-sm text-gold font-semibold">Du erhältst 50€</div>
+
+              <div className="text-center flex-1">
+                <motion.div
+                  animate={{ scale: [1, 1.1, 1] }}
+                  transition={{ repeat: Infinity, duration: 2, delay: 0.5 }}
+                  className="w-12 h-12 bg-gradient-to-br from-gold/30 to-gold/20 rounded-full flex items-center justify-center border border-gold/40 mx-auto mb-2"
+                >
+                  <Users className="h-6 w-6 text-gold" />
+                </motion.div>
+                <div className="text-xs text-gold font-medium">Du</div>
+                <div className="text-lg font-bold text-gold">50€</div>
+              </div>
             </div>
           </motion.div>
         </div>
 
-        {/* Floating coins animation */}
-        <motion.div
-          animate={{ y: [0, -10, 0] }}
-          transition={{ repeat: Infinity, duration: 3 }}
-          className="absolute top-20 left-10 w-8 h-8 bg-gold/30 rounded-full flex items-center justify-center"
-        >
-          <span className="text-gold text-sm">€</span>
-        </motion.div>
-        
-        <motion.div
-          animate={{ y: [0, -15, 0] }}
-          transition={{ repeat: Infinity, duration: 4, delay: 1 }}
-          className="absolute top-32 right-16 w-6 h-6 bg-gold/20 rounded-full flex items-center justify-center"
-        >
-          <span className="text-gold text-xs">€</span>
-        </motion.div>
-        
-        <motion.div
-          animate={{ y: [0, -8, 0] }}
-          transition={{ repeat: Infinity, duration: 2.5, delay: 2 }}
-          className="absolute bottom-20 left-20 w-7 h-7 bg-gold/25 rounded-full flex items-center justify-center"
-        >
-          <span className="text-gold text-sm">€</span>
-        </motion.div>
+        {/* Floating Money Animation */}
+        <div className="absolute inset-0 pointer-events-none">
+          {[...Array(6)].map((_, i) => (
+            <motion.div
+              key={i}
+              animate={{ 
+                y: [0, -20, 0],
+                x: [0, Math.sin(i) * 10, 0],
+                opacity: [0.3, 0.7, 0.3]
+              }}
+              transition={{ 
+                repeat: Infinity, 
+                duration: 3 + i * 0.5, 
+                delay: i * 0.8 
+              }}
+              className={`absolute w-6 h-6 bg-gold/20 rounded-full flex items-center justify-center
+                ${i % 2 === 0 ? 'top-10 left-10' : i % 3 === 0 ? 'top-20 right-8' : 'bottom-16 left-16'}`}
+              style={{
+                left: `${20 + (i * 15)}%`,
+                top: `${10 + (i * 10)}%`
+              }}
+            >
+              <Euro className="h-3 w-3 text-gold" />
+            </motion.div>
+          ))}
+        </div>
       </div>
     </div>
   );

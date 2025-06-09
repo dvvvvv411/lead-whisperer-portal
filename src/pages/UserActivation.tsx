@@ -174,6 +174,7 @@ const UserActivation = () => {
                 <div className="w-full">
                   <ActivationForm 
                     user={user} 
+                    userCredit={userCredit}
                     creditThreshold={CREDIT_ACTIVATION_THRESHOLD}
                     onStepChange={handleStepChange} 
                   />

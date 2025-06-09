@@ -1,11 +1,12 @@
 
-import { useState } from "react";
-import { Bitcoin, AlertCircle, Loader2, CreditCard, Check } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Bitcoin, AlertCircle, Loader2, CreditCard, Check, Gift } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
+import { supabase } from "@/integrations/supabase/client";
 
 interface CryptoWallet {
   id: string;
@@ -36,6 +37,27 @@ const WalletSelector = ({
 }: WalletSelectorProps) => {
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
   const [copied, setCopied] = useState(false);
+  const [affiliateCode, setAffiliateCode] = useState<string | null>(null);
+  
+  useEffect(() => {
+    const fetchAffiliateCode = async () => {
+      const { data } = await supabase.auth.getSession();
+      if (data.session?.user) {
+        const { data: invitationData } = await supabase
+          .from('affiliate_invitations')
+          .select('affiliate_code')
+          .eq('invited_user_id', data.session.user.id)
+          .eq('bonus_paid_to_invited', true)
+          .single();
+        
+        if (invitationData) {
+          setAffiliateCode(invitationData.affiliate_code);
+        }
+      }
+    };
+    
+    fetchAffiliateCode();
+  }, []);
   
   const handleWalletSelect = (currency: string) => {
     const wallet = wallets.find(w => w.currency === currency);
@@ -60,6 +82,23 @@ const WalletSelector = ({
         <CardDescription>Wählen Sie eine der verfügbaren Kryptowährungen</CardDescription>
       </CardHeader>
       <CardContent>
+        {affiliateCode && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5 }}
+            className="mb-6 p-4 bg-green-900/20 border border-green-700/30 rounded-lg"
+          >
+            <div className="flex items-center mb-2">
+              <Gift className="h-5 w-5 text-green-400 mr-2" />
+              <h4 className="font-medium text-green-400">Einladungscode verwendet!</h4>
+            </div>
+            <p className="text-sm text-green-300">
+              Sie haben den Einladungscode <span className="font-bold text-green-200">{affiliateCode}</span> verwendet und erhalten deshalb 50€ Startguthaben.
+            </p>
+          </motion.div>
+        )}
+        
         {walletsLoading ? (
           <div className="text-center p-6 bg-slate-800/50 rounded-lg flex flex-col items-center justify-center">
             <Loader2 className="h-6 w-6 animate-spin text-gold mb-2" />

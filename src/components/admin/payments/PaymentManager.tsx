@@ -1,8 +1,7 @@
-
 import { useState, useEffect } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { supabase } from "@/integrations/supabase/client";
-import { AdminNavbar } from "../AdminNavbar";
+import AdminNavbar from "../AdminNavbar";
 import { PaymentTable, Payment } from "./PaymentTable";
 import { motion } from "framer-motion";
 

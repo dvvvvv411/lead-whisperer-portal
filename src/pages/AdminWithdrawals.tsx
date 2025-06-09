@@ -1,6 +1,5 @@
-
 import { useState, useEffect } from "react";
-import { AdminNavbar } from "@/components/admin/AdminNavbar";
+import AdminNavbar from "@/components/admin/AdminNavbar";
 import WithdrawalManager from "@/components/admin/withdrawals/WithdrawalManager";
 import { useAdminAuth } from "@/hooks/useAdminAuth";
 import { motion } from "framer-motion";

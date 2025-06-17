@@ -77,16 +77,23 @@ serve(async (req) => {
       throw new Error('Invalid lead data: Name, email and phone are required');
     }
 
-    // Get source URL
+    // Get source URL and invitation code
     const sourceUrl = payload.source_url || "Keine Quelle";
+    const invitationCode = payload.invitation_code || payload.affiliateCode || null;
 
-    // Format message
-    const message = `🚨 *Neuer Lead über Landingpage!* 🚨\n\n` +
+    // Format message with conditional invitation code
+    let message = `🚨 *Neuer Lead über Landingpage!* 🚨\n\n` +
       `*Name:* ${payload.name}\n` +
       `*Email:* ${payload.email}\n` +
       `*Telefon:* ${payload.phone}\n` +
-      `*Nachricht:* ${payload.message || "Keine Nachricht"}\n` +
-      `*Quelle:* ${sourceUrl}\n` +
+      `*Nachricht:* ${payload.message || "Keine Nachricht"}\n`;
+    
+    // Add invitation code line if it exists
+    if (invitationCode && invitationCode.trim() !== '') {
+      message += `*Einladungscode:* ${invitationCode.trim()}\n`;
+    }
+    
+    message += `*Quelle:* ${sourceUrl}\n` +
       `*Zeit:* ${new Date().toLocaleString('de-DE')}\n\n` +
       `➡️ Admin-Panel: ${sourceUrl ? sourceUrl.split('?')[0].replace(/\/[^/]*$/, '/admin/leads') : ""}`;
 

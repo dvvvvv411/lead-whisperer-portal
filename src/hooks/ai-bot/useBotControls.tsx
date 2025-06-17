@@ -14,8 +14,8 @@ export const useBotControls = (
 ) => {
   const { toast } = useToast();
   
-  // Minimum balance required for trading (250€ = 25000 cents)
-  const MINIMUM_BALANCE = 25000;
+  // Minimum balance required for trading (250€)
+  const MINIMUM_BALANCE = 250;
   
   // Start the trading bot
   const startBot = useCallback(() => {
@@ -32,8 +32,8 @@ export const useBotControls = (
     
     // Check minimum balance requirement
     if (!userCredit || userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = Math.floor((userCredit || 0) / 100);
-      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
+      const currentBalanceEur = userCredit || 0;
+      const requiredBalanceEur = MINIMUM_BALANCE;
       console.log("Cannot start bot: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       toast({
         title: "Mindestguthaben erforderlich",

@@ -19,8 +19,8 @@ export const useBotTradeExecution = (
   const simulationInProgressRef = useRef(false);
   const { cryptos, fetchCryptos } = useCryptos();
   
-  // Minimum balance required for trading (250€ = 25000 cents)
-  const MINIMUM_BALANCE = 25000;
+  // Minimum balance required for trading (250€)
+  const MINIMUM_BALANCE = 250;
   
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
@@ -48,8 +48,8 @@ export const useBotTradeExecution = (
     
     // Check minimum balance requirement
     if (userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = Math.floor(userCredit / 100);
-      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
+      const currentBalanceEur = userCredit;
+      const requiredBalanceEur = MINIMUM_BALANCE;
       console.log("Cannot execute trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       toast({
         title: "Mindestguthaben erforderlich",
@@ -131,8 +131,8 @@ export const useBotTradeExecution = (
     
     // Check minimum balance requirement again before completing trade
     if (userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = Math.floor(userCredit / 100);
-      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
+      const currentBalanceEur = userCredit;
+      const requiredBalanceEur = MINIMUM_BALANCE;
       console.log("Cannot complete trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       simulationInProgressRef.current = false; // Reset simulation state
       setIsSimulating(false);

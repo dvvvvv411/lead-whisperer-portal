@@ -13,6 +13,11 @@ interface LoginFormProps {
   onResetPassword: () => void;
 }
 
+interface AffiliateResponse {
+  success: boolean;
+  message: string;
+}
+
 const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   const { toast } = useToast();
   const navigate = useNavigate();
@@ -81,16 +86,26 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
                   description: "Ihr Konto wurde erstellt, aber der Affiliate-Code konnte nicht verarbeitet werden. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
                   variant: "default"
                 });
-              } else if (affiliateResult?.success) {
-                toast({
-                  title: "Registrierung erfolgreich",
-                  description: "Herzlichen Glückwunsch! Sie haben 50€ Bonus erhalten. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
-                });
+              } else if (affiliateResult) {
+                // Cast the Json response to our expected type
+                const result = affiliateResult as AffiliateResponse;
+                
+                if (result.success) {
+                  toast({
+                    title: "Registrierung erfolgreich",
+                    description: "Herzlichen Glückwunsch! Sie haben 50€ Bonus erhalten. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+                  });
+                } else {
+                  toast({
+                    title: "Registrierung erfolgreich", 
+                    description: `Ihr Konto wurde erstellt, aber: ${result.message || 'Affiliate-Code ungültig'}. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.`,
+                    variant: "default"
+                  });
+                }
               } else {
                 toast({
-                  title: "Registrierung erfolgreich", 
-                  description: `Ihr Konto wurde erstellt, aber: ${affiliateResult?.message || 'Affiliate-Code ungültig'}. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.`,
-                  variant: "default"
+                  title: "Registrierung erfolgreich",
+                  description: "Ihr Konto wurde erstellt. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
                 });
               }
             } catch (affiliateError) {

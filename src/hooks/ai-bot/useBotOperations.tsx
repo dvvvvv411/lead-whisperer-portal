@@ -32,14 +32,15 @@ export const useBotOperations = (
     onTradeExecuted
   );
   
-  // Use our new bot controls hook
+  // Use our new bot controls hook (now with userCredit)
   const { startBot, stopBot } = useBotControls(
     userId,
     status,
     updateStatus,
     clearBotInterval,
     setNewBotInterval,
-    executeSingleTrade
+    executeSingleTrade,
+    userCredit // Pass userCredit to controls
   );
   
   return {

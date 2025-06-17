@@ -7,7 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { supabase } from "@/integrations/supabase/client";
 import { motion } from "framer-motion";
-import { ShieldCheck, Lock, Key, Mail, ArrowRight, UserPlus } from "lucide-react";
+import { ShieldCheck, Lock, Key, Mail, ArrowRight, UserPlus, Gift } from "lucide-react";
 
 interface LoginFormProps {
   onResetPassword: () => void;
@@ -21,6 +21,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [affiliateCode, setAffiliateCode] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,17 +63,56 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           } catch (roleError) {
             console.error("Error adding user role:", roleError);
           }
+
+          // Process affiliate code if provided
+          if (affiliateCode.trim()) {
+            try {
+              console.log("Processing affiliate invitation with code:", affiliateCode.trim());
+              const { data: affiliateResult, error: affiliateError } = await supabase.rpc('process_affiliate_invitation', {
+                invited_user_id_param: data.user.id,
+                affiliate_code_param: affiliateCode.trim().toUpperCase()
+              });
+
+              if (affiliateError) {
+                console.error("Affiliate processing error:", affiliateError);
+                // Don't fail registration, just show a warning
+                toast({
+                  title: "Registrierung erfolgreich",
+                  description: "Ihr Konto wurde erstellt, aber der Affiliate-Code konnte nicht verarbeitet werden. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+                  variant: "default"
+                });
+              } else if (affiliateResult?.success) {
+                toast({
+                  title: "Registrierung erfolgreich",
+                  description: "Herzlichen Glückwunsch! Sie haben 50€ Bonus erhalten. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+                });
+              } else {
+                toast({
+                  title: "Registrierung erfolgreich", 
+                  description: `Ihr Konto wurde erstellt, aber: ${affiliateResult?.message || 'Affiliate-Code ungültig'}. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.`,
+                  variant: "default"
+                });
+              }
+            } catch (affiliateError) {
+              console.error("Error processing affiliate code:", affiliateError);
+              toast({
+                title: "Registrierung erfolgreich",
+                description: "Ihr Konto wurde erstellt. Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+              });
+            }
+          } else {
+            toast({
+              title: "Registrierung erfolgreich",
+              description: "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
+            });
+          }
         }
-        
-        toast({
-          title: "Registrierung erfolgreich",
-          description: "Bitte überprüfen Sie Ihre E-Mail für die Bestätigung.",
-        });
         
         // Reset form
         setEmail("");
         setPassword("");
         setConfirmPassword("");
+        setAffiliateCode("");
         setIsRegisterMode(false);
         
       } else {
@@ -126,6 +166,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
     setEmail("");
     setPassword("");
     setConfirmPassword("");
+    setAffiliateCode("");
   };
 
   // Animation variants
@@ -210,31 +251,60 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           {isRegisterMode && (
-            <motion.div
-              custom={3}
-              variants={fadeIn}
-              initial="hidden"
-              animate="visible"
-              className="space-y-2"
-            >
-              <Label htmlFor="confirmPassword" className="text-gray-300">Passwort bestätigen</Label>
-              <div className="relative">
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={confirmPassword}
-                  onChange={(e) => setConfirmPassword(e.target.value)}
-                  className="pl-10 bg-casino-darker border-gold/30 text-white"
-                  required
-                  minLength={6}
-                />
-                <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
-              </div>
-            </motion.div>
+            <>
+              <motion.div
+                custom={3}
+                variants={fadeIn}
+                initial="hidden"
+                animate="visible"
+                className="space-y-2"
+              >
+                <Label htmlFor="confirmPassword" className="text-gray-300">Passwort bestätigen</Label>
+                <div className="relative">
+                  <Input
+                    id="confirmPassword"
+                    type="password"
+                    value={confirmPassword}
+                    onChange={(e) => setConfirmPassword(e.target.value)}
+                    className="pl-10 bg-casino-darker border-gold/30 text-white"
+                    required
+                    minLength={6}
+                  />
+                  <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                </div>
+              </motion.div>
+
+              <motion.div
+                custom={4}
+                variants={fadeIn}
+                initial="hidden"
+                animate="visible"
+                className="space-y-2"
+              >
+                <Label htmlFor="affiliateCode" className="text-gray-300">
+                  Einladungscode (optional)
+                </Label>
+                <div className="relative">
+                  <Input
+                    id="affiliateCode"
+                    type="text"
+                    value={affiliateCode}
+                    onChange={(e) => setAffiliateCode(e.target.value.toUpperCase())}
+                    className="pl-10 bg-casino-darker border-gold/30 text-white placeholder:text-gray-500"
+                    placeholder="Z.B. ABC12345"
+                    maxLength={8}
+                  />
+                  <Gift className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
+                </div>
+                <p className="text-xs text-gray-500">
+                  Mit einem Einladungscode erhalten Sie 50€ Startbonus!
+                </p>
+              </motion.div>
+            </>
           )}
 
           <motion.div
-            custom={isRegisterMode ? 4 : 3}
+            custom={isRegisterMode ? 5 : 3}
             variants={fadeIn}
             initial="hidden"
             animate="visible"
@@ -259,7 +329,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           <motion.div
-            custom={isRegisterMode ? 5 : 4}
+            custom={isRegisterMode ? 6 : 4}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 
@@ -285,7 +355,7 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
           </motion.div>
 
           <motion.div
-            custom={isRegisterMode ? 6 : 5}
+            custom={isRegisterMode ? 7 : 5}
             variants={fadeIn}
             initial="hidden"
             animate="visible" 

@@ -9,9 +9,13 @@ export const useBotControls = (
   updateStatus?: (newStatus: Partial<BotStatus>) => void,
   clearBotInterval?: () => void,
   setNewBotInterval?: (callback: () => void, minutes: number) => void,
-  executeSingleTrade?: () => Promise<boolean>
+  executeSingleTrade?: () => Promise<boolean>,
+  userCredit?: number
 ) => {
   const { toast } = useToast();
+  
+  // Minimum balance required for trading (250€ = 25000 cents)
+  const MINIMUM_BALANCE = 25000;
   
   // Start the trading bot
   const startBot = useCallback(() => {
@@ -23,6 +27,19 @@ export const useBotControls = (
     // Only allow starting if not already running
     if (status.isRunning) {
       console.log("Bot is already running");
+      return;
+    }
+    
+    // Check minimum balance requirement
+    if (!userCredit || userCredit < MINIMUM_BALANCE) {
+      const currentBalanceEur = userCredit ? (userCredit / 100).toFixed(2) : "0.00";
+      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      console.log("Cannot start bot: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
+      toast({
+        title: "Mindestguthaben erforderlich",
+        description: `Für den automatischen Handel benötigen Sie mindestens ${requiredBalanceEur}€. Ihr aktuelles Guthaben: ${currentBalanceEur}€`,
+        variant: "destructive"
+      });
       return;
     }
     
@@ -45,7 +62,7 @@ export const useBotControls = (
     
     // Removed toast notification that was shown when bot starts
     
-  }, [userId, status, updateStatus, setNewBotInterval, executeSingleTrade]);
+  }, [userId, status, updateStatus, setNewBotInterval, executeSingleTrade, userCredit, toast]);
   
   // Stop the trading bot
   const stopBot = useCallback(() => {

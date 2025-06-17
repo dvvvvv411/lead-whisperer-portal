@@ -19,6 +19,9 @@ export const useBotTradeExecution = (
   const simulationInProgressRef = useRef(false);
   const { cryptos, fetchCryptos } = useCryptos();
   
+  // Minimum balance required for trading (250€ = 25000 cents)
+  const MINIMUM_BALANCE = 25000;
+  
   // Execute a single trade
   const executeSingleTrade = useCallback(async () => {
     console.log("Checking if trade can be executed...");
@@ -38,6 +41,19 @@ export const useBotTradeExecution = (
       toast({
         title: "Fehler",
         description: "Nicht genügend Guthaben für den Handel",
+        variant: "destructive"
+      });
+      return false;
+    }
+    
+    // Check minimum balance requirement
+    if (userCredit < MINIMUM_BALANCE) {
+      const currentBalanceEur = (userCredit / 100).toFixed(2);
+      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      console.log("Cannot execute trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
+      toast({
+        title: "Mindestguthaben erforderlich",
+        description: `Für den automatischen Handel benötigen Sie mindestens ${requiredBalanceEur}€. Ihr aktuelles Guthaben: ${currentBalanceEur}€`,
         variant: "destructive"
       });
       return false;
@@ -111,6 +127,21 @@ export const useBotTradeExecution = (
         variant: "destructive"
       });
       return { success: false, error: "Insufficient credit" };
+    }
+    
+    // Check minimum balance requirement again before completing trade
+    if (userCredit < MINIMUM_BALANCE) {
+      const currentBalanceEur = (userCredit / 100).toFixed(2);
+      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      console.log("Cannot complete trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
+      simulationInProgressRef.current = false; // Reset simulation state
+      setIsSimulating(false);
+      toast({
+        title: "Mindestguthaben erforderlich",
+        description: `Für den automatischen Handel benötigen Sie mindestens ${requiredBalanceEur}€. Ihr aktuelles Guthaben: ${currentBalanceEur}€`,
+        variant: "destructive"
+      });
+      return { success: false, error: "Insufficient balance" };
     }
     
     try {

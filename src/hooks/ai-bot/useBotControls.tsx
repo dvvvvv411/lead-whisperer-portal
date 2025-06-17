@@ -32,8 +32,8 @@ export const useBotControls = (
     
     // Check minimum balance requirement
     if (!userCredit || userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = userCredit ? (userCredit / 100).toFixed(2) : "0.00";
-      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      const currentBalanceEur = Math.floor((userCredit || 0) / 100);
+      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
       console.log("Cannot start bot: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       toast({
         title: "Mindestguthaben erforderlich",

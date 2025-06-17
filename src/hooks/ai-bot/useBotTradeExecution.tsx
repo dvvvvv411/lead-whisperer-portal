@@ -48,8 +48,8 @@ export const useBotTradeExecution = (
     
     // Check minimum balance requirement
     if (userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = (userCredit / 100).toFixed(2);
-      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      const currentBalanceEur = Math.floor(userCredit / 100);
+      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
       console.log("Cannot execute trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       toast({
         title: "Mindestguthaben erforderlich",
@@ -131,8 +131,8 @@ export const useBotTradeExecution = (
     
     // Check minimum balance requirement again before completing trade
     if (userCredit < MINIMUM_BALANCE) {
-      const currentBalanceEur = (userCredit / 100).toFixed(2);
-      const requiredBalanceEur = (MINIMUM_BALANCE / 100).toFixed(2);
+      const currentBalanceEur = Math.floor(userCredit / 100);
+      const requiredBalanceEur = Math.floor(MINIMUM_BALANCE / 100);
       console.log("Cannot complete trade: balance below minimum", { userCredit, minimumRequired: MINIMUM_BALANCE });
       simulationInProgressRef.current = false; // Reset simulation state
       setIsSimulating(false);

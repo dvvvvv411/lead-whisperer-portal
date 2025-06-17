@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "@/hooks/use-toast";
@@ -87,8 +86,8 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
                   variant: "default"
                 });
               } else if (affiliateResult) {
-                // Cast the Json response to our expected type
-                const result = affiliateResult as AffiliateResponse;
+                // Cast the Json response to our expected type (first to unknown, then to our type)
+                const result = affiliateResult as unknown as AffiliateResponse;
                 
                 if (result.success) {
                   toast({

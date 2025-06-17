@@ -130,6 +130,31 @@ serve(async (req) => {
         }
       }
 
+      // Send user registration notification
+      try {
+        const notificationResponse = await fetch(`${Deno.env.get("SUPABASE_URL")}/functions/v1/user-registration-notification`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${Deno.env.get("SUPABASE_ANON_KEY")}`
+          },
+          body: JSON.stringify({
+            name: name,
+            email: email,
+            phone: phone || "",
+            leadId: leadId
+          })
+        });
+        
+        if (!notificationResponse.ok) {
+          console.error("User registration notification error:", await notificationResponse.text());
+        } else {
+          console.log("User registration notification sent successfully");
+        }
+      } catch (notificationError) {
+        console.error("Error calling user registration notification function:", notificationError);
+      }
+
       // Send welcome email
       try {
         const origin = req.headers.get('Origin') || "https://ai-bitloon.com";

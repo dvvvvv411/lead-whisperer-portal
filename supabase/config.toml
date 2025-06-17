@@ -3,3 +3,6 @@ project_id = "evtlahgiyytcvfeiqwaz"
 
 [functions.lead-form-notification]
 verify_jwt = false
+
+[functions.user-registration-notification]
+verify_jwt = false

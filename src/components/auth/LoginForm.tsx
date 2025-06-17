@@ -68,6 +68,26 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
             console.error("Error adding user role:", roleError);
           }
 
+          // Send user registration notification
+          try {
+            const { error: notificationError } = await supabase.functions.invoke('user-registration-notification', {
+              body: {
+                name: data.user.email?.split('@')[0] || 'Unbekannter Benutzer', // Use email prefix as fallback name
+                email: data.user.email,
+                phone: "",
+                leadId: null
+              }
+            });
+            
+            if (notificationError) {
+              console.error("Error sending user registration notification:", notificationError);
+            } else {
+              console.log("User registration notification sent successfully");
+            }
+          } catch (notificationError) {
+            console.error("Exception sending user registration notification:", notificationError);
+          }
+
           // Process affiliate code if provided
           if (affiliateCode.trim()) {
             try {

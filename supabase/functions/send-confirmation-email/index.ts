@@ -34,7 +34,7 @@ serve(async (req) => {
     const displayName = name.split(' ')[0].trim();
 
     const emailResponse = await resend.emails.send({
-      from: "bitloon <noreply@ai-bitloon.com>",
+      from: "bitloon <noreply@bitloon.io>",
       to: [email],
       subject: "Danke für dein Interesse an bitloon",
       html: `

@@ -34,7 +34,7 @@ serve(async (req) => {
     const loginUrl = "https://ai-bitloon.com/auth";
 
     const emailResponse = await resend.emails.send({
-      from: "bitloon <noreply@ai-bitloon.com>",
+      from: "bitloon <noreply@bitloon.io>",
       to: [email],
       subject: "Ihre Zugangsdaten für bitloon",
       html: `

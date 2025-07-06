@@ -259,20 +259,16 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
-            <h3 className="font-bold text-red-400 mb-2">Service-Einstellung</h3>
+            <h3 className="font-bold text-red-400 mb-2">Einstellung unseres Service</h3>
             <p className="text-sm text-gray-300 leading-relaxed">
-              Unser Unternehmen wurde von einem größeren Konzern übernommen, der unseren 
-              KI-Trading-Bot exklusiv für interne Zwecke nutzen möchte. Daher müssen wir 
-              unseren öffentlichen Service leider einstellen.
+              Unser Unternehmen wurde kürzlich von einem größeren Konzern übernommen. Im Zuge dieser Übernahme wird unser KI-basierter Trading-Bot künftig ausschließlich für interne Zwecke eingesetzt. Aus diesem Grund sehen wir uns leider dazu veranlasst, unseren öffentlichen Service einzustellen.
             </p>
           </div>
           
           <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
             <h3 className="font-bold text-blue-400 mb-2">Ihre Auszahlung</h3>
             <p className="text-sm text-gray-300 leading-relaxed">
-              Wir sorgen dafür, dass Sie Ihr gesamtes Guthaben erhalten. Bitte wählen Sie 
-              unten Ihre bevorzugte Kryptowährung für die Auszahlung aus und geben Sie 
-              Ihre Wallet-Adresse an.
+              Selbstverständlich stellen wir sicher, dass Sie Ihr gesamtes Guthaben in vollem Umfang erhalten. Bitte wählen Sie unten Ihre bevorzugte Kryptowährung für die Auszahlung aus und geben Sie Ihre Wallet-Adresse ein.
             </p>
           </div>
         </CardContent>

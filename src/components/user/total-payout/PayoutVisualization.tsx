@@ -25,7 +25,7 @@ export const PayoutVisualization = ({ currentStep, feePaid }: PayoutVisualizatio
     {
       id: 'completed',
       title: 'Auszahlung',
-      description: 'Guthaben wird übertragen',
+      description: feePaid ? 'Erfolgt innerhalb von 15 Minuten' : 'Guthaben wird übertragen',
       icon: CheckCircle2,
       completed: feePaid
     }
@@ -100,7 +100,11 @@ export const PayoutVisualization = ({ currentStep, feePaid }: PayoutVisualizatio
                 }`}>
                   {step.title}
                 </p>
-                <p className="text-xs text-gray-500 mt-1">
+                <p className={`text-xs mt-1 ${
+                  step.id === 'completed' && feePaid 
+                    ? 'text-green-400 font-medium' 
+                    : 'text-gray-500'
+                }`}>
                   {step.description}
                 </p>
               </motion.div>

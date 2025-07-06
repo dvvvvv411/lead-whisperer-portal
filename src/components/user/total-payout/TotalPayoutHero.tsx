@@ -23,14 +23,14 @@ export const TotalPayoutHero = ({ userBalance, status, feePaid }: TotalPayoutHer
       return {
         icon: Clock,
         title: "Auszahlung ausstehend",
-        subtitle: "Gebührenzahlung erforderlich",
+        subtitle: "bitloon stellt seinen Service ein",
         color: "text-orange-400",
         bgColor: "bg-orange-900/20"
       };
     } else {
       return {
         icon: TrendingUp,
-        title: "Gesamtauszahlung",
+        title: "Zahlen Sie ihr gesamtes Guthaben aus",
         subtitle: "Ihr Guthaben wird ausgezahlt",
         color: "text-gold",
         bgColor: "bg-gold/10"
@@ -76,7 +76,7 @@ export const TotalPayoutHero = ({ userBalance, status, feePaid }: TotalPayoutHer
             transition={{ delay: 0.3, duration: 0.6 }}
           >
             <h1 className="text-4xl font-bold text-white mb-3">
-              Service-Einstellung
+              Zahlen Sie ihr gesamtes Guthaben aus
             </h1>
             <p className="text-gray-300 text-lg mb-8 max-w-2xl mx-auto leading-relaxed">
               {statusInfo.subtitle}

@@ -8,8 +8,12 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
-import { AlertTriangle, Wallet, Lock, Unlock, CheckCircle2 } from "lucide-react";
+import { Wallet } from "lucide-react";
 import { useWallets } from "@/hooks/useWallets";
+import { PayoutHeroSection } from "./PayoutHeroSection";
+import { BossEncounter } from "./BossEncounter";
+import { PayoutProgressQuest } from "./PayoutProgressQuest";
+import { PayoutRewards } from "./PayoutRewards";
 
 interface PayoutData {
   id: string;
@@ -137,204 +141,124 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
 
   if (step === 'fee-payment' || payoutData.payout_currency) {
     return (
-      <div className="grid md:grid-cols-2 gap-6">
-        <Card className="bg-casino-card border-gold/10">
-          <CardHeader>
-            <CardTitle className="text-gold flex items-center">
-              <Wallet className="mr-2 h-5 w-5" />
-              Gebühren bezahlen
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-orange-900/20 border border-orange-500/30 rounded-lg p-4">
-              <div className="flex items-center mb-2">
-                <AlertTriangle className="h-5 w-5 text-orange-400 mr-2" />
-                <span className="font-medium text-orange-400">Gebühr erforderlich</span>
-              </div>
-              <p className="text-sm text-gray-300">
-                Um Ihre Auszahlung freizuschalten, müssen Sie eine Gebühr von{' '}
-                <span className="font-bold text-white">{payoutData.fee_percentage}%</span> bezahlen.
-              </p>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="fee-currency">Zahlungsmethode für Gebühr</Label>
-              <Select value={feePaymentCurrency} onValueChange={setFeePaymentCurrency}>
-                <SelectTrigger className="bg-casino-darker border-gold/20">
-                  <SelectValue placeholder="Kryptowährung auswählen" />
-                </SelectTrigger>
-                <SelectContent className="bg-casino-card border-gold/20">
-                  {wallets.map((wallet) => (
-                    <SelectItem key={wallet.id} value={wallet.currency}>
-                      {wallet.currency.toUpperCase()}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            {feePaymentWallet && (
-              <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4">
-                <h4 className="font-medium text-green-400 mb-2">Zahlungsdetails</h4>
-                <div className="space-y-2 text-sm">
-                  <div>
-                    <span className="text-gray-400">Betrag: </span>
-                    <span className="font-bold text-white">{feeAmountInEuros.toFixed(2)}€</span>
-                  </div>
-                  <div>
-                    <span className="text-gray-400">Wallet-Adresse:</span>
-                    <div className="bg-casino-darker p-2 rounded mt-1 break-all font-mono text-xs">
-                      {feePaymentWallet.wallet_address}
-                    </div>
-                  </div>
-                </div>
-                
-                {!payoutData.fee_paid && (
-                  <Button
-                    onClick={handleConfirmFeePayment}
-                    disabled={processing}
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-medium"
-                  >
-                    {processing ? "Wird bestätigt..." : "Gebührenzahlung bestätigen"}
-                  </Button>
-                )}
-              </div>
-            )}
-          </CardContent>
-        </Card>
-
-        <Card className="bg-casino-card border-gold/10">
-          <CardHeader>
-            <CardTitle className="text-gold flex items-center">
-              <CheckCircle2 className="mr-2 h-5 w-5" />
-              Ihre Auszahlung
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-              <h4 className="font-medium text-blue-400 mb-2">Auszahlungsdetails</h4>
-              <div className="space-y-2 text-sm">
-                <div>
-                  <span className="text-gray-400">Guthaben: </span>
-                  <span className="font-bold text-white">{balanceInEuros.toFixed(2)}€</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Währung: </span>
-                  <span className="text-white">{(payoutData.payout_currency || payoutCurrency).toUpperCase()}</span>
-                </div>
-                <div>
-                  <span className="text-gray-400">Wallet:</span>
-                  <div className="bg-casino-darker p-2 rounded mt-1 break-all font-mono text-xs">
-                    {payoutData.payout_wallet_address || payoutWalletAddress}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex items-center justify-center py-4">
-              {payoutData.fee_paid ? (
-                <div className="flex items-center text-green-400">
-                  <Unlock className="mr-2 h-6 w-6" />
-                  <span className="font-medium">Auszahlung freigeschaltet!</span>
-                </div>
-              ) : (
-                <div className="flex items-center text-orange-400">
-                  <Lock className="mr-2 h-6 w-6" />
-                  <span className="font-medium">Warten auf Gebührenzahlung</span>
-                </div>
-              )}
-            </div>
-          </CardContent>
-        </Card>
+      <div className="space-y-8">
+        <PayoutHeroSection />
+        <PayoutProgressQuest 
+          currentStep={payoutData.fee_paid ? 'completed' : 'fee-payment'} 
+          feePaid={payoutData.fee_paid} 
+        />
+        
+        <div className="grid lg:grid-cols-2 gap-8">
+          <BossEncounter
+            feePercentage={payoutData.fee_percentage}
+            feeAmount={feeAmountInEuros}
+            onFeePaymentConfirm={handleConfirmFeePayment}
+            processing={processing}
+            selectedCurrency={feePaymentCurrency}
+            onCurrencySelect={setFeePaymentCurrency}
+          />
+          
+          <PayoutRewards
+            balance={balanceInEuros}
+            currency={payoutData.payout_currency || payoutCurrency}
+            walletAddress={payoutData.payout_wallet_address || payoutWalletAddress}
+            isUnlocked={payoutData.fee_paid}
+          />
+        </div>
       </div>
     );
   }
 
   return (
-    <div className="grid md:grid-cols-2 gap-6">
-      <Card className="bg-casino-card border-gold/10">
-        <CardHeader>
-          <CardTitle className="text-gold">Wichtige Information</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
-            <h3 className="font-bold text-red-400 mb-2">Service-Einstellung</h3>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Unser Unternehmen wurde von einem größeren Konzern übernommen, der unseren 
-              KI-Trading-Bot exklusiv für interne Zwecke nutzen möchte. Daher müssen wir 
-              unseren öffentlichen Service leider einstellen.
-            </p>
-          </div>
-          
-          <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
-            <h3 className="font-bold text-blue-400 mb-2">Ihre Auszahlung</h3>
-            <p className="text-sm text-gray-300 leading-relaxed">
-              Wir sorgen dafür, dass Sie Ihr gesamtes Guthaben erhalten. Bitte wählen Sie 
-              unten Ihre bevorzugte Kryptowährung für die Auszahlung aus und geben Sie 
-              Ihre Wallet-Adresse an.
-            </p>
-          </div>
-        </CardContent>
-      </Card>
+    <div className="space-y-8">
+      <PayoutHeroSection />
+      <PayoutProgressQuest currentStep="info" feePaid={false} />
+      
+      <div className="grid lg:grid-cols-2 gap-8">
+        <Card className="bg-casino-card/80 backdrop-blur-lg border-gold/20">
+          <CardHeader>
+            <CardTitle className="text-gold">Wichtige Information</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-red-900/20 border border-red-500/30 rounded-lg p-4">
+              <h3 className="font-bold text-red-400 mb-2">Service-Einstellung</h3>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Unser Unternehmen wurde von einem größeren Konzern übernommen, der unseren 
+                KI-Trading-Bot exklusiv für interne Zwecke nutzen möchte. Daher müssen wir 
+                unseren öffentlichen Service leider einstellen.
+              </p>
+            </div>
+            
+            <div className="bg-blue-900/20 border border-blue-500/30 rounded-lg p-4">
+              <h3 className="font-bold text-blue-400 mb-2">Ihre Auszahlung</h3>
+              <p className="text-sm text-gray-300 leading-relaxed">
+                Wir sorgen dafür, dass Sie Ihr gesamtes Guthaben erhalten. Bitte wählen Sie 
+                unten Ihre bevorzugte Kryptowährung für die Auszahlung aus und geben Sie 
+                Ihre Wallet-Adresse an.
+              </p>
+            </div>
+          </CardContent>
+        </Card>
 
-      <Card className="bg-casino-card border-gold/10">
-        <CardHeader>
-          <CardTitle className="text-gold flex items-center">
-            <Wallet className="mr-2 h-5 w-5" />
-            Auszahlungsdetails
-          </CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4 text-center">
-            <h3 className="text-sm text-gray-400 mb-1">Ihr verfügbares Guthaben</h3>
-            <p className="text-3xl font-bold text-green-400">{balanceInEuros.toFixed(2)}€</p>
-          </div>
-
-          <Separator className="bg-gold/20" />
-
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="payout-currency">Auszahlungswährung</Label>
-              <Select value={payoutCurrency} onValueChange={setPayoutCurrency}>
-                <SelectTrigger className="bg-casino-darker border-gold/20">
-                  <SelectValue placeholder="Kryptowährung auswählen" />
-                </SelectTrigger>
-                <SelectContent className="bg-casino-card border-gold/20">
-                  {walletsLoading ? (
-                    <SelectItem value="loading" disabled>Wird geladen...</SelectItem>
-                  ) : (
-                    wallets.map((wallet) => (
-                      <SelectItem key={wallet.id} value={wallet.currency}>
-                        {wallet.currency.toUpperCase()}
-                      </SelectItem>
-                    ))
-                  )}
-                </SelectContent>
-              </Select>
+        <Card className="bg-casino-card/80 backdrop-blur-lg border-gold/20">
+          <CardHeader>
+            <CardTitle className="text-gold flex items-center">
+              <Wallet className="mr-2 h-5 w-5" />
+              Auszahlungsdetails
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="bg-green-900/20 border border-green-500/30 rounded-lg p-4 text-center">
+              <h3 className="text-sm text-gray-400 mb-1">Ihr verfügbares Guthaben</h3>
+              <p className="text-3xl font-bold text-green-400">{balanceInEuros.toFixed(2)}€</p>
             </div>
 
-            <div className="space-y-2">
-              <Label htmlFor="wallet-address">Ihre Wallet-Adresse</Label>
-              <Input
-                id="wallet-address"
-                type="text"
-                value={payoutWalletAddress}
-                onChange={(e) => setPayoutWalletAddress(e.target.value)}
-                placeholder="Wallet-Adresse eingeben"
-                className="bg-casino-darker border-gold/20 text-white font-mono text-sm"
-              />
-            </div>
+            <Separator className="bg-gold/20" />
 
-            <Button
-              onClick={handleSavePayoutDetails}
-              disabled={processing || !payoutCurrency || !payoutWalletAddress}
-              className="w-full bg-gold hover:bg-gold/90 text-black font-medium"
-            >
-              {processing ? "Wird verarbeitet..." : "Weiter zur Gebührenzahlung"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="payout-currency">Auszahlungswährung</Label>
+                <Select value={payoutCurrency} onValueChange={setPayoutCurrency}>
+                  <SelectTrigger className="bg-casino-darker border-gold/20">
+                    <SelectValue placeholder="Kryptowährung auswählen" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-casino-card border-gold/20">
+                    {walletsLoading ? (
+                      <SelectItem value="loading" disabled>Wird geladen...</SelectItem>
+                    ) : (
+                      wallets.map((wallet) => (
+                        <SelectItem key={wallet.id} value={wallet.currency}>
+                          {wallet.currency.toUpperCase()}
+                        </SelectItem>
+                      ))
+                    )}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="wallet-address">Ihre Wallet-Adresse</Label>
+                <Input
+                  id="wallet-address"
+                  type="text"
+                  value={payoutWalletAddress}
+                  onChange={(e) => setPayoutWalletAddress(e.target.value)}
+                  placeholder="Wallet-Adresse eingeben"
+                  className="bg-casino-darker border-gold/20 text-white font-mono text-sm"
+                />
+              </div>
+
+              <Button
+                onClick={handleSavePayoutDetails}
+                disabled={processing || !payoutCurrency || !payoutWalletAddress}
+                className="w-full bg-gold hover:bg-gold/90 text-black font-medium"
+              >
+                {processing ? "Wird verarbeitet..." : "Weiter zur Gebührenzahlung"}
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

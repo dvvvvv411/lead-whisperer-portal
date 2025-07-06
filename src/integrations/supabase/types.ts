@@ -640,6 +640,10 @@ export type Database = {
         }
         Returns: undefined
       }
+      confirm_total_payout_fee: {
+        Args: { payout_id: string }
+        Returns: Json
+      }
       create_affiliate_code_for_user: {
         Args: { user_id_param: string }
         Returns: string

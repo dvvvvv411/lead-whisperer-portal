@@ -32,6 +32,34 @@ export const TotalPayoutManager = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
 
+  const handleConfirmFeePayment = async (payoutId: string) => {
+    try {
+      const { data, error } = await supabase.rpc('confirm_total_payout_fee', {
+        payout_id: payoutId
+      });
+
+      if (error) throw error;
+
+      const response = data as any;
+      if (response?.success) {
+        toast({
+          title: "Gebühr bestätigt",
+          description: "Die Gebührenzahlung wurde erfolgreich bestätigt."
+        });
+        fetchTotalPayouts();
+      } else {
+        throw new Error(response?.message || "Unbekannter Fehler");
+      }
+    } catch (error: any) {
+      console.error("Error confirming fee payment:", error);
+      toast({
+        title: "Fehler",
+        description: "Die Gebührenzahlung konnte nicht bestätigt werden.",
+        variant: "destructive"
+      });
+    }
+  };
+
   const fetchTotalPayouts = async () => {
     try {
       const { data, error } = await supabase
@@ -88,6 +116,8 @@ export const TotalPayoutManager = () => {
     switch (status) {
       case 'pending':
         return <Badge variant="outline" className="bg-yellow-100 text-yellow-800">Ausstehend</Badge>;
+      case 'fee_pending_confirmation':
+        return <Badge className="bg-orange-100 text-orange-800">Gebühr zu bestätigen</Badge>;
       case 'fee_paid':
         return <Badge className="bg-green-100 text-green-800">Gebühr bezahlt</Badge>;
       case 'completed':
@@ -197,6 +227,16 @@ export const TotalPayoutManager = () => {
                           >
                             <ExternalLink className="h-4 w-4" />
                           </Button>
+                          {payout.status === 'fee_pending_confirmation' && (
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleConfirmFeePayment(payout.id)}
+                              className="bg-green-900/20 border-green-500/30 hover:bg-green-800/30 text-green-400"
+                            >
+                              Bestätigen
+                            </Button>
+                          )}
                         </div>
                         {payout.payout_wallet_address && (
                           <div className="text-xs">

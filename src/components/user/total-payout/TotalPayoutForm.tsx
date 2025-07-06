@@ -110,8 +110,8 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
       const response = data as any;
       if (response?.success) {
         toast({
-          title: "Gebühr bestätigt",
-          description: "Ihre Gebührenzahlung wurde bestätigt. Die Auszahlung wird bearbeitet."
+          title: "Gebühr eingereicht",
+          description: "Ihre Gebührenzahlung wurde eingereicht und wartet auf Admin-Bestätigung."
         });
         onUpdate();
       } else {
@@ -194,9 +194,9 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
                   <Button
                     onClick={handleConfirmFeePayment}
                     disabled={processing}
-                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-medium"
+                    className="w-full mt-4 bg-orange-600 hover:bg-orange-700 text-white font-medium"
                   >
-                    {processing ? "Wird bestätigt..." : "Gebührenzahlung bestätigen"}
+                    {processing ? "Wird eingereicht..." : "Gebührenzahlung einreichen"}
                   </Button>
                 )}
               </div>
@@ -241,7 +241,7 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
               ) : (
                 <div className="flex items-center text-orange-400">
                   <Lock className="mr-2 h-6 w-6" />
-                  <span className="font-medium">Warten auf Gebührenzahlung</span>
+                  <span className="font-medium">Warten auf Admin-Bestätigung</span>
                 </div>
               )}
             </div>

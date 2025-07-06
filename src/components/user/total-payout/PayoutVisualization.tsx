@@ -25,7 +25,7 @@ export const PayoutVisualization = ({ currentStep, feePaid }: PayoutVisualizatio
     {
       id: 'completed',
       title: 'Auszahlung',
-      description: feePaid ? 'Erfolgt innerhalb von 15 Minuten' : 'Guthaben wird übertragen',
+      description: 'Erfolgt innerhalb von 15 Minuten',
       icon: CheckCircle2,
       completed: feePaid
     }
@@ -101,7 +101,7 @@ export const PayoutVisualization = ({ currentStep, feePaid }: PayoutVisualizatio
                   {step.title}
                 </p>
                 <p className={`text-xs mt-1 ${
-                  step.id === 'completed' && feePaid 
+                  step.id === 'completed'
                     ? 'text-green-400 font-medium' 
                     : 'text-gray-500'
                 }`}>

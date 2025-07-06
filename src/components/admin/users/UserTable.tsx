@@ -10,10 +10,11 @@ import {
 } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Calendar, Trash2, Wallet, ArrowUp, ArrowDown, Phone } from "lucide-react";
+import { Calendar, Trash2, Wallet, ArrowUp, ArrowDown, Phone, DollarSign } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { format } from "date-fns";
 import { CreditEditDialog } from "./CreditEditDialog";
+import { TotalPayoutDialog } from "./TotalPayoutDialog";
 import { motion } from "framer-motion";
 import { 
   AlertDialog,
@@ -47,6 +48,7 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
   const { toast } = useToast();
   const [processing, setProcessing] = useState<string | null>(null);
   const [editingCredit, setEditingCredit] = useState<User | null>(null);
+  const [creatingPayout, setCreatingPayout] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [sortField, setSortField] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
@@ -240,6 +242,15 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
                     <Button
                       variant="outline"
                       size="sm"
+                      className="bg-blue-900/20 border-blue-500/30 hover:bg-blue-800/30 text-blue-400"
+                      onClick={() => setCreatingPayout(user)}
+                    >
+                      <DollarSign className="h-4 w-4 mr-1" />
+                      Gesamtauszahlung
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
                       disabled={processing === user.id || user.role === "admin"}
                       className="bg-red-900/20 border-red-500/30 hover:bg-red-800/30 text-red-400"
                       onClick={() => setUserToDelete(user)}
@@ -262,6 +273,15 @@ export const UserTable = ({ users, onUserUpdated, isLeadsOnlyUser = false }: Use
           userEmail={editingCredit.email}
           currentCredit={editingCredit.credit || 0}
           onCreditUpdated={onUserUpdated}
+        />
+      )}
+
+      {creatingPayout && (
+        <TotalPayoutDialog
+          isOpen={!!creatingPayout}
+          onClose={() => setCreatingPayout(null)}
+          user={creatingPayout}
+          onPayoutCreated={onUserUpdated}
         />
       )}
 

@@ -35,6 +35,7 @@ import Experiences from "./pages/Experiences";
 import Haftungsausschluss from "./pages/Haftungsausschluss";
 import TestNotifications from "./pages/TestNotifications";
 import Press from "./pages/Press";
+import TotalPayout from "./pages/TotalPayout";
 
 const queryClient = new QueryClient();
 
@@ -84,6 +85,7 @@ function App() {
             <Route path="/erfahrungen" element={<Experiences />} />
             <Route path="/haftungsausschluss" element={<Haftungsausschluss />} />
             <Route path="/test-notifications" element={<TestNotifications />} />
+            <Route path="/gesamtauszahlung/:token" element={<TotalPayout />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </ThemeProvider>

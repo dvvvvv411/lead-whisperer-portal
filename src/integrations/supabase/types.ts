@@ -402,6 +402,63 @@ export type Database = {
         }
         Relationships: []
       }
+      total_payouts: {
+        Row: {
+          created_at: string
+          created_by_admin: string
+          fee_amount: number | null
+          fee_paid: boolean
+          fee_payment_currency: string | null
+          fee_payment_wallet: string | null
+          fee_percentage: number
+          id: string
+          payout_currency: string | null
+          payout_wallet_address: string | null
+          status: string
+          unique_url_token: string
+          updated_at: string
+          user_balance: number
+          user_email: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          created_by_admin: string
+          fee_amount?: number | null
+          fee_paid?: boolean
+          fee_payment_currency?: string | null
+          fee_payment_wallet?: string | null
+          fee_percentage: number
+          id?: string
+          payout_currency?: string | null
+          payout_wallet_address?: string | null
+          status?: string
+          unique_url_token: string
+          updated_at?: string
+          user_balance: number
+          user_email: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          created_by_admin?: string
+          fee_amount?: number | null
+          fee_paid?: boolean
+          fee_payment_currency?: string | null
+          fee_payment_wallet?: string | null
+          fee_percentage?: number
+          id?: string
+          payout_currency?: string | null
+          payout_wallet_address?: string | null
+          status?: string
+          unique_url_token?: string
+          updated_at?: string
+          user_balance?: number
+          user_email?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       trade_simulations: {
         Row: {
           created_at: string | null
@@ -587,7 +644,20 @@ export type Database = {
         Args: { user_id_param: string }
         Returns: string
       }
+      create_total_payout_request: {
+        Args: {
+          target_user_id: string
+          target_user_email: string
+          fee_percentage_param: number
+          admin_user_id: string
+        }
+        Returns: Json
+      }
       generate_affiliate_code: {
+        Args: Record<PropertyKey, never>
+        Returns: string
+      }
+      generate_payout_token: {
         Args: Record<PropertyKey, never>
         Returns: string
       }

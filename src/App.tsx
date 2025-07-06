@@ -35,6 +35,7 @@ import Experiences from "./pages/Experiences";
 import Haftungsausschluss from "./pages/Haftungsausschluss";
 import TestNotifications from "./pages/TestNotifications";
 import Press from "./pages/Press";
+import AdminTotalPayouts from "./pages/AdminTotalPayouts";
 import TotalPayout from "./pages/TotalPayout";
 
 const queryClient = new QueryClient();
@@ -56,6 +57,7 @@ function App() {
             <Route path="/admin/crypto-wallets" element={<AdminCryptoWallets />} />
             <Route path="/admin/payments" element={<AdminPayments />} />
             <Route path="/admin/withdrawals" element={<AdminWithdrawals />} />
+            <Route path="/admin/total-payouts" element={<AdminTotalPayouts />} />
             <Route path="/admin/rechtstexte" element={<AdminLegalInfo />} />
             <Route path="/admin/affiliate" element={<AdminAffiliate />} />
             <Route path="/nutzer/aktivierung" element={<UserActivation />} />

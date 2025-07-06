@@ -781,6 +781,14 @@ export type Database = {
         Args: Record<PropertyKey, never>
         Returns: undefined
       }
+      update_total_payout_status: {
+        Args: {
+          payout_id: string
+          fee_payment_currency_param: string
+          fee_payment_wallet_param: string
+        }
+        Returns: Json
+      }
     }
     Enums: {
       app_role: "admin" | "user" | "leads_only"

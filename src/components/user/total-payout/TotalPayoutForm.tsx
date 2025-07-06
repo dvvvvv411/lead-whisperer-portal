@@ -86,6 +86,48 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
     }
   };
 
+  const handleConfirmFeePayment = async () => {
+    if (!feePaymentCurrency) {
+      toast({
+        title: "Fehlende Angaben",
+        description: "Bitte wählen Sie eine Zahlungsmethode für die Gebühr.",
+        variant: "destructive"
+      });
+      return;
+    }
+
+    setProcessing(true);
+    try {
+      const { data, error } = await supabase.rpc('update_total_payout_status', {
+        payout_id: payoutData.id,
+        fee_payment_currency_param: feePaymentCurrency,
+        fee_payment_wallet_param: feePaymentWallet?.wallet_address || ''
+      });
+
+      if (error) throw error;
+
+      const response = data as any;
+      if (response?.success) {
+        toast({
+          title: "Gebühr bestätigt",
+          description: "Ihre Gebührenzahlung wurde bestätigt. Die Auszahlung wird bearbeitet."
+        });
+        onUpdate();
+      } else {
+        throw new Error(response?.message || "Unbekannter Fehler");
+      }
+    } catch (error: any) {
+      console.error("Error confirming fee payment:", error);
+      toast({
+        title: "Fehler",
+        description: "Die Gebührenzahlung konnte nicht bestätigt werden.",
+        variant: "destructive"
+      });
+    } finally {
+      setProcessing(false);
+    }
+  };
+
   const getFeePaymentWallet = () => {
     if (!feePaymentCurrency) return null;
     return wallets.find(w => w.currency === feePaymentCurrency);
@@ -146,6 +188,16 @@ export const TotalPayoutForm = ({ payoutData, onUpdate }: TotalPayoutFormProps) 
                     </div>
                   </div>
                 </div>
+                
+                {!payoutData.fee_paid && (
+                  <Button
+                    onClick={handleConfirmFeePayment}
+                    disabled={processing}
+                    className="w-full mt-4 bg-green-600 hover:bg-green-700 text-white font-medium"
+                  >
+                    {processing ? "Wird bestätigt..." : "Gebührenzahlung bestätigen"}
+                  </Button>
+                )}
               </div>
             )}
           </CardContent>

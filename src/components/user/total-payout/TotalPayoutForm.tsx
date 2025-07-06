@@ -10,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Separator } from "@/components/ui/separator";
 import { AlertTriangle, Wallet, Lock, Unlock, CheckCircle2 } from "lucide-react";
 import { useWallets } from "@/hooks/useWallets";
+import { PayoutStatusCard } from "./PayoutStatusCard";
 
 interface PayoutData {
   id: string;

@@ -17,7 +17,7 @@ const PaymentConfirmationDialog = ({
   onClose,
   onConfirm,
   selectedWallet,
-  remainingAmount = 250
+  remainingAmount
 }: PaymentConfirmationDialogProps) => {
   return (
     <Dialog open={showDialog} onOpenChange={onClose}>
@@ -25,7 +25,7 @@ const PaymentConfirmationDialog = ({
         <DialogHeader>
           <DialogTitle className="text-center gradient-text text-xl">Zahlung bestätigen</DialogTitle>
           <DialogDescription className="text-center text-gray-400">
-            Haben Sie die Zahlung von {remainingAmount.toFixed(2)}€ in {selectedWallet} durchgeführt?
+            Haben Sie die Zahlung von {remainingAmount?.toFixed(2)}€ in {selectedWallet} durchgeführt?
           </DialogDescription>
         </DialogHeader>
         

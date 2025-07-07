@@ -38,6 +38,7 @@ const DepositForm = ({
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedWallet, setSelectedWallet] = useState<string | null>(null);
   const [selectedWalletId, setSelectedWalletId] = useState<string | null>(null);
+  const [depositAmount, setDepositAmount] = useState<number>(0);
   
   // Initialize form with react-hook-form
   const form = useForm<DepositFormValues>({
@@ -71,6 +72,7 @@ const DepositForm = ({
 
     setSelectedWallet(values.walletCurrency);
     setSelectedWalletId(wallet.id);
+    setDepositAmount(values.amount);
     setShowConfirmation(true);
   };
 
@@ -149,6 +151,7 @@ const DepositForm = ({
         onClose={() => setShowConfirmation(false)}
         onConfirm={handleConfirmPayment}
         selectedWallet={selectedWallet}
+        remainingAmount={depositAmount}
       />
     </>
   );

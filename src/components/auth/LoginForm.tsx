@@ -326,7 +326,6 @@ const LoginForm = ({ onResetPassword }: LoginFormProps) => {
                     onChange={(e) => setAffiliateCode(e.target.value.toUpperCase())}
                     className="pl-10 bg-casino-darker border-gold/30 text-white placeholder:text-gray-500"
                     placeholder="Z.B. ABC12345"
-                    maxLength={8}
                   />
                   <Gift className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                 </div>
